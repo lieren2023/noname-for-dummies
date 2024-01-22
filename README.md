@@ -114,6 +114,7 @@
 贡献代码：
 
 - 请前往无名杀原版/懒人包开源地址提Pull requests
+- 本懒人包提交Pull requests时请推送到“update-Branch”分支
 
 bug反馈：
 
@@ -149,6 +150,12 @@ bug反馈：
 <ins>若想赞赏作者，可私聊棘手怀念摧毁获取赞赏码</ins>
 
 ## Part Ⅱ 无名杀原版README
+
+noname-server.exe的源码见以下仓库：
+
+https://github.com/nonameShijian/noname-server
+
+---
 
 在线试玩：
 
