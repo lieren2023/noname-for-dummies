@@ -1,0 +1,97 @@
+
+effect_zhugeliannu.png
+size: 638,638
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zgln01_01
+  rotate: false
+  xy: 386, 160
+  size: 171, 126
+  orig: 420, 420
+  offset: 115, 146
+  index: -1
+zgln_fx_07
+  rotate: true
+  xy: 384, 91
+  size: 67, 166
+  orig: 210, 210
+  offset: 70, 15
+  index: -1
+zgln_star_08
+  rotate: false
+  xy: 384, 3
+  size: 106, 86
+  orig: 140, 140
+  offset: 17, 27
+  index: -1
+zgln_tx01_00
+  rotate: false
+  xy: 2, 480
+  size: 195, 156
+  orig: 420, 420
+  offset: 101, 141
+  index: -1
+zgln_tx01_01
+  rotate: false
+  xy: 2, 319
+  size: 191, 159
+  orig: 420, 420
+  offset: 106, 142
+  index: -1
+zgln_tx01_02
+  rotate: false
+  xy: 390, 478
+  size: 186, 158
+  orig: 420, 420
+  offset: 110, 142
+  index: -1
+zgln_tx01_03
+  rotate: true
+  xy: 386, 288
+  size: 187, 152
+  orig: 420, 420
+  offset: 109, 143
+  index: -1
+zgln_tx01_04
+  rotate: false
+  xy: 199, 477
+  size: 189, 159
+  orig: 420, 420
+  offset: 107, 139
+  index: -1
+zgln_tx01_05
+  rotate: false
+  xy: 2, 157
+  size: 190, 160
+  orig: 420, 420
+  offset: 106, 136
+  index: -1
+zgln_tx01_06
+  rotate: false
+  xy: 198, 10
+  size: 184, 156
+  orig: 420, 420
+  offset: 111, 139
+  index: -1
+zgln_tx01_07
+  rotate: false
+  xy: 195, 321
+  size: 189, 154
+  orig: 420, 420
+  offset: 106, 141
+  index: -1
+zgln_tx01_08
+  rotate: false
+  xy: 195, 168
+  size: 189, 151
+  orig: 420, 420
+  offset: 106, 141
+  index: -1
+zgln_tx01_09
+  rotate: false
+  xy: 2, 2
+  size: 194, 153
+  orig: 420, 420
+  offset: 102, 140
+  index: -1

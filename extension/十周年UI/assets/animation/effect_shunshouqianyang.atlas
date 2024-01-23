@@ -1,0 +1,48 @@
+
+effect_shunshouqianyang.png
+size: 306,306
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+shou
+  rotate: true
+  xy: 176, 117
+  size: 187, 78
+  orig: 188, 78
+  offset: 1, 0
+  index: -1
+shouzhi1
+  rotate: true
+  xy: 256, 246
+  size: 58, 28
+  orig: 58, 28
+  offset: 0, 0
+  index: -1
+shouzhi2
+  rotate: true
+  xy: 256, 194
+  size: 50, 32
+  orig: 50, 32
+  offset: 0, 0
+  index: -1
+yangshenti
+  rotate: true
+  xy: 2, 2
+  size: 130, 145
+  orig: 130, 145
+  offset: 0, 0
+  index: -1
+yangtou
+  rotate: false
+  xy: 2, 134
+  size: 172, 170
+  orig: 172, 170
+  offset: 0, 0
+  index: -1
+zhouzhi3
+  rotate: true
+  xy: 149, 103
+  size: 29, 23
+  orig: 29, 23
+  offset: 0, 0
+  index: -1

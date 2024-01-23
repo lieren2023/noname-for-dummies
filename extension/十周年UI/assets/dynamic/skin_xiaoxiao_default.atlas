@@ -1,0 +1,859 @@
+
+skin_xiaoxiao_default.png
+size: 2046,2046
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+chibang2_yy
+  rotate: true
+  xy: 261, 39
+  size: 51, 192
+  orig: 53, 193
+  offset: 1, 1
+  index: -1
+erduo1
+  rotate: true
+  xy: 1618, 56
+  size: 163, 419
+  orig: 169, 421
+  offset: 1, 1
+  index: -1
+gong
+  rotate: false
+  xy: 646, 1571
+  size: 1335, 473
+  orig: 1335, 473
+  offset: 0, 0
+  index: -1
+hei_00
+  rotate: true
+  xy: 1929, 1178
+  size: 185, 105
+  orig: 225, 113
+  offset: 23, 0
+  index: -1
+pidai
+  rotate: false
+  xy: 799, 17
+  size: 756, 105
+  orig: 757, 105
+  offset: 1, 0
+  index: -1
+pidai_yy
+  rotate: false
+  xy: 799, 124
+  size: 817, 399
+  orig: 824, 401
+  offset: 0, 1
+  index: -1
+tou
+  rotate: false
+  xy: 2, 92
+  size: 795, 624
+  orig: 806, 632
+  offset: 6, 7
+  index: -1
+vfx/jiaxue/ci_11
+  rotate: false
+  xy: 646, 750
+  size: 151, 219
+  orig: 338, 338
+  offset: 124, 30
+  index: -1
+vfx/jiaxue/ci_14
+  rotate: false
+  xy: 1929, 1012
+  size: 115, 164
+  orig: 338, 338
+  offset: 162, 37
+  index: -1
+vfx/jiaxue/ci_18
+  rotate: false
+  xy: 1944, 449
+  size: 98, 131
+  orig: 338, 338
+  offset: 179, 56
+  index: -1
+vfx/jiaxue/ci_19
+  rotate: true
+  xy: 1760, 972
+  size: 98, 136
+  orig: 338, 338
+  offset: 179, 51
+  index: -1
+vfx/jiaxue/ci_20
+  rotate: false
+  xy: 1618, 389
+  size: 83, 134
+  orig: 338, 338
+  offset: 179, 53
+  index: -1
+vfx/jiaxue/ci_21
+  rotate: true
+  xy: 455, 10
+  size: 80, 129
+  orig: 338, 338
+  offset: 180, 58
+  index: -1
+vfx/jiaxue/ci_22
+  rotate: true
+  xy: 586, 12
+  size: 78, 123
+  orig: 338, 338
+  offset: 180, 61
+  index: -1
+vfx/jiaxue/ci_24
+  rotate: false
+  xy: 711, 20
+  size: 73, 70
+  orig: 338, 338
+  offset: 182, 68
+  index: -1
+vfx/jiaxue/jiaxue_43
+  rotate: false
+  xy: 1944, 718
+  size: 98, 135
+  orig: 225, 225
+  offset: 73, 31
+  index: -1
+vfx/jiaxue/jiaxue_44
+  rotate: false
+  xy: 1944, 582
+  size: 96, 134
+  orig: 225, 225
+  offset: 75, 32
+  index: -1
+weiba
+  rotate: false
+  xy: 1618, 221
+  size: 409, 165
+  orig: 410, 169
+  offset: 1, 3
+  index: -1
+weijin
+  rotate: true
+  xy: 799, 525
+  size: 444, 902
+  orig: 446, 905
+  offset: 1, 1
+  index: -1
+xian
+  rotate: false
+  xy: 646, 971
+  size: 1112, 80
+  orig: 1112, 80
+  offset: 0, 0
+  index: -1
+yanlei1
+  rotate: true
+  xy: 1983, 1822
+  size: 111, 34
+  orig: 111, 34
+  offset: 0, 0
+  index: -1
+yanlei2
+  rotate: true
+  xy: 1557, 30
+  size: 92, 43
+  orig: 93, 44
+  offset: 1, 1
+  index: -1
+yumao1
+  rotate: true
+  xy: 2, 19
+  size: 71, 257
+  orig: 74, 259
+  offset: 2, 1
+  index: -1
+yumao2
+  rotate: false
+  xy: 1736, 1072
+  size: 191, 497
+  orig: 194, 498
+  offset: 1, 0
+  index: -1
+yumao3
+  rotate: false
+  xy: 1929, 1365
+  size: 92, 204
+  orig: 95, 206
+  offset: 1, 1
+  index: -1
+yumao4
+  rotate: false
+  xy: 1703, 388
+  size: 239, 581
+  orig: 242, 585
+  offset: 1, 0
+  index: -1
+zhanchi1
+  rotate: false
+  xy: 2, 718
+  size: 642, 1326
+  orig: 643, 1328
+  offset: 0, 1
+  index: -1
+zhanchi2
+  rotate: false
+  xy: 646, 1053
+  size: 1088, 516
+  orig: 1090, 518
+  offset: 1, 1
+  index: -1
+zui
+  rotate: false
+  xy: 1983, 1935
+  size: 55, 109
+  orig: 55, 109
+  offset: 0, 0
+  index: -1
+zuoyanpi2
+  rotate: true
+  xy: 1944, 855
+  size: 155, 100
+  orig: 156, 101
+  offset: 0, 1
+  index: -1
+
+skin_xiaoxiao_default2.png
+size: 1894,1894
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baoshi
+  rotate: true
+  xy: 438, 591
+  size: 213, 180
+  orig: 215, 181
+  offset: 1, 0
+  index: -1
+chibang1
+  rotate: false
+  xy: 2, 806
+  size: 589, 575
+  orig: 590, 577
+  offset: 1, 1
+  index: -1
+chibang1_yy
+  rotate: false
+  xy: 2, 601
+  size: 434, 203
+  orig: 436, 205
+  offset: 1, 1
+  index: -1
+chibang2
+  rotate: false
+  xy: 787, 1419
+  size: 351, 473
+  orig: 352, 479
+  offset: 0, 5
+  index: -1
+erduo2
+  rotate: false
+  xy: 787, 1281
+  size: 262, 136
+  orig: 263, 138
+  offset: 0, 1
+  index: -1
+jiao1
+  rotate: false
+  xy: 593, 1079
+  size: 179, 302
+  orig: 182, 303
+  offset: 2, 1
+  index: -1
+jiao2
+  rotate: false
+  xy: 1739, 1351
+  size: 153, 270
+  orig: 153, 272
+  offset: 0, 1
+  index: -1
+jiemao1
+  rotate: false
+  xy: 620, 539
+  size: 155, 277
+  orig: 156, 278
+  offset: 1, 1
+  index: -1
+jiemao2
+  rotate: true
+  xy: 932, 870
+  size: 236, 127
+  orig: 238, 129
+  offset: 1, 1
+  index: -1
+shenti
+  rotate: false
+  xy: 2, 1383
+  size: 783, 509
+  orig: 786, 510
+  offset: 2, 1
+  index: -1
+vfx/jiaxue/ci_00
+  rotate: false
+  xy: 2, 46
+  size: 202, 270
+  orig: 338, 338
+  offset: 55, 68
+  index: -1
+vfx/jiaxue/ci_01
+  rotate: false
+  xy: 1140, 1608
+  size: 202, 284
+  orig: 338, 338
+  offset: 76, 31
+  index: -1
+vfx/jiaxue/ci_02
+  rotate: false
+  xy: 2, 318
+  size: 202, 281
+  orig: 338, 338
+  offset: 96, 1
+  index: -1
+vfx/jiaxue/ci_03
+  rotate: false
+  xy: 1344, 1618
+  size: 205, 274
+  orig: 338, 338
+  offset: 110, 0
+  index: -1
+vfx/jiaxue/ci_04
+  rotate: false
+  xy: 206, 328
+  size: 204, 271
+  orig: 338, 338
+  offset: 110, 0
+  index: -1
+vfx/jiaxue/ci_05
+  rotate: false
+  xy: 1551, 1623
+  size: 199, 269
+  orig: 338, 338
+  offset: 110, 0
+  index: -1
+vfx/jiaxue/ci_06
+  rotate: false
+  xy: 206, 62
+  size: 184, 264
+  orig: 338, 338
+  offset: 110, 3
+  index: -1
+vfx/jiaxue/ci_07
+  rotate: false
+  xy: 593, 818
+  size: 181, 259
+  orig: 338, 338
+  offset: 114, 2
+  index: -1
+vfx/jiaxue/ci_08
+  rotate: false
+  xy: 1377, 1359
+  size: 181, 257
+  orig: 338, 338
+  offset: 114, 0
+  index: -1
+vfx/jiaxue/ci_09
+  rotate: false
+  xy: 1560, 1368
+  size: 177, 253
+  orig: 338, 338
+  offset: 114, 4
+  index: -1
+vfx/jiaxue/ci_10
+  rotate: true
+  xy: 774, 1108
+  size: 171, 246
+  orig: 338, 338
+  offset: 117, 7
+  index: -1
+vfx/jiaxue/ci_12
+  rotate: false
+  xy: 778, 335
+  size: 145, 207
+  orig: 338, 338
+  offset: 131, 39
+  index: -1
+vfx/jiaxue/ci_13
+  rotate: false
+  xy: 1022, 1108
+  size: 119, 171
+  orig: 338, 338
+  offset: 157, 38
+  index: -1
+vfx/jiaxue/ci_15
+  rotate: false
+  xy: 1752, 1623
+  size: 98, 123
+  orig: 338, 338
+  offset: 179, 59
+  index: -1
+vfx/jiaxue/ci_16
+  rotate: true
+  xy: 1160, 82
+  size: 98, 126
+  orig: 338, 338
+  offset: 179, 61
+  index: -1
+vfx/jiaxue/ci_17
+  rotate: false
+  xy: 1228, 813
+  size: 98, 127
+  orig: 338, 338
+  offset: 179, 60
+  index: -1
+vfx/jiaxue/ci_23
+  rotate: true
+  xy: 1160, 5
+  size: 75, 118
+  orig: 338, 338
+  offset: 181, 63
+  index: -1
+vfx/jiaxue/ci_25
+  rotate: false
+  xy: 1824, 1132
+  size: 64, 69
+  orig: 338, 338
+  offset: 185, 70
+  index: -1
+vfx/jiaxue/jiaxue_00
+  rotate: true
+  xy: 1029, 60
+  size: 124, 129
+  orig: 225, 225
+  offset: 56, 12
+  index: -1
+vfx/jiaxue/jiaxue_01
+  rotate: false
+  xy: 737, 183
+  size: 144, 148
+  orig: 225, 225
+  offset: 51, 12
+  index: -1
+vfx/jiaxue/jiaxue_02
+  rotate: false
+  xy: 1483, 1206
+  size: 157, 151
+  orig: 225, 225
+  offset: 45, 12
+  index: -1
+vfx/jiaxue/jiaxue_03
+  rotate: true
+  xy: 1507, 1047
+  size: 157, 151
+  orig: 225, 225
+  offset: 45, 12
+  index: -1
+vfx/jiaxue/jiaxue_04
+  rotate: false
+  xy: 1313, 1206
+  size: 168, 151
+  orig: 225, 225
+  offset: 40, 12
+  index: -1
+vfx/jiaxue/jiaxue_05
+  rotate: true
+  xy: 1185, 942
+  size: 168, 150
+  orig: 225, 225
+  offset: 40, 13
+  index: -1
+vfx/jiaxue/jiaxue_06
+  rotate: false
+  xy: 1337, 895
+  size: 168, 150
+  orig: 225, 225
+  offset: 40, 13
+  index: -1
+vfx/jiaxue/jiaxue_07
+  rotate: false
+  xy: 1507, 895
+  size: 168, 150
+  orig: 225, 225
+  offset: 40, 13
+  index: -1
+vfx/jiaxue/jiaxue_08
+  rotate: true
+  xy: 1076, 755
+  size: 168, 150
+  orig: 225, 225
+  offset: 40, 13
+  index: -1
+vfx/jiaxue/jiaxue_09
+  rotate: false
+  xy: 1076, 604
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_10
+  rotate: true
+  xy: 925, 477
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_11
+  rotate: false
+  xy: 1076, 453
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_12
+  rotate: true
+  xy: 925, 307
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_13
+  rotate: false
+  xy: 1076, 302
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_14
+  rotate: false
+  xy: 1328, 744
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_15
+  rotate: false
+  xy: 1498, 744
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_16
+  rotate: false
+  xy: 1246, 280
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_17
+  rotate: false
+  xy: 1416, 287
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_18
+  rotate: true
+  xy: 1586, 574
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_19
+  rotate: true
+  xy: 1586, 404
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_20
+  rotate: false
+  xy: 1586, 253
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_21
+  rotate: false
+  xy: 1668, 744
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_22
+  rotate: true
+  xy: 1737, 574
+  size: 168, 149
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_23
+  rotate: false
+  xy: 1416, 438
+  size: 168, 150
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_24
+  rotate: false
+  xy: 1416, 590
+  size: 168, 152
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_25
+  rotate: false
+  xy: 1246, 431
+  size: 168, 153
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_26
+  rotate: false
+  xy: 1246, 586
+  size: 168, 156
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_27
+  rotate: false
+  xy: 1337, 1047
+  size: 168, 157
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_28
+  rotate: false
+  xy: 1143, 1218
+  size: 168, 159
+  orig: 225, 225
+  offset: 40, 14
+  index: -1
+vfx/jiaxue/jiaxue_29
+  rotate: false
+  xy: 553, 24
+  size: 158, 158
+  orig: 225, 225
+  offset: 44, 16
+  index: -1
+vfx/jiaxue/jiaxue_30
+  rotate: false
+  xy: 392, 29
+  size: 159, 158
+  orig: 225, 225
+  offset: 43, 16
+  index: -1
+vfx/jiaxue/jiaxue_31
+  rotate: false
+  xy: 412, 189
+  size: 161, 158
+  orig: 225, 225
+  offset: 41, 16
+  index: -1
+vfx/jiaxue/jiaxue_32
+  rotate: true
+  xy: 1737, 410
+  size: 162, 147
+  orig: 225, 225
+  offset: 40, 16
+  index: -1
+vfx/jiaxue/jiaxue_33
+  rotate: false
+  xy: 1660, 1054
+  size: 162, 147
+  orig: 225, 225
+  offset: 40, 16
+  index: -1
+vfx/jiaxue/jiaxue_34
+  rotate: false
+  xy: 575, 184
+  size: 160, 147
+  orig: 225, 225
+  offset: 42, 16
+  index: -1
+vfx/jiaxue/jiaxue_35
+  rotate: true
+  xy: 1677, 895
+  size: 157, 147
+  orig: 225, 225
+  offset: 45, 16
+  index: -1
+vfx/jiaxue/jiaxue_36
+  rotate: false
+  xy: 1739, 1203
+  size: 149, 146
+  orig: 225, 225
+  offset: 49, 17
+  index: -1
+vfx/jiaxue/jiaxue_37
+  rotate: false
+  xy: 713, 35
+  size: 149, 146
+  orig: 225, 225
+  offset: 49, 17
+  index: -1
+vfx/jiaxue/jiaxue_38
+  rotate: false
+  xy: 883, 161
+  size: 144, 144
+  orig: 225, 225
+  offset: 51, 18
+  index: -1
+vfx/jiaxue/jiaxue_39
+  rotate: false
+  xy: 1752, 1748
+  size: 140, 144
+  orig: 225, 225
+  offset: 53, 19
+  index: -1
+vfx/jiaxue/jiaxue_40
+  rotate: false
+  xy: 1756, 264
+  size: 133, 144
+  orig: 225, 225
+  offset: 56, 20
+  index: -1
+vfx/jiaxue/jiaxue_41
+  rotate: true
+  xy: 1029, 186
+  size: 114, 142
+  orig: 225, 225
+  offset: 65, 23
+  index: -1
+vfx/jiaxue/jiaxue_42
+  rotate: true
+  xy: 1143, 1112
+  size: 104, 136
+  orig: 225, 225
+  offset: 73, 30
+  index: -1
+vfx/jiaxue/jiaxue_45
+  rotate: true
+  xy: 1173, 182
+  size: 96, 127
+  orig: 225, 225
+  offset: 75, 33
+  index: -1
+vfx/jiaxue/jiaxue_46
+  rotate: false
+  xy: 1642, 1272
+  size: 95, 94
+  orig: 225, 225
+  offset: 76, 33
+  index: -1
+vfx/jiaxue/jiaxue_47
+  rotate: false
+  xy: 1302, 184
+  size: 94, 94
+  orig: 225, 225
+  offset: 76, 34
+  index: -1
+vfx/jiaxue/jiaxue_48
+  rotate: true
+  xy: 1398, 185
+  size: 93, 92
+  orig: 225, 225
+  offset: 77, 36
+  index: -1
+vfx/jiaxue/jiaxue_49
+  rotate: false
+  xy: 1492, 192
+  size: 92, 93
+  orig: 225, 225
+  offset: 78, 36
+  index: -1
+vfx/jiaxue/jiaxue_50
+  rotate: false
+  xy: 1051, 1324
+  size: 87, 93
+  orig: 225, 225
+  offset: 83, 38
+  index: -1
+vfx/jiaxue/jiaxue_51
+  rotate: true
+  xy: 1586, 165
+  size: 86, 93
+  orig: 225, 225
+  offset: 83, 39
+  index: -1
+vfx/jiaxue/jiaxue_52
+  rotate: false
+  xy: 1681, 158
+  size: 86, 93
+  orig: 225, 225
+  offset: 82, 40
+  index: -1
+vfx/jiaxue/jiaxue_53
+  rotate: false
+  xy: 1769, 169
+  size: 85, 93
+  orig: 225, 225
+  offset: 82, 41
+  index: -1
+vfx/jiaxue/jiaxue_54
+  rotate: true
+  xy: 1492, 107
+  size: 83, 92
+  orig: 225, 225
+  offset: 82, 43
+  index: -1
+yanbai1
+  rotate: false
+  xy: 1140, 1379
+  size: 235, 227
+  orig: 238, 229
+  offset: 2, 1
+  index: -1
+yanbai2
+  rotate: false
+  xy: 777, 652
+  size: 168, 206
+  orig: 170, 209
+  offset: 1, 2
+  index: -1
+yanzhu1
+  rotate: false
+  xy: 864, 15
+  size: 144, 144
+  orig: 144, 144
+  offset: 0, 0
+  index: -1
+yanzhu2
+  rotate: true
+  xy: 777, 544
+  size: 106, 143
+  orig: 107, 144
+  offset: 0, 1
+  index: -1
+youyanpi1
+  rotate: true
+  xy: 776, 860
+  size: 246, 154
+  orig: 248, 161
+  offset: 1, 5
+  index: -1
+youyanpi2
+  rotate: true
+  xy: 947, 647
+  size: 221, 127
+  orig: 224, 128
+  offset: 1, 1
+  index: -1
+zhangzui
+  rotate: true
+  xy: 1642, 1206
+  size: 64, 72
+  orig: 64, 72
+  offset: 0, 0
+  index: -1
+zhua1
+  rotate: true
+  xy: 412, 349
+  size: 240, 189
+  orig: 242, 191
+  offset: 2, 1
+  index: -1
+zhua2
+  rotate: true
+  xy: 603, 333
+  size: 204, 173
+  orig: 206, 176
+  offset: 1, 2
+  index: -1
+zuoyanpi1
+  rotate: true
+  xy: 1061, 925
+  size: 181, 122
+  orig: 182, 125
+  offset: 0, 1
+  index: -1

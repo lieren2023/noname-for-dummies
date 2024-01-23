@@ -1,0 +1,188 @@
+
+effect_wuxiekeji.png
+size: 488,488
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+wuxie_0100
+  rotate: false
+  xy: 399, 384
+  size: 87, 102
+  orig: 114, 114
+  offset: 17, 6
+  index: -1
+wuxie_chongji00
+  rotate: false
+  xy: 137, 363
+  size: 130, 123
+  orig: 166, 128
+  offset: 19, 5
+  index: -1
+wuxie_chongji01
+  rotate: false
+  xy: 2, 113
+  size: 130, 123
+  orig: 166, 128
+  offset: 20, 5
+  index: -1
+wuxie_chongji02
+  rotate: false
+  xy: 2, 363
+  size: 133, 123
+  orig: 166, 128
+  offset: 18, 5
+  index: -1
+wuxie_chongji03
+  rotate: false
+  xy: 2, 238
+  size: 132, 123
+  orig: 166, 128
+  offset: 19, 5
+  index: -1
+wuxie_chongji04
+  rotate: false
+  xy: 136, 238
+  size: 129, 123
+  orig: 166, 128
+  offset: 20, 5
+  index: -1
+wuxie_glow00
+  rotate: true
+  xy: 305, 262
+  size: 100, 85
+  orig: 166, 128
+  offset: 34, 16
+  index: -1
+wuxie_saoguang00
+  rotate: true
+  xy: 305, 211
+  size: 49, 98
+  orig: 114, 114
+  offset: 20, 8
+  index: -1
+wuxie_saoguang01
+  rotate: false
+  xy: 392, 263
+  size: 61, 99
+  orig: 114, 114
+  offset: 20, 7
+  index: -1
+wuxie_saoguang02
+  rotate: true
+  xy: 305, 56
+  size: 71, 101
+  orig: 114, 114
+  offset: 20, 5
+  index: -1
+wuxie_saoguang03
+  rotate: false
+  xy: 408, 160
+  size: 74, 101
+  orig: 114, 114
+  offset: 20, 5
+  index: -1
+wuxie_saoguang04
+  rotate: true
+  xy: 305, 129
+  size: 80, 101
+  orig: 114, 114
+  offset: 21, 5
+  index: -1
+wuxie_saoguang05
+  rotate: false
+  xy: 408, 60
+  size: 66, 98
+  orig: 114, 114
+  offset: 38, 5
+  index: -1
+wuxie_saoguang06
+  rotate: true
+  xy: 234, 3
+  size: 51, 91
+  orig: 114, 114
+  offset: 55, 5
+  index: -1
+wuxie_saoguang07
+  rotate: false
+  xy: 267, 62
+  size: 36, 64
+  orig: 114, 114
+  offset: 70, 5
+  index: -1
+wuxie_saoguang08
+  rotate: true
+  xy: 2, 7
+  size: 23, 38
+  orig: 114, 114
+  offset: 83, 6
+  index: -1
+wuxie_shitou00
+  rotate: false
+  xy: 408, 21
+  size: 62, 37
+  orig: 166, 128
+  offset: 63, 44
+  index: -1
+wuxie_shitou01
+  rotate: false
+  xy: 2, 32
+  size: 113, 79
+  orig: 166, 128
+  offset: 38, 32
+  index: -1
+wuxie_shitou02
+  rotate: false
+  xy: 269, 405
+  size: 128, 81
+  orig: 166, 128
+  offset: 32, 33
+  index: -1
+wuxie_shitou03
+  rotate: false
+  xy: 134, 167
+  size: 131, 69
+  orig: 166, 128
+  offset: 35, 34
+  index: -1
+wuxie_shitou04
+  rotate: false
+  xy: 117, 31
+  size: 115, 57
+  orig: 166, 128
+  offset: 28, 31
+  index: -1
+wuxie_shitou05
+  rotate: false
+  xy: 134, 123
+  size: 126, 42
+  orig: 166, 128
+  offset: 21, 31
+  index: -1
+wuxie_shitou06
+  rotate: false
+  xy: 134, 90
+  size: 131, 31
+  orig: 166, 128
+  offset: 18, 32
+  index: -1
+wuxie_shitou07
+  rotate: true
+  xy: 267, 235
+  size: 126, 36
+  orig: 166, 128
+  offset: 16, 33
+  index: -1
+wuxie_shitou08
+  rotate: false
+  xy: 269, 364
+  size: 127, 39
+  orig: 166, 128
+  offset: 16, 34
+  index: -1
+wuxie_shitou09
+  rotate: true
+  xy: 267, 128
+  size: 105, 36
+  orig: 166, 128
+  offset: 39, 33
+  index: -1

@@ -1,0 +1,188 @@
+
+effect_nanmanruqin.png
+size: 648,648
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+nanman03_00
+  rotate: false
+  xy: 229, 567
+  size: 238, 79
+  orig: 249, 110
+  offset: 7, 5
+  index: -1
+nanman_00
+  rotate: true
+  xy: 2, 178
+  size: 248, 181
+  orig: 249, 249
+  offset: 1, 8
+  index: -1
+nanman_huicheng00
+  rotate: false
+  xy: 185, 156
+  size: 157, 58
+  orig: 184, 104
+  offset: 15, 25
+  index: -1
+nanman_huicheng01
+  rotate: false
+  xy: 411, 419
+  size: 158, 69
+  orig: 184, 104
+  offset: 13, 16
+  index: -1
+nanman_huicheng02
+  rotate: false
+  xy: 395, 258
+  size: 157, 69
+  orig: 184, 104
+  offset: 12, 18
+  index: -1
+nanman_huicheng03
+  rotate: true
+  xy: 437, 14
+  size: 159, 69
+  orig: 184, 104
+  offset: 9, 20
+  index: -1
+nanman_huicheng04
+  rotate: false
+  xy: 406, 490
+  size: 159, 74
+  orig: 184, 104
+  offset: 8, 17
+  index: -1
+nanman_huicheng05
+  rotate: false
+  xy: 229, 488
+  size: 175, 77
+  orig: 184, 104
+  offset: 6, 15
+  index: -1
+nanman_huicheng06
+  rotate: false
+  xy: 2, 97
+  size: 178, 79
+  orig: 184, 104
+  offset: 4, 16
+  index: -1
+nanman_huicheng07
+  rotate: false
+  xy: 2, 23
+  size: 178, 72
+  orig: 184, 104
+  offset: 3, 16
+  index: -1
+nanman_huicheng08
+  rotate: false
+  xy: 502, 184
+  size: 144, 72
+  orig: 184, 104
+  offset: 36, 17
+  index: -1
+nanman_huicheng09
+  rotate: true
+  xy: 571, 419
+  size: 145, 72
+  orig: 184, 104
+  offset: 35, 19
+  index: -1
+nanman_huicheng10
+  rotate: true
+  xy: 508, 36
+  size: 146, 72
+  orig: 184, 104
+  offset: 33, 20
+  index: -1
+nanman_huicheng11
+  rotate: true
+  xy: 354, 23
+  size: 150, 81
+  orig: 184, 104
+  offset: 28, 13
+  index: -1
+nanman_huicheng12
+  rotate: true
+  xy: 272, 3
+  size: 151, 80
+  orig: 184, 104
+  offset: 26, 16
+  index: -1
+nanman_huicheng13
+  rotate: true
+  xy: 182, 2
+  size: 152, 88
+  orig: 184, 104
+  offset: 24, 10
+  index: -1
+nanman_huicheng14
+  rotate: false
+  xy: 395, 329
+  size: 154, 88
+  orig: 184, 104
+  offset: 22, 11
+  index: -1
+nanman_huicheng15
+  rotate: false
+  xy: 185, 216
+  size: 155, 89
+  orig: 184, 104
+  offset: 20, 12
+  index: -1
+nanman_huicheng16
+  rotate: false
+  xy: 344, 175
+  size: 156, 81
+  orig: 184, 104
+  offset: 19, 14
+  index: -1
+nanman_huicheng17
+  rotate: false
+  xy: 469, 566
+  size: 157, 80
+  orig: 184, 104
+  offset: 17, 15
+  index: -1
+nanman_xiang01
+  rotate: false
+  xy: 2, 428
+  size: 225, 218
+  orig: 225, 218
+  offset: 0, 0
+  index: -1
+nanman_xiangbi
+  rotate: false
+  xy: 321, 312
+  size: 72, 109
+  orig: 74, 111
+  offset: 2, 0
+  index: -1
+nanman_xiangtui
+  rotate: false
+  xy: 554, 308
+  size: 56, 109
+  orig: 58, 109
+  offset: 1, 0
+  index: -1
+nanmanruqin_zi
+  rotate: true
+  xy: 582, 29
+  size: 153, 38
+  orig: 153, 38
+  offset: 0, 0
+  index: -1
+nanmanruqin_zi_00
+  rotate: false
+  xy: 229, 423
+  size: 180, 63
+  orig: 262, 65
+  offset: 40, 2
+  index: -1
+wugu_yan01
+  rotate: false
+  xy: 185, 307
+  size: 134, 114
+  orig: 146, 142
+  offset: 5, 13
+  index: -1

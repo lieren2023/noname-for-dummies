@@ -1,0 +1,146 @@
+
+effect_wanjianqifa.png
+size: 504,504
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+wanjian01_17
+  rotate: false
+  xy: 133, 397
+  size: 129, 105
+  orig: 147, 115
+  offset: 7, 0
+  index: -1
+wanjian02_17
+  rotate: true
+  xy: 214, 266
+  size: 129, 93
+  orig: 147, 115
+  offset: 7, 6
+  index: -1
+wanjian_jian01
+  rotate: false
+  xy: 396, 45
+  size: 66, 71
+  orig: 150, 150
+  offset: 78, 0
+  index: -1
+wanjian_jian02
+  rotate: false
+  xy: 330, 40
+  size: 64, 76
+  orig: 150, 150
+  offset: 69, 0
+  index: -1
+wanjian_jian03
+  rotate: true
+  xy: 372, 118
+  size: 80, 82
+  orig: 150, 150
+  offset: 60, 0
+  index: -1
+wanjian_jian04
+  rotate: false
+  xy: 372, 200
+  size: 90, 84
+  orig: 150, 150
+  offset: 51, 4
+  index: -1
+wanjian_jian05
+  rotate: true
+  xy: 309, 308
+  size: 88, 79
+  orig: 150, 150
+  offset: 47, 9
+  index: -1
+wanjian_jian06
+  rotate: false
+  xy: 390, 286
+  size: 112, 93
+  orig: 150, 150
+  offset: 38, 0
+  index: -1
+wanjian_jian07
+  rotate: true
+  xy: 118, 4
+  size: 115, 97
+  orig: 150, 150
+  offset: 29, 0
+  index: -1
+wanjian_jian08
+  rotate: true
+  xy: 180, 135
+  size: 116, 97
+  orig: 150, 150
+  offset: 20, 5
+  index: -1
+wanjian_jian09
+  rotate: true
+  xy: 217, 17
+  size: 116, 111
+  orig: 150, 150
+  offset: 18, 0
+  index: -1
+wanjian_jian10
+  rotate: false
+  xy: 2, 382
+  size: 129, 120
+  orig: 150, 150
+  offset: 12, 0
+  index: -1
+wanjian_jian11
+  rotate: false
+  xy: 2, 253
+  size: 121, 127
+  orig: 150, 150
+  offset: 12, 3
+  index: -1
+wanjian_jian12
+  rotate: true
+  xy: 392, 381
+  size: 121, 103
+  orig: 150, 150
+  offset: 18, 10
+  index: -1
+wanjian_jian13
+  rotate: true
+  xy: 279, 151
+  size: 113, 91
+  orig: 150, 150
+  offset: 20, 9
+  index: -1
+wanjian_jian14
+  rotate: true
+  xy: 2, 114
+  size: 137, 95
+  orig: 150, 150
+  offset: 13, 12
+  index: -1
+wanjian_jian15
+  rotate: false
+  xy: 2, 13
+  size: 114, 99
+  orig: 150, 150
+  offset: 32, 15
+  index: -1
+wanjian_jian16
+  rotate: false
+  xy: 264, 398
+  size: 126, 104
+  orig: 150, 150
+  offset: 21, 17
+  index: -1
+wanjian_jian17
+  rotate: true
+  xy: 99, 121
+  size: 130, 79
+  orig: 150, 150
+  offset: 12, 11
+  index: -1
+wanjian_jian18
+  rotate: true
+  xy: 125, 253
+  size: 127, 87
+  orig: 150, 150
+  offset: 12, 9
+  index: -1

@@ -1,0 +1,167 @@
+
+effect_guanshifu.png
+size: 737,737
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+gsf01_00
+  rotate: false
+  xy: 292, 13
+  size: 136, 115
+  orig: 144, 144
+  offset: 7, 14
+  index: -1
+gsf_glow_00
+  rotate: false
+  xy: 2, 546
+  size: 314, 189
+  orig: 480, 480
+  offset: 64, 98
+  index: -1
+gsf_lizi_00
+  rotate: false
+  xy: 568, 4
+  size: 83, 110
+  orig: 480, 480
+  offset: 170, 138
+  index: -1
+gsf_lizi_01
+  rotate: false
+  xy: 653, 621
+  size: 82, 114
+  orig: 480, 480
+  offset: 170, 154
+  index: -1
+gsf_lizi_02
+  rotate: false
+  xy: 636, 173
+  size: 90, 128
+  orig: 480, 480
+  offset: 168, 154
+  index: -1
+gsf_lizi_03
+  rotate: false
+  xy: 644, 454
+  size: 89, 124
+  orig: 480, 480
+  offset: 165, 165
+  index: -1
+gsf_lizi_04
+  rotate: false
+  xy: 631, 303
+  size: 95, 130
+  orig: 480, 480
+  offset: 161, 166
+  index: -1
+gsf_lizi_05
+  rotate: true
+  xy: 430, 4
+  size: 110, 136
+  orig: 480, 480
+  offset: 150, 166
+  index: -1
+gsf_lizi_06
+  rotate: true
+  xy: 342, 130
+  size: 127, 149
+  orig: 480, 480
+  offset: 139, 161
+  index: -1
+gsf_lizi_07
+  rotate: false
+  xy: 2, 34
+  size: 143, 162
+  orig: 480, 480
+  offset: 129, 155
+  index: -1
+gsf_lizi_08
+  rotate: true
+  xy: 492, 580
+  size: 155, 159
+  orig: 480, 480
+  offset: 123, 162
+  index: -1
+gsf_lizi_09
+  rotate: false
+  xy: 2, 198
+  size: 149, 172
+  orig: 480, 480
+  offset: 133, 154
+  index: -1
+gsf_tx01_00
+  rotate: false
+  xy: 2, 372
+  size: 189, 172
+  orig: 480, 480
+  offset: 117, 134
+  index: -1
+gsf_tx01_01
+  rotate: false
+  xy: 318, 581
+  size: 172, 154
+  orig: 480, 480
+  offset: 124, 145
+  index: -1
+gsf_tx01_02
+  rotate: true
+  xy: 198, 220
+  size: 160, 142
+  orig: 480, 480
+  offset: 130, 148
+  index: -1
+gsf_tx01_03
+  rotate: true
+  xy: 193, 382
+  size: 162, 140
+  orig: 480, 480
+  offset: 128, 148
+  index: -1
+gsf_tx01_04
+  rotate: false
+  xy: 482, 435
+  size: 160, 143
+  orig: 480, 480
+  offset: 130, 145
+  index: -1
+gsf_tx01_05
+  rotate: true
+  xy: 485, 275
+  size: 158, 144
+  orig: 480, 480
+  offset: 132, 146
+  index: -1
+gsf_tx01_06
+  rotate: true
+  xy: 493, 116
+  size: 157, 141
+  orig: 480, 480
+  offset: 132, 148
+  index: -1
+gsf_tx01_07
+  rotate: true
+  xy: 147, 41
+  size: 155, 143
+  orig: 480, 480
+  offset: 134, 145
+  index: -1
+gsf_tx01_08
+  rotate: true
+  xy: 335, 420
+  size: 159, 145
+  orig: 480, 480
+  offset: 131, 145
+  index: -1
+gsf_tx01_09
+  rotate: true
+  xy: 342, 259
+  size: 159, 141
+  orig: 480, 480
+  offset: 130, 147
+  index: -1
+gsf_tx02_00
+  rotate: true
+  xy: 153, 205
+  size: 165, 43
+  orig: 240, 240
+  offset: 38, 98
+  index: -1

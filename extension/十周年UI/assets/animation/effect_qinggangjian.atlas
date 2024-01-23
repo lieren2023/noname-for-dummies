@@ -1,0 +1,153 @@
+
+effect_qinggangjian.png
+size: 838,838
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+qhj01_00
+  rotate: false
+  xy: 506, 245
+  size: 169, 145
+  orig: 300, 300
+  offset: 68, 75
+  index: -1
+qhj_jian01_00
+  rotate: false
+  xy: 549, 9
+  size: 78, 115
+  orig: 300, 300
+  offset: 79, 109
+  index: -1
+qhj_jian01_01
+  rotate: false
+  xy: 734, 370
+  size: 72, 37
+  orig: 300, 300
+  offset: 82, 118
+  index: -1
+qhj_jian01_02
+  rotate: false
+  xy: 677, 261
+  size: 27, 129
+  orig: 300, 300
+  offset: 128, 42
+  index: -1
+qhj_jian01_daoguang01_00
+  rotate: false
+  xy: 2, 257
+  size: 258, 286
+  orig: 300, 300
+  offset: 5, 0
+  index: -1
+qhj_jian01_daoguang01_01
+  rotate: true
+  xy: 2, 2
+  size: 253, 290
+  orig: 300, 300
+  offset: 9, 0
+  index: -1
+qhj_jian01_daoguang01_02
+  rotate: false
+  xy: 2, 545
+  size: 259, 291
+  orig: 300, 300
+  offset: 4, 0
+  index: -1
+qhj_jian01_daoguang01_03
+  rotate: false
+  xy: 263, 551
+  size: 247, 285
+  orig: 300, 300
+  offset: 12, 0
+  index: -1
+qhj_jian01_daoguang01_04
+  rotate: true
+  xy: 506, 126
+  size: 117, 184
+  orig: 300, 300
+  offset: 64, 55
+  index: -1
+qhj_jian01_daoguang01_05
+  rotate: true
+  xy: 294, 8
+  size: 107, 181
+  orig: 300, 300
+  offset: 65, 57
+  index: -1
+qhj_jian01_daoguang01_06
+  rotate: false
+  xy: 732, 686
+  size: 89, 150
+  orig: 300, 300
+  offset: 79, 73
+  index: -1
+qhj_jian02_00
+  rotate: false
+  xy: 629, 5
+  size: 61, 119
+  orig: 300, 300
+  offset: 137, 78
+  index: -1
+qhj_jian02_01
+  rotate: false
+  xy: 734, 332
+  size: 47, 36
+  orig: 300, 300
+  offset: 141, 95
+  index: -1
+qhj_jian02_02
+  rotate: false
+  xy: 706, 277
+  size: 26, 113
+  orig: 300, 300
+  offset: 136, 27
+  index: -1
+qhj_jian02_daoguang02_00
+  rotate: false
+  xy: 512, 392
+  size: 218, 220
+  orig: 300, 300
+  offset: 56, 0
+  index: -1
+qhj_jian02_daoguang02_01
+  rotate: true
+  xy: 263, 337
+  size: 212, 223
+  orig: 300, 300
+  offset: 58, 0
+  index: -1
+qhj_jian02_daoguang02_02
+  rotate: false
+  xy: 512, 614
+  size: 218, 222
+  orig: 300, 300
+  offset: 56, 0
+  index: -1
+qhj_jian02_daoguang02_03
+  rotate: false
+  xy: 294, 117
+  size: 210, 218
+  orig: 300, 300
+  offset: 59, 0
+  index: -1
+qhj_jian02_daoguang02_04
+  rotate: false
+  xy: 732, 545
+  size: 90, 139
+  orig: 300, 300
+  offset: 137, 43
+  index: -1
+qhj_jian02_daoguang02_05
+  rotate: false
+  xy: 732, 409
+  size: 83, 134
+  orig: 300, 300
+  offset: 143, 47
+  index: -1
+qhj_jian02_daoguang02_06
+  rotate: false
+  xy: 477, 2
+  size: 70, 113
+  orig: 300, 300
+  offset: 146, 57
+  index: -1

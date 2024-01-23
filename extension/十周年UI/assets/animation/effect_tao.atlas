@@ -1,0 +1,377 @@
+
+effect_tao.png
+size: 787,787
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tao1_00
+  rotate: false
+  xy: 465, 151
+  size: 88, 89
+  orig: 120, 120
+  offset: 16, 15
+  index: -1
+tao2_00
+  rotate: true
+  xy: 555, 161
+  size: 79, 78
+  orig: 120, 120
+  offset: 19, 23
+  index: -1
+tao_diguang02_00
+  rotate: true
+  xy: 133, 345
+  size: 125, 45
+  orig: 293, 153
+  offset: 86, 55
+  index: -1
+tao_diguang02_01
+  rotate: false
+  xy: 639, 513
+  size: 143, 51
+  orig: 293, 153
+  offset: 77, 51
+  index: -1
+tao_diguang02_02
+  rotate: false
+  xy: 184, 477
+  size: 168, 60
+  orig: 293, 153
+  offset: 65, 45
+  index: -1
+tao_diguang02_03
+  rotate: false
+  xy: 2, 472
+  size: 180, 65
+  orig: 293, 153
+  offset: 59, 42
+  index: -1
+tao_diguang02_04
+  rotate: false
+  xy: 441, 476
+  size: 185, 66
+  orig: 293, 153
+  offset: 56, 41
+  index: -1
+tao_diguang02_05
+  rotate: false
+  xy: 441, 544
+  size: 196, 71
+  orig: 293, 153
+  offset: 51, 38
+  index: -1
+tao_diguang02_06
+  rotate: false
+  xy: 2, 539
+  size: 206, 75
+  orig: 293, 153
+  offset: 46, 35
+  index: -1
+tao_diguang02_07
+  rotate: false
+  xy: 228, 539
+  size: 211, 76
+  orig: 293, 153
+  offset: 43, 34
+  index: -1
+tao_diguang02_08
+  rotate: true
+  xy: 705, 566
+  size: 219, 79
+  orig: 293, 153
+  offset: 39, 32
+  index: -1
+tao_diguang02_09
+  rotate: false
+  xy: 228, 617
+  size: 223, 81
+  orig: 293, 153
+  offset: 38, 30
+  index: -1
+tao_diguang02_10
+  rotate: false
+  xy: 473, 617
+  size: 229, 83
+  orig: 293, 153
+  offset: 34, 29
+  index: -1
+tao_diguang02_11
+  rotate: false
+  xy: 238, 700
+  size: 233, 85
+  orig: 293, 153
+  offset: 32, 27
+  index: -1
+tao_diguang02_12
+  rotate: false
+  xy: 2, 700
+  size: 234, 85
+  orig: 293, 153
+  offset: 32, 27
+  index: -1
+tao_diguang02_13
+  rotate: false
+  xy: 473, 702
+  size: 230, 83
+  orig: 293, 153
+  offset: 32, 28
+  index: -1
+tao_diguang02_14
+  rotate: false
+  xy: 2, 616
+  size: 224, 82
+  orig: 293, 153
+  offset: 37, 30
+  index: -1
+tao_diguang_00
+  rotate: false
+  xy: 628, 452
+  size: 140, 59
+  orig: 174, 91
+  offset: 15, 14
+  index: -1
+tao_saoguang_00
+  rotate: true
+  xy: 430, 150
+  size: 34, 33
+  orig: 80, 82
+  offset: 4, 31
+  index: -1
+tao_saoguang_01
+  rotate: true
+  xy: 392, 147
+  size: 37, 36
+  orig: 80, 82
+  offset: 4, 28
+  index: -1
+tao_saoguang_02
+  rotate: false
+  xy: 133, 306
+  size: 45, 37
+  orig: 80, 82
+  offset: 4, 27
+  index: -1
+tao_saoguang_03
+  rotate: false
+  xy: 569, 354
+  size: 52, 38
+  orig: 80, 82
+  offset: 4, 26
+  index: -1
+tao_saoguang_04
+  rotate: false
+  xy: 569, 394
+  size: 55, 38
+  orig: 80, 82
+  offset: 5, 26
+  index: -1
+tao_saoguang_05
+  rotate: false
+  xy: 569, 434
+  size: 57, 40
+  orig: 80, 82
+  offset: 7, 22
+  index: -1
+tao_saoguang_06
+  rotate: false
+  xy: 567, 310
+  size: 58, 42
+  orig: 80, 82
+  offset: 9, 18
+  index: -1
+tao_saoguang_07
+  rotate: true
+  xy: 131, 144
+  size: 58, 42
+  orig: 80, 82
+  offset: 12, 16
+  index: -1
+tao_saoguang_08
+  rotate: true
+  xy: 133, 249
+  size: 55, 44
+  orig: 80, 82
+  offset: 17, 14
+  index: -1
+tao_saoguang_09
+  rotate: true
+  xy: 639, 566
+  size: 49, 45
+  orig: 80, 82
+  offset: 23, 13
+  index: -1
+tao_saoguang_10
+  rotate: true
+  xy: 133, 204
+  size: 43, 44
+  orig: 80, 82
+  offset: 29, 13
+  index: -1
+tao_saoguang_11
+  rotate: false
+  xy: 309, 143
+  size: 41, 41
+  orig: 80, 82
+  offset: 31, 13
+  index: -1
+tao_saoguang_12
+  rotate: false
+  xy: 352, 146
+  size: 38, 38
+  orig: 80, 82
+  offset: 34, 13
+  index: -1
+tao_saoguang_13
+  rotate: true
+  xy: 317, 441
+  size: 34, 35
+  orig: 80, 82
+  offset: 38, 13
+  index: -1
+tao_saoguang_14
+  rotate: false
+  xy: 131, 112
+  size: 30, 30
+  orig: 80, 82
+  offset: 42, 13
+  index: -1
+tao_zi_00
+  rotate: true
+  xy: 354, 462
+  size: 75, 82
+  orig: 109, 112
+  offset: 16, 10
+  index: -1
+taoshanguang_02
+  rotate: false
+  xy: 599, 5
+  size: 117, 102
+  orig: 160, 165
+  offset: 22, 21
+  index: -1
+taoshanguang_03
+  rotate: false
+  xy: 2, 2
+  size: 117, 106
+  orig: 160, 165
+  offset: 22, 22
+  index: -1
+taoshanguang_05
+  rotate: true
+  xy: 481, 25
+  size: 124, 116
+  orig: 160, 165
+  offset: 19, 17
+  index: -1
+taoshanguang_06
+  rotate: true
+  xy: 311, 186
+  size: 123, 124
+  orig: 160, 165
+  offset: 20, 14
+  index: -1
+taoshanguang_08
+  rotate: false
+  xy: 635, 109
+  size: 123, 121
+  orig: 160, 165
+  offset: 19, 19
+  index: -1
+taoshanguang_09
+  rotate: false
+  xy: 635, 232
+  size: 124, 101
+  orig: 160, 165
+  offset: 18, 21
+  index: -1
+taoshanguang_11
+  rotate: false
+  xy: 121, 3
+  size: 126, 105
+  orig: 160, 165
+  offset: 17, 21
+  index: -1
+taoshanguang_12
+  rotate: true
+  xy: 249, 7
+  size: 126, 108
+  orig: 160, 165
+  offset: 17, 23
+  index: -1
+taoshanguang_14
+  rotate: false
+  xy: 180, 250
+  size: 129, 110
+  orig: 160, 165
+  offset: 14, 24
+  index: -1
+taoshanguang_15
+  rotate: false
+  xy: 184, 362
+  size: 131, 113
+  orig: 160, 165
+  offset: 14, 23
+  index: -1
+taoshanguang_17
+  rotate: false
+  xy: 438, 357
+  size: 129, 117
+  orig: 160, 165
+  offset: 16, 22
+  index: -1
+taoshanguang_18
+  rotate: false
+  xy: 437, 242
+  size: 128, 113
+  orig: 160, 165
+  offset: 16, 21
+  index: -1
+taoshanguang_20
+  rotate: false
+  xy: 179, 135
+  size: 128, 113
+  orig: 160, 165
+  offset: 16, 22
+  index: -1
+taoshanguang_21
+  rotate: false
+  xy: 628, 335
+  size: 128, 115
+  orig: 160, 165
+  offset: 16, 22
+  index: -1
+taoshanguang_23
+  rotate: true
+  xy: 317, 311
+  size: 128, 118
+  orig: 160, 165
+  offset: 16, 22
+  index: -1
+taoshanguang_24
+  rotate: false
+  xy: 2, 352
+  size: 129, 118
+  orig: 160, 165
+  offset: 15, 22
+  index: -1
+taoshanguang_25
+  rotate: false
+  xy: 2, 232
+  size: 129, 118
+  orig: 160, 165
+  offset: 15, 22
+  index: -1
+taoshanguang_27
+  rotate: false
+  xy: 359, 20
+  size: 120, 124
+  orig: 160, 165
+  offset: 16, 18
+  index: -1
+taoshanguang_28
+  rotate: true
+  xy: 2, 110
+  size: 120, 127
+  orig: 160, 165
+  offset: 16, 15
+  index: -1

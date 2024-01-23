@@ -1,0 +1,174 @@
+
+effect_zhangbashemao.png
+size: 795,795
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zbsm01_00
+  rotate: true
+  xy: 645, 291
+  size: 133, 113
+  orig: 300, 300
+  offset: 85, 96
+  index: -1
+zbsm_she00
+  rotate: false
+  xy: 441, 615
+  size: 180, 178
+  orig: 190, 190
+  offset: 5, 6
+  index: -1
+zbsm_tx01_00
+  rotate: true
+  xy: 451, 387
+  size: 73, 128
+  orig: 360, 360
+  offset: 216, 192
+  index: -1
+zbsm_tx01_01
+  rotate: true
+  xy: 213, 352
+  size: 95, 127
+  orig: 360, 360
+  offset: 199, 186
+  index: -1
+zbsm_tx01_02
+  rotate: true
+  xy: 342, 353
+  size: 94, 107
+  orig: 360, 360
+  offset: 171, 175
+  index: -1
+zbsm_tx01_03
+  rotate: true
+  xy: 684, 110
+  size: 103, 89
+  orig: 360, 360
+  offset: 103, 127
+  index: -1
+zbsm_tx01_04
+  rotate: false
+  xy: 645, 215
+  size: 75, 74
+  orig: 360, 360
+  offset: 107, 126
+  index: -1
+zbsm_tx01_05
+  rotate: false
+  xy: 684, 49
+  size: 55, 59
+  orig: 360, 360
+  offset: 107, 126
+  index: -1
+zbsm_tx01_06
+  rotate: false
+  xy: 581, 418
+  size: 31, 42
+  orig: 360, 360
+  offset: 109, 127
+  index: -1
+zbsm_tx02_00
+  rotate: false
+  xy: 2, 577
+  size: 222, 216
+  orig: 360, 360
+  offset: 26, 50
+  index: -1
+zbsm_tx02_01
+  rotate: true
+  xy: 2, 351
+  size: 224, 209
+  orig: 360, 360
+  offset: 24, 51
+  index: -1
+zbsm_tx02_02
+  rotate: false
+  xy: 226, 599
+  size: 213, 194
+  orig: 360, 360
+  offset: 27, 55
+  index: -1
+zbsm_tx02_03
+  rotate: false
+  xy: 2, 162
+  size: 183, 187
+  orig: 360, 360
+  offset: 46, 61
+  index: -1
+zbsm_tx02_04
+  rotate: false
+  xy: 188, 2
+  size: 159, 160
+  orig: 360, 360
+  offset: 57, 79
+  index: -1
+zbsm_tx03_00
+  rotate: false
+  xy: 349, 15
+  size: 179, 152
+  orig: 300, 300
+  offset: 47, 79
+  index: -1
+zbsm_tx03_01
+  rotate: true
+  xy: 494, 206
+  size: 179, 149
+  orig: 300, 300
+  offset: 47, 77
+  index: -1
+zbsm_tx03_02
+  rotate: true
+  xy: 623, 426
+  size: 182, 154
+  orig: 300, 300
+  offset: 45, 74
+  index: -1
+zbsm_tx03_03
+  rotate: false
+  xy: 2, 5
+  size: 184, 155
+  orig: 300, 300
+  offset: 44, 75
+  index: -1
+zbsm_tx03_04
+  rotate: true
+  xy: 623, 610
+  size: 183, 155
+  orig: 300, 300
+  offset: 46, 74
+  index: -1
+zbsm_tx03_05
+  rotate: true
+  xy: 339, 169
+  size: 181, 153
+  orig: 300, 300
+  offset: 49, 74
+  index: -1
+zbsm_tx03_06
+  rotate: true
+  xy: 530, 25
+  size: 179, 152
+  orig: 300, 300
+  offset: 50, 76
+  index: -1
+zbsm_tx03_07
+  rotate: true
+  xy: 187, 164
+  size: 185, 150
+  orig: 300, 300
+  offset: 42, 77
+  index: -1
+zbsm_tx03_08
+  rotate: false
+  xy: 226, 449
+  size: 184, 148
+  orig: 300, 300
+  offset: 42, 78
+  index: -1
+zbsm_tx03_09
+  rotate: false
+  xy: 441, 462
+  size: 180, 151
+  orig: 300, 300
+  offset: 46, 78
+  index: -1

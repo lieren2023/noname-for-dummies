@@ -1,0 +1,160 @@
+
+effect_gudingdao.png
+size: 800,800
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+gdd_dao_05
+  rotate: true
+  xy: 437, 5
+  size: 120, 100
+  orig: 360, 360
+  offset: 150, 141
+  index: -1
+gdd_daoguang_04
+  rotate: false
+  xy: 2, 445
+  size: 335, 353
+  orig: 360, 360
+  offset: 13, 3
+  index: -1
+gdd_daoguang_05
+  rotate: true
+  xy: 2, 99
+  size: 344, 332
+  orig: 360, 360
+  offset: 8, 14
+  index: -1
+gdd_daoguang_06
+  rotate: false
+  xy: 339, 470
+  size: 328, 328
+  orig: 360, 360
+  offset: 16, 16
+  index: -1
+gdd_daoguang_07
+  rotate: false
+  xy: 336, 127
+  size: 189, 193
+  orig: 360, 360
+  offset: 74, 91
+  index: -1
+gdd_daoguang_08
+  rotate: false
+  xy: 576, 285
+  size: 177, 183
+  orig: 360, 360
+  offset: 77, 99
+  index: -1
+gdd_daoguang_09
+  rotate: false
+  xy: 527, 129
+  size: 163, 154
+  orig: 360, 360
+  offset: 83, 110
+  index: -1
+gdd_glow_05
+  rotate: false
+  xy: 339, 322
+  size: 235, 146
+  orig: 240, 240
+  offset: 5, 47
+  index: -1
+gdd_lizi_05
+  rotate: false
+  xy: 692, 184
+  size: 74, 99
+  orig: 360, 360
+  offset: 123, 101
+  index: -1
+gdd_lizi_06
+  rotate: false
+  xy: 620, 24
+  size: 73, 103
+  orig: 360, 360
+  offset: 123, 115
+  index: -1
+gdd_lizi_07
+  rotate: true
+  xy: 121, 16
+  size: 81, 116
+  orig: 360, 360
+  offset: 120, 115
+  index: -1
+gdd_lizi_08
+  rotate: false
+  xy: 539, 15
+  size: 79, 112
+  orig: 360, 360
+  offset: 118, 125
+  index: -1
+gdd_lizi_09
+  rotate: true
+  xy: 2, 12
+  size: 85, 117
+  orig: 360, 360
+  offset: 114, 126
+  index: -1
+gdd_lizi_10
+  rotate: false
+  xy: 336, 2
+  size: 99, 123
+  orig: 360, 360
+  offset: 104, 127
+  index: -1
+gdd_lizi_11
+  rotate: false
+  xy: 669, 515
+  size: 114, 136
+  orig: 360, 360
+  offset: 94, 121
+  index: -1
+gdd_lizi_12
+  rotate: false
+  xy: 669, 653
+  size: 128, 145
+  orig: 360, 360
+  offset: 86, 116
+  index: -1
+gdd_saoguang_08
+  rotate: false
+  xy: 695, 121
+  size: 55, 61
+  orig: 360, 360
+  offset: 208, 175
+  index: -1
+gdd_saoguang_09
+  rotate: false
+  xy: 239, 27
+  size: 55, 70
+  orig: 360, 360
+  offset: 184, 151
+  index: -1
+gdd_saoguang_10
+  rotate: false
+  xy: 695, 64
+  size: 55, 55
+  orig: 360, 360
+  offset: 161, 142
+  index: -1
+gdd_saoguang_11
+  rotate: false
+  xy: 669, 477
+  size: 49, 36
+  orig: 360, 360
+  offset: 143, 141
+  index: -1
+gdd_saoguang_12
+  rotate: false
+  xy: 649, 2
+  size: 27, 20
+  orig: 360, 360
+  offset: 142, 141
+  index: -1
+gdd_saoguang_13
+  rotate: false
+  xy: 620, 2
+  size: 27, 20
+  orig: 360, 360
+  offset: 142, 141
+  index: -1

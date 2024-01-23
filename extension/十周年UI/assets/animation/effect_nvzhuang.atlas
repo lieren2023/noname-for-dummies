@@ -1,0 +1,27 @@
+
+effect_nvzhuang.png
+size: 304,304
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+nvhzuangglow
+  rotate: false
+  xy: 2, 2
+  size: 129, 129
+  orig: 129, 129
+  offset: 0, 0
+  index: -1
+nvzhuang1
+  rotate: false
+  xy: 2, 133
+  size: 160, 169
+  orig: 160, 169
+  offset: 0, 0
+  index: -1
+nvzhuang2
+  rotate: true
+  xy: 164, 142
+  size: 160, 89
+  orig: 160, 89
+  offset: 0, 0
+  index: -1

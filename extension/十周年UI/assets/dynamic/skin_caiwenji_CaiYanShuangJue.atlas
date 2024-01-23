@@ -1,0 +1,356 @@
+
+skin_caiwenji_CaiYanShuangJue.png
+size: 1301,1301
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+caiwenji_damaoling
+  rotate: false
+  xy: 656, 346
+  size: 218, 184
+  orig: 220, 184
+  offset: 2, 0
+  index: -1
+caiwenji_dizi
+  rotate: false
+  xy: 213, 130
+  size: 269, 98
+  orig: 270, 104
+  offset: 0, 6
+  index: -1
+caiwenji_erhuan
+  rotate: false
+  xy: 996, 33
+  size: 40, 52
+  orig: 40, 52
+  offset: 0, 0
+  index: -1
+caiwenji_fasi1
+  rotate: false
+  xy: 1112, 397
+  size: 128, 133
+  orig: 129, 134
+  offset: 1, 1
+  index: -1
+caiwenji_lampiaodai
+  rotate: true
+  xy: 1214, 860
+  size: 170, 80
+  orig: 170, 80
+  offset: 0, 0
+  index: -1
+caiwenji_lansha
+  rotate: true
+  xy: 656, 188
+  size: 156, 180
+  orig: 179, 181
+  offset: 22, 0
+  index: -1
+caiwenji_liuhai1
+  rotate: false
+  xy: 484, 72
+  size: 156, 113
+  orig: 157, 113
+  offset: 0, 0
+  index: -1
+caiwenji_liuhai2
+  rotate: false
+  xy: 2, 115
+  size: 209, 403
+  orig: 209, 406
+  offset: 0, 0
+  index: -1
+caiwenji_qiantui
+  rotate: false
+  xy: 495, 187
+  size: 159, 331
+  orig: 170, 336
+  offset: 0, 5
+  index: -1
+caiwenji_ren
+  rotate: false
+  xy: 2, 520
+  size: 600, 779
+  orig: 600, 779
+  offset: 0, 0
+  index: -1
+caiwenji_shajing
+  rotate: false
+  xy: 838, 155
+  size: 185, 125
+  orig: 185, 125
+  offset: 0, 0
+  index: -1
+caiwenji_shou2
+  rotate: false
+  xy: 1242, 434
+  size: 56, 97
+  orig: 56, 98
+  offset: 0, 1
+  index: -1
+caiwenji_shouqian
+  rotate: true
+  xy: 876, 416
+  size: 114, 234
+  orig: 114, 234
+  offset: 0, 0
+  index: -1
+caiwenji_sidai1
+  rotate: false
+  xy: 1214, 1032
+  size: 77, 267
+  orig: 78, 272
+  offset: 1, 5
+  index: -1
+caiwenji_sidai2
+  rotate: false
+  xy: 477, 12
+  size: 101, 58
+  orig: 101, 70
+  offset: 0, 12
+  index: -1
+caiwenji_songshu
+  rotate: false
+  xy: 1214, 600
+  size: 58, 130
+  orig: 63, 135
+  offset: 2, 4
+  index: -1
+caiwenji_songshuguo
+  rotate: true
+  xy: 838, 316
+  size: 28, 36
+  orig: 28, 36
+  offset: 0, 0
+  index: -1
+caiwenji_songshushou1
+  rotate: true
+  xy: 646, 9
+  size: 24, 33
+  orig: 24, 33
+  offset: 0, 0
+  index: -1
+caiwenji_songshushou2
+  rotate: false
+  xy: 1242, 412
+  size: 12, 20
+  orig: 12, 21
+  offset: 0, 0
+  index: -1
+caiwenji_songshuweiba
+  rotate: true
+  xy: 656, 88
+  size: 98, 130
+  orig: 102, 138
+  offset: 2, 1
+  index: -1
+caiwenji_szhuangsh1i
+  rotate: true
+  xy: 876, 282
+  size: 132, 202
+  orig: 133, 203
+  offset: 0, 1
+  index: -1
+caiwenji_toufatui
+  rotate: false
+  xy: 604, 532
+  size: 608, 767
+  orig: 630, 767
+  offset: 22, 0
+  index: -1
+caiwenji_toufayingying
+  rotate: true
+  xy: 911, 36
+  size: 36, 83
+  orig: 38, 83
+  offset: 1, 0
+  index: -1
+caiwenji_toushi
+  rotate: false
+  xy: 1080, 246
+  size: 174, 149
+  orig: 187, 168
+  offset: 1, 19
+  index: -1
+caiwenji_xianglian
+  rotate: false
+  xy: 788, 155
+  size: 47, 31
+  orig: 47, 31
+  offset: 0, 0
+  index: -1
+caiwenji_xianglian2
+  rotate: true
+  xy: 911, 2
+  size: 32, 55
+  orig: 32, 55
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie1
+  rotate: false
+  xy: 911, 74
+  size: 83, 79
+  orig: 84, 79
+  offset: 1, 0
+  index: -1
+caiwenji_xiaohudie10
+  rotate: false
+  xy: 646, 35
+  size: 63, 51
+  orig: 63, 51
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie11
+  rotate: false
+  xy: 1038, 57
+  size: 60, 44
+  orig: 60, 44
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie12
+  rotate: false
+  xy: 838, 282
+  size: 30, 32
+  orig: 31, 33
+  offset: 1, 0
+  index: -1
+caiwenji_xiaohudie2
+  rotate: true
+  xy: 1025, 251
+  size: 29, 53
+  orig: 30, 53
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie3
+  rotate: true
+  xy: 1100, 59
+  size: 42, 46
+  orig: 42, 48
+  offset: 0, 1
+  index: -1
+caiwenji_xiaohudie4
+  rotate: true
+  xy: 1274, 682
+  size: 48, 21
+  orig: 48, 21
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie5
+  rotate: false
+  xy: 244, 16
+  size: 63, 8
+  orig: 63, 8
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie6
+  rotate: false
+  xy: 1171, 105
+  size: 121, 139
+  orig: 122, 139
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie8
+  rotate: false
+  xy: 968, 7
+  size: 24, 27
+  orig: 24, 27
+  offset: 0, 0
+  index: -1
+caiwenji_xiaohudie9
+  rotate: false
+  xy: 1256, 292
+  size: 37, 58
+  orig: 38, 58
+  offset: 1, 0
+  index: -1
+caiwenji_xiongqianjinshu
+  rotate: false
+  xy: 711, 40
+  size: 67, 46
+  orig: 69, 46
+  offset: 1, 0
+  index: -1
+caiwenji_xiuzi1
+  rotate: false
+  xy: 213, 230
+  size: 280, 288
+  orig: 281, 288
+  offset: 0, 0
+  index: -1
+caiwenji_xiuzi2
+  rotate: true
+  xy: 244, 26
+  size: 102, 231
+  orig: 102, 231
+  offset: 0, 0
+  index: -1
+caiwenji_youdabi
+  rotate: true
+  xy: 788, 33
+  size: 120, 121
+  orig: 120, 121
+  offset: 0, 0
+  index: -1
+caiwenji_yumao1
+  rotate: true
+  xy: 996, 87
+  size: 66, 27
+  orig: 66, 28
+  offset: 0, 0
+  index: -1
+caiwenji_yuxiaobi
+  rotate: false
+  xy: 1214, 732
+  size: 84, 126
+  orig: 84, 126
+  offset: 0, 0
+  index: -1
+caiwenji_zuojianbang
+  rotate: false
+  xy: 1256, 352
+  size: 43, 80
+  orig: 43, 81
+  offset: 0, 1
+  index: -1
+chutu/1_00000
+  rotate: true
+  xy: 1025, 103
+  size: 141, 144
+  orig: 149, 154
+  offset: 6, 3
+  index: -1
+chutu/2_00000
+  rotate: true
+  xy: 1256, 251
+  size: 39, 27
+  orig: 39, 27
+  offset: 0, 0
+  index: -1
+chutu/glow4_00000
+  rotate: false
+  xy: 213, 115
+  size: 13, 13
+  orig: 13, 13
+  offset: 0, 0
+  index: -1
+chutu/glow_00000
+  rotate: false
+  xy: 580, 6
+  size: 64, 64
+  orig: 66, 68
+  offset: 1, 1
+  index: -1
+chutu/glow_00011
+  rotate: true
+  xy: 1214, 533
+  size: 65, 64
+  orig: 65, 66
+  offset: 0, 1
+  index: -1
+dizitexiao
+  rotate: false
+  xy: 2, 10
+  size: 240, 103
+  orig: 240, 104
+  offset: 0, 0
+  index: -1

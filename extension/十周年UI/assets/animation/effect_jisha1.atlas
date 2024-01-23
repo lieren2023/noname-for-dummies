@@ -1,0 +1,90 @@
+
+effect_jisha1.png
+size: 695,695
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+glow
+  rotate: false
+  xy: 2, 311
+  size: 396, 382
+  orig: 500, 500
+  offset: 50, 58
+  index: -1
+guang
+  rotate: true
+  xy: 304, 181
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+guang2
+  rotate: true
+  xy: 596, 49
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+kuosanbowen/kuosanbowen_80
+  rotate: false
+  xy: 400, 450
+  size: 277, 243
+  orig: 300, 300
+  offset: 10, 24
+  index: -1
+kuosanbowen/kuosanbowen_81
+  rotate: false
+  xy: 2, 65
+  size: 300, 244
+  orig: 300, 300
+  offset: 0, 28
+  index: -1
+line
+  rotate: false
+  xy: 2, 2
+  size: 254, 61
+  orig: 254, 63
+  offset: 0, 1
+  index: -1
+wenzi_0000_1pohong
+  rotate: false
+  xy: 400, 310
+  size: 153, 138
+  orig: 153, 138
+  offset: 0, 0
+  index: -1
+wenzi_0001_1pohong2
+  rotate: true
+  xy: 555, 307
+  size: 141, 126
+  orig: 141, 126
+  offset: 0, 0
+  index: -1
+wenzi_0002_1pohong3
+  rotate: false
+  xy: 528, 179
+  size: 141, 126
+  orig: 141, 126
+  offset: 0, 0
+  index: -1
+wenzi_0003_2di
+  rotate: false
+  xy: 370, 177
+  size: 156, 131
+  orig: 156, 131
+  offset: 0, 0
+  index: -1
+wenzi_0004_2di2
+  rotate: false
+  xy: 304, 56
+  size: 144, 119
+  orig: 144, 119
+  offset: 0, 0
+  index: -1
+wenzi_0005_2di3
+  rotate: false
+  xy: 450, 56
+  size: 144, 119
+  orig: 144, 119
+  offset: 0, 0
+  index: -1

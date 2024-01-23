@@ -1,0 +1,90 @@
+
+effect_qilingong.png
+size: 560,560
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+qlg_gongxuan_05
+  rotate: true
+  xy: 387, 176
+  size: 114, 146
+  orig: 480, 480
+  offset: 185, 163
+  index: -1
+qlg_gongxuan_06
+  rotate: false
+  xy: 308, 28
+  size: 114, 146
+  orig: 480, 480
+  offset: 185, 163
+  index: -1
+qlg_gongxuan_07
+  rotate: false
+  xy: 181, 412
+  size: 124, 146
+  orig: 480, 480
+  offset: 186, 163
+  index: -1
+qlg_gongxuan_08
+  rotate: false
+  xy: 32, 411
+  size: 147, 147
+  orig: 480, 480
+  offset: 186, 162
+  index: -1
+qlg_gongxuan_09
+  rotate: true
+  xy: 51, 239
+  size: 169, 153
+  orig: 480, 480
+  offset: 186, 156
+  index: -1
+qlg_gongxuan_10
+  rotate: true
+  xy: 387, 292
+  size: 116, 146
+  orig: 480, 480
+  offset: 187, 162
+  index: -1
+qlg_gongxuan_11
+  rotate: false
+  xy: 424, 28
+  size: 112, 146
+  orig: 480, 480
+  offset: 188, 161
+  index: -1
+qlg_jian_00
+  rotate: false
+  xy: 32, 236
+  size: 17, 172
+  orig: 240, 400
+  offset: 116, 119
+  index: -1
+qlg_jianguang_06
+  rotate: false
+  xy: 2, 236
+  size: 28, 322
+  orig: 86, 400
+  offset: 33, 23
+  index: -1
+qlg_qilin_10
+  rotate: false
+  xy: 206, 242
+  size: 179, 166
+  orig: 694, 480
+  offset: 263, 152
+  index: -1
+qlg_shanguang_09
+  rotate: false
+  xy: 2, 2
+  size: 304, 232
+  orig: 480, 480
+  offset: 87, 124
+  index: -1
+qlg_wuqi_05
+  rotate: true
+  xy: 308, 410
+  size: 148, 186
+  orig: 694, 480
+  offset: 273, 146
+  index: -1

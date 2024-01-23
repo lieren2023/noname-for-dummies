@@ -1,0 +1,83 @@
+
+effect_heisha.png
+size: 321,321
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+heisha_jianti01
+  rotate: false
+  xy: 222, 227
+  size: 96, 92
+  orig: 96, 92
+  offset: 0, 0
+  index: -1
+heisha_jianti02
+  rotate: false
+  xy: 2, 207
+  size: 115, 112
+  orig: 115, 112
+  offset: 0, 0
+  index: -1
+modi01_01
+  rotate: false
+  xy: 199, 2
+  size: 37, 38
+  orig: 132, 132
+  offset: 54, 48
+  index: -1
+modi01_02
+  rotate: false
+  xy: 199, 42
+  size: 54, 54
+  orig: 132, 132
+  offset: 45, 40
+  index: -1
+modi01_03
+  rotate: false
+  xy: 2, 16
+  size: 74, 71
+  orig: 132, 132
+  offset: 37, 32
+  index: -1
+modi01_04
+  rotate: true
+  xy: 110, 10
+  size: 86, 87
+  orig: 132, 132
+  offset: 28, 25
+  index: -1
+modi01_05
+  rotate: false
+  xy: 212, 106
+  size: 98, 101
+  orig: 132, 132
+  offset: 21, 17
+  index: -1
+modi01_06
+  rotate: false
+  xy: 110, 98
+  size: 100, 107
+  orig: 132, 132
+  offset: 20, 11
+  index: -1
+modi01_07
+  rotate: false
+  xy: 119, 209
+  size: 101, 110
+  orig: 132, 132
+  offset: 19, 8
+  index: -1
+modi01_08
+  rotate: false
+  xy: 2, 89
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1
+modi01_09
+  rotate: false
+  xy: 2, 89
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1

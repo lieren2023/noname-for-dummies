@@ -1,0 +1,41 @@
+
+effect_renwangdun.png
+size: 481,481
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+rwd_2_06
+  rotate: false
+  xy: 319, 172
+  size: 144, 147
+  orig: 360, 360
+  offset: 113, 102
+  index: -1
+rwd_blue2_06
+  rotate: true
+  xy: 319, 321
+  size: 158, 160
+  orig: 360, 360
+  offset: 106, 95
+  index: -1
+rwd_blue_06
+  rotate: false
+  xy: 2, 163
+  size: 315, 316
+  orig: 360, 360
+  offset: 28, 18
+  index: -1
+rwd_dun06
+  rotate: true
+  xy: 2, 11
+  size: 150, 196
+  orig: 360, 360
+  offset: 113, 84
+  index: -1
+rwd_shanguang_06
+  rotate: false
+  xy: 200, 31
+  size: 202, 130
+  orig: 360, 360
+  offset: 82, 120
+  index: -1

@@ -1,0 +1,181 @@
+
+effect_yinfengjia.png
+size: 475,475
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+4/yinfengjia_saoguang_00
+  rotate: false
+  xy: 2, 164
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_01
+  rotate: false
+  xy: 150, 376
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_02
+  rotate: false
+  xy: 2, 65
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_03
+  rotate: false
+  xy: 150, 277
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_04
+  rotate: false
+  xy: 226, 376
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_05
+  rotate: false
+  xy: 226, 277
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_06
+  rotate: false
+  xy: 302, 376
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_07
+  rotate: false
+  xy: 302, 277
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_08
+  rotate: false
+  xy: 378, 376
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_09
+  rotate: false
+  xy: 378, 277
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_10
+  rotate: false
+  xy: 78, 164
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_11
+  rotate: false
+  xy: 78, 65
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_12
+  rotate: false
+  xy: 154, 178
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_13
+  rotate: false
+  xy: 154, 79
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_14
+  rotate: false
+  xy: 230, 178
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_15
+  rotate: false
+  xy: 230, 79
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_16
+  rotate: false
+  xy: 306, 178
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_17
+  rotate: false
+  xy: 306, 79
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_18
+  rotate: false
+  xy: 382, 178
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+4/yinfengjia_saoguang_19
+  rotate: false
+  xy: 382, 79
+  size: 74, 97
+  orig: 107, 107
+  offset: 17, 2
+  index: -1
+mifeng1
+  rotate: false
+  xy: 2, 2
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+mifeng2
+  rotate: false
+  xy: 244, 71
+  size: 7, 6
+  orig: 7, 6
+  offset: 0, 0
+  index: -1
+mifeng3
+  rotate: false
+  xy: 454, 463
+  size: 13, 10
+  orig: 13, 10
+  offset: 0, 0
+  index: -1
+yinfengjia
+  rotate: false
+  xy: 2, 263
+  size: 146, 210
+  orig: 146, 210
+  offset: 0, 0
+  index: -1
+yinfengjia_2_00
+  rotate: true
+  xy: 154, 15
+  size: 62, 88
+  orig: 67, 89
+  offset: 5, 1
+  index: -1

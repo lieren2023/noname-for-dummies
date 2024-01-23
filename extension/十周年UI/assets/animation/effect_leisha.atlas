@@ -1,0 +1,188 @@
+
+effect_leisha.png
+size: 509,509
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+heisha_jianti01
+  rotate: false
+  xy: 179, 196
+  size: 96, 92
+  orig: 96, 92
+  offset: 0, 0
+  index: -1
+leisha01_jianti_00
+  rotate: false
+  xy: 370, 297
+  size: 116, 114
+  orig: 160, 160
+  offset: 22, 23
+  index: -1
+leisha02_00
+  rotate: true
+  xy: 390, 45
+  size: 59, 47
+  orig: 150, 150
+  offset: 83, 79
+  index: -1
+leisha02_01
+  rotate: false
+  xy: 208, 34
+  size: 62, 50
+  orig: 150, 150
+  offset: 81, 77
+  index: -1
+leisha02_02
+  rotate: true
+  xy: 179, 290
+  size: 81, 66
+  orig: 150, 150
+  offset: 63, 64
+  index: -1
+leisha02_03
+  rotate: true
+  xy: 198, 86
+  size: 108, 88
+  orig: 150, 150
+  offset: 36, 44
+  index: -1
+leisha02_04
+  rotate: true
+  xy: 105, 84
+  size: 110, 91
+  orig: 150, 150
+  offset: 34, 42
+  index: -1
+leisha02_05
+  rotate: false
+  xy: 365, 196
+  size: 115, 99
+  orig: 150, 150
+  offset: 30, 36
+  index: -1
+leisha02_06
+  rotate: false
+  xy: 247, 404
+  size: 121, 103
+  orig: 150, 150
+  offset: 22, 30
+  index: -1
+leisha02_07
+  rotate: false
+  xy: 370, 413
+  size: 117, 94
+  orig: 150, 150
+  offset: 20, 31
+  index: -1
+leisha02_08
+  rotate: false
+  xy: 390, 106
+  size: 106, 88
+  orig: 150, 150
+  offset: 19, 32
+  index: -1
+leisha02_09
+  rotate: false
+  xy: 2, 5
+  size: 105, 77
+  orig: 150, 150
+  offset: 14, 34
+  index: -1
+leisha02_10
+  rotate: false
+  xy: 2, 297
+  size: 101, 74
+  orig: 150, 150
+  offset: 16, 35
+  index: -1
+leisha02_11
+  rotate: true
+  xy: 105, 196
+  size: 98, 72
+  orig: 150, 150
+  offset: 17, 35
+  index: -1
+leisha02_12
+  rotate: false
+  xy: 109, 14
+  size: 97, 68
+  orig: 150, 150
+  offset: 16, 37
+  index: -1
+leisha02_13
+  rotate: true
+  xy: 288, 111
+  size: 94, 64
+  orig: 150, 150
+  offset: 17, 37
+  index: -1
+leisha_shandian05
+  rotate: false
+  xy: 2, 373
+  size: 243, 134
+  orig: 243, 145
+  offset: 0, 0
+  index: -1
+modi01_01
+  rotate: false
+  xy: 390, 5
+  size: 37, 38
+  orig: 132, 132
+  offset: 54, 48
+  index: -1
+modi01_02
+  rotate: false
+  xy: 439, 50
+  size: 54, 54
+  orig: 132, 132
+  offset: 45, 40
+  index: -1
+modi01_03
+  rotate: true
+  xy: 105, 297
+  size: 74, 71
+  orig: 132, 132
+  offset: 37, 32
+  index: -1
+modi01_04
+  rotate: false
+  xy: 277, 207
+  size: 86, 87
+  orig: 132, 132
+  offset: 28, 25
+  index: -1
+modi01_05
+  rotate: true
+  xy: 2, 196
+  size: 98, 101
+  orig: 132, 132
+  offset: 21, 17
+  index: -1
+modi01_06
+  rotate: false
+  xy: 288, 2
+  size: 100, 107
+  orig: 132, 132
+  offset: 20, 11
+  index: -1
+modi01_07
+  rotate: false
+  xy: 2, 84
+  size: 101, 110
+  orig: 132, 132
+  offset: 19, 8
+  index: -1
+modi01_08
+  rotate: true
+  xy: 247, 296
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1
+modi01_09
+  rotate: true
+  xy: 247, 296
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1

@@ -1,0 +1,90 @@
+
+effect_fangtianhuaji.png
+size: 845,845
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+fthj1_00
+  rotate: false
+  xy: 670, 710
+  size: 158, 133
+  orig: 400, 400
+  offset: 124, 128
+  index: -1
+fthj1_xuanz00
+  rotate: false
+  xy: 645, 193
+  size: 187, 188
+  orig: 320, 320
+  offset: 67, 68
+  index: -1
+fthj_tx01_00
+  rotate: false
+  xy: 2, 122
+  size: 217, 232
+  orig: 480, 480
+  offset: 151, 138
+  index: -1
+fthj_tx01_01
+  rotate: false
+  xy: 2, 356
+  size: 217, 242
+  orig: 480, 480
+  offset: 142, 130
+  index: -1
+fthj_tx01_02
+  rotate: false
+  xy: 455, 607
+  size: 213, 236
+  orig: 480, 480
+  offset: 90, 88
+  index: -1
+fthj_tx01_03
+  rotate: false
+  xy: 221, 365
+  size: 212, 233
+  orig: 480, 480
+  offset: 90, 90
+  index: -1
+fthj_tx01_04
+  rotate: false
+  xy: 221, 141
+  size: 206, 222
+  orig: 480, 480
+  offset: 93, 96
+  index: -1
+fthj_tx01_05
+  rotate: false
+  xy: 435, 172
+  size: 208, 216
+  orig: 480, 480
+  offset: 94, 99
+  index: -1
+fthj_tx01_06
+  rotate: false
+  xy: 435, 390
+  size: 210, 215
+  orig: 480, 480
+  offset: 95, 99
+  index: -1
+fthj_tx01_07
+  rotate: false
+  xy: 647, 383
+  size: 196, 222
+  orig: 480, 480
+  offset: 95, 85
+  index: -1
+fthj_tx01_08
+  rotate: false
+  xy: 2, 600
+  size: 226, 243
+  orig: 480, 480
+  offset: 92, 84
+  index: -1
+fthj_tx01_09
+  rotate: false
+  xy: 230, 607
+  size: 223, 236
+  orig: 480, 480
+  offset: 92, 90
+  index: -1

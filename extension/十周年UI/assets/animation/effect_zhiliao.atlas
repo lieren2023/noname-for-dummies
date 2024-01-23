@@ -1,0 +1,139 @@
+
+effect_zhiliao.png
+size: 990,990
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+paiju_zhiliao_01
+  rotate: true
+  xy: 482, 553
+  size: 203, 328
+  orig: 520, 520
+  offset: 158, 97
+  index: -1
+paiju_zhiliao_02
+  rotate: false
+  xy: 2, 650
+  size: 235, 338
+  orig: 520, 520
+  offset: 140, 103
+  index: -1
+paiju_zhiliao_03
+  rotate: false
+  xy: 235, 321
+  size: 235, 327
+  orig: 520, 520
+  offset: 143, 111
+  index: -1
+paiju_zhiliao_04
+  rotate: true
+  xy: 472, 322
+  size: 229, 327
+  orig: 520, 520
+  offset: 136, 117
+  index: -1
+paiju_zhiliao_05
+  rotate: false
+  xy: 239, 660
+  size: 241, 328
+  orig: 520, 520
+  offset: 133, 121
+  index: -1
+paiju_zhiliao_06
+  rotate: true
+  xy: 482, 758
+  size: 230, 336
+  orig: 520, 520
+  offset: 132, 125
+  index: -1
+paiju_zhiliao_07
+  rotate: false
+  xy: 2, 310
+  size: 231, 338
+  orig: 520, 520
+  offset: 131, 132
+  index: -1
+paiju_zhiliao_08
+  rotate: true
+  xy: 472, 98
+  size: 222, 320
+  orig: 520, 520
+  offset: 135, 138
+  index: -1
+paiju_zhiliao_09
+  rotate: false
+  xy: 235, 11
+  size: 221, 308
+  orig: 520, 520
+  offset: 135, 147
+  index: -1
+paiju_zhiliao_10
+  rotate: false
+  xy: 2, 8
+  size: 209, 300
+  orig: 520, 520
+  offset: 138, 156
+  index: -1
+paiju_zhiliao_11
+  rotate: true
+  xy: 820, 791
+  size: 197, 167
+  orig: 520, 520
+  offset: 137, 209
+  index: -1
+paiju_zhiliao_12
+  rotate: true
+  xy: 820, 657
+  size: 132, 160
+  orig: 520, 520
+  offset: 200, 213
+  index: -1
+paiju_zhiliao_13
+  rotate: true
+  xy: 812, 527
+  size: 128, 157
+  orig: 520, 520
+  offset: 202, 216
+  index: -1
+paiju_zhiliao_14
+  rotate: false
+  xy: 801, 369
+  size: 123, 156
+  orig: 520, 520
+  offset: 204, 217
+  index: -1
+paiju_zhiliao_15
+  rotate: true
+  xy: 801, 247
+  size: 120, 128
+  orig: 520, 520
+  offset: 205, 245
+  index: -1
+paiju_zhiliao_16
+  rotate: false
+  xy: 794, 136
+  size: 117, 109
+  orig: 520, 520
+  offset: 208, 249
+  index: -1
+paiju_zhiliao_17
+  rotate: true
+  xy: 458, 4
+  size: 92, 107
+  orig: 520, 520
+  offset: 209, 250
+  index: -1
+paiju_zhiliao_18
+  rotate: true
+  xy: 567, 5
+  size: 91, 107
+  orig: 520, 520
+  offset: 209, 250
+  index: -1
+paiju_zhiliao_19
+  rotate: true
+  xy: 213, 2
+  size: 7, 56
+  orig: 520, 520
+  offset: 274, 277
+  index: -1
