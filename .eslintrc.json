@@ -1,0 +1,34 @@
+{
+	"extends": "eslint:recommended",
+	"env": {
+		"browser": true,
+		"es6": true,
+		"node": true,
+		"serviceworker": true,
+		"worker": true
+	},
+	"rules": {
+		"no-console": 0,
+		"no-constant-condition": [
+			"error",
+			{
+				"checkLoops": false
+			}
+		],
+		"no-irregular-whitespace": [
+			"error",
+			{
+				"skipStrings": true,
+				"skipTemplates": true
+			}
+		],
+		"no-redeclare": 0,
+		"no-undef": 0,
+		"no-unused-vars": 0,
+		"require-yield": 0
+	},
+	"parserOptions": {
+		"ecmaVersion": 13,
+		"sourceType": "module"
+	}
+}

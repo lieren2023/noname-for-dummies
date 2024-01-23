@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="user-scalable=no, viewport-fit=cover">
+	<title>无名杀</title>
+	<script>
+		window.onerror = function (msg, src, line, column, err) {
+			let str = `错误文件: ${typeof src == 'string' && src.length > 0 ? decodeURI(src) : '未知文件'}`;
+			str += `\n错误信息: ${msg}`;
+			str += `\n行号: ${line}`;
+			str += `\n列号: ${column}`;
+			if (err && err.stack) str += '\n' + decodeURI(err.stack);
+			console.error(str);
+			alert(str);
+		};
+	</script>
+	<script>
+		if (location.href.startsWith('http') && typeof window.initReadWriteFunction != 'function' && !window.require && !window.__dirname) {
+			window.initReadWriteFunction = async function(game) {
+				return new Promise((resolve, reject) => {
+					fetch(`./readFile?fileName=noname.js`)
+						.then(response => {
+							return response.json();
+						})
+						.then(result => {
+							if (result && result.success) callback();
+							else reject(result.errorMsg)
+						})
+						.catch(reject);
+
+					function callback() {
+						game.createDir = function (dir, success = () => { }, error = () => { }) {
+							fetch(`./createDir?dir=${dir}`)
+								.then(response => {
+									return response.json();
+								})
+								.then(result => {
+									if (result && result.success) success();
+									else error();
+								})
+								.catch(error);
+						};
+
+						game.readFile = function (fileName, callback = () => { }, error = () => { }) {
+							fetch(`./readFile?fileName=${fileName}`)
+								.then(response => {
+									return response.json();
+								})
+								.then(result => {
+									if (result && result.success) callback(new Uint8Array(result.data).buffer);
+									else error(result && result.errorMsg);
+								})
+								.catch(error);
+						};
+
+						game.readFileAsText = function (fileName, callback = () => { }, error = () => { }) {
+							fetch(`./readFileAsText?fileName=${fileName}`)
+								.then(response => {
+									return response.json();
+								})
+								.then(result => {
+									if (result && result.success) callback(result.data);
+									else error(result && result.errorMsg);
+								})
+								.catch(error);
+						};
+
+						game.writeFile = function (data, path, name, callback = () => { }) {
+							game.ensureDirectory(path, function () {
+								if (Object.prototype.toString.call(data) == '[object File]') {
+									const fileReader = new FileReader();
+									fileReader.onload = function (e) {
+										game.writeFile(e.target.result, path, name, callback);
+									};
+									fileReader.readAsArrayBuffer(data, "UTF-8");
+								}
+								else {
+									let filePath = path;
+									if (path.endsWith('/')) {
+										filePath += name;
+									} else if (path == "") {
+										filePath += name;
+									} else {
+										filePath += '/' + name;
+									}
+
+									fetch(`./writeFile`, {
+										method: 'post',
+										headers: { "Content-Type": "application/json" },
+										body: JSON.stringify({
+											data: typeof data == 'string' ? data : Array.prototype.slice.call(new Uint8Array(data)),
+											path: filePath
+										})
+									})
+										.then(response => {
+											return response.json();
+										})
+										.then(result => {
+											if (result && result.success) {
+												callback();
+											} else {
+												callback(result.errorMsg);
+											}
+										});
+								}
+							});
+						};
+
+						game.removeFile = function (fileName, callback = () => { }) {
+							fetch(`./removeFile?fileName=${fileName}`)
+								.then(response => {
+									return response.json();
+								})
+								.then(result => {
+									callback(result.errorMsg);
+								})
+								.catch(error);
+						};
+
+						game.getFileList = function (dir, callback = () => { }) {
+							fetch(`./getFileList?dir=${dir}`)
+								.then(response => {
+									return response.json();
+								})
+								.then(result => {
+									if (result && result.success) {
+										callback(result.data.dirs, result.data.files);
+									}
+								});
+						};
+
+						game.ensureDirectory = function (list, callback = () => { }, file = false) {
+							let pathArray = typeof list == "string" ? list.split("/") : list;
+							if (file) {
+								pathArray = pathArray.slice(0, -1);
+							}
+							game.createDir(pathArray.join("/"), callback, console.error);
+						};
+
+						resolve();
+					}
+				});
+			};
+		}
+	</script>
+	<script src="game/update.js"></script>
+	<script src="game/config.js"></script>
+	<script src="game/package.js"></script>
+	<script src="game/game.js"></script>
+</head>
