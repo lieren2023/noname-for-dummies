@@ -1,0 +1,90 @@
+
+effect_baguazhen.png
+size: 888,888
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baguazheng_01
+  rotate: true
+  xy: 259, 22
+  size: 137, 138
+  orig: 360, 360
+  offset: 111, 111
+  index: -1
+baguazheng_bagua01_00
+  rotate: false
+  xy: 301, 264
+  size: 90, 324
+  orig: 360, 360
+  offset: 136, 18
+  index: -1
+baguazheng_bagua01_01
+  rotate: true
+  xy: 650, 314
+  size: 68, 236
+  orig: 360, 360
+  offset: 146, 62
+  index: -1
+baguazheng_bagua01_02
+  rotate: false
+  xy: 2, 590
+  size: 325, 296
+  orig: 360, 360
+  offset: 18, 32
+  index: -1
+baguazheng_bagua01_03
+  rotate: false
+  xy: 650, 384
+  size: 236, 244
+  orig: 360, 360
+  offset: 62, 58
+  index: -1
+baguazheng_bagua01_04
+  rotate: false
+  xy: 2, 301
+  size: 297, 287
+  orig: 360, 360
+  offset: 32, 36
+  index: -1
+baguazheng_bagua01_05
+  rotate: false
+  xy: 393, 161
+  size: 243, 208
+  orig: 360, 360
+  offset: 59, 76
+  index: -1
+baguazheng_bagua01_06
+  rotate: false
+  xy: 329, 629
+  size: 257, 257
+  orig: 360, 360
+  offset: 52, 51
+  index: -1
+baguazheng_bagua01_07
+  rotate: false
+  xy: 2, 42
+  size: 255, 257
+  orig: 360, 360
+  offset: 53, 51
+  index: -1
+baguazheng_bagua01_08
+  rotate: false
+  xy: 393, 371
+  size: 255, 256
+  orig: 360, 360
+  offset: 53, 52
+  index: -1
+baguazheng_bagua01_09
+  rotate: true
+  xy: 638, 77
+  size: 235, 236
+  orig: 360, 360
+  offset: 63, 62
+  index: -1
+baguazheng_yuanxin_01
+  rotate: false
+  xy: 588, 630
+  size: 256, 256
+  orig: 360, 360
+  offset: 52, 52
+  index: -1

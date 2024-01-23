@@ -1,0 +1,118 @@
+
+effect_wanjianqifa_full.png
+size: 966,361
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+SF_eff_jiangling_wanjianqifa_0000
+  rotate: true
+  xy: 929, 84
+  size: 94, 25
+  orig: 180, 256
+  offset: 51, 216
+  index: -1
+SF_eff_jiangling_wanjianqifa_0001
+  rotate: false
+  xy: 839, 180
+  size: 119, 69
+  orig: 180, 256
+  offset: 47, 179
+  index: -1
+SF_eff_jiangling_wanjianqifa_0002
+  rotate: true
+  xy: 150, 4
+  size: 134, 117
+  orig: 180, 256
+  offset: 42, 139
+  index: -1
+SF_eff_jiangling_wanjianqifa_0003
+  rotate: false
+  xy: 444, 167
+  size: 149, 192
+  orig: 180, 256
+  offset: 28, 61
+  index: -1
+SF_eff_jiangling_wanjianqifa_0004
+  rotate: true
+  xy: 565, 6
+  size: 159, 173
+  orig: 180, 256
+  offset: 21, 77
+  index: -1
+SF_eff_jiangling_wanjianqifa_0005
+  rotate: true
+  xy: 740, 20
+  size: 147, 187
+  orig: 180, 256
+  offset: 28, 55
+  index: -1
+SF_eff_jiangling_wanjianqifa_0006
+  rotate: true
+  xy: 269, 12
+  size: 126, 178
+  orig: 180, 256
+  offset: 12, 70
+  index: -1
+SF_eff_jiangling_wanjianqifa_0007
+  rotate: false
+  xy: 119, 140
+  size: 164, 219
+  orig: 180, 256
+  offset: 8, 31
+  index: -1
+SF_eff_jiangling_wanjianqifa_0008
+  rotate: false
+  xy: 285, 151
+  size: 157, 208
+  orig: 180, 256
+  offset: 22, 39
+  index: -1
+SF_eff_jiangling_wanjianqifa_0009
+  rotate: false
+  xy: 2, 2
+  size: 146, 120
+  orig: 180, 256
+  offset: 0, 136
+  index: -1
+SF_eff_jiangling_wanjianqifa_0010
+  rotate: false
+  xy: 595, 169
+  size: 157, 190
+  orig: 180, 256
+  offset: 0, 58
+  index: -1
+SF_eff_jiangling_wanjianqifa_0011
+  rotate: false
+  xy: 449, 2
+  size: 114, 163
+  orig: 180, 256
+  offset: 42, 81
+  index: -1
+SF_eff_jiangling_wanjianqifa_0012
+  rotate: false
+  xy: 2, 124
+  size: 115, 235
+  orig: 180, 256
+  offset: 31, 1
+  index: -1
+SF_eff_jiangling_wanjianqifa_0013
+  rotate: false
+  xy: 754, 169
+  size: 83, 190
+  orig: 180, 256
+  offset: 72, 42
+  index: -1
+SF_eff_jiangling_wanjianqifa_0014
+  rotate: true
+  xy: 839, 251
+  size: 108, 125
+  orig: 180, 256
+  offset: 68, 99
+  index: -1
+SF_eff_jiangling_wanjianqifa_0015
+  rotate: false
+  xy: 119, 130
+  size: 4, 8
+  orig: 180, 256
+  offset: 139, 162
+  index: -1

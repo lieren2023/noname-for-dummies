@@ -1,0 +1,118 @@
+
+effect_guohechaiqiao.png
+size: 745,745
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+guohe_qiao0100
+  rotate: false
+  xy: 2, 44
+  size: 54, 62
+  orig: 88, 88
+  offset: 9, 7
+  index: -1
+guohe_qiao0200
+  rotate: false
+  xy: 2, 108
+  size: 76, 76
+  orig: 99, 99
+  offset: 14, 13
+  index: -1
+guohe_qiao0300
+  rotate: true
+  xy: 712, 702
+  size: 41, 29
+  orig: 50, 50
+  offset: 8, 4
+  index: -1
+guohe_qiao0400
+  rotate: false
+  xy: 80, 169
+  size: 12, 15
+  orig: 24, 24
+  offset: 6, 6
+  index: -1
+guohe_qiao0500
+  rotate: false
+  xy: 58, 100
+  size: 7, 6
+  orig: 24, 24
+  offset: 9, 9
+  index: -1
+guohe_qiao0600
+  rotate: false
+  xy: 2, 36
+  size: 9, 6
+  orig: 24, 24
+  offset: 8, 9
+  index: -1
+guohechaiqiao_heliu00
+  rotate: false
+  xy: 2, 372
+  size: 235, 184
+  orig: 240, 240
+  offset: 5, 25
+  index: -1
+guohechaiqiao_heliu01
+  rotate: false
+  xy: 476, 373
+  size: 235, 183
+  orig: 240, 240
+  offset: 5, 26
+  index: -1
+guohechaiqiao_heliu02
+  rotate: false
+  xy: 2, 558
+  size: 235, 185
+  orig: 240, 240
+  offset: 5, 24
+  index: -1
+guohechaiqiao_heliu03
+  rotate: false
+  xy: 239, 559
+  size: 235, 184
+  orig: 240, 240
+  offset: 5, 25
+  index: -1
+guohechaiqiao_heliu04
+  rotate: false
+  xy: 2, 186
+  size: 235, 184
+  orig: 240, 240
+  offset: 5, 25
+  index: -1
+guohechaiqiao_heliu05
+  rotate: false
+  xy: 239, 373
+  size: 235, 184
+  orig: 240, 240
+  offset: 5, 25
+  index: -1
+guohechaiqiao_heliu06
+  rotate: false
+  xy: 475, 2
+  size: 234, 183
+  orig: 240, 240
+  offset: 5, 25
+  index: -1
+guohechaiqiao_heliu07
+  rotate: false
+  xy: 475, 187
+  size: 234, 184
+  orig: 240, 240
+  offset: 5, 24
+  index: -1
+guohechaiqiao_heliu08
+  rotate: false
+  xy: 476, 558
+  size: 234, 185
+  orig: 240, 240
+  offset: 5, 23
+  index: -1
+guohechaiqiao_heliu09
+  rotate: false
+  xy: 239, 186
+  size: 234, 185
+  orig: 240, 240
+  offset: 5, 24
+  index: -1

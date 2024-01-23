@@ -1,0 +1,34 @@
+
+effect_baiyinshizi.png
+size: 495,495
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baiyin_shizitoukui_00
+  rotate: true
+  xy: 272, 259
+  size: 234, 217
+  orig: 400, 400
+  offset: 85, 92
+  index: -1
+shizi_yanjing_04
+  rotate: false
+  xy: 2, 157
+  size: 122, 30
+  orig: 240, 240
+  offset: 50, 153
+  index: -1
+shizitou_01
+  rotate: false
+  xy: 2, 189
+  size: 268, 304
+  orig: 400, 400
+  offset: 66, 62
+  index: -1
+shizitou_02
+  rotate: true
+  xy: 272, 63
+  size: 194, 221
+  orig: 400, 400
+  offset: 102, 103
+  index: -1

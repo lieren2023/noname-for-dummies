@@ -1,0 +1,48 @@
+
+effect_zheji.png
+size: 469,469
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+jinghe_guang_02
+  rotate: false
+  xy: 2, 42
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+yajiao_quan
+  rotate: false
+  xy: 132, 88
+  size: 82, 82
+  orig: 100, 100
+  offset: 9, 9
+  index: -1
+zheji1
+  rotate: true
+  xy: 213, 246
+  size: 221, 251
+  orig: 221, 251
+  offset: 0, 0
+  index: -1
+zheji2
+  rotate: false
+  xy: 2, 17
+  size: 58, 23
+  orig: 58, 23
+  offset: 0, 0
+  index: -1
+zheji3
+  rotate: true
+  xy: 216, 23
+  size: 221, 251
+  orig: 221, 251
+  offset: 0, 0
+  index: -1
+zheji_guang
+  rotate: false
+  xy: 2, 172
+  size: 209, 295
+  orig: 280, 389
+  offset: 25, 47
+  index: -1

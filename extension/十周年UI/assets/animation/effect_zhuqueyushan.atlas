@@ -1,0 +1,104 @@
+
+effect_zhuqueyushan.png
+size: 836,836
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zqys_ranshao_06
+  rotate: true
+  xy: 148, 45
+  size: 89, 208
+  orig: 240, 300
+  offset: 77, 70
+  index: -1
+zqys_ranshao_07
+  rotate: false
+  xy: 630, 381
+  size: 204, 223
+  orig: 240, 300
+  offset: 9, 55
+  index: -1
+zqys_ranshao_08
+  rotate: false
+  xy: 2, 368
+  size: 211, 230
+  orig: 240, 300
+  offset: 7, 52
+  index: -1
+zqys_ranshao_09
+  rotate: false
+  xy: 2, 136
+  size: 210, 230
+  orig: 240, 300
+  offset: 8, 53
+  index: -1
+zqys_ranshao_10
+  rotate: false
+  xy: 2, 600
+  size: 208, 234
+  orig: 240, 300
+  offset: 9, 50
+  index: -1
+zqys_ranshao_11
+  rotate: false
+  xy: 212, 603
+  size: 210, 231
+  orig: 240, 300
+  offset: 8, 53
+  index: -1
+zqys_ranshao_12
+  rotate: false
+  xy: 214, 136
+  size: 209, 230
+  orig: 240, 300
+  offset: 8, 54
+  index: -1
+zqys_ranshao_13
+  rotate: false
+  xy: 215, 372
+  size: 209, 229
+  orig: 240, 300
+  offset: 8, 56
+  index: -1
+zqys_ranshao_14
+  rotate: false
+  xy: 424, 606
+  size: 207, 228
+  orig: 240, 300
+  offset: 9, 56
+  index: -1
+zqys_ranshao_15
+  rotate: false
+  xy: 425, 143
+  size: 205, 227
+  orig: 240, 300
+  offset: 9, 57
+  index: -1
+zqys_ranshao_16
+  rotate: false
+  xy: 426, 378
+  size: 202, 226
+  orig: 240, 300
+  offset: 11, 57
+  index: -1
+zqys_ranshao_17
+  rotate: false
+  xy: 633, 613
+  size: 200, 221
+  orig: 240, 300
+  offset: 13, 60
+  index: -1
+zqys_ranshao_18
+  rotate: false
+  xy: 632, 163
+  size: 200, 216
+  orig: 240, 300
+  offset: 14, 63
+  index: -1
+zqys_shan_01
+  rotate: true
+  xy: 2, 5
+  size: 129, 144
+  orig: 360, 360
+  offset: 113, 112
+  index: -1

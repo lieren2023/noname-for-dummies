@@ -1,0 +1,69 @@
+
+effect_shan.png
+size: 372,372
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+modi01_02
+  rotate: false
+  xy: 255, 19
+  size: 54, 54
+  orig: 132, 132
+  offset: 45, 40
+  index: -1
+modi01_04
+  rotate: false
+  xy: 255, 75
+  size: 86, 87
+  orig: 132, 132
+  offset: 28, 25
+  index: -1
+modi01_06
+  rotate: true
+  xy: 146, 2
+  size: 100, 107
+  orig: 132, 132
+  offset: 20, 11
+  index: -1
+modi01_08
+  rotate: false
+  xy: 146, 104
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1
+modi01_09
+  rotate: false
+  xy: 146, 104
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1
+shan_jianti01
+  rotate: false
+  xy: 254, 164
+  size: 104, 92
+  orig: 140, 140
+  offset: 30, 29
+  index: -1
+shanguang02_00
+  rotate: false
+  xy: 2, 222
+  size: 248, 148
+  orig: 250, 150
+  offset: 2, 1
+  index: -1
+shexian_13
+  rotate: false
+  xy: 2, 19
+  size: 142, 201
+  orig: 250, 250
+  offset: 45, 2
+  index: -1
+xing_00
+  rotate: false
+  xy: 252, 258
+  size: 117, 112
+  orig: 200, 200
+  offset: 42, 42
+  index: -1

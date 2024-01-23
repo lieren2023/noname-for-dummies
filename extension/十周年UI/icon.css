@@ -1,0 +1,105 @@
+/*所以图标均为正方形素材*/
+
+.icon.feichu,
+.icon.feichu:before, .icon.feichu:after {
+	opacity: 0.8;
+	background: white;
+}
+
+.icon-background {
+	width: 50px;
+	height:50px;
+	border: solid 1px gray;
+}
+
+.icon-treasure {
+	position: relative;
+	width: 100%;
+	height:100%;
+	background: transparent !important;
+}
+
+
+.icon-treasure:before {
+	content: "";
+	position: absolute;
+	display: block;
+	top: 10%;
+	left:10%;
+	width: 80%;
+	height:60%;
+	border-radius: 20% 20% 0 0;
+	background: linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%) top no-repeat, linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%) bottom no-repeat;
+	background-size: 100% 60%, 100% 30% !important;
+	clip-path: polygon(0 0, 100% 0, 100% 70%, 62% 70%, 62% 100%, 38% 100%, 38% 70%, 0 70%);
+	-webkit-clip-path: polygon(0 0, 100% 0, 100% 70%, 62% 70%, 62% 100%, 38% 100%, 38% 70%, 0 70%);
+}
+
+.icon-treasure.feichu:before {
+	background: linear-gradient(to right, white 0%, white 100%) top no-repeat, linear-gradient(to right, white 0%, white 100%) bottom no-repeat;
+}
+
+.icon-treasure:after {
+	content: "";
+	position: absolute;
+	display: block;
+	top: 50%;
+	left:10%;
+	width: 80%;
+	height:40%;
+	border-radius: 0 0 25% 25%;
+	background: linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%);
+	clip-path: polygon(0 0, 29% 0, 29% 60%, 71% 60%, 71% 0, 100% 0, 100% 100%, 0 100%);
+	-webkit-clip-path: polygon(0 0, 29% 0, 29% 60%, 71% 60%, 71% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+
+
+.icon-saber {
+	width: 100%;
+	height:100%;
+	background: linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%);
+	transform:rotate(-45deg);
+	clip-path: polygon(50% 0, 65% 15%, 60% 70%, 75% 70%, 72% 80%, 56% 82%, 56% 100%, 44% 100%, 44% 82%, 28% 80%, 25% 70%, 40% 70%, 35% 15%, 50% 0);
+	-webkit-clip-path: polygon(50% 0, 65% 15%, 60% 70%, 75% 70%, 72% 80%, 56% 82%, 56% 100%, 44% 100%, 44% 82%, 28% 80%, 25% 70%, 40% 70%, 35% 15%, 50% 0);
+}
+
+.icon-shield {
+    position: relative;
+    width: 100%;
+    height: 100%;
+	background: transparent !important;
+}
+
+.icon-shield:before, .icon-shield:after {
+	content: "";
+	position: absolute;
+	display: block;
+	top: 8%;
+	left: 15%;
+	width: 70%;
+	height: 70%;
+	background: linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%);
+}
+
+
+.icon-shield:before {
+	border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+}
+
+.icon-shield:after {
+	width: 70%;
+	height: 84%;
+	border-radius: 15% 15% 0 0 / 20% 20% 0 0;
+	clip-path: polygon(0 0, 100% 0, 100% 30%, 82% 72%, 50% 100%, 18% 72%, 0 30%, 0 0);
+	-webkit-clip-path: polygon(0 0, 100% 0, 100% 30%, 82% 72%, 50% 100%, 18% 72%, 0 30%, 0 0);
+}
+
+
+.icon-mount {
+	width: 100%;
+	height:100%;
+	background: linear-gradient(to right, #ED6E6E 0%, #ec8c69 100%);
+	clip-path: polygon(50% 5%, 55% 20%, 80% 60%, 75% 65%, 75% 75%, 80% 90%, 15% 90%, 50% 70%, 50% 55%, 45% 50%, 22% 65%, 10% 50%, 45% 20%, 50% 5%);
+	-webkit-clip-path: polygon(50% 5%, 55% 20%, 80% 60%, 75% 65%, 75% 75%, 80% 90%, 15% 90%, 50% 70%, 50% 55%, 45% 50%, 22% 65%, 10% 50%, 45% 20%, 50% 5%);
+}

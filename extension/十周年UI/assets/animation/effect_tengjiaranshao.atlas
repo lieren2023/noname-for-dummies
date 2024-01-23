@@ -1,0 +1,118 @@
+
+effect_tengjiaranshao.png
+size: 810,810
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tengjia_fangyu_01
+  rotate: true
+  xy: 521, 20
+  size: 141, 166
+  orig: 290, 338
+  offset: 75, 92
+  index: -1
+tengjia_ranshao01_04
+  rotate: false
+  xy: 2, 619
+  size: 266, 189
+  orig: 360, 360
+  offset: 50, 46
+  index: -1
+tengjia_ranshao01_05
+  rotate: false
+  xy: 2, 429
+  size: 264, 188
+  orig: 360, 360
+  offset: 50, 55
+  index: -1
+tengjia_ranshao01_06
+  rotate: false
+  xy: 2, 240
+  size: 261, 187
+  orig: 360, 360
+  offset: 52, 66
+  index: -1
+tengjia_ranshao01_07
+  rotate: false
+  xy: 2, 54
+  size: 257, 184
+  orig: 360, 360
+  offset: 53, 73
+  index: -1
+tengjia_ranshao01_08
+  rotate: false
+  xy: 268, 250
+  size: 255, 185
+  orig: 360, 360
+  offset: 55, 77
+  index: -1
+tengjia_ranshao01_09
+  rotate: false
+  xy: 265, 64
+  size: 254, 184
+  orig: 360, 360
+  offset: 54, 84
+  index: -1
+tengjia_ranshao01_10
+  rotate: false
+  xy: 535, 437
+  size: 251, 184
+  orig: 360, 360
+  offset: 55, 94
+  index: -1
+tengjia_ranshao01_11
+  rotate: false
+  xy: 270, 437
+  size: 256, 183
+  orig: 360, 360
+  offset: 53, 103
+  index: -1
+tengjia_ranshao01_12
+  rotate: false
+  xy: 270, 622
+  size: 263, 186
+  orig: 360, 360
+  offset: 50, 113
+  index: -1
+tengjia_ranshao01_13
+  rotate: false
+  xy: 535, 623
+  size: 262, 185
+  orig: 360, 360
+  offset: 50, 126
+  index: -1
+tengjia_shouji02_01
+  rotate: false
+  xy: 686, 178
+  size: 93, 96
+  orig: 360, 360
+  offset: 126, 151
+  index: -1
+tengjia_shouji02_02
+  rotate: false
+  xy: 525, 285
+  size: 161, 150
+  orig: 360, 360
+  offset: 101, 137
+  index: -1
+tengjia_shouji02_03
+  rotate: true
+  xy: 688, 276
+  size: 159, 120
+  orig: 360, 360
+  offset: 102, 134
+  index: -1
+tengjia_shouji02_04
+  rotate: false
+  xy: 525, 163
+  size: 159, 120
+  orig: 360, 360
+  offset: 102, 134
+  index: -1
+tengjia_shouji_01
+  rotate: false
+  xy: 2, 36
+  size: 204, 16
+  orig: 360, 120
+  offset: 82, 53
+  index: -1

@@ -1,0 +1,377 @@
+#arena>.equips-wrap {
+    left: -12.5px;
+    top: auto;
+    right: auto;
+    bottom: 1%;
+    min-height: 150px;
+    min-width: 156px;
+}
+
+#arena[data-right-layout='on']>.equips-wrap {
+	left: auto;
+    top: auto;
+    right: 10px;
+    bottom: 1%;
+    min-height: 150px;
+    min-width: 156px;
+}
+
+.equips-wrap>.equips-back{
+	position: absolute;
+	display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+	height: 100%;
+    flex-direction: column;
+}
+
+.equips-wrap>.equips {
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+
+
+
+
+
+
+
+
+
+.equips-wrap>.equips-back>div:first-child {
+	opacity: 0;
+}
+
+.equips-wrap>.equips>div {
+	left: 36px;
+	right: 18px;
+	height: 16px;
+    width: calc(100% - 43.4px);
+	position: absolute;
+	box-shadow: none;
+	border-radius: 0px;
+	background: none !important;
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+								
+	z-index: 5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.equips-wrap>.equips>div.selectable {
+	cursor: pointer;
+	transform: translateX(10px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.equips-wrap .equips>div[data-card-subype='equip5'] .equips-wrap>.equips-back>div.equip0 {
+	opacity: 1;
+}
+
+.equips-wrap>.equips>.card {
+    top: -34px;
+}
+
+.equips-wrap>.equips-back>div.equip0,
+.equips-wrap>.equips>div.equip5{
+	top: 61px;
+}
+
+.equips-wrap>.equips-back>div.equip1,
+.equips-wrap>.equips>div.equip1{
+	top: 77px;
+}
+
+.equips-wrap>.equips-back>div.equip2,
+.equips-wrap>.equips>div.equip2{
+	top: 93px;
+}
+
+.equips-wrap>.equips-back>div.equip3,
+.equips-wrap>.equips>div.equip3,
+.equips-wrap>.equips>div.equip6 {
+	top: 109px;
+}
+
+.equips-wrap>.equips-back>div.equip4,
+.equips-wrap>.equips>div.equip4{
+	top: 125px;
+}
+
+.equips-wrap>.equips-back>div>.icon,
+.equips-wrap>.equips>div>.icon {
+	display: block;
+	top: 4px;
+	left: 2px;
+	width: 20px;
+	height: 0px;
+	transition: opacity 0.5s;
+}
+
+.equips-wrap>.equips>.card>div {
+	text-shadow: none;
+	position: absolute;
+}
+
+.equips-wrap>.equips>.card>.name2 {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	position: static;
+	width: calc(100% - 1px);
+	height: calc(100% - 1px);
+    background: rgba(242, 232, 213, 0.6) !important;
+	border: 1px solid rgb(95, 55, 45);
+	border-radius: 1px;
+	box-sizing: border-box;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: "shousha" !important;
+					   
+	pointer-events: none;
+	z-index: 1;
+}
+
+.equips-wrap>.equips>.card[data-suit='heart']>.name2,
+.equips-wrap>.equips>.card[data-suit='diamond']>.name2 {
+	color: #8B0000;
+}
+
+.equips-wrap>.equips>.card[data-suit='spade']>.name2,
+.equips-wrap>.equips>.card[data-suit='club']>.name2 {
+	color: #181818;
+}
+
+.equips-wrap>.equips>.card.feichu>.name2 {
+	background-color: rgba(242, 232, 213, 0.6);
+	color: #181818;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: "shousha" !important;
+}
+
+.equips-wrap>.equips>.card>.image {
+				
+		   
+			 
+				
+			 
+				 
+					   
+	visibility: hidden !important;	
+			
+}
+
+.equips-wrap>.equips>.card:not(.fullskin)>.image {
+	display: block !important;
+}
+
+
+/*其他玩家装备栏*/
+.player>.equips, 
+#arena>.player:not(.minskin)>.equips {
+    left: 23.2px;
+    right: 5px;
+    width: calc(100% - 23.5px);
+    /* height: 80px; */
+    bottom: 3%;
+	box-shadow: none;
+	background: none;
+	background-image: none;
+	border-radius: 0px;
+	pointer-events: none;
+	z-index: 85;
+	transform: none;
+    transform-origin: center;
+}
+
+#arena[data-equip-layout='off']>.player>.equips, 
+#arena[data-equip-layout='off']>#arena>.player:not(.minskin)>.equips {
+    height: 80px;
+}
+
+.player>.equips>div.selectable {
+	cursor: pointer;
+	transform: translateX(10px);
+}
+
+.player .equips>.card.selected{
+	box-shadow: 0 0 5px yellow !important;
+	background: rgba(242, 232, 213, 0.6) !important;/*装备底色不变*/
+	border: 1px solid rgb(240,214,70);/*装备边框变黄*/
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div,
+#arena[data-equip-layout='off']>.player>.equips>.card {
+	position: absolute;
+}
+
+#arena[data-equip-layout='off']>.player>.equips>.card {
+    top: -16px;
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div.equip1 {
+    top: 16px;
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div.equip2 {
+    top: 32px;
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div.equip3,
+#arena[data-equip-layout='off']>.player>.equips>div.equip6 {
+    top: 48px;
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div.equip4 {
+    top: 64px;
+    /* bottom: 0; */
+}
+
+#arena[data-equip-layout='off']>.player>.equips>div.equip5 {
+    top: 0;
+}
+
+
+#arena.decadeUI:not(.long).mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty),
+#arena.decadeUI:not(.long):not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty),
+#arena.decadeUI.long.mobile:not(.oldlayout) .player.unseen2:not([data-position="0"]) .equips:not(*:empty),
+#arena.decadeUI.long:not(.mobile):not(.oldlayout) .player.unseen2 .equips:not(*:empty){
+	background: none;
+	border-radius: 0;
+	overflow: hidden;
+	box-shadow: none;
+}
+
+.player>.equips>.card,
+.player.unseen>.equips>.card,
+.player.unseen2>.equips>.card {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+background: rgba(242, 232, 213, 0.6) !important;/*装备底色*/
+border: 1px solid rgb(95, 55, 45);/*装备边框*/
+border-image: none !important;
+	box-sizing: border-box;
+	border-radius: 0px;
+	width: 100%;
+	height: 16px;
+	text-shadow: none;
+}
+
+#arena.decadeUI:not(.long).mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena.decadeUI:not(.long):not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty)>.card:not(.selected),
+#arena.decadeUI.long.mobile:not(.oldlayout) .player.unseen2:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena.decadeUI.long:not(.mobile):not(.oldlayout) .player.unseen2 .equips:not(*:empty)>.card:not(.selected){
+	background: rgba(242, 232, 213, 0.6) !important;/*玩家装备栏底色*/
+}
+
+
+.player:not(.selectable)>.equips>.card,
+.player:not(.selectable)>.equips>.card>div {
+    pointer-events: auto;
+}
+
+.player>.equips>.card>div {
+	position: static;
+}
+
+.player>.equips>.card>.name2 {
+	position: absolute;
+    left: 0;
+    top: 0.5px;
+    display: flex;
+	align-items: center;
+    align-content: center;
+    justify-content: center;
+	width: 100%;
+	height: 100%;
+	line-height: 15px;
+	color: #181818;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: shousha, xinwei, xinkai !important;
+	text-shadow: none;
+	text-align: center;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	pointer-events: none;
+}
+
+
+.player>.equips>.card[data-suit='heart']>.name2,
+.player>.equips>.card[data-suit='diamond']>.name2 {
+	color: #8B0000;
+}
+
+.player>.equips>.card[data-suit='spade']>.name2,
+.player>.equips>.card[data-suit='club']>.name2 {
+	color: #181818;
+}

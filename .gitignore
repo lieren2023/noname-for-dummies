@@ -1,13 +1,3 @@
-!extension/boss
-!extension/cardpile
-!extension/coin
-!extension/wuxing
-!node_modules/@types
-!node_modules/noname-typings
-!node_modules/options
-!node_modules/ultron
-!node_modules/undici-types
-!node_modules/ws
 ._*
 .DS_Store
 .DS_Store?
@@ -18,11 +8,9 @@
 app
 app.html
 ehthumbs.db
-extension
 jsconfig.json
 localStorage.json
 main.js
-node_modules
 noname.ico
 package-lock.json
 package.json

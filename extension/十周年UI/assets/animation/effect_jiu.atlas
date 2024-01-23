@@ -1,0 +1,90 @@
+
+effect_jiu.png
+size: 609,609
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Jiu_00
+  rotate: false
+  xy: 98, 20
+  size: 89, 94
+  orig: 200, 200
+  offset: 55, 53
+  index: -1
+Jiu_shadow_00
+  rotate: false
+  xy: 485, 24
+  size: 72, 37
+  orig: 100, 100
+  offset: 15, 32
+  index: -1
+jiu_water01_00
+  rotate: false
+  xy: 216, 373
+  size: 195, 234
+  orig: 300, 300
+  offset: 60, 39
+  index: -1
+jiu_water01_01
+  rotate: false
+  xy: 2, 355
+  size: 212, 252
+  orig: 300, 300
+  offset: 52, 48
+  index: -1
+jiu_water01_02
+  rotate: false
+  xy: 2, 116
+  size: 220, 237
+  orig: 300, 300
+  offset: 48, 63
+  index: -1
+jiu_water01_03
+  rotate: true
+  xy: 224, 30
+  size: 232, 217
+  orig: 300, 300
+  offset: 34, 60
+  index: -1
+jiu_water01_04
+  rotate: true
+  xy: 413, 389
+  size: 218, 194
+  orig: 300, 300
+  offset: 53, 69
+  index: -1
+jiu_water01_05
+  rotate: true
+  xy: 443, 63
+  size: 199, 151
+  orig: 300, 300
+  offset: 52, 100
+  index: -1
+jiu_water01_06
+  rotate: false
+  xy: 413, 264
+  size: 185, 123
+  orig: 300, 300
+  offset: 48, 123
+  index: -1
+jiu_water01_07
+  rotate: true
+  xy: 2, 5
+  size: 109, 94
+  orig: 300, 300
+  offset: 112, 138
+  index: -1
+jiu_water01_08
+  rotate: false
+  xy: 443, 6
+  size: 40, 55
+  orig: 300, 300
+  offset: 160, 156
+  index: -1
+jiu_water01_09
+  rotate: true
+  xy: 189, 2
+  size: 26, 25
+  orig: 300, 300
+  offset: 160, 182
+  index: -1

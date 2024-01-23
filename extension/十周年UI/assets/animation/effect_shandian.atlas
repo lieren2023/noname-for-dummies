@@ -1,0 +1,160 @@
+
+effect_shandian.png
+size: 657,657
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+gdd_lizi_05
+  rotate: true
+  xy: 414, 27
+  size: 74, 99
+  orig: 360, 360
+  offset: 123, 101
+  index: -1
+gdd_lizi_06
+  rotate: true
+  xy: 538, 105
+  size: 73, 103
+  orig: 360, 360
+  offset: 123, 115
+  index: -1
+gdd_lizi_07
+  rotate: false
+  xy: 402, 367
+  size: 81, 116
+  orig: 360, 360
+  offset: 120, 115
+  index: -1
+gdd_lizi_08
+  rotate: true
+  xy: 538, 180
+  size: 79, 112
+  orig: 360, 360
+  offset: 118, 125
+  index: -1
+gdd_lizi_09
+  rotate: true
+  xy: 502, 483
+  size: 85, 117
+  orig: 360, 360
+  offset: 114, 126
+  index: -1
+gdd_lizi_10
+  rotate: false
+  xy: 313, 27
+  size: 99, 123
+  orig: 360, 360
+  offset: 104, 127
+  index: -1
+gdd_lizi_11
+  rotate: true
+  xy: 175, 33
+  size: 114, 136
+  orig: 360, 360
+  offset: 94, 121
+  index: -1
+gdd_lizi_12
+  rotate: false
+  xy: 182, 149
+  size: 128, 145
+  orig: 360, 360
+  offset: 86, 116
+  index: -1
+shandian01_00
+  rotate: false
+  xy: 295, 300
+  size: 105, 176
+  orig: 180, 180
+  offset: 42, 0
+  index: -1
+shandian01_01
+  rotate: true
+  xy: 485, 371
+  size: 110, 170
+  orig: 180, 180
+  offset: 38, 0
+  index: -1
+shandian01_02
+  rotate: false
+  xy: 182, 296
+  size: 111, 180
+  orig: 180, 180
+  offset: 37, 0
+  index: -1
+shandian01_03
+  rotate: true
+  xy: 485, 261
+  size: 108, 169
+  orig: 180, 180
+  offset: 37, 10
+  index: -1
+shandian01_04
+  rotate: true
+  xy: 2, 55
+  size: 111, 171
+  orig: 180, 180
+  offset: 37, 7
+  index: -1
+shandian01_05
+  rotate: false
+  xy: 312, 152
+  size: 106, 146
+  orig: 180, 180
+  offset: 40, 33
+  index: -1
+shandian01_06
+  rotate: true
+  xy: 420, 159
+  size: 100, 116
+  orig: 180, 180
+  offset: 43, 56
+  index: -1
+shandian01_07
+  rotate: true
+  xy: 420, 103
+  size: 54, 100
+  orig: 180, 180
+  offset: 40, 70
+  index: -1
+shandian02_00
+  rotate: false
+  xy: 515, 7
+  size: 77, 94
+  orig: 120, 120
+  offset: 21, 13
+  index: -1
+shandian04_00
+  rotate: true
+  xy: 302, 485
+  size: 83, 198
+  orig: 94, 308
+  offset: 4, 110
+  index: -1
+shandian04_01
+  rotate: true
+  xy: 302, 570
+  size: 85, 308
+  orig: 94, 308
+  offset: 0, 0
+  index: -1
+shandian04_02
+  rotate: false
+  xy: 2, 168
+  size: 91, 308
+  orig: 94, 308
+  offset: 0, 0
+  index: -1
+shandian04_03
+  rotate: false
+  xy: 95, 168
+  size: 85, 308
+  orig: 94, 308
+  offset: 4, 0
+  index: -1
+shanguang01_00
+  rotate: false
+  xy: 2, 478
+  size: 298, 177
+  orig: 300, 180
+  offset: 2, 1
+  index: -1

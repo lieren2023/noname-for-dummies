@@ -1,0 +1,223 @@
+
+effect_lebusishu.png
+size: 743,743
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+fire_chengse_00
+  rotate: false
+  xy: 579, 360
+  size: 126, 123
+  orig: 150, 150
+  offset: 14, 12
+  index: -1
+fire_chengse_01
+  rotate: false
+  xy: 450, 362
+  size: 127, 124
+  orig: 150, 150
+  offset: 12, 12
+  index: -1
+fire_chengse_02
+  rotate: false
+  xy: 369, 236
+  size: 124, 124
+  orig: 150, 150
+  offset: 14, 12
+  index: -1
+fire_chengse_03
+  rotate: false
+  xy: 490, 109
+  size: 122, 124
+  orig: 150, 150
+  offset: 14, 12
+  index: -1
+fire_chengse_04
+  rotate: true
+  xy: 495, 235
+  size: 123, 125
+  orig: 150, 150
+  offset: 12, 12
+  index: -1
+fire_chengse_05
+  rotate: false
+  xy: 241, 235
+  size: 126, 125
+  orig: 150, 150
+  offset: 10, 12
+  index: -1
+fire_chengse_06
+  rotate: false
+  xy: 320, 362
+  size: 128, 124
+  orig: 150, 150
+  offset: 10, 12
+  index: -1
+fire_chengse_07
+  rotate: true
+  xy: 241, 105
+  size: 128, 123
+  orig: 150, 150
+  offset: 11, 12
+  index: -1
+fire_chengse_08
+  rotate: true
+  xy: 366, 108
+  size: 125, 122
+  orig: 150, 150
+  offset: 15, 12
+  index: -1
+fire_chengse_09
+  rotate: true
+  xy: 614, 109
+  size: 124, 122
+  orig: 150, 150
+  offset: 16, 12
+  index: -1
+lebusishu_biankuang00
+  rotate: false
+  xy: 2, 408
+  size: 316, 333
+  orig: 410, 415
+  offset: 36, 40
+  index: -1
+lebusishu_men00
+  rotate: false
+  xy: 579, 485
+  size: 101, 256
+  orig: 111, 268
+  offset: 5, 7
+  index: -1
+lebusishu_saoguang00
+  rotate: false
+  xy: 718, 514
+  size: 14, 51
+  orig: 149, 118
+  offset: 22, 28
+  index: -1
+lebusishu_saoguang01
+  rotate: false
+  xy: 354, 42
+  size: 24, 61
+  orig: 149, 118
+  offset: 22, 23
+  index: -1
+lebusishu_saoguang02
+  rotate: false
+  xy: 682, 504
+  size: 34, 61
+  orig: 149, 118
+  offset: 22, 23
+  index: -1
+lebusishu_saoguang03
+  rotate: true
+  xy: 241, 362
+  size: 44, 61
+  orig: 149, 118
+  offset: 22, 23
+  index: -1
+lebusishu_saoguang04
+  rotate: false
+  xy: 682, 680
+  size: 53, 61
+  orig: 149, 118
+  offset: 23, 23
+  index: -1
+lebusishu_saoguang05
+  rotate: false
+  xy: 298, 48
+  size: 54, 55
+  orig: 149, 118
+  offset: 31, 28
+  index: -1
+lebusishu_saoguang06
+  rotate: false
+  xy: 297, 8
+  size: 53, 38
+  orig: 149, 118
+  offset: 43, 48
+  index: -1
+lebusishu_saoguang07
+  rotate: false
+  xy: 427, 67
+  size: 49, 39
+  orig: 149, 118
+  offset: 53, 48
+  index: -1
+lebusishu_saoguang08
+  rotate: false
+  xy: 241, 2
+  size: 54, 44
+  orig: 149, 118
+  offset: 62, 48
+  index: -1
+lebusishu_saoguang09
+  rotate: true
+  xy: 682, 567
+  size: 54, 48
+  orig: 149, 118
+  offset: 72, 48
+  index: -1
+lebusishu_saoguang10
+  rotate: true
+  xy: 682, 623
+  size: 55, 48
+  orig: 149, 118
+  offset: 78, 49
+  index: -1
+lebusishu_saoguang11
+  rotate: false
+  xy: 380, 58
+  size: 45, 48
+  orig: 149, 118
+  offset: 90, 50
+  index: -1
+lebusishu_saoguang12
+  rotate: true
+  xy: 380, 26
+  size: 30, 48
+  orig: 149, 118
+  offset: 105, 50
+  index: -1
+lebusishu_saoguang13
+  rotate: true
+  xy: 430, 40
+  size: 25, 47
+  orig: 149, 118
+  offset: 110, 51
+  index: -1
+lebusishu_saoguang14
+  rotate: false
+  xy: 304, 370
+  size: 13, 36
+  orig: 149, 118
+  offset: 122, 59
+  index: -1
+lebusishu_shiwu00
+  rotate: false
+  xy: 320, 488
+  size: 257, 253
+  orig: 257, 268
+  offset: 0, 6
+  index: -1
+lebusishu_zi01
+  rotate: true
+  xy: 622, 242
+  size: 116, 119
+  orig: 126, 129
+  offset: 6, 9
+  index: -1
+men_glow_05_00
+  rotate: true
+  xy: 2, 15
+  size: 391, 237
+  orig: 400, 400
+  offset: 9, 82
+  index: -1
+xing01_00
+  rotate: false
+  xy: 241, 48
+  size: 55, 55
+  orig: 100, 100
+  offset: 22, 21
+  index: -1

@@ -1,0 +1,118 @@
+
+effect_numa.png
+size: 549,549
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+8/10000
+  rotate: false
+  xy: 2, 114
+  size: 120, 123
+  orig: 200, 200
+  offset: 52, 62
+  index: -1
+8/10002
+  rotate: false
+  xy: 126, 141
+  size: 120, 122
+  orig: 200, 200
+  offset: 50, 59
+  index: -1
+8/10004
+  rotate: true
+  xy: 369, 170
+  size: 121, 120
+  orig: 200, 200
+  offset: 47, 56
+  index: -1
+8/10006
+  rotate: true
+  xy: 248, 147
+  size: 122, 119
+  orig: 200, 200
+  offset: 44, 53
+  index: -1
+8/10008
+  rotate: true
+  xy: 360, 293
+  size: 123, 118
+  orig: 200, 200
+  offset: 41, 50
+  index: -1
+8/10010
+  rotate: true
+  xy: 126, 265
+  size: 124, 116
+  orig: 200, 200
+  offset: 38, 47
+  index: -1
+8/10012
+  rotate: true
+  xy: 244, 271
+  size: 124, 114
+  orig: 200, 200
+  offset: 36, 44
+  index: -1
+8/10014
+  rotate: false
+  xy: 329, 418
+  size: 125, 129
+  orig: 200, 200
+  offset: 32, 41
+  index: -1
+8/10016
+  rotate: true
+  xy: 2, 18
+  size: 94, 116
+  orig: 200, 200
+  offset: 60, 50
+  index: -1
+8/10018
+  rotate: true
+  xy: 124, 45
+  size: 94, 115
+  orig: 200, 200
+  offset: 58, 47
+  index: -1
+8/10020
+  rotate: true
+  xy: 369, 76
+  size: 92, 114
+  orig: 200, 200
+  offset: 58, 44
+  index: -1
+8/10022
+  rotate: true
+  xy: 248, 53
+  size: 92, 113
+  orig: 200, 200
+  offset: 57, 41
+  index: -1
+8/10024
+  rotate: false
+  xy: 456, 421
+  size: 91, 126
+  orig: 200, 200
+  offset: 56, 48
+  index: -1
+8/10026
+  rotate: false
+  xy: 2, 239
+  size: 122, 150
+  orig: 200, 200
+  offset: 54, 46
+  index: -1
+8/10028
+  rotate: false
+  xy: 206, 397
+  size: 121, 150
+  orig: 200, 200
+  offset: 54, 42
+  index: -1
+numa
+  rotate: false
+  xy: 2, 391
+  size: 202, 156
+  orig: 202, 156
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,177 @@
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+
+@keyframes open {
+	from {
+		transform: scale(0);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+@keyframes open-dialog {
+	from {
+		opacity: 0.1;
+		transform: scale(0.8);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes close-dialog {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+}
+
+@keyframes moveout-left {
+	from {
+		left: 100%;
+	}
+	to {
+		left: -100%;
+	}
+}
+
+@keyframes player-died {
+	5%, 15%, 25%, 35%, 55%, 65% {
+		transform: translateX(5px) rotate(0deg);
+	}
+
+	10%, 30%, 40%, 50%, 70% {
+		transform: translateX(-5px) rotate(0deg);
+	}
+
+	20%, 60% {
+		transform: translate(-1px) rotate(0deg);
+	}
+
+	45%, 85% {
+		transform: translateX(1px) rotate(0deg);
+	}
+	
+	95% {
+		transform: translateX(-2px) rotate(0deg);
+	}
+
+	100% {
+		transform: none;
+	}
+}
+
+@keyframes use-card {
+	0% {
+		transform: scale(4);
+		opacity: 1;
+	}
+	
+	20% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	
+	100% {
+		transform: scale(1);
+		opacity: 0;
+	}
+}
+
+@keyframes turned-over {
+	0% {
+		transform: rotateY(0deg);
+	}
+	
+	50% {
+		transform: rotateY(90deg);
+	}
+	
+	100% {
+		transform: rotateY(0deg);
+	}
+}
+
+@keyframes open-fade-in {
+	from {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+	
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes open-fade-in-out {
+	0% {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+	
+	40% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	
+	60% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	
+	100% {
+		opacity: 0;
+		transform: scale(1);
+	}
+}
+
+@keyframes player-hurt {
+	0% {
+		transform: translateX(1px);
+	}
+	
+	50% {
+		transform: translateX(-5px);
+	}
+
+	100% {
+		transform: translateX(0px);
+	}
+}
+
+@keyframes fade-in-out-selectable {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0.2;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+@keyframes swing {
+	0% {
+		transform: rotate(-5deg);
+		transform-origin: top center;
+	}
+	100% {
+		transform: rotate(5deg);
+		transform-origin: top center;
+	}
+}

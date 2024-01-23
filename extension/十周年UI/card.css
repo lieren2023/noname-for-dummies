@@ -1,0 +1,237 @@
+
+/*选中阴影显示*/
+.card::before {
+	content: '';
+    position: absolute;
+    top: -7px;
+	left: -7px;
+	height: 100%;
+    width: 100%;
+	border-image-source: url('assets/image/card_select.png');
+    border-image-slice: 8 7 7 8;
+    border-style: solid;
+    border-image-width: 8px 7px 7px 8px;
+    border-width: 7px;
+	box-shadow: none;
+	border-radius: inherit;
+	opacity: 0;
+	transition: opacity 0.3s linear;
+    z-index: 0;
+}
+
+.card::after {
+	display: none;
+}
+
+.card.selected::before {
+    opacity: 1;
+}
+
+
+#arena>.card.thrown {
+	z-index: 5;
+}
+
+.card>.animation {
+	position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 150px;
+	color: black;
+	font-size: 100px;
+    font-family: 'xingkai';
+	font-display: swap;
+    text-align: center;
+    text-shadow: 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.card>.animation[data-nature='fire'] {
+	text-shadow: 0 0 4px #FFF, 0 -5px 4px #ff3, 2px -10px 6px #fd3, -2px -15px 10px #f80, 2px -25px 20px #f20;
+}
+
+.card>.animation[data-nature='thunder']::before {
+	content:'';
+	display: block;
+    position: absolute;
+	left: calc(50% - 50px);
+	top: calc(50% - 30px);
+	width: 100px;
+  	height: 60px;
+	text-shadow: 0 0 10px white !important;
+  	background: linear-gradient(to bottom, white, rgba(100,100,255,1) 15%, white 30%, rgba(100,100,255,1) 50%, white 70%, rgba(100,100,255,1) 85%, white);
+  	clip-path: polygon(100% 0, 20% 50%, 37% 60%, 0 100%, 80% 50%, 63% 40%);
+  	-webkit-clip-path: polygon(100% 0, 20% 50%, 37% 60%, 0 100%, 80% 50%, 63% 40%);
+	transform: scale(1.5);
+	z-index: -1;
+	pointer-events: none;
+}
+
+.card>.animation-player {
+	display: block;
+    position: absolute;
+    left: -120%;
+    top: -70%;
+    width: 340%;
+    height: 240%;
+    transition: none;
+    pointer-events: none;
+    z-index: 8;
+}
+
+/*出牌来源提示*/
+.card>.used-info {
+    opacity: 0;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    text-align: center;
+	/* background-color: rgba(0, 0, 0, 0.4); */
+	background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.3) 80%, rgba(0,0,0,0.1) 100%);
+    color: rgb(255, 255, 200);
+    font-size: 16px;
+	width: 100%;
+	height: 33%;
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	font-family: 'STHeiti', 'SimHei', 'Microsoft JhengHei', 'Microsoft YaHei', 'WenQuanYi Micro Hei', Helvetica,Arial, sans-serif !important;
+	z-index: 4;
+}
+
+.card.thrown:not(.drawingcard):not(.movingcard)>.used-info:not(:empty) {
+	opacity: 1;
+}
+
+/*卡牌转换提示*/
+.card>.gaintag.info,
+.card.button>.gaintag.info {
+    left: 4px;
+    top: calc(50% + 6px);
+	bottom: auto;
+    right: 4px;
+    width: auto;
+    color: #181818;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: shousha;
+    line-height: 24px;
+    text-align: center;
+    text-shadow: none;
+	white-space: normal;
+    background: rgba(230, 210, 166, 0.8);
+    border-radius: 2px;
+    border: 1px solid black;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.card>.gaintag.info:empty,
+.card.button>.gaintag.info:empty {
+	display: none;
+}
+
+/*卡名辅助显示及控制*/
+.card>.name,
+.card.fullskin>.name,
+.card.fullskin>.name.long,
+.dialog .buttons>.card>.name.long {
+	top: auto;
+	bottom: 5px;
+	line-height: 16px;
+	color: black;
+	font-size: 16px;
+	font-weight: bold;
+	font-family: shousha;
+	text-shadow: 0 0 1px white, 0 0 3px white;
+	border: 1px solid black;
+	border-radius: 2px;
+	z-index: 1;
+}
+
+.card.decade-card:not(*[data-card-type='basic'])>.name {
+    bottom: 5px;
+}
+
+#window[data-card-alternate-name-visible='off'] .card>.name,
+#window[data-card-alternate-name-visible='off'] .card>.range:not(.card-tag) {
+    display: none;
+}
+
+
+/****** 转换牌显示 ******/
+.card>.temp-name {
+	position: absolute;
+	left: 4px;
+    top: calc(50% - 18px);
+    right: 4px;
+    width: auto;
+	height: 24px;
+    color: #181818;
+    font-size: 19px;
+    font-weight: bold;
+    font-family: shousha;
+    line-height: 24px;
+    text-align: center;
+    text-shadow: none;
+	white-space: normal;
+    background: rgba(228, 207, 166, 0.8);
+    border-radius: 2px;
+    border: 1px solid black;
+	pointer-events: none
+}
+
+.card>.temp-name[data-nature='fire'] {
+	/* color: red; */
+	/* text-shadow: 0 0 4px #FFF, 0 -5px 4px #ff3, 2px -10px 6px #fd3, -2px -15px 10px #f80, 2px -25px 20px #f20; */
+	color: #F21A1A;
+	text-shadow: 0 0 0.5px #631113, 0 0 0.5px #631113;
+}
+
+.card>.temp-name[data-nature='thunder'] {
+	/* color: blue; */
+	/* text-shadow: 0 0 5px lightblue, 0 0 10px lightblue; */
+	color: #CB95FF;
+	text-shadow: 0 0 0.5px #423569, 0 0 0.5px #423569;
+}
+
+.card>.temp-name[data-nature='ice'] {
+	color: lightblue;
+	text-shadow: 0 0 0.5px #33A0BB, 0 0 0.5px #33A0BB;
+}
+
+.card>.temp-name[data-nature='stab'] {
+	color: #080706;
+	text-shadow: 0 0 0.5px black, 0 0 0.5px black;
+}
+
+/* .card>.temp-name[data-nature='thunder']::before { */
+	/* content:''; */
+	/* display: block; */
+    /* position: absolute; */
+	/* left: calc(50% - 50px); */
+	/* top: calc(50% - 30px); */
+	/* width: 100px; */
+  	/* height: 60px; */
+	/* text-shadow: 0 0 10px white !important; */
+  	/* background: linear-gradient(to bottom, white, blue 15%, white 30%, blue 50%, white 70%, blue 85%, white);; */
+  	/* clip-path: polygon(100% 0, 20% 50%, 37% 60%, 0 100%, 80% 50%, 63% 40%); */
+  	/* -webkit-clip-path: polygon(100% 0, 20% 50%, 37% 60%, 0 100%, 80% 50%, 63% 40%); */
+	/* transform: scale(0.8); */
+/* } */
+
+.card>.temp-name:empty {
+	display: none;
+}
+
+/* 修复卡牌背面朝上的显示问题（废弃方案） */
+/* .card.infohidden{ */
+    /* background: url('../../theme/style/cardback/image/ol.png') !important; */
+/* } */
+/* .card.infohidden.infoflip{ */
+    /* background-size: 100% 100% !important; */
+/* } */

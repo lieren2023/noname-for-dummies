@@ -1,0 +1,53 @@
+/* 用于技能和身份的字体 */
+/* @font-face { */
+  /* font-family: 'HYZLSJ'; */
+  /* src: local('汉仪中隶书简'), url("./fonts/HYZLSJ.TTF"); */
+/* } */
+/* 用于武将字体 */
+/* @font-face { */
+  /* font-family: 'FZLBJW'; */
+  /* src: local('方正隶变简体'), url("./fonts/FZLBJW.TTF"); */
+/* } */
+/* 用于角色弹框标题的字体 */
+/* @font-face { */
+  /* font-family: 'ATLL'; */
+  /* src: local('安托刘隶'), url("./fonts/ATLL.OTF"); */
+/* } */
+
+.menu-container > .menu.main.cxy-import-dialog {
+  top: 50% !important;
+  left: 50% !important;
+  width: 420px;
+  height: 130px;
+  padding: 15px;
+  transform: translate(-50%, -50%);
+}
+.menu.main.cxy-import-dialog > .caption {
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+
+.boxContent {
+background-color: rgba(0,0,0,0.5);
+width: 450px;
+height:9px;
+border-radius: 10px;
+box-shadow:0px 0px 5px #ccc inset,0px 0px 5px #FFFFD5;
+overflow: hidden;
+border:1px solid #41351D;
+/* position: fixed; */
+position: absolute;
+display: block;
+/* margin: 0 30.5% !important; */
+}
+
+.ssui_showFps {
+font-size: 17px;
+font-family: 'shousha';
+color: #CCBBAB;
+text-shadow:
+black 1px 1px 1px,
+black 1px -1px 1px,
+black -1px 1px 1px,
+black -1px -1px 1px;
+}

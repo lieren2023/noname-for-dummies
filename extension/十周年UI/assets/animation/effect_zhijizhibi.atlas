@@ -1,0 +1,55 @@
+
+effect_zhijizhibi.png
+size: 244,244
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zhijizhibi_shanguang01
+  rotate: false
+  xy: 2, 167
+  size: 187, 75
+  orig: 187, 80
+  offset: 0, 2
+  index: -1
+zhijizhibi_shouzhi
+  rotate: false
+  xy: 191, 171
+  size: 29, 29
+  orig: 44, 44
+  offset: 8, 9
+  index: -1
+zhijizhibi_yan00
+  rotate: true
+  xy: 222, 174
+  size: 26, 8
+  orig: 132, 132
+  offset: 52, 72
+  index: -1
+zhijizhibi_yan01
+  rotate: false
+  xy: 191, 202
+  size: 50, 40
+  orig: 132, 132
+  offset: 38, 53
+  index: -1
+zhijizhibi_yan02
+  rotate: true
+  xy: 125, 2
+  size: 67, 62
+  orig: 132, 132
+  offset: 35, 38
+  index: -1
+zhijizhibi_yan03
+  rotate: true
+  xy: 125, 71
+  size: 94, 103
+  orig: 132, 132
+  offset: 19, 16
+  index: -1
+zhijizhibi_yan04
+  rotate: false
+  xy: 2, 37
+  size: 121, 128
+  orig: 132, 132
+  offset: 3, 1
+  index: -1

@@ -1,0 +1,237 @@
+
+effect_hanbingjian.png
+size: 1013,1013
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+hbj_bing_00
+  rotate: false
+  xy: 732, 488
+  size: 93, 147
+  orig: 360, 360
+  offset: 127, 130
+  index: -1
+hbj_bingqi_00
+  rotate: false
+  xy: 840, 619
+  size: 153, 155
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_01
+  rotate: true
+  xy: 570, 327
+  size: 153, 155
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_02
+  rotate: false
+  xy: 415, 277
+  size: 153, 155
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_03
+  rotate: false
+  xy: 423, 120
+  size: 153, 155
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_04
+  rotate: false
+  xy: 578, 14
+  size: 153, 154
+  orig: 300, 300
+  offset: 83, 1
+  index: -1
+hbj_bingqi_05
+  rotate: false
+  xy: 267, 50
+  size: 154, 157
+  orig: 300, 300
+  offset: 82, 0
+  index: -1
+hbj_bingqi_06
+  rotate: false
+  xy: 415, 434
+  size: 153, 157
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_07
+  rotate: true
+  xy: 573, 482
+  size: 153, 157
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_08
+  rotate: true
+  xy: 415, 593
+  size: 153, 156
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_bingqi_09
+  rotate: false
+  xy: 578, 170
+  size: 153, 155
+  orig: 300, 300
+  offset: 83, 0
+  index: -1
+hbj_glow_02
+  rotate: true
+  xy: 840, 776
+  size: 235, 146
+  orig: 360, 360
+  offset: 65, 107
+  index: -1
+hbj_jian_00
+  rotate: false
+  xy: 380, 428
+  size: 33, 189
+  orig: 360, 360
+  offset: 161, 87
+  index: -1
+hbj_jianqi_00
+  rotate: false
+  xy: 383, 748
+  size: 188, 263
+  orig: 360, 360
+  offset: 86, 30
+  index: -1
+hbj_jianqi_01
+  rotate: true
+  xy: 573, 825
+  size: 186, 265
+  orig: 360, 360
+  offset: 87, 29
+  index: -1
+hbj_jianqi_02
+  rotate: true
+  xy: 573, 637
+  size: 186, 265
+  orig: 360, 360
+  offset: 87, 30
+  index: -1
+hbj_jianqi_03
+  rotate: false
+  xy: 192, 475
+  size: 186, 264
+  orig: 360, 360
+  offset: 88, 31
+  index: -1
+hbj_jianqi_04
+  rotate: false
+  xy: 192, 209
+  size: 186, 264
+  orig: 360, 360
+  offset: 88, 31
+  index: -1
+hbj_jianqi_05
+  rotate: false
+  xy: 2, 741
+  size: 189, 270
+  orig: 360, 360
+  offset: 85, 25
+  index: -1
+hbj_jianqi_06
+  rotate: false
+  xy: 2, 472
+  size: 188, 267
+  orig: 360, 360
+  offset: 85, 27
+  index: -1
+hbj_jianqi_07
+  rotate: false
+  xy: 193, 746
+  size: 188, 265
+  orig: 360, 360
+  offset: 86, 28
+  index: -1
+hbj_jianqi_08
+  rotate: false
+  xy: 2, 206
+  size: 188, 264
+  orig: 360, 360
+  offset: 86, 29
+  index: -1
+hbj_jianqi_09
+  rotate: true
+  xy: 2, 16
+  size: 188, 263
+  orig: 360, 360
+  offset: 86, 30
+  index: -1
+hbj_lizi_00
+  rotate: true
+  xy: 834, 2
+  size: 74, 99
+  orig: 360, 360
+  offset: 143, 98
+  index: -1
+hbj_lizi_01
+  rotate: false
+  xy: 931, 233
+  size: 73, 103
+  orig: 360, 360
+  offset: 143, 112
+  index: -1
+hbj_lizi_02
+  rotate: false
+  xy: 423, 2
+  size: 81, 116
+  orig: 360, 360
+  offset: 140, 112
+  index: -1
+hbj_lizi_03
+  rotate: false
+  xy: 849, 220
+  size: 80, 112
+  orig: 360, 360
+  offset: 138, 122
+  index: -1
+hbj_lizi_04
+  rotate: false
+  xy: 834, 78
+  size: 86, 117
+  orig: 360, 360
+  offset: 134, 123
+  index: -1
+hbj_lizi_05
+  rotate: false
+  xy: 733, 72
+  size: 99, 123
+  orig: 360, 360
+  offset: 124, 124
+  index: -1
+hbj_lizi_06
+  rotate: false
+  xy: 733, 197
+  size: 114, 135
+  orig: 360, 360
+  offset: 115, 119
+  index: -1
+hbj_lizi_07
+  rotate: false
+  xy: 727, 334
+  size: 128, 146
+  orig: 360, 360
+  offset: 106, 113
+  index: -1
+hbj_lizi_08
+  rotate: false
+  xy: 857, 338
+  size: 138, 143
+  orig: 360, 360
+  offset: 101, 120
+  index: -1
+hbj_lizi_09
+  rotate: true
+  xy: 827, 483
+  size: 134, 156
+  orig: 360, 360
+  offset: 109, 112
+  index: -1

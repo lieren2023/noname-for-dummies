@@ -1,0 +1,76 @@
+.skill-control {
+  max-width: 150px;
+  bottom: 35px;
+  left: 150px;
+  z-index: 5;
+  max-height: 135px;
+  overflow: scroll;
+}
+.skill-control div {
+  position: relative;
+}
+.skill-control .skillitem {
+  float: left;
+  white-space: nowrap;
+  
+  color: #F5D78E;
+  text-shadow: #F5D78E 0 0 1px,
+    black 0 0 2px,
+    black 0 0 2px,
+    black 0 0 2px, 
+    black 0 0 2px,
+    black 0 0 2px,
+    black 0 0 2px;
+  font-size: 18px;
+}
+.skill-control > div {
+ 
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.skill-control > div::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.skill-control > .enable {
+  margin: 0 0 0 0;
+  max-width: 150px;
+}
+
+.skill-control > .trigger > .skillitem {
+--w: auto;
+  --h: calc(var(--w) * 91 / 200);
+  width: var(--w);
+  height: var(--h);
+  line-height: var(--h);
+   text-align: center;
+  /*background-image: url("./images/skill.png");*/
+  background-size: 100% 100%;
+  margin: 2px 2px;
+  font-family: 'shousha';
+font-size: 18px;			  
+}
+.skill-control > .enable > .skillitem {
+  margin: 0px 0px;
+  --w: 75px;
+  --h: calc(var(--w) * 85 / 175);
+  width: var(--w);
+  height: var(--h);
+  line-height: calc(var(--w) * 87 / 175);
+  text-align: center;
+  font-family: 'HYZLSJ';
+font-size: auto;			  
+  background-image: url("./images/btn.png");
+  background-size: 100% 100%;
+  
+}
+.skill-control > .enable > .skillitem.select {
+  background-image: url("./images/btn1.png");
+}
+.skill-control > .enable > .skillitem:not(.usable):not(.select) {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+}
+

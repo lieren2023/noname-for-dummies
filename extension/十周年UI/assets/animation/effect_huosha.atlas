@@ -1,0 +1,139 @@
+
+effect_huosha.png
+size: 398,398
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+huosha_huoyan_00
+  rotate: false
+  xy: 248, 33
+  size: 36, 28
+  orig: 100, 100
+  offset: 34, 9
+  index: -1
+huosha_huoyan_01
+  rotate: false
+  xy: 319, 83
+  size: 71, 70
+  orig: 100, 100
+  offset: 14, 8
+  index: -1
+huosha_huoyan_02
+  rotate: true
+  xy: 87, 2
+  size: 73, 72
+  orig: 100, 100
+  offset: 13, 6
+  index: -1
+huosha_huoyan_03
+  rotate: false
+  xy: 173, 35
+  size: 73, 72
+  orig: 100, 100
+  offset: 14, 6
+  index: -1
+huosha_huoyan_04
+  rotate: true
+  xy: 2, 2
+  size: 73, 83
+  orig: 100, 100
+  offset: 14, 6
+  index: -1
+huosha_huoyan_05
+  rotate: false
+  xy: 173, 109
+  size: 72, 84
+  orig: 100, 100
+  offset: 14, 6
+  index: -1
+huosha_huoyan_06
+  rotate: false
+  xy: 227, 205
+  size: 74, 83
+  orig: 100, 100
+  offset: 15, 7
+  index: -1
+huosha_huoyan_07
+  rotate: false
+  xy: 247, 119
+  size: 70, 84
+  orig: 100, 100
+  offset: 16, 8
+  index: -1
+huosha_huoyan_08
+  rotate: false
+  xy: 104, 99
+  size: 67, 85
+  orig: 100, 100
+  offset: 17, 8
+  index: -1
+huosha_huoyan_09
+  rotate: true
+  xy: 304, 241
+  size: 66, 85
+  orig: 100, 100
+  offset: 19, 8
+  index: -1
+huosha_huoyan_10
+  rotate: false
+  xy: 319, 155
+  size: 63, 84
+  orig: 100, 100
+  offset: 20, 8
+  index: -1
+huosha_huoyan_11
+  rotate: false
+  xy: 167, 195
+  size: 58, 84
+  orig: 100, 100
+  offset: 24, 8
+  index: -1
+huosha_jianti01
+  rotate: false
+  xy: 2, 186
+  size: 163, 93
+  orig: 163, 93
+  offset: 0, 0
+  index: -1
+huosha_jianti02_00
+  rotate: false
+  xy: 2, 281
+  size: 182, 115
+  orig: 300, 170
+  offset: 59, 28
+  index: -1
+modi01_02
+  rotate: false
+  xy: 248, 63
+  size: 54, 54
+  orig: 132, 132
+  offset: 45, 40
+  index: -1
+modi01_04
+  rotate: false
+  xy: 304, 309
+  size: 86, 87
+  orig: 132, 132
+  offset: 28, 25
+  index: -1
+modi01_06
+  rotate: false
+  xy: 2, 77
+  size: 100, 107
+  orig: 132, 132
+  offset: 20, 11
+  index: -1
+modi01_08
+  rotate: true
+  xy: 186, 290
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1
+modi01_09
+  rotate: true
+  xy: 186, 290
+  size: 106, 116
+  orig: 132, 132
+  offset: 14, 7
+  index: -1

@@ -1,0 +1,237 @@
+
+effect_wugufengdeng.png
+size: 513,513
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+wugu_0100
+  rotate: false
+  xy: 2, 296
+  size: 99, 104
+  orig: 109, 106
+  offset: 0, 2
+  index: -1
+wugu_0200
+  rotate: false
+  xy: 2, 191
+  size: 99, 103
+  orig: 109, 106
+  offset: 0, 1
+  index: -1
+wugu_lizi01
+  rotate: false
+  xy: 442, 192
+  size: 68, 47
+  orig: 148, 143
+  offset: 41, 25
+  index: -1
+wugu_lizi02
+  rotate: false
+  xy: 282, 115
+  size: 76, 62
+  orig: 148, 143
+  offset: 35, 37
+  index: -1
+wugu_lizi03
+  rotate: true
+  xy: 360, 91
+  size: 83, 73
+  orig: 148, 143
+  offset: 31, 46
+  index: -1
+wugu_lizi04
+  rotate: false
+  xy: 282, 179
+  size: 82, 75
+  orig: 148, 143
+  offset: 30, 55
+  index: -1
+wugu_lizi05
+  rotate: true
+  xy: 211, 20
+  size: 92, 78
+  orig: 148, 143
+  offset: 26, 58
+  index: -1
+wugu_lizi06
+  rotate: true
+  xy: 201, 321
+  size: 94, 79
+  orig: 148, 143
+  offset: 25, 59
+  index: -1
+wugu_lizi07
+  rotate: true
+  xy: 367, 176
+  size: 84, 73
+  orig: 148, 143
+  offset: 34, 60
+  index: -1
+wugu_lizi08
+  rotate: true
+  xy: 372, 335
+  size: 91, 68
+  orig: 148, 143
+  offset: 32, 55
+  index: -1
+wugu_lizi09
+  rotate: true
+  xy: 442, 320
+  size: 91, 64
+  orig: 148, 143
+  offset: 31, 49
+  index: -1
+wugu_lizi10
+  rotate: true
+  xy: 449, 413
+  size: 98, 59
+  orig: 148, 143
+  offset: 26, 41
+  index: -1
+wugu_maizi00
+  rotate: false
+  xy: 442, 241
+  size: 62, 77
+  orig: 155, 151
+  offset: 51, 19
+  index: -1
+wugu_maizi01
+  rotate: false
+  xy: 435, 51
+  size: 71, 84
+  orig: 155, 151
+  offset: 44, 24
+  index: -1
+wugu_maizi02
+  rotate: false
+  xy: 338, 12
+  size: 77, 77
+  orig: 155, 151
+  offset: 40, 36
+  index: -1
+wugu_maizi03
+  rotate: true
+  xy: 284, 428
+  size: 83, 82
+  orig: 155, 151
+  offset: 36, 40
+  index: -1
+wugu_maizi04
+  rotate: false
+  xy: 197, 114
+  size: 83, 89
+  orig: 155, 151
+  offset: 37, 43
+  index: -1
+wugu_maizi05
+  rotate: false
+  xy: 197, 205
+  size: 83, 94
+  orig: 155, 151
+  offset: 35, 49
+  index: -1
+wugu_maizi06
+  rotate: false
+  xy: 103, 197
+  size: 92, 102
+  orig: 155, 151
+  offset: 29, 47
+  index: -1
+wugu_maizi07
+  rotate: false
+  xy: 2, 83
+  size: 93, 106
+  orig: 155, 151
+  offset: 28, 42
+  index: -1
+wugu_maizi08
+  rotate: false
+  xy: 2, 402
+  size: 100, 109
+  orig: 155, 151
+  offset: 25, 37
+  index: -1
+wugu_maizi09
+  rotate: false
+  xy: 2, 5
+  size: 106, 76
+  orig: 155, 151
+  offset: 22, 30
+  index: -1
+wugu_saoguang00
+  rotate: true
+  xy: 368, 428
+  size: 83, 79
+  orig: 109, 106
+  offset: 0, 26
+  index: -1
+wugu_saoguang01
+  rotate: true
+  xy: 194, 417
+  size: 94, 88
+  orig: 109, 106
+  offset: 0, 16
+  index: -1
+wugu_saoguang02
+  rotate: true
+  xy: 97, 89
+  size: 100, 98
+  orig: 109, 106
+  offset: 0, 6
+  index: -1
+wugu_saoguang03
+  rotate: false
+  xy: 103, 301
+  size: 96, 99
+  orig: 109, 106
+  offset: 4, 4
+  index: -1
+wugu_saoguang04
+  rotate: false
+  xy: 104, 416
+  size: 88, 95
+  orig: 109, 106
+  offset: 12, 3
+  index: -1
+wugu_saoguang05
+  rotate: true
+  xy: 282, 334
+  size: 81, 88
+  orig: 109, 106
+  offset: 19, 3
+  index: -1
+wugu_saoguang06
+  rotate: true
+  xy: 282, 256
+  size: 76, 83
+  orig: 109, 106
+  offset: 24, 3
+  index: -1
+wugu_saoguang07
+  rotate: false
+  xy: 372, 262
+  size: 68, 71
+  orig: 109, 106
+  offset: 32, 3
+  index: -1
+wugu_saoguang08
+  rotate: false
+  xy: 442, 137
+  size: 57, 53
+  orig: 109, 106
+  offset: 43, 3
+  index: -1
+wugu_saoguang09
+  rotate: false
+  xy: 291, 74
+  size: 45, 39
+  orig: 109, 106
+  offset: 55, 3
+  index: -1
+wugu_yan01
+  rotate: false
+  xy: 110, 2
+  size: 99, 85
+  orig: 109, 106
+  offset: 4, 10
+  index: -1

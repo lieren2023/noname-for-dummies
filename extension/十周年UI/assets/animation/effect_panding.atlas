@@ -1,0 +1,230 @@
+
+effect_panding.png
+size: 303,303
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+jijiangpanding_saoguang_00
+  rotate: true
+  xy: 232, 5
+  size: 12, 21
+  orig: 150, 150
+  offset: 50, 81
+  index: -1
+jijiangpanding_saoguang_01
+  rotate: false
+  xy: 2, 2
+  size: 32, 50
+  orig: 150, 150
+  offset: 50, 53
+  index: -1
+jijiangpanding_saoguang_02
+  rotate: true
+  xy: 134, 45
+  size: 47, 52
+  orig: 150, 150
+  offset: 50, 52
+  index: -1
+jijiangpanding_saoguang_03
+  rotate: true
+  xy: 107, 9
+  size: 34, 51
+  orig: 150, 150
+  offset: 66, 52
+  index: -1
+jijiangpanding_saoguang_04
+  rotate: true
+  xy: 103, 51
+  size: 15, 29
+  orig: 150, 150
+  offset: 85, 52
+  index: -1
+jijiangpanding_zi01
+  rotate: false
+  xy: 103, 163
+  size: 60, 58
+  orig: 160, 160
+  offset: 51, 53
+  index: -1
+jijiangshengxiao_saoguang_00
+  rotate: true
+  xy: 82, 206
+  size: 12, 19
+  orig: 150, 150
+  offset: 50, 81
+  index: -1
+jijiangshengxiao_saoguang_01
+  rotate: false
+  xy: 36, 2
+  size: 30, 50
+  orig: 150, 150
+  offset: 51, 52
+  index: -1
+jijiangshengxiao_saoguang_02
+  rotate: false
+  xy: 188, 54
+  size: 47, 51
+  orig: 150, 150
+  offset: 51, 52
+  index: -1
+jijiangshengxiao_saoguang_03
+  rotate: false
+  xy: 237, 73
+  size: 39, 49
+  orig: 150, 150
+  offset: 64, 53
+  index: -1
+jijiangshengxiao_saoguang_04
+  rotate: false
+  xy: 278, 84
+  size: 20, 38
+  orig: 150, 150
+  offset: 84, 52
+  index: -1
+jijiangshengxiao_zi01
+  rotate: true
+  xy: 244, 242
+  size: 59, 57
+  orig: 160, 160
+  offset: 52, 53
+  index: -1
+jijiangshixiao_zi01
+  rotate: false
+  xy: 243, 124
+  size: 58, 58
+  orig: 160, 160
+  offset: 50, 50
+  index: -1
+pandingshengxiao_gou_00
+  rotate: false
+  xy: 232, 19
+  size: 26, 28
+  orig: 176, 176
+  offset: 50, 91
+  index: -1
+pandingshengxiao_gou_01
+  rotate: false
+  xy: 68, 3
+  size: 37, 43
+  orig: 176, 176
+  offset: 50, 76
+  index: -1
+pandingshengxiao_gou_02
+  rotate: true
+  xy: 188, 107
+  size: 58, 43
+  orig: 176, 176
+  offset: 50, 76
+  index: -1
+pandingshengxiao_gou_03
+  rotate: false
+  xy: 165, 239
+  size: 77, 62
+  orig: 176, 176
+  offset: 50, 76
+  index: -1
+pandingshengxiao_saoguang_00
+  rotate: false
+  xy: 82, 186
+  size: 13, 18
+  orig: 300, 300
+  offset: 113, 162
+  index: -1
+pandingshengxiao_saoguang_01
+  rotate: false
+  xy: 134, 94
+  size: 52, 67
+  orig: 300, 300
+  offset: 104, 116
+  index: -1
+pandingshengxiao_saoguang_02
+  rotate: false
+  xy: 2, 54
+  size: 67, 84
+  orig: 300, 300
+  offset: 119, 116
+  index: -1
+pandingshengxiao_saoguang_03
+  rotate: true
+  xy: 165, 198
+  size: 39, 76
+  orig: 300, 300
+  offset: 147, 116
+  index: -1
+pandingshengxiao_saoguang_04
+  rotate: true
+  xy: 278, 65
+  size: 17, 20
+  orig: 300, 300
+  offset: 174, 116
+  index: -1
+pandingshengxiao_zi_00
+  rotate: true
+  xy: 237, 49
+  size: 22, 29
+  orig: 176, 176
+  offset: 38, 50
+  index: -1
+pandingshengxiao_zi_01
+  rotate: true
+  xy: 201, 3
+  size: 49, 29
+  orig: 176, 176
+  offset: 38, 50
+  index: -1
+pandingshengxiao_zi_02
+  rotate: false
+  xy: 165, 167
+  size: 76, 29
+  orig: 176, 176
+  offset: 38, 50
+  index: -1
+pandingshengxiao_zi_03
+  rotate: true
+  xy: 103, 68
+  size: 93, 29
+  orig: 176, 176
+  offset: 38, 50
+  index: -1
+pandingshixiao_x_00
+  rotate: false
+  xy: 160, 5
+  size: 39, 38
+  orig: 160, 160
+  offset: 41, 99
+  index: -1
+pandingshixiao_x_01
+  rotate: false
+  xy: 244, 184
+  size: 57, 56
+  orig: 160, 160
+  offset: 41, 81
+  index: -1
+pandingshixiao_x_02
+  rotate: false
+  xy: 2, 140
+  size: 78, 78
+  orig: 160, 160
+  offset: 41, 61
+  index: -1
+pandingshixiao_x_03
+  rotate: false
+  xy: 85, 223
+  size: 78, 78
+  orig: 160, 160
+  offset: 41, 61
+  index: -1
+pandingshixiao_x_04
+  rotate: false
+  xy: 2, 220
+  size: 81, 81
+  orig: 160, 160
+  offset: 38, 58
+  index: -1
+pandingshixioa_zi_00
+  rotate: true
+  xy: 71, 48
+  size: 90, 30
+  orig: 160, 160
+  offset: 30, 42
+  index: -1

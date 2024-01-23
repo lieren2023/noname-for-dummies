@@ -1,0 +1,90 @@
+
+effect_zhulutianxia.png
+size: 172,172
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+jiansheff/jiansheff_00
+  rotate: false
+  xy: 2, 96
+  size: 120, 21
+  orig: 128, 32
+  offset: 0, 7
+  index: -1
+jianshi1
+  rotate: false
+  xy: 2, 119
+  size: 118, 51
+  orig: 118, 52
+  offset: 0, 0
+  index: -1
+luer
+  rotate: false
+  xy: 65, 9
+  size: 23, 17
+  orig: 23, 17
+  offset: 0, 0
+  index: -1
+luer2
+  rotate: false
+  xy: 90, 12
+  size: 17, 14
+  orig: 17, 15
+  offset: 0, 0
+  index: -1
+lujing
+  rotate: false
+  xy: 143, 135
+  size: 27, 35
+  orig: 27, 35
+  offset: 0, 0
+  index: -1
+lushen
+  rotate: false
+  xy: 2, 36
+  size: 61, 58
+  orig: 61, 58
+  offset: 0, 0
+  index: -1
+luti
+  rotate: true
+  xy: 143, 124
+  size: 9, 26
+  orig: 9, 26
+  offset: 0, 0
+  index: -1
+luti2
+  rotate: true
+  xy: 2, 10
+  size: 24, 42
+  orig: 24, 42
+  offset: 0, 0
+  index: -1
+lutou
+  rotate: false
+  xy: 118, 31
+  size: 46, 63
+  orig: 46, 63
+  offset: 0, 0
+  index: -1
+lutui1
+  rotate: false
+  xy: 65, 28
+  size: 51, 66
+  orig: 51, 66
+  offset: 0, 0
+  index: -1
+lutui2
+  rotate: false
+  xy: 122, 120
+  size: 19, 50
+  orig: 22, 50
+  offset: 0, 0
+  index: -1
+luwei
+  rotate: false
+  xy: 46, 8
+  size: 17, 26
+  orig: 17, 26
+  offset: 0, 0
+  index: -1

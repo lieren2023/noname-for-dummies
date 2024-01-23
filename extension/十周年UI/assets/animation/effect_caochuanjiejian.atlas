@@ -1,0 +1,146 @@
+
+effect_caochuanjiejian.png
+size: 668,668
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ccjjeff/ccjjeff_00
+  rotate: true
+  xy: 556, 41
+  size: 109, 107
+  orig: 186, 186
+  offset: 39, 39
+  index: -1
+ccjjeff/ccjjeff_01
+  rotate: false
+  xy: 434, 37
+  size: 120, 113
+  orig: 186, 186
+  offset: 33, 34
+  index: -1
+ccjjeff/ccjjeff_02
+  rotate: false
+  xy: 434, 152
+  size: 130, 121
+  orig: 186, 186
+  offset: 28, 28
+  index: -1
+ccjjeff/ccjjeff_03
+  rotate: false
+  xy: 147, 402
+  size: 143, 130
+  orig: 186, 186
+  offset: 21, 21
+  index: -1
+ccjjeff/ccjjeff_04
+  rotate: false
+  xy: 292, 536
+  size: 142, 130
+  orig: 186, 186
+  offset: 22, 21
+  index: -1
+ccjjeff/ccjjeff_05
+  rotate: false
+  xy: 2, 134
+  size: 142, 130
+  orig: 186, 186
+  offset: 22, 21
+  index: -1
+ccjjeff/ccjjeff_06
+  rotate: false
+  xy: 147, 271
+  size: 142, 129
+  orig: 186, 186
+  offset: 22, 21
+  index: -1
+ccjjeff/ccjjeff_07
+  rotate: false
+  xy: 147, 141
+  size: 142, 128
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_08
+  rotate: false
+  xy: 292, 275
+  size: 141, 128
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_09
+  rotate: false
+  xy: 435, 275
+  size: 141, 128
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_10
+  rotate: false
+  xy: 291, 145
+  size: 141, 128
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_11
+  rotate: false
+  xy: 146, 11
+  size: 142, 128
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_12
+  rotate: false
+  xy: 292, 405
+  size: 142, 129
+  orig: 186, 186
+  offset: 21, 22
+  index: -1
+ccjjeff/ccjjeff_13
+  rotate: false
+  xy: 436, 537
+  size: 142, 129
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_14
+  rotate: false
+  xy: 2, 2
+  size: 141, 130
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_15
+  rotate: false
+  xy: 436, 405
+  size: 141, 130
+  orig: 186, 186
+  offset: 22, 22
+  index: -1
+ccjjeff/ccjjeff_16
+  rotate: false
+  xy: 2, 400
+  size: 143, 132
+  orig: 186, 186
+  offset: 21, 21
+  index: -1
+ccjjeff/ccjjeff_17
+  rotate: false
+  xy: 147, 534
+  size: 143, 132
+  orig: 186, 186
+  offset: 21, 21
+  index: -1
+ccjjeff/ccjjeff_18
+  rotate: false
+  xy: 2, 266
+  size: 143, 132
+  orig: 186, 186
+  offset: 21, 21
+  index: -1
+ccjjeff/ccjjeff_19
+  rotate: false
+  xy: 2, 534
+  size: 143, 132
+  orig: 186, 186
+  offset: 21, 21
+  index: -1

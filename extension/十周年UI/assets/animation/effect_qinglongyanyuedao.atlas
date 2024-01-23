@@ -1,0 +1,132 @@
+
+effect_qinglongyanyuedao.png
+size: 1006,1006
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+qinglong_12
+  rotate: true
+  xy: 782, 60
+  size: 213, 167
+  orig: 400, 400
+  offset: 90, 149
+  index: -1
+qlyy_dao_00
+  rotate: true
+  xy: 846, 488
+  size: 83, 158
+  orig: 400, 400
+  offset: 165, 90
+  index: -1
+qlyy_dao_01
+  rotate: true
+  xy: 873, 830
+  size: 174, 89
+  orig: 400, 400
+  offset: 113, 144
+  index: -1
+qlyy_dao_02
+  rotate: true
+  xy: 825, 285
+  size: 43, 136
+  orig: 400, 400
+  offset: 178, 112
+  index: -1
+qlyy_dao_03
+  rotate: false
+  xy: 825, 330
+  size: 165, 156
+  orig: 400, 400
+  offset: 110, 109
+  index: -1
+qlyy_daoguang01_00
+  rotate: false
+  xy: 543, 62
+  size: 237, 211
+  orig: 400, 400
+  offset: 69, 80
+  index: -1
+qlyy_daoguang01_01
+  rotate: false
+  xy: 2, 759
+  size: 297, 245
+  orig: 400, 400
+  offset: 49, 52
+  index: -1
+qlyy_daoguang01_02
+  rotate: false
+  xy: 301, 762
+  size: 295, 242
+  orig: 400, 400
+  offset: 51, 54
+  index: -1
+qlyy_daoguang01_03
+  rotate: false
+  xy: 288, 56
+  size: 253, 217
+  orig: 400, 400
+  offset: 66, 61
+  index: -1
+yanyuedao_12
+  rotate: true
+  xy: 846, 573
+  size: 181, 138
+  orig: 400, 400
+  offset: 111, 136
+  index: -1
+yanyuedao_glow_12
+  rotate: false
+  xy: 2, 502
+  size: 287, 255
+  orig: 400, 400
+  offset: 59, 82
+  index: -1
+yanyuedao_glow_13
+  rotate: false
+  xy: 2, 255
+  size: 284, 245
+  orig: 400, 400
+  offset: 59, 85
+  index: -1
+yanyuedao_glow_14
+  rotate: false
+  xy: 2, 7
+  size: 277, 246
+  orig: 400, 400
+  offset: 64, 84
+  index: -1
+yanyuedao_glow_15
+  rotate: false
+  xy: 598, 756
+  size: 273, 248
+  orig: 400, 400
+  offset: 66, 83
+  index: -1
+yanyuedao_glow_16
+  rotate: false
+  xy: 301, 513
+  size: 271, 247
+  orig: 400, 400
+  offset: 67, 83
+  index: -1
+yanyuedao_glow_17
+  rotate: false
+  xy: 574, 512
+  size: 270, 242
+  orig: 400, 400
+  offset: 68, 82
+  index: -1
+yanyuedao_glow_18
+  rotate: false
+  xy: 291, 275
+  size: 265, 236
+  orig: 400, 400
+  offset: 72, 84
+  index: -1
+yanyuedao_glow_19
+  rotate: false
+  xy: 558, 275
+  size: 265, 235
+  orig: 400, 400
+  offset: 70, 85
+  index: -1

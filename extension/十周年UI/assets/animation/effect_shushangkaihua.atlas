@@ -1,0 +1,174 @@
+
+effect_shushangkaihua.png
+size: 396,396
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+diutu001
+  rotate: false
+  xy: 2, 247
+  size: 151, 147
+  orig: 151, 148
+  offset: 0, 0
+  index: -1
+huahua01
+  rotate: true
+  xy: 140, 237
+  size: 8, 9
+  orig: 8, 9
+  offset: 0, 0
+  index: -1
+huahua02
+  rotate: false
+  xy: 127, 213
+  size: 7, 9
+  orig: 7, 9
+  offset: 0, 0
+  index: -1
+huahua03
+  rotate: false
+  xy: 136, 227
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+huahua04
+  rotate: false
+  xy: 174, 34
+  size: 7, 10
+  orig: 7, 10
+  offset: 0, 0
+  index: -1
+huahua05
+  rotate: true
+  xy: 278, 165
+  size: 6, 8
+  orig: 6, 8
+  offset: 0, 0
+  index: -1
+huahua06
+  rotate: false
+  xy: 146, 228
+  size: 7, 7
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+huahua07
+  rotate: false
+  xy: 297, 165
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+huahua08
+  rotate: false
+  xy: 146, 219
+  size: 7, 7
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+huahua09
+  rotate: true
+  xy: 288, 165
+  size: 6, 7
+  orig: 6, 7
+  offset: 0, 0
+  index: -1
+huahua10
+  rotate: false
+  xy: 127, 224
+  size: 7, 11
+  orig: 7, 11
+  offset: 0, 0
+  index: -1
+huahua11
+  rotate: false
+  xy: 127, 237
+  size: 11, 8
+  orig: 14, 10
+  offset: 3, 0
+  index: -1
+huahua12
+  rotate: false
+  xy: 163, 23
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+huahua13
+  rotate: false
+  xy: 163, 13
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+huahua14
+  rotate: false
+  xy: 163, 34
+  size: 9, 10
+  orig: 9, 10
+  offset: 0, 0
+  index: -1
+shugan001/shugan001_00
+  rotate: false
+  xy: 280, 173
+  size: 110, 109
+  orig: 128, 128
+  offset: 9, 9
+  index: -1
+shugan001/shugan001_01
+  rotate: false
+  xy: 247, 51
+  size: 111, 112
+  orig: 128, 128
+  offset: 9, 6
+  index: -1
+shugan001/shugan001_02
+  rotate: false
+  xy: 155, 165
+  size: 121, 111
+  orig: 128, 128
+  offset: 4, 7
+  index: -1
+shugan001/shugan001_03
+  rotate: false
+  xy: 155, 278
+  size: 123, 116
+  orig: 128, 128
+  offset: 3, 9
+  index: -1
+shugan001/shugan001_04
+  rotate: false
+  xy: 2, 128
+  size: 123, 117
+  orig: 128, 128
+  offset: 3, 9
+  index: -1
+shugan001/shugan001_05
+  rotate: false
+  xy: 2, 9
+  size: 122, 117
+  orig: 128, 128
+  offset: 3, 9
+  index: -1
+shugan001/shugan001_06
+  rotate: false
+  xy: 127, 46
+  size: 118, 117
+  orig: 128, 128
+  offset: 4, 9
+  index: -1
+shugan001/shugan001_07
+  rotate: true
+  xy: 280, 284
+  size: 110, 114
+  orig: 128, 128
+  offset: 9, 9
+  index: -1
+waifaguang_00
+  rotate: false
+  xy: 126, 9
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,230 @@
+
+effect_taoyuanjieyi.png
+size: 1008,838
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+SF_eff_jiangling_taoyuanjieyi_0000
+  rotate: false
+  xy: 339, 9
+  size: 34, 30
+  orig: 240, 290
+  offset: 38, 211
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0002
+  rotate: true
+  xy: 57, 26
+  size: 54, 93
+  orig: 240, 290
+  offset: 15, 192
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0004
+  rotate: true
+  xy: 784, 146
+  size: 136, 86
+  orig: 240, 290
+  offset: 13, 181
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0006
+  rotate: true
+  xy: 780, 447
+  size: 163, 114
+  orig: 240, 290
+  offset: 12, 171
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0008
+  rotate: true
+  xy: 881, 658
+  size: 178, 121
+  orig: 240, 290
+  offset: 13, 149
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0010
+  rotate: false
+  xy: 162, 7
+  size: 175, 139
+  orig: 240, 290
+  offset: 15, 110
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0012
+  rotate: true
+  xy: 339, 41
+  size: 173, 163
+  orig: 240, 290
+  offset: 16, 71
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0014
+  rotate: true
+  xy: 336, 216
+  size: 174, 169
+  orig: 240, 290
+  offset: 14, 68
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0016
+  rotate: false
+  xy: 539, 610
+  size: 173, 226
+  orig: 240, 290
+  offset: 16, 59
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0018
+  rotate: false
+  xy: 714, 612
+  size: 165, 224
+  orig: 240, 290
+  offset: 24, 55
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0020
+  rotate: false
+  xy: 2, 82
+  size: 158, 230
+  orig: 240, 290
+  offset: 32, 55
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0022
+  rotate: false
+  xy: 162, 148
+  size: 172, 206
+  orig: 240, 290
+  offset: 36, 66
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0024
+  rotate: false
+  xy: 332, 392
+  size: 171, 185
+  orig: 240, 290
+  offset: 37, 85
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0026
+  rotate: false
+  xy: 159, 356
+  size: 171, 218
+  orig: 240, 290
+  offset: 37, 50
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0028
+  rotate: false
+  xy: 366, 598
+  size: 171, 238
+  orig: 240, 290
+  offset: 37, 29
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0030
+  rotate: false
+  xy: 2, 576
+  size: 179, 260
+  orig: 240, 290
+  offset: 29, 5
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0032
+  rotate: false
+  xy: 183, 579
+  size: 181, 257
+  orig: 240, 290
+  offset: 31, 1
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0034
+  rotate: false
+  xy: 2, 314
+  size: 155, 260
+  orig: 240, 290
+  offset: 58, 25
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0036
+  rotate: true
+  xy: 507, 119
+  size: 133, 149
+  orig: 240, 290
+  offset: 58, 88
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0038
+  rotate: false
+  xy: 648, 280
+  size: 132, 159
+  orig: 240, 290
+  offset: 58, 66
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0040
+  rotate: false
+  xy: 645, 441
+  size: 133, 167
+  orig: 240, 290
+  offset: 58, 50
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0042
+  rotate: false
+  xy: 505, 424
+  size: 138, 172
+  orig: 240, 290
+  offset: 55, 39
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0044
+  rotate: false
+  xy: 507, 254
+  size: 139, 168
+  orig: 240, 290
+  offset: 54, 37
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0046
+  rotate: false
+  xy: 892, 239
+  size: 112, 139
+  orig: 240, 290
+  offset: 69, 59
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0048
+  rotate: false
+  xy: 896, 380
+  size: 108, 136
+  orig: 240, 290
+  offset: 69, 54
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0050
+  rotate: false
+  xy: 896, 518
+  size: 110, 138
+  orig: 240, 290
+  offset: 67, 49
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0052
+  rotate: true
+  xy: 658, 3
+  size: 118, 147
+  orig: 240, 290
+  offset: 65, 45
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0054
+  rotate: false
+  xy: 658, 123
+  size: 124, 155
+  orig: 240, 290
+  offset: 63, 42
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0056
+  rotate: false
+  xy: 782, 284
+  size: 108, 161
+  orig: 240, 290
+  offset: 63, 41
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0058
+  rotate: true
+  xy: 504, 9
+  size: 108, 136
+  orig: 240, 290
+  offset: 58, 69
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0060
+  rotate: true
+  xy: 872, 123
+  size: 114, 132
+  orig: 240, 290
+  offset: 53, 76
+  index: -1
+SF_eff_jiangling_taoyuanjieyi_0062
+  rotate: false
+  xy: 2, 2
+  size: 53, 78
+  orig: 240, 290
+  offset: 109, 132
+  index: -1

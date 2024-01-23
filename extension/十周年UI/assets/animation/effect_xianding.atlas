@@ -1,0 +1,104 @@
+
+effect_xianding.png
+size: 1024,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+heidi
+  rotate: false
+  xy: 300, 391
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+baidi
+  rotate: false
+  xy: 308, 391
+  size: 4, 4
+  orig: 4, 4
+  offset: 0, 0
+  index: -1
+xianding_golw_00003
+  rotate: false
+  xy: 598, 597
+  size: 294, 296
+  orig: 295, 297
+  offset: 0, 0
+  index: -1
+xianding_golw_00006
+  rotate: false
+  xy: 706, 1
+  size: 296, 296
+  orig: 297, 297
+  offset: 1, 0
+  index: -1
+xianding_golw_00002
+  rotate: false
+  xy: 408, 299
+  size: 296, 296
+  orig: 297, 297
+  offset: 0, 0
+  index: -1
+xianding_golw_00008
+  rotate: false
+  xy: 1, 391
+  size: 297, 295
+  orig: 297, 297
+  offset: 0, 0
+  index: -1
+xianding_golw_00005
+  rotate: false
+  xy: 408, 1
+  size: 296, 296
+  orig: 297, 297
+  offset: 0, 0
+  index: -1
+xianding_golw_00000
+  rotate: false
+  xy: 297, 894
+  size: 291, 296
+  orig: 293, 297
+  offset: 1, 0
+  index: -1
+xianding_golw_00007
+  rotate: false
+  xy: 300, 597
+  size: 296, 295
+  orig: 297, 297
+  offset: 1, 0
+  index: -1
+xianding_golw_00009
+  rotate: false
+  xy: 706, 299
+  size: 296, 296
+  orig: 297, 297
+  offset: 0, 0
+  index: -1
+xianding_golw_00001
+  rotate: false
+  xy: 1, 987
+  size: 292, 293
+  orig: 297, 297
+  offset: 3, 3
+  index: -1
+xianding_golw_00004
+  rotate: false
+  xy: 1, 688
+  size: 294, 297
+  orig: 297, 297
+  offset: 0, 0
+  index: -1
+guangquan
+  rotate: false
+  xy: 1, 1
+  size: 405, 388
+  orig: 410, 389
+  offset: 5, 1
+  index: -1
+daguang
+  rotate: false
+  xy: 590, 895
+  size: 141, 159
+  orig: 146, 159
+  offset: 0, 0
+  index: -1

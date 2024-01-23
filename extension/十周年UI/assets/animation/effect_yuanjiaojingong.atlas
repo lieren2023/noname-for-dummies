@@ -1,0 +1,160 @@
+
+effect_yuanjiaojingong.png
+size: 317,317
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+yuanjiao_lizi00
+  rotate: false
+  xy: 267, 127
+  size: 45, 65
+  orig: 85, 101
+  offset: 22, 10
+  index: -1
+yuanjiao_lizi01
+  rotate: true
+  xy: 198, 82
+  size: 45, 64
+  orig: 85, 101
+  offset: 20, 15
+  index: -1
+yuanjiao_lizi02
+  rotate: false
+  xy: 148, 128
+  size: 48, 66
+  orig: 85, 101
+  offset: 18, 16
+  index: -1
+yuanjiao_lizi03
+  rotate: false
+  xy: 136, 37
+  size: 55, 69
+  orig: 85, 101
+  offset: 13, 17
+  index: -1
+yuanjiao_lizi04
+  rotate: false
+  xy: 135, 196
+  size: 64, 77
+  orig: 85, 101
+  offset: 7, 13
+  index: -1
+yuanjiao_lizi05
+  rotate: false
+  xy: 2, 17
+  size: 72, 82
+  orig: 85, 101
+  offset: 2, 10
+  index: -1
+yuanjiao_lizi06
+  rotate: false
+  xy: 2, 101
+  size: 77, 81
+  orig: 85, 101
+  offset: 0, 14
+  index: -1
+yuanjiao_lizi07
+  rotate: false
+  xy: 2, 184
+  size: 75, 88
+  orig: 85, 101
+  offset: 4, 10
+  index: -1
+yuanjiao_quan0100
+  rotate: false
+  xy: 81, 108
+  size: 65, 80
+  orig: 66, 80
+  offset: 0, 0
+  index: -1
+yuanjiao_quan0200
+  rotate: false
+  xy: 198, 129
+  size: 67, 63
+  orig: 68, 69
+  offset: 1, 4
+  index: -1
+yuanjiao_shanguang01
+  rotate: false
+  xy: 2, 274
+  size: 123, 41
+  orig: 133, 47
+  offset: 6, 3
+  index: -1
+yuanjiaoi_glow02
+  rotate: false
+  xy: 258, 9
+  size: 54, 53
+  orig: 63, 66
+  offset: 5, 7
+  index: -1
+yuanjiaojingong_saoguang00
+  rotate: true
+  xy: 281, 299
+  size: 16, 34
+  orig: 138, 138
+  offset: 8, 27
+  index: -1
+yuanjiaojingong_saoguang01
+  rotate: true
+  xy: 76, 2
+  size: 25, 63
+  orig: 138, 138
+  offset: 8, 27
+  index: -1
+yuanjiaojingong_saoguang02
+  rotate: true
+  xy: 127, 275
+  size: 40, 72
+  orig: 138, 138
+  offset: 9, 27
+  index: -1
+yuanjiaojingong_saoguang03
+  rotate: false
+  xy: 79, 190
+  size: 54, 82
+  orig: 138, 138
+  offset: 11, 33
+  index: -1
+yuanjiaojingong_saoguang04
+  rotate: true
+  xy: 76, 29
+  size: 70, 58
+  orig: 138, 138
+  offset: 22, 58
+  index: -1
+yuanjiaojingong_saoguang05
+  rotate: false
+  xy: 201, 194
+  size: 80, 57
+  orig: 138, 138
+  offset: 35, 59
+  index: -1
+yuanjiaojingong_saoguang06
+  rotate: false
+  xy: 201, 253
+  size: 78, 62
+  orig: 138, 138
+  offset: 51, 54
+  index: -1
+yuanjiaojingong_saoguang07
+  rotate: false
+  xy: 193, 17
+  size: 63, 63
+  orig: 138, 138
+  offset: 68, 53
+  index: -1
+yuanjiaojingong_saoguang08
+  rotate: false
+  xy: 264, 64
+  size: 46, 61
+  orig: 138, 138
+  offset: 84, 53
+  index: -1
+yuanjiaojingong_saoguang09
+  rotate: false
+  xy: 281, 259
+  size: 15, 38
+  orig: 138, 138
+  offset: 114, 55
+  index: -1

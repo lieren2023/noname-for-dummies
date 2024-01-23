@@ -1,0 +1,377 @@
+
+skin_sunshangxiang_MeiYingJianWu.png
+size: 1719,1719
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+quan001_00
+  rotate: false
+  xy: 1088, 179
+  size: 185, 184
+  orig: 205, 205
+  offset: 9, 13
+  index: -1
+quan_00000
+  rotate: true
+  xy: 2, 79
+  size: 741, 288
+  orig: 880, 882
+  offset: 73, 559
+  index: -1
+sunshangxiang_body
+  rotate: false
+  xy: 407, 1130
+  size: 399, 587
+  orig: 399, 587
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao1
+  rotate: false
+  xy: 1557, 1304
+  size: 78, 166
+  orig: 78, 166
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao10
+  rotate: true
+  xy: 650, 19
+  size: 39, 186
+  orig: 39, 186
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao2
+  rotate: true
+  xy: 1321, 29
+  size: 68, 188
+  orig: 68, 188
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao3
+  rotate: false
+  xy: 1637, 1317
+  size: 68, 166
+  orig: 68, 166
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao4
+  rotate: false
+  xy: 808, 1162
+  size: 309, 269
+  orig: 309, 269
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao5
+  rotate: false
+  xy: 1119, 887
+  size: 200, 238
+  orig: 200, 238
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao6
+  rotate: false
+  xy: 1320, 623
+  size: 267, 251
+  orig: 267, 251
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao7
+  rotate: true
+  xy: 851, 505
+  size: 228, 217
+  orig: 228, 217
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao8
+  rotate: false
+  xy: 903, 49
+  size: 93, 307
+  orig: 93, 307
+  offset: 0, 0
+  index: -1
+sunshangxiang_dao9
+  rotate: true
+  xy: 1070, 486
+  size: 218, 223
+  orig: 218, 223
+  offset: 0, 0
+  index: -1
+sunshangxiang_duzi
+  rotate: true
+  xy: 1119, 1127
+  size: 304, 196
+  orig: 304, 197
+  offset: 0, 1
+  index: -1
+sunshangxiang_fa1
+  rotate: false
+  xy: 1564, 1485
+  size: 133, 232
+  orig: 134, 232
+  offset: 0, 0
+  index: -1
+sunshangxiang_fa2
+  rotate: false
+  xy: 1589, 655
+  size: 75, 94
+  orig: 75, 94
+  offset: 0, 0
+  index: -1
+sunshangxiang_fa3
+  rotate: true
+  xy: 1677, 88
+  size: 70, 40
+  orig: 72, 41
+  offset: 1, 0
+  index: -1
+sunshangxiang_fa4
+  rotate: false
+  xy: 1088, 60
+  size: 231, 117
+  orig: 232, 119
+  offset: 0, 1
+  index: -1
+sunshangxiang_fa5
+  rotate: true
+  xy: 998, 87
+  size: 269, 88
+  orig: 273, 88
+  offset: 0, 0
+  index: -1
+sunshangxiang_fa6
+  rotate: true
+  xy: 438, 8
+  size: 327, 210
+  orig: 330, 211
+  offset: 1, 1
+  index: -1
+sunshangxiang_fa7
+  rotate: false
+  xy: 1321, 99
+  size: 238, 117
+  orig: 239, 117
+  offset: 0, 0
+  index: -1
+sunshangxiang_fa8
+  rotate: false
+  xy: 1561, 56
+  size: 114, 178
+  orig: 114, 178
+  offset: 0, 0
+  index: -1
+sunshangxiang_jianbu
+  rotate: false
+  xy: 1560, 889
+  size: 98, 142
+  orig: 98, 142
+  offset: 0, 0
+  index: -1
+sunshangxiang_jianbu2
+  rotate: false
+  xy: 1589, 751
+  size: 91, 136
+  orig: 91, 136
+  offset: 0, 0
+  index: -1
+sunshangxiang_l_dabi
+  rotate: false
+  xy: 1560, 1033
+  size: 113, 165
+  orig: 113, 165
+  offset: 0, 0
+  index: -1
+sunshangxiang_l_datui
+  rotate: false
+  xy: 808, 1433
+  size: 434, 284
+  orig: 435, 285
+  offset: 1, 0
+  index: -1
+sunshangxiang_l_kuzi
+  rotate: false
+  xy: 292, 337
+  size: 299, 261
+  orig: 299, 261
+  offset: 0, 0
+  index: -1
+sunshangxiang_l_kuzi2
+  rotate: true
+  xy: 650, 60
+  size: 276, 251
+  orig: 276, 251
+  offset: 0, 0
+  index: -1
+sunshangxiang_l_tui
+  rotate: false
+  xy: 2, 822
+  size: 403, 895
+  orig: 403, 895
+  offset: 0, 0
+  index: -1
+sunshangxiang_l_xiaobi
+  rotate: true
+  xy: 1317, 1172
+  size: 298, 238
+  orig: 298, 238
+  offset: 0, 0
+  index: -1
+sunshangxiang_lian
+  rotate: true
+  xy: 783, 735
+  size: 226, 294
+  orig: 226, 294
+  offset: 0, 0
+  index: -1
+sunshangxiang_lingzi
+  rotate: true
+  xy: 670, 642
+  size: 178, 110
+  orig: 179, 110
+  offset: 0, 0
+  index: -1
+sunshangxiang_lingzi2
+  rotate: true
+  xy: 1042, 365
+  size: 119, 246
+  orig: 120, 246
+  offset: 1, 0
+  index: -1
+sunshangxiang_lingzihou
+  rotate: false
+  xy: 808, 963
+  size: 309, 197
+  orig: 310, 197
+  offset: 0, 0
+  index: -1
+sunshangxiang_qunzi
+  rotate: false
+  xy: 407, 822
+  size: 374, 306
+  orig: 375, 306
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_dabi
+  rotate: false
+  xy: 1244, 1472
+  size: 318, 245
+  orig: 318, 245
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_kuzi
+  rotate: false
+  xy: 1295, 362
+  size: 271, 259
+  orig: 271, 259
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_kuzi2
+  rotate: true
+  xy: 593, 338
+  size: 260, 256
+  orig: 260, 256
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_shou
+  rotate: false
+  xy: 1497, 236
+  size: 180, 117
+  orig: 180, 117
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_shou2
+  rotate: true
+  xy: 2, 28
+  size: 49, 266
+  orig: 50, 266
+  offset: 1, 0
+  index: -1
+sunshangxiang_r_shou3
+  rotate: false
+  xy: 1568, 355
+  size: 90, 266
+  orig: 90, 266
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_shou4
+  rotate: true
+  xy: 851, 358
+  size: 145, 189
+  orig: 145, 189
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_shou5
+  rotate: false
+  xy: 1079, 706
+  size: 239, 179
+  orig: 239, 179
+  offset: 0, 0
+  index: -1
+sunshangxiang_r_xiaobi
+  rotate: false
+  xy: 1321, 876
+  size: 237, 294
+  orig: 237, 294
+  offset: 0, 0
+  index: -1
+sunshangxiang_sidai
+  rotate: true
+  xy: 292, 2
+  size: 333, 144
+  orig: 334, 144
+  offset: 1, 0
+  index: -1
+sunshangxiang_sidai2
+  rotate: true
+  xy: 1557, 1200
+  size: 102, 93
+  orig: 102, 118
+  offset: 0, 25
+  index: -1
+sunshangxiang_sidai3
+  rotate: false
+  xy: 1275, 218
+  size: 220, 142
+  orig: 220, 142
+  offset: 0, 0
+  index: -1
+sunshangxiang_tiepian
+  rotate: true
+  xy: 1244, 1434
+  size: 36, 70
+  orig: 37, 70
+  offset: 0, 0
+  index: -1
+sunshangxiang_tiepian2
+  rotate: false
+  xy: 1677, 160
+  size: 40, 74
+  orig: 40, 74
+  offset: 0, 0
+  index: -1
+sunshangxiang_tiepian3
+  rotate: true
+  xy: 670, 600
+  size: 40, 76
+  orig: 40, 76
+  offset: 0, 0
+  index: -1
+sunshangxiang_tiepian4
+  rotate: true
+  xy: 1652, 1253
+  size: 62, 55
+  orig: 62, 55
+  offset: 0, 0
+  index: -1
+sunshangxiang_tiepian5
+  rotate: false
+  xy: 782, 641
+  size: 59, 92
+  orig: 59, 92
+  offset: 0, 0
+  index: -1
+sunshangxiang_xiaotui
+  rotate: false
+  xy: 292, 600
+  size: 376, 220
+  orig: 377, 220
+  offset: 1, 0
+  index: -1
