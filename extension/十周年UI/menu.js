@@ -2151,11 +2151,43 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							}
 						}
 						if(list2.length){
-							var cfgnodeX=createConfig({
-								name:'其他',
+							var boolx=false;
+							for(var i=0;i<list2.length;i++){
+								if(!listb.contains(list2[i])) boolx=true;
+							}
+							var cfgnodeY={
+								name:'等待分包',
 								_name:'others',
-								clear:true,
-							});
+								init:boolx,
+								onclick:function(bool){
+									var banned=[];
+									if(connectMenu){
+										var modex=menux.pages[0].firstChild.querySelector('.active');
+										if(modex&&modex.mode){
+											banned=lib.config['connect_'+modex.mode+'_banned'];
+										}
+									}
+									else if(_status.connectMode) return;
+									else banned=lib.config[get.mode()+'_banned']||[];
+									if(bool){
+										for(var i=0;i<list2.length;i++){
+											banned.remove(list2[i]);
+										}
+									}
+									else{
+										for(var i=0;i<list2.length;i++){
+											banned.add(list2[i]);
+										}
+									}
+									game.saveConfig(connectMenu?('connect_'+modex.mode+'_banned'):(get.mode()+'_banned'),banned);
+									updateActive();
+								},
+							};
+							if(mode.startsWith('mode_')&&!mode.startsWith('mode_extension_')&&!mode.startsWith('mode_guozhan')){
+								cfgnodeY.clear=true;
+								delete cfgnodeY.onclick;
+							}
+							var cfgnodeX=createConfig(cfgnodeY);
 							page.appendChild(cfgnodeX);
 							var buttons=ui.create.buttons(list2,'character',page);
 							for(var i=0;i<buttons.length;i++){

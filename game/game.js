@@ -1,11 +1,11 @@
 "use strict";
 
 new Promise(resolve => {
-	// 客户端自带core.js的请注意跟进
+	// 客户端自带core.js的请注意跟进core.js版本
 	if ('__core-js_shared__' in window) resolve(null);
 	else {
 		const nonameInitialized = localStorage.getItem('noname_inited');
-		const assetURL = typeof nonameInitialized != 'string' || nonameInitialized == 'nodejs' ? '' : nonameInitialized;
+		const assetURL = location.protocol.startsWith('http') || typeof nonameInitialized != 'string' || nonameInitialized == 'nodejs' ? '' : nonameInitialized;
 		const coreJSBundle = document.createElement('script');
 		coreJSBundle.onerror = coreJSBundle.onload = resolve;
 		coreJSBundle.src = `${assetURL}game/core-js-bundle.js`;
@@ -13,7 +13,7 @@ new Promise(resolve => {
 	}
 }).then(() => {
 	const nonameInitialized = localStorage.getItem('noname_inited');
-	const assetURL = typeof nonameInitialized != 'string' || nonameInitialized == 'nodejs' ? '' : nonameInitialized;
+	const assetURL = location.protocol.startsWith('http') || typeof nonameInitialized != 'string' || nonameInitialized == 'nodejs' ? '' : nonameInitialized;
 	const userAgent = navigator.userAgent.toLowerCase();
 
 	const exit = () => {
@@ -86,17 +86,78 @@ new Promise(resolve => {
 		exit()
 	}
 	else {
+		// node环境下
+		if (typeof window.require == 'function' &&
+			typeof window.process == 'object' &&
+			typeof window.__dirname == 'string') {
+			// 在http环境下修改__dirname和require的逻辑
+			if (location.protocol.startsWith('http') &&
+				window.__dirname.endsWith('electron.asar\\renderer')) {
+				const path = require('path');
+				window.__dirname = path.join(path.resolve(), 'resources/app');
+				const oldData = Object.entries(window.require);
+				// @ts-ignore
+				window.require = function (moduleId) {
+					try {
+						return module.require(moduleId);
+					} catch {
+						return module.require(path.join(window.__dirname, moduleId));
+					}
+				};
+				oldData.forEach(([key, value]) => {
+					window.require[key] = value;
+				});
+			}
+			// 增加导入ts的逻辑
+			window.require.extensions['.ts'] = function (module, filename) {
+				// @ts-ignore
+				const _compile = module._compile;
+				// @ts-ignore
+				module._compile = function (code, fileName) {
+					/**
+					 * @type { import('typescript') }
+					 */
+					// @ts-ignore
+					const ts = require('./game/typescript.js');
+					// 使用ts compiler对ts文件进行编译
+					const result = ts.transpile(code, {
+						module: ts.ModuleKind.CommonJS,
+						target: ts.ScriptTarget.ES2019,
+						inlineSourceMap: true
+					}, fileName);
+					// 使用默认的js编译函数获取返回值
+					return _compile.call(this, result, fileName);
+				}
+				// @ts-ignore
+				module._compile(require('fs').readFileSync(filename, 'utf8'), filename);
+			};
+		}
+		if (location.protocol.startsWith('http') && 'serviceWorker' in navigator) {
+			let scope = window.location.protocol + '//' + window.location.host + '/';
+			navigator.serviceWorker.register(`${scope}service-worker.js`, {
+				updateViaCache: "all",
+				scope,
+			}).then(registration => {
+				navigator.serviceWorker.addEventListener('message', e => {
+					console.log(e);
+				});
+				registration.update();
+				// console.log(`set scope: ${scope}, service worker instance:`, registration);
+			}).catch(e => {
+				console.log('serviceWorker加载失败: ', e);
+			});
+		}
 		const script = document.createElement('script')
 		script.type = "module";
-		script.src = `${assetURL}game/entry.js`
-		script.async = true
-		script.onerror = (event) => {
-			console.error(event)
+		script.src = `${assetURL}game/entry.js`;
+		script.async = true;
+		script.onerror = event => {
+			console.error(event);
 			const message = `您使用的浏览器或《无名杀》客户端加载内容失败！\n目前使用的浏览器UA信息为：\n${userAgent}\n若您使用的客户端为自带内核的旧版“兼容版”，请及时更新客户端版本！\n若您使用的客户端为手机端的非兼容版《无名杀》，请尝试更新手机的WebView内核，或者更换为1.8.2版本及以上的兼容版！\n若您是直接使用浏览器加载index.html进行游戏，请改为运行文件夹内的“noname-server.exe”（或使用VSCode等工具启动Live Server），以动态服务器的方式启动《无名杀》！`;
 			console.error(message);
 			alert(message);
-			exit()
+			exit();
 		}
-		document.head.appendChild(script)
+		document.head.appendChild(script);
 	}
 });

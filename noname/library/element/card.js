@@ -8,8 +8,6 @@ import { UI as ui } from '../../ui/index.js';
 export class Card extends HTMLDivElement {
 	/**
 	 * @param {HTMLDivElement|DocumentFragment} [position]
-	 * @param {'noclick'} [info]
-	 * @param {true} [noclick]
 	 */
 	// @ts-ignore
 	constructor(position) {
@@ -28,6 +26,10 @@ export class Card extends HTMLDivElement {
 		card._args = [position];
 		return card;
 	}
+	/**
+	 * @param {'noclick'} [info]
+	 * @param {true} [noclick]
+	 */
 	build(info, noclick) {
 		let card = this;
 		card.buildNode();
@@ -72,6 +74,28 @@ export class Card extends HTMLDivElement {
 	buildIntro(noclick) {
 		if (!noclick) lib.setIntro(this);
 	}
+	/** @type { SMap<HTMLDivElement> } */
+	node;
+	/**
+	 * @type { string }
+	 */
+	name;
+	/**
+	 * @type { SMap<any> }
+	 */
+	storage;
+	/**
+	 * @type { any[] }
+	 */
+	vanishtag;
+	/**
+	 * @type { any[] }
+	 */
+	gaintag;
+	/**
+	 * @type { any[] }
+	 */
+	_uncheck;
 	//执行销毁一张牌的钩子函数
 	selfDestroy(event) {
 		if (this._selfDestroyed) return;
@@ -763,6 +787,34 @@ export class Card extends HTMLDivElement {
 		if (skill) this._uncheck.remove(skill);
 		else this._uncheck.length = 0;
 		if (this._uncheck.length == 0) this.classList.remove('uncheck');
+	}
+	/**
+	 * 判断此牌是否包含class样式，参数有多个时，只需一个满足。
+	 * 
+	 * @param {string} className
+	 * 
+	 * @returns {boolean} 是否包含class
+	 */
+	classListContains(className){
+		return Array.from(arguments).some(name=>this.classList.contains(className));
+	}
+	/**
+	 * 判断此牌是否包含class样式，参数有多个时，需全部满足。
+	 * 
+	 * @param {string} className
+	 * 
+	 * @returns {boolean} 是否包含class
+	 */
+	classListContainsAll(){
+		return Array.from(arguments).every(name=>this.classList.contains(this.className));
+	}
+	/**
+	 * 返回一个键值，用于在缓存中作为键名。
+	 * 
+	 * @returns {string} cacheKey
+	 */
+	getCacheKey(){
+		return `[c:${this.cardid}]`;
 	}
 	discard(bool) {
 		if (!this._selfDestroyed) {

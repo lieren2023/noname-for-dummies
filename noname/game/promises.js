@@ -92,4 +92,12 @@ export class GamePromises extends Uninstantable {
 			game.createDir(directory, resolve, reject);
 		});
 	}
+	static removeFile(filename) {
+		return /** @type {Promise<void>} */(new Promise((resolve, reject) => {
+			game.removeFile(filename, err => {
+				if (err) reject(err);
+				else resolve();
+			});
+		}));
+	}
 }

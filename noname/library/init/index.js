@@ -709,7 +709,13 @@ export class LibInit extends Uninstantable {
 		else if (typeof func == 'object') {
 			for (var i in func) {
 				if (Object.prototype.hasOwnProperty.call(func, i)) {
-					func[i] = lib.init.eval(func[i]);
+					if(typeof func[i] == 'function'){
+						let checkObject = {};
+						checkObject[i] = func[i];
+						return eval(`(function(){return ${get.stringify(checkObject)};})()`)[i];
+					}else{
+						func[i] = lib.init.eval(func[i]);
+					}
 				}
 			}
 		}
@@ -780,5 +786,15 @@ export class LibInit extends Uninstantable {
 			str += ',\n'
 		}
 		return str;
+	}
+
+	/**
+	 * 在返回当前加载的esm模块相对位置。
+	 * @param {*} url 传入import.meta.url 
+	 */
+	static getCurrentFileLocation(url){
+		let head = window.location.href.slice(0,window.location.href.lastIndexOf('/')+1);
+		let ret = url.replace(head,'');
+		return decodeURIComponent(ret);
 	}
 }

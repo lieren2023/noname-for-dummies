@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'offline',
@@ -11,7 +11,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				offline_yijiang:['ol_xinxianying'],
 				offline_luanwu:["ns_lijue","ns_zhangji","ns_fanchou"],
 				offline_yongjian:["ns_chendao","yj_caoang","yj_caocao",'yj_liru','yj_caohong','yj_zhangfei','yongjian_ganning','yj_dongzhuo','yj_xuyou','yj_jiaxu','yj_zhenji'],
-				offline_piracyE:['shen_jiaxu','pe_wangyun','pe_zhonghui','pe_sunchen','pe_mengda','pe_wenqin','ns_caoanmin','jiangfei','chendong','jiangqing','kongrong','jiling','tianfeng','mateng'],
+				offline_piracyE:['shen_jiaxu','pe_wangyun','pe_zhonghui','pe_sunchen','pe_mengda','pe_wenqin','ns_caoanmin','chendong','jiangqing','zy_kongrong','jiling','tianfeng','mateng'],
 				offline_piracyS:['ns_jiaxu','longyufei','ps_guanyu','ps1059_guojia','ps2070_guojia','ps2063_zhaoyun','ps2067_zhaoyun','ps1062_zhouyu','ps2080_zhouyu','ps_caozhi','ps_jin_simayi','ps_caopi','ps_simayi','ps2068_simayi','ps_machao','ps_zhugeliang','ps2066_zhugeliang','ps_jiaxu','ps_lvbu','ps_shen_machao','jsp_liubei'],
 				offline_piracyK:['pk_sp_duyu'],
 				offline_vtuber:['vtb_xiaosha','vtb_xiaoshan','vtb_xiaotao','vtb_xiaole','vtb_xiaojiu'],
@@ -33,10 +33,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mateng:['male','qun',4,['mashu','xiongyi']],
 			tianfeng:['male','qun',3,['sijian','gzsuishi']],
 			jiling:['male','qun',4,['shuangren']],
-			kongrong:['male','qun',3,['zymingshi','lirang']],
+			zy_kongrong:['male','qun',3,['zymingshi','lirang']],
 			chendong:['male','wu',4,['duanxie','fenming']],
 			jiangqing:['male','wu',4,['zyshangyi']],
-			jiangfei:['male','shu',3,['reshengxi','shoucheng']],
 			pk_sp_duyu:['male','qun',4,['pkwuku','pksanchen']],
 			ps_lvbu:['male','qun',4,['wushuang','pssheji']],
 			ps_jiaxu:['male','qun',4,['wansha','psqupo','psbaoquan']],
@@ -168,7 +167,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						d1=true;
 						if(trigger.player.hasSkill('jueqing')||trigger.player.hasSkill('gangzhi')) d1=false;
 						for(var target of trigger.targets){
-							if(!target.mayHaveShan(player,'use')||trigger.player.hasSkillTag('directHit_ai',true,{
+							if(!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+								return i.hasGaintag('sha_notshan');
+							}))||trigger.player.hasSkillTag('directHit_ai',true,{
 								target:target,
 								card:trigger.card,
 							},true)){
@@ -297,7 +298,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var effect=0;
 						for(var target of trigger.targets){
 							var eff=get.effect(target,trigger.card,trigger.player,player);
-							if(!target.mayHaveShan(player,'use')||trigger.player.hasSkillTag('directHit_ai',true,{
+							if(!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+								return i.hasGaintag('sha_notshan');
+							}))||trigger.player.hasSkillTag('directHit_ai',true,{
 								target:target,
 								card:trigger.card,
 							},true)){
@@ -4433,6 +4436,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var target=result.targets[0];
 						event.target=target;
 						player.logSkill('nsfeixiong',target);
+						if(get.mode()!=='identity'||player.identity!=='nei') player.addExpose(0.2);
 						player.chooseToCompare(target);
 					}
 					else event.finish();
@@ -6789,16 +6793,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_xinxianying_prefix:'将',
 			chendong:'战役篇陈武董袭',
 			chendong_prefix:'战役篇',
-			jiangfei:'战役篇蒋琬费祎',
-			jiangfei_prefix:'战役篇',
 			jiangqing:'战役篇蒋钦',
 			jiangqing_prefix:'战役篇',
 			tianfeng:'战役篇田丰',
 			tianfeng_prefix:'战役篇',
 			jiling:'战役篇纪灵',
 			jiling_prefix:'战役篇',
-			kongrong:'战役篇孔融',
-			kongrong_prefix:'战役篇',
+			zy_kongrong:'战役篇孔融',
+			zy_kongrong_prefix:'战役篇',
 			mateng:'战役篇马腾',
 			mateng_prefix:'战役篇',
 

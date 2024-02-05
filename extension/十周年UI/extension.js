@@ -1,4 +1,5 @@
 /*jshint esversion: 6 */
+import {ChildNodesWatcher} from '../../noname/library/cache/childNodesWatcher.js';
 game.import("extension", function(lib,game,ui,get,ai,_status){ 
 	// 适配新版本体
 	Array.prototype.contains = Array.prototype.includes;//懒得一个个改了，直接用这个消去报错。
@@ -19,6 +20,24 @@ content:function(config, pack){
 	var extensionPath = lib.assetURL + 'extension/' + extensionName + '/';
 	
     if (!(extension && extension.enable && extension.enable.init)) return;
+	
+	// Show-K修复版搬运
+	const decadeExtCardImage = lib.decade_extCardImage || (lib.decade_extCardImage = {});
+	if(lib.node&&lib.node.fs) new Promise((resolve, reject) => lib.node.fs.readdir(`${__dirname}/${decadeUIPath}image/card/`, (errnoException, files) => {
+		if (errnoException) reject(errnoException);
+		else resolve(files);
+	})).then(files => files.forEach(file => {
+		const fileName = lib.path.parse(file).name;
+		if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${file}`;
+	}));
+	else if (typeof resolveLocalFileSystemURL == 'function') new Promise((resolve, reject) => {
+		resolveLocalFileSystemURL(`${decadeUIPath}image/card/`, resolve, reject);
+	}).then(directoryEntry => new Promise((resolve, reject) => {
+		directoryEntry.createReader().readEntries(resolve, reject);
+	})).then(entries => entries.forEach(entry => {
+		const entryName = entry.name, fileName = lib.path.parse(entryName).name;
+		if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${entryName}`;
+	}));
 	
 	// 其他-帮助-关于游戏内容添加提示
 	lib.help['关于游戏']=
@@ -234,7 +253,7 @@ content:function(config, pack){
 			var getLeft=function(player){
 				if(player==game.me&&!ui.fakeme&&!ui.chess) return player.getLeft()+player.node.avatar.offsetWidth/2;
 				return player.getLeft()+player.offsetWidth/2;
-			}
+			};
 			var player=this;
 			var emotion=ui.create.div('','<div style="text-align:center"> <img src="'+lib.assetURL+'image/emotion/throw_emotion/'+name+'1.png"> </div>',game.chess?ui.chess:ui.window);
 			emotion.style.width='60px';
@@ -275,488 +294,508 @@ content:function(config, pack){
 	// 发送交互表情时间修改
 	// 修改game.js的函数nodeintro:(node,simple,evt)=>{
 	get.nodeintro=function(node,simple,evt){
-		var uiintro=ui.create.dialog('hidden','notouchscroll');
-		if(node.classList.contains('player')&&!node.name){
+		var uiintro = ui.create.dialog('hidden', 'notouchscroll');
+		if (node.classList.contains('player') && !node.name) {
 			return uiintro;
 		}
-		var i,translation,intro,str;
-		if(node._nointro) return;
-		if(typeof node._customintro=='function'){
-			if(node._customintro(uiintro,evt)===false) return;
-			if(evt)lib.placePoppedDialog(uiintro,evt);
+		var i, translation, intro, str;
+		if (node._nointro) return;
+		if (typeof node._customintro == 'function') {
+			if (node._customintro(uiintro, evt) === false) return;
+			if (evt) lib.placePoppedDialog(uiintro, evt);
 		}
-		else if(Array.isArray(node._customintro)){
-			var caption=node._customintro[0];
-			var content=node._customintro[1];
-			if(typeof caption=='function'){
-				caption=caption(node);
+		else if (Array.isArray(node._customintro)) {
+			var caption = node._customintro[0];
+			var content = node._customintro[1];
+			if (typeof caption == 'function') {
+				caption = caption(node);
 			}
-			if(typeof content=='function'){
-				content=content(node);
+			if (typeof content == 'function') {
+				content = content(node);
 			}
 			uiintro.add(caption);
-			uiintro.add('<div class="text center" style="padding-bottom:5px">'+content+'</div>');
+			uiintro.add('<div class="text center" style="padding-bottom:5px">' + content + '</div>');
 		}
-		else if(node.classList.contains('player')||node.linkplayer){
-			if(node.linkplayer){
-				node=node.link;
+		else if (node.classList.contains('player') || node.linkplayer) {
+			if (node.linkplayer) {
+				node = node.link;
 			}
-			let capt=get.translation(node.name);
-			const characterInfo=get.character(node.name),sex=node.sex||characterInfo[0];
-			if(sex&&sex!='unknown'&&lib.config.show_sex) capt+=`&nbsp;&nbsp;${sex=='none'?'无':get.translation(sex)}`;
-			const group=node.group;
-			if(group&&group!='unknown'&&lib.config.show_group) capt+=`&nbsp;&nbsp;${get.translation(group)}`;
+			let capt = get.translation(node.name);
+			const characterInfo = get.character(node.name), sex = node.sex || characterInfo[0];
+			if (sex && sex != 'unknown' && lib.config.show_sex) capt += `&nbsp;&nbsp;${sex == 'none' ? '无' : get.translation(sex)}`;
+			const group = node.group;
+			if (group && group != 'unknown' && lib.config.show_group) capt += `&nbsp;&nbsp;${get.translation(group)}`;
 			uiintro.add(capt);
 
-			if(lib.characterTitle[node.name]){
+			if (lib.characterTitle[node.name]) {
 				uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
 			}
 
-			if(!node.noclick){
-				const allShown=(node.isUnderControl()||(!game.observe&&game.me&&game.me.hasSkillTag('viewHandcard',null,node,true)));
-				const shownHs=node.getShownCards();
-				if(shownHs.length){
+			if (get.characterInitFilter(node.name)) {
+				const initFilters = get.characterInitFilter(node.name).filter(tag => {
+					if (!lib.characterInitFilter[node.name]) return true;
+					return lib.characterInitFilter[node.name](tag) !== false;
+				});
+				if(initFilters.length){
+					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
+					uiintro.addText(str);
+				}
+			}
+
+			if (!node.noclick) {
+				const allShown = (node.isUnderControl() || (!game.observe && game.me && game.me.hasSkillTag('viewHandcard', null, node, true)));
+				const shownHs = node.getShownCards();
+				if (shownHs.length) {
 					uiintro.add('<div class="text center">明置的手牌</div>');
 					uiintro.addSmall(shownHs);
-					if(allShown){
-						var hs=node.getCards('h');
-						hs.removeArray(shownHs)
-						if(hs.length){
+					if (allShown) {
+						var hs = node.getCards('h');
+						hs.removeArray(shownHs);
+						if (hs.length) {
 							uiintro.add('<div class="text center">其他手牌</div>');
 							uiintro.addSmall(hs);
 						}
 					}
 				}
-				else if(allShown){
-					var hs=node.getCards('h');
-					if(hs.length){
+				else if (allShown) {
+					var hs = node.getCards('h');
+					if (hs.length) {
 						uiintro.add('<div class="text center">手牌</div>');
 						uiintro.addSmall(hs);
 					}
 				}
 			}
 
-			var skills=node.getSkills(null,false,false).slice(0);
-			var skills2=game.filterSkills(skills,node);
-			if(node==game.me&&node.hiddenSkills.length){
+			var skills = node.getSkills(null, false, false).slice(0);
+			var skills2 = game.filterSkills(skills, node);
+			if (node == game.me && node.hiddenSkills.length) {
 				skills.addArray(node.hiddenSkills);
 			}
-			for(var i in node.disabledSkills){
-				if(node.disabledSkills[i].length==1&&
-					node.disabledSkills[i][0]==i+'_awake'&&
-					!node.hiddenSkills.contains(i)){
+			for (var i in node.disabledSkills) {
+				if (node.disabledSkills[i].length == 1 &&
+					node.disabledSkills[i][0] == i + '_awake' &&
+					!node.hiddenSkills.includes(i)) {
 					skills.add(i);
 				}
 			}
-			for(i=0;i<skills.length;i++){
-				if(lib.skill[skills[i]]&&(lib.skill[skills[i]].nopop||lib.skill[skills[i]].equipSkill)) continue;
-				if(lib.translate[skills[i]+'_info']){
-					if(lib.translate[skills[i]+'_ab']) translation=lib.translate[skills[i]+'_ab'];
-					else{
-						translation=get.translation(skills[i]);
-						if(!lib.skill[skills[i]].nobracket) translation=translation.slice(0,2);
+			for (i = 0; i < skills.length; i++) {
+				if (lib.skill[skills[i]] && (lib.skill[skills[i]].nopop || lib.skill[skills[i]].equipSkill)) continue;
+				if (lib.translate[skills[i] + '_info']) {
+					if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
+					else {
+						translation = get.translation(skills[i]);
+						if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
 					}
 
-					if(node.forbiddenSkills[skills[i]]){
-						var forbidstr='<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>';
-						if(node.forbiddenSkills[skills[i]].length){
-							forbidstr+='（与'+get.translation(node.forbiddenSkills[skills[i]])+'冲突）<br>';
+					if (node.forbiddenSkills[skills[i]]) {
+						var forbidstr = '<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>';
+						if (node.forbiddenSkills[skills[i]].length) {
+							forbidstr += '（与' + get.translation(node.forbiddenSkills[skills[i]]) + '冲突）<br>';
 						}
-						else{
-							forbidstr+='（双将禁用）<br>';
+						else {
+							forbidstr += '（双将禁用）<br>';
 						}
-						forbidstr+=get.skillInfoTranslation(skills[i],node)+'</div></div>'
+						forbidstr += get.skillInfoTranslation(skills[i], node) + '</div></div>';
 						uiintro.add(forbidstr);
 					}
-					else if(!skills2.contains(skills[i])){
-						if(lib.skill[skills[i]].preHidden&&get.mode()=='guozhan'){
-							uiintro.add('<div><div class="skill" style="opacity:0.5">【'+translation+'】</div><div><span style="opacity:0.5">'+get.skillInfoTranslation(skills[i],node)+'</span><br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">预亮技能</div></div></div>');
-							var underlinenode=uiintro.content.lastChild.querySelector('.underlinenode');
-							if(_status.prehidden_skills.contains(skills[i])){
+					else if (!skills2.includes(skills[i])) {
+						if (lib.skill[skills[i]].preHidden && get.mode() == 'guozhan') {
+							uiintro.add('<div><div class="skill" style="opacity:0.5">' + translation + '</div><div><span style="opacity:0.5">' + get.skillInfoTranslation(skills[i], node) + '</span><br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">预亮技能</div></div></div>');
+							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
+							if (_status.prehidden_skills.includes(skills[i])) {
 								underlinenode.classList.remove('on');
 							}
-							underlinenode.link=skills[i];
+							underlinenode.link = skills[i];
 							underlinenode.listen(ui.click.hiddenskill);
 						}
-						else uiintro.add('<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i],node)+'</div></div>');
+						else uiintro.add('<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
 					}
-					else if(lib.skill[skills[i]].temp||!node.skills.contains(skills[i])||lib.skill[skills[i]].thundertext){
-						if(lib.skill[skills[i]].frequent||lib.skill[skills[i]].subfrequent){
-							uiintro.add('<div><div class="skill thundertext thunderauto">【'+translation+'】</div><div class="thundertext thunderauto">'+get.skillInfoTranslation(skills[i],node)+'<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
-							var underlinenode=uiintro.content.lastChild.querySelector('.underlinenode');
-							if(lib.skill[skills[i]].frequent){
-								if(lib.config.autoskilllist.contains(skills[i])){
+					else if (lib.skill[skills[i]].temp || !node.skills.includes(skills[i]) || lib.skill[skills[i]].thundertext) {
+						if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
+							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
+							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
+							if (lib.skill[skills[i]].frequent) {
+								if (lib.config.autoskilllist.includes(skills[i])) {
 									underlinenode.classList.remove('on');
 								}
 							}
-							if(lib.skill[skills[i]].subfrequent){
-								for(var j=0;j<lib.skill[skills[i]].subfrequent.length;j++){
-									if(lib.config.autoskilllist.contains(skills[i]+'_'+lib.skill[skills[i]].subfrequent[j])){
+							if (lib.skill[skills[i]].subfrequent) {
+								for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
+									if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
 										underlinenode.classList.remove('on');
 									}
 								}
 							}
-							if(lib.config.autoskilllist.contains(skills[i])){
+							if (lib.config.autoskilllist.includes(skills[i])) {
 								underlinenode.classList.remove('on');
 							}
-							underlinenode.link=skills[i];
+							underlinenode.link = skills[i];
 							underlinenode.listen(ui.click.autoskill2);
 						}
-						else{
-							uiintro.add('<div><div class="skill thundertext thunderauto">【'+translation+'】</div><div class="thundertext thunderauto">'+get.skillInfoTranslation(skills[i],node)+'</div></div>');
+						else {
+							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
 						}
 					}
-					else if(lib.skill[skills[i]].frequent||lib.skill[skills[i]].subfrequent){
-						uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i],node)+'<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
-						var underlinenode=uiintro.content.lastChild.querySelector('.underlinenode');
-						if(lib.skill[skills[i]].frequent){
-							if(lib.config.autoskilllist.contains(skills[i])){
+					else if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
+						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
+						var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
+						if (lib.skill[skills[i]].frequent) {
+							if (lib.config.autoskilllist.includes(skills[i])) {
 								underlinenode.classList.remove('on');
 							}
 						}
-						if(lib.skill[skills[i]].subfrequent){
-							for(var j=0;j<lib.skill[skills[i]].subfrequent.length;j++){
-								if(lib.config.autoskilllist.contains(skills[i]+'_'+lib.skill[skills[i]].subfrequent[j])){
+						if (lib.skill[skills[i]].subfrequent) {
+							for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
+								if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
 									underlinenode.classList.remove('on');
 								}
 							}
 						}
-						if(lib.config.autoskilllist.contains(skills[i])){
+						if (lib.config.autoskilllist.includes(skills[i])) {
 							underlinenode.classList.remove('on');
 						}
-						underlinenode.link=skills[i];
+						underlinenode.link = skills[i];
 						underlinenode.listen(ui.click.autoskill2);
 					}
-					else if(lib.skill[skills[i]].clickable&&node.isIn()&&node.isUnderControl(true)){
-						var intronode=uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i],node)+'<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
-						if(!_status.gameStarted||(lib.skill[skills[i]].clickableFilter&&!lib.skill[skills[i]].clickableFilter(node))){
+					else if (lib.skill[skills[i]].clickable && node.isIn() && node.isUnderControl(true)) {
+						var intronode = uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
+						if (!_status.gameStarted || (lib.skill[skills[i]].clickableFilter && !lib.skill[skills[i]].clickableFilter(node))) {
 							intronode.classList.add('disabled');
-							intronode.style.opacity=0.5;
+							intronode.style.opacity = 0.5;
 						}
-						else{
-							intronode.link=node;
-							intronode.func=lib.skill[skills[i]].clickable;
+						else {
+							intronode.link = node;
+							intronode.func = lib.skill[skills[i]].clickable;
 							intronode.classList.add('pointerdiv');
 							intronode.listen(ui.click.skillbutton);
 						}
 					}
-					else{
-						uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i],node)+'</div></div>');
+					else {
+						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
 					}
-					if(lib.translate[skills[i]+'_append']){
-						uiintro._place_text=uiintro.add('<div class="text">'+lib.translate[skills[i]+'_append']+'</div>')
+					if (lib.translate[skills[i] + '_append']) {
+						uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
 					}
 				}
 			}
 			// if(get.is.phoneLayout()){
-			//     var storage=node.storage;
-			//     for(i in storage){
-			//      			if(get.info(i)&&get.info(i).intro){
-			//      						 intro=get.info(i).intro;
-			//      						 if(node.getSkills().concat(lib.skill.global).contains(i)==false&&!intro.show) continue;
-			//      						 var name=intro.name?intro.name:get.translation(i);
-			//      						 if(typeof name=='function'){
-			//      									  name=name(storage[i],node);
-			//      						 }
-			//      						 translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
-			//      						 var stint=get.storageintro(intro.content,storage[i],node,null,i);
-			//      						 if(stint){
-			//      									  translation+=stint+'</div></div>';
-			//      									  uiintro.add(translation);
-			//      						 }
-			//      			}
-			//     }
+			// 	var storage=node.storage;
+			// 	for(i in storage){
+			// 		if(get.info(i)&&get.info(i).intro){
+			// 			intro=get.info(i).intro;
+			// 			if(node.getSkills().concat(lib.skill.global).includes(i)==false&&!intro.show) continue;
+			// 			var name=intro.name?intro.name:get.translation(i);
+			// 			if(typeof name=='function'){
+			// 				name=name(storage[i],node);
+			// 			}
+			// 			translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
+			// 			var stint=get.storageintro(intro.content,storage[i],node,null,i);
+			// 			if(stint){
+			// 				translation+=stint+'</div></div>';
+			// 				uiintro.add(translation);
+			// 			}
+			// 		}
+			// 	}
 			// }
 
-			if(lib.config.right_range&&_status.gameStarted){
+			if (lib.config.right_range && _status.gameStarted) {
 				uiintro.add(ui.create.div('.placeholder'));
-				var table,tr,td;
-				table=document.createElement('table');
-				tr=document.createElement('tr');
+				var table, tr, td;
+				table = document.createElement('table');
+				tr = document.createElement('tr');
 				table.appendChild(tr);
-				td=document.createElement('td');
-				td.innerHTML='距离';
+				td = document.createElement('td');
+				td.innerHTML = '距离';
 				tr.appendChild(td);
-				td=document.createElement('td');
-				td.innerHTML='手牌';
+				td = document.createElement('td');
+				td.innerHTML = '手牌';
 				tr.appendChild(td);
-				td=document.createElement('td');
-				td.innerHTML='行动';
+				td = document.createElement('td');
+				td.innerHTML = '行动';
 				tr.appendChild(td);
-				td=document.createElement('td');
-				td.innerHTML='伤害';
+				td = document.createElement('td');
+				td.innerHTML = '伤害';
 				tr.appendChild(td);
 
-				tr=document.createElement('tr');
+				tr = document.createElement('tr');
 				table.appendChild(tr);
-				td=document.createElement('td');
-				if(node==game.me||!game.me||!game.me.isIn()){
-					td.innerHTML='-';
+				td = document.createElement('td');
+				if (node == game.me || !game.me || !game.me.isIn()) {
+					td.innerHTML = '-';
 				}
-				else{
-					var dist1=get.numStr(Math.max(1,game.me.distanceTo(node)));
-					var dist2=get.numStr(Math.max(1,node.distanceTo(game.me)));
-					if(dist1==dist2){
-						td.innerHTML=dist1;
+				else {
+					var dist1 = get.numStr(Math.max(1, game.me.distanceTo(node)));
+					var dist2 = get.numStr(Math.max(1, node.distanceTo(game.me)));
+					if (dist1 == dist2) {
+						td.innerHTML = dist1;
 					}
-					else{
-						td.innerHTML=dist1+'/'+dist2;
+					else {
+						td.innerHTML = dist1 + '/' + dist2;
 					}
 				}
 				tr.appendChild(td);
-				td=document.createElement('td');
-				let handcardLimit=node.getHandcardLimit();
-				td.innerHTML=`${node.countCards('h')}/${handcardLimit>=114514?'∞':handcardLimit}`;
+				td = document.createElement('td');
+				let handcardLimit = node.getHandcardLimit();
+				td.innerHTML = `${node.countCards('h')}/${handcardLimit >= 114514 ? '∞' : handcardLimit}`;
 				tr.appendChild(td);
-				td=document.createElement('td');
-				td.innerHTML=node.phaseNumber;
+				td = document.createElement('td');
+				td.innerHTML = node.phaseNumber;
 				tr.appendChild(td);
-				td=document.createElement('td');
+				td = document.createElement('td');
 
-				(function(){
-					num=0;
-					for(var j=0;j<node.stat.length;j++){
-						if(typeof node.stat[j].damage=='number') num+=node.stat[j].damage;
+				(function () {
+					num = 0;
+					for (var j = 0; j < node.stat.length; j++) {
+						if (typeof node.stat[j].damage == 'number') num += node.stat[j].damage;
 					}
-					td.innerHTML=num;
+					td.innerHTML = num;
 				}());
 				tr.appendChild(td);
-				table.style.width='calc(100% - 20px)';
-				table.style.marginLeft='10px';
+				table.style.width = 'calc(100% - 20px)';
+				table.style.marginLeft = '10px';
 
 				uiintro.content.appendChild(table);
-				if(!lib.config.show_favourite){
-					table.style.paddingBottom='5px'
+				if (!lib.config.show_favourite) {
+					table.style.paddingBottom = '5px';
 				}
 			}
-			if(!simple||get.is.phoneLayout()){
-				var es=node.getCards('e');
-				for(var i=0;i<es.length;i++){
-					var cardinfo=lib.card[es[i].name];
-					if(cardinfo&&cardinfo.cardPrompt) uiintro.add('<div><div class="skill">'+es[i].outerHTML+'</div><div>'+cardinfo.cardPrompt(es[i])+'</div></div>');
-					else uiintro.add('<div><div class="skill">'+es[i].outerHTML+'</div><div>'+lib.translate[es[i].name+'_info']+'</div></div>');
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform='';
-					
-					if(lib.translate[es[i].name+'_append']){
-						uiintro.add('<div class="text">'+lib.translate[es[i].name+'_append']+'</div>');
+			if (!simple || get.is.phoneLayout()) {
+				var es = node.getCards('e');
+				for (var i = 0; i < es.length; i++) {
+					var cardinfo = lib.card[es[i].name];
+					if (cardinfo && cardinfo.cardPrompt) uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + cardinfo.cardPrompt(es[i]) + '</div></div>');
+					else uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + lib.translate[es[i].name + '_info'] + '</div></div>');
+					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
+
+					if (lib.translate[es[i].name + '_append']) {
+						uiintro.add('<div class="text">' + lib.translate[es[i].name + '_append'] + '</div>');
 					}
 				}
-				var js=node.getCards('j');
-				for(var i=0;i<js.length;i++){
-					if(js[i].viewAs&&js[i].viewAs!=js[i].name){
-						uiintro.add('<div><div class="skill">'+js[i].outerHTML+'</div><div>'+lib.translate[js[i].viewAs]+'：'+lib.translate[js[i].viewAs+'_info']+'</div></div>');
+				var js = node.getCards('j');
+				for (var i = 0; i < js.length; i++) {
+					if (js[i].viewAs && js[i].viewAs != js[i].name) {
+						let html = js[i].outerHTML;
+						let cardInfo = lib.card[js[i].viewAs], showCardIntro=true;
+						if (cardInfo.blankCard) {
+							var cardOwner = get.owner(js[i]);
+							if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
+						}
+						if (!showCardIntro) {
+							html=ui.create.button(js[i],'blank').outerHTML;
+						}
+						uiintro.add('<div><div class="skill">' + html + '</div><div>' + lib.translate[js[i].viewAs] + '：' + lib.translate[js[i].viewAs + '_info'] + '</div></div>');
 					}
-					else{
-						uiintro.add('<div><div class="skill">'+js[i].outerHTML+'</div><div>'+lib.translate[js[i].name+'_info']+'</div></div>');
+					else {
+						uiintro.add('<div><div class="skill">' + js[i].outerHTML + '</div><div>' + lib.translate[js[i].name + '_info'] + '</div></div>');
 					}
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform='';
+					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
 				}
-				if(get.is.phoneLayout()){
-					var markCoutainer=ui.create.div('.mark-container.marks');
-					for(var i in node.marks){
-						var nodemark=node.marks[i].cloneNode(true);
+				if (get.is.phoneLayout()) {
+					var markCoutainer = ui.create.div('.mark-container.marks');
+					for (var i in node.marks) {
+						var nodemark = node.marks[i].cloneNode(true);
 						nodemark.classList.add('pointerdiv');
-						nodemark.link=node.marks[i];
-						nodemark.style.transform='';
+						nodemark.link = node.marks[i];
+						nodemark.style.transform = '';
 						markCoutainer.appendChild(nodemark);
-						nodemark.listen(function(){
-							uiintro.noresume=true;
-							var rect=this.link.getBoundingClientRect();
-							ui.click.intro.call(this.link,{
-								clientX:rect.left+rect.width,
-								clientY:rect.top+rect.height/2,
+						nodemark.listen(function () {
+							uiintro.noresume = true;
+							var rect = this.link.getBoundingClientRect();
+							ui.click.intro.call(this.link, {
+								clientX: rect.left + rect.width,
+								clientY: rect.top + rect.height / 2,
 							});
-							if(lib.config.touchscreen){
+							if (lib.config.touchscreen) {
 								uiintro._close();
 							}
 						});
 					}
-					if(markCoutainer.childElementCount){
+					if (markCoutainer.childElementCount) {
 						uiintro.addText('标记');
 						uiintro.add(markCoutainer);
 					}
 				}
 			}
-			if(!game.observe&&_status.gameStarted&&game.me&&node!=game.me){
-				ui.throwEmotion=[];
+			if (!game.observe && _status.gameStarted && game.me && node != game.me) {
+				ui.throwEmotion = [];
 				uiintro.addText('发送交互表情');
-				var click=function(){
-					if(_status.dragged) return;
-					if(_status.justdragged) return;
-					if(_status.throwEmotionWait) return;
-					var emotion=this.link;
-					if(game.online){
-						game.send('throwEmotion',node,emotion);
+				var click = function () {
+					if (_status.dragged) return;
+					if (_status.justdragged) return;
+					if (_status.throwEmotionWait) return;
+					var emotion = this.link;
+					if (game.online) {
+						game.send('throwEmotion', node, emotion);
 					}
-					else game.me.throwEmotion(node,emotion);
+					else game.me.throwEmotion(node, emotion);
 					uiintro._close();
-					_status.throwEmotionWait=true;
-					setTimeout(function(){
-						_status.throwEmotionWait=false;
-						if(ui.throwEmotion){
-							for(var i of ui.throwEmotion) i.classList.remove('exclude');
+					_status.throwEmotionWait = true;
+					setTimeout(function () {
+						_status.throwEmotionWait = false;
+						if (ui.throwEmotion) {
+							for (var i of ui.throwEmotion) i.classList.remove('exclude');
 						}
-					},(emotion=='flower'||emotion=='egg')?5:10)
+					}, (emotion == 'flower' || emotion == 'egg') ? 5 : 10);
 				};
 				var td;
-				var table=document.createElement('div');
+				var table = document.createElement('div');
 				table.classList.add('add-setting');
-				table.style.margin='0';
-				table.style.width='100%';
-				table.style.position='relative';
-				var listi=['flower','egg'];
-				for(var i=0;i<listi.length;i++){
-					td=ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
+				table.style.margin = '0';
+				table.style.width = '100%';
+				table.style.position = 'relative';
+				var listi = ['flower', 'egg'];
+				for (var i = 0; i < listi.length; i++) {
+					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
 					ui.throwEmotion.add(td);
-					if(_status.throwEmotionWait) td.classList.add('exclude');
-					td.link=listi[i];
+					if (_status.throwEmotionWait) td.classList.add('exclude');
+					td.link = listi[i];
 					table.appendChild(td);
-					td.innerHTML='<span>'+get.translation(listi[i])+'</span>';
-					td.addEventListener(lib.config.touchscreen?'touchend':'click',click);
+					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
+					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
 				}
 				uiintro.content.appendChild(table);
-				table=document.createElement('div');
+				table = document.createElement('div');
 				table.classList.add('add-setting');
-				table.style.margin='0';
-				table.style.width='100%';
-				table.style.position='relative';
-				var listi=['wine','shoe'];
-				if(game.me.storage.zhuSkill_shanli) listi=['yuxisx','jiasuo'];
-				for(var i=0;i<listi.length;i++){
-					td=ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
+				table.style.margin = '0';
+				table.style.width = '100%';
+				table.style.position = 'relative';
+				var listi = ['wine', 'shoe'];
+				if (game.me.storage.zhuSkill_shanli) listi = ['yuxisx', 'jiasuo'];
+				for (var i = 0; i < listi.length; i++) {
+					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
 					ui.throwEmotion.add(td);
-					if(_status.throwEmotionWait) td.classList.add('exclude');
-					td.link=listi[i];
+					if (_status.throwEmotionWait) td.classList.add('exclude');
+					td.link = listi[i];
 					table.appendChild(td);
-					td.innerHTML='<span>'+get.translation(listi[i])+'</span>';
-					td.addEventListener(lib.config.touchscreen?'touchend':'click',click);
+					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
+					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
 				}
 				uiintro.content.appendChild(table);
 			}
-			var modepack=lib.characterPack['mode_'+get.mode()];
-			if(lib.config.show_favourite&&lib.character[node.name]&&game.players.contains(node)&&
-				(!modepack||!modepack[node.name])&&(!simple||get.is.phoneLayout())){
-				var addFavourite=ui.create.div('.text.center.pointerdiv');
-				addFavourite.link=node.name;
-				if(lib.config.favouriteCharacter.contains(node.name)){
-					addFavourite.innerHTML='移除收藏';
+			var modepack = lib.characterPack['mode_' + get.mode()];
+			if (lib.config.show_favourite && lib.character[node.name] && game.players.includes(node) &&
+				(!modepack || !modepack[node.name]) && (!simple || get.is.phoneLayout())) {
+				var addFavourite = ui.create.div('.text.center.pointerdiv');
+				addFavourite.link = node.name;
+				if (lib.config.favouriteCharacter.includes(node.name)) {
+					addFavourite.innerHTML = '移除收藏';
 				}
-				else{
-					addFavourite.innerHTML='添加收藏';
+				else {
+					addFavourite.innerHTML = '添加收藏';
 				}
-				addFavourite.listen(ui.click.favouriteCharacter)
+				addFavourite.listen(ui.click.favouriteCharacter);
 				uiintro.add(addFavourite);
 			}
-			if(!simple||get.is.phoneLayout()){
-				if((lib.config.change_skin||lib.skin)&&!node.isUnseen()){
-					var num=1;
-					var introadded=false;
-					var createButtons=function(num,avatar2){
-						if(!introadded){
-							introadded=true;
+			if (!simple || get.is.phoneLayout()) {
+				if ((lib.config.change_skin || lib.skin) && !node.isUnseen()) {
+					var num = 1;
+					var introadded = false;
+					var createButtons = function (num, avatar2) {
+						if (!introadded) {
+							introadded = true;
 							uiintro.add('<div class="text center">更改皮肤</div>');
 						}
-						var buttons=ui.create.div('.buttons.smallzoom.scrollbuttons');
+						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
 						lib.setMousewheel(buttons);
-						var nameskin=(avatar2?node.name2:node.name1);
-						var nameskin2=nameskin;
-						var gzbool=false;
-						if(nameskin.startsWith('gz_shibing')){
-							nameskin=nameskin.slice(3,11);
+						var nameskin = (avatar2 ? node.name2 : node.name1);
+						var nameskin2 = nameskin;
+						var gzbool = false;
+						if (nameskin.startsWith('gz_shibing')) {
+							nameskin = nameskin.slice(3, 11);
 						}
-						else if(nameskin.startsWith('gz_')){
-							nameskin=nameskin.slice(3);
-							gzbool=true;
+						else if (nameskin.startsWith('gz_')) {
+							nameskin = nameskin.slice(3);
+							gzbool = true;
 						}
-						for(var i=0;i<=num;i++){
-							var button=ui.create.div('.button.character.pointerdiv',buttons,function(){
-								if(this._link){
-									if(avatar2){
-										lib.config.skin[nameskin]=this._link;
-										node.node.avatar2.style.backgroundImage=this.style.backgroundImage;
+						for (var i = 0; i <= num; i++) {
+							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
+								if (this._link) {
+									if (avatar2) {
+										lib.config.skin[nameskin] = this._link;
+										node.node.avatar2.style.backgroundImage = this.style.backgroundImage;
 									}
-									else{
-										lib.config.skin[nameskin]=this._link;
-										node.node.avatar.style.backgroundImage=this.style.backgroundImage;
+									else {
+										lib.config.skin[nameskin] = this._link;
+										node.node.avatar.style.backgroundImage = this.style.backgroundImage;
 									}
 								}
-								else{
+								else {
 									delete lib.config.skin[nameskin];
-									if(avatar2){
-										if(gzbool&&lib.character[nameskin2][4].contains('gzskin')&&lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar2.setBackground(nameskin2,'character');
-										else node.node.avatar2.setBackground(nameskin,'character');
+									if (avatar2) {
+										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar2.setBackground(nameskin2, 'character');
+										else node.node.avatar2.setBackground(nameskin, 'character');
 									}
-									else{
-										if(gzbool&&lib.character[nameskin2][4].contains('gzskin')&&lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar.setBackground(nameskin2,'character');
-										else node.node.avatar.setBackground(nameskin,'character');
+									else {
+										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar.setBackground(nameskin2, 'character');
+										else node.node.avatar.setBackground(nameskin, 'character');
 									}
 								}
-								game.saveConfig('skin',lib.config.skin);
+								game.saveConfig('skin', lib.config.skin);
 							});
-							button._link=i;
-							if(i){
-								button.setBackgroundImage('image/skin/'+nameskin+'/'+i+'.jpg');
+							button._link = i;
+							if (i) {
+								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
 							}
-							else{
-								if(gzbool&&lib.character[nameskin2][4].contains('gzskin')&&lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2,'character','noskin');
-								else button.setBackground(nameskin,'character','noskin');
+							else {
+								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
+								else button.setBackground(nameskin, 'character', 'noskin');
 							}
 						}
 						uiintro.add(buttons);
 					};
-					var loadImage=function(avatar2){
-						var img=new Image();
-						img.onload=function(){
+					var loadImage = function (avatar2) {
+						var img = new Image();
+						img.onload = function () {
 							num++;
 							loadImage(avatar2);
-						}
-						img.onerror=function(){
+						};
+						img.onerror = function () {
 							num--;
-							if(num){
-								createButtons(num,avatar2);
+							if (num) {
+								createButtons(num, avatar2);
 							}
-							if(!avatar2){
-								if(!node.classList.contains('unseen2')&&node.name2){
-									num=1;
+							if (!avatar2) {
+								if (!node.classList.contains('unseen2') && node.name2) {
+									num = 1;
 									loadImage(true);
 								}
 							}
+						};
+						var nameskin = (avatar2 ? node.name2 : node.name1);
+						var nameskin2 = nameskin;
+						var gzbool = false;
+						if (nameskin.startsWith('gz_shibing')) {
+							nameskin = nameskin.slice(3, 11);
 						}
-						var nameskin=(avatar2?node.name2:node.name1);
-						var nameskin2=nameskin;
-						var gzbool=false;
-						if(nameskin.startsWith('gz_shibing')){
-							nameskin=nameskin.slice(3,11);
+						else if (nameskin.startsWith('gz_')) {
+							nameskin = nameskin.slice(3);
+							gzbool = true;
 						}
-						else if(nameskin.startsWith('gz_')){
-							nameskin=nameskin.slice(3);
-							gzbool=true;
-						}
-						img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.jpg';
-					}
-					if(lib.config.change_skin){
-						if(!node.isUnseen(0)){
+						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
+					};
+					if (lib.config.change_skin) {
+						if (!node.isUnseen(0)) {
 							loadImage();
 						}
-						else if(node.name2){
+						else if (node.name2) {
 							loadImage(true);
 						}
 					}
-					else{
-						setTimeout(function(){
-							var nameskin1=node.name1;
-							var nameskin2=node.name2;
-							if(nameskin1&&nameskin1.startsWith('gz_')){
-								nameskin1=nameskin1.slice(3);
+					else {
+						setTimeout(function () {
+							var nameskin1 = node.name1;
+							var nameskin2 = node.name2;
+							if (nameskin1 && nameskin1.startsWith('gz_')) {
+								nameskin1 = nameskin1.slice(3);
 							}
-							if(nameskin2&&nameskin2.startsWith('gz_')){
-								nameskin2=nameskin2.slice(3);
+							if (nameskin2 && nameskin2.startsWith('gz_')) {
+								nameskin2 = nameskin2.slice(3);
 							}
-							if(!node.isUnseen(0)&&lib.skin[nameskin1]){
+							if (!node.isUnseen(0) && lib.skin[nameskin1]) {
 								createButtons(lib.skin[nameskin1]);
 							}
-							if(!node.isUnseen(1)&&lib.skin[nameskin2]){
-								createButtons(lib.skin[nameskin2],true);
+							if (!node.isUnseen(1) && lib.skin[nameskin2]) {
+								createButtons(lib.skin[nameskin2], true);
 							}
 						});
 					}
@@ -765,43 +804,43 @@ content:function(config, pack){
 
 			uiintro.add(ui.create.div('.placeholder.slim'));
 		}
-		else if(node.classList.contains('mark')&&node.info&&
-			node.parentNode&&node.parentNode.parentNode&&node.parentNode.parentNode.classList.contains('player')){
-			var info=node.info;
-			var player=node.parentNode.parentNode;
-			if(info.name){
-				if(typeof info.name=='function'){
-					var named=info.name(player.storage[node.skill],player);
-					if(named){
+		else if (node.classList.contains('mark') && node.info &&
+			node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.classList.contains('player')) {
+			var info = node.info;
+			var player = node.parentNode.parentNode;
+			if (info.name) {
+				if (typeof info.name == 'function') {
+					var named = info.name(player.storage[node.skill], player);
+					if (named) {
 						uiintro.add(named);
 					}
 				}
-				else{
+				else {
 					uiintro.add(info.name);
 				}
 			}
-			else if(info.name!==false){
+			else if (info.name !== false) {
 				uiintro.add(get.translation(node.skill));
 			}
-			if(typeof info.id=='string'&&info.id.startsWith('subplayer')&&
-				player.isUnderControl(true)&&player.storage[info.id]&&!_status.video){
-				var storage=player.storage[info.id];
-				uiintro.addText('当前体力：'+storage.hp+'/'+storage.maxHp);
-				if(storage.hs.length){
+			if (typeof info.id == 'string' && info.id.startsWith('subplayer') &&
+				player.isUnderControl(true) && player.storage[info.id] && !_status.video) {
+				var storage = player.storage[info.id];
+				uiintro.addText('当前体力：' + storage.hp + '/' + storage.maxHp);
+				if (storage.hs.length) {
 					uiintro.addText('手牌区');
 					uiintro.addSmall(storage.hs);
 				}
-				if(storage.es.length){
+				if (storage.es.length) {
 					uiintro.addText('装备区');
 					uiintro.addSmall(storage.es);
 				}
 			}
-			if(typeof info.mark=='function'){
-				var stint=info.mark(uiintro,player.storage[node.skill],player);
-				if(stint){
-					var placetext=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
-					if(!stint.startsWith('<div class="skill"')){
-						uiintro._place_text=placetext;
+			if (typeof info.mark == 'function') {
+				var stint = info.mark(uiintro, player.storage[node.skill], player);
+				if (stint) {
+					var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
+					if (!stint.startsWith('<div class="skill"')) {
+						uiintro._place_text = placetext;
 					}
 					// if(stint.length<=100){
 					// 	uiintro.add('<div class="text center">'+stint+'</div>');
@@ -811,16 +850,16 @@ content:function(config, pack){
 					// }
 				}
 			}
-			else{
-				var stint=get.storageintro(info.content,player.storage[node.skill],player,uiintro,node.skill);
-				if(stint){
-					if(stint[0]=='@'){
-						uiintro.add('<div class="caption">'+stint.slice(1)+'</div>');
+			else {
+				var stint = get.storageintro(info.content, player.storage[node.skill], player, uiintro, node.skill);
+				if (stint) {
+					if (stint[0] == '@') {
+						uiintro.add('<div class="caption">' + stint.slice(1) + '</div>');
 					}
-					else{
-						var placetext=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
-						if(!stint.startsWith('<div class="skill"')){
-							uiintro._place_text=placetext;
+					else {
+						var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
+						if (!stint.startsWith('<div class="skill"')) {
+							uiintro._place_text = placetext;
 						}
 					}
 					// else if(stint.length<=100){
@@ -833,522 +872,538 @@ content:function(config, pack){
 			}
 			uiintro.add(ui.create.div('.placeholder.slim'));
 		}
-		else if(node.classList.contains('card')){
+		else if (node.classList.contains('card')) {
 			//卡牌长按介绍
-			if(ui.arena.classList.contains('observe')&&node.parentNode.classList.contains('handcards')){
+			if (ui.arena.classList.contains('observe') && node.parentNode.classList.contains('handcards')) {
 				return;
 			}
-			var name=node.name;
-			if(node.parentNode.cardMod){
-				var moded=false;
-				for(var i in node.parentNode.cardMod){
-					var item=node.parentNode.cardMod[i](node);
-					if(Array.isArray(item)){
-						moded=true;
+			var name = node.name;
+			if (node.parentNode.cardMod) {
+				var moded = false;
+				for (var i in node.parentNode.cardMod) {
+					var item = node.parentNode.cardMod[i](node);
+					if (Array.isArray(item)) {
+						moded = true;
 						uiintro.add(item[0]);
-						uiintro._place_text=uiintro.add('<div class="text" style="display:inline">'+item[1]+'</div>');
+						uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + item[1] + '</div>');
 					}
 				}
-				if(moded) return uiintro;
+				if (moded) return uiintro;
 			}
-			if(node.link&&node.link.name&&lib.card[node.link.name]){
-				name=node.link.name;
+			if (node.link && node.link.name && lib.card[node.link.name]) {
+				name = node.link.name;
 			}
-			if(get.position(node)=='j'&&node.viewAs&&node.viewAs!=name){
+			if (get.position(node) == 'j' && node.viewAs && node.viewAs != name) {
 				uiintro.add(get.translation(node.viewAs));
-				uiintro.add('<div class="text center">（'+get.translation(get.translation(node))+'）</div>');
+				var cardInfo = lib.card[node.viewAs], showCardIntro=true;
+				if (cardInfo.blankCard) {
+					var cardOwner = get.owner(node);
+					if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
+				}
+				if (showCardIntro) uiintro.add('<div class="text center">（' + get.translation(get.translation(node)) + '）</div>');
 				// uiintro.add(get.translation(node.viewAs)+'<br><div class="text center" style="padding-top:5px;">（'+get.translation(node)+'）</div>');
-				uiintro.nosub=true;
-				name=node.viewAs;
+				uiintro.nosub = true;
+				name = node.viewAs;
 			}
-			else{
+			else {
 				uiintro.add(get.translation(node));
 			}
-			if(node._banning){
-				var clickBanned=function(){
-					var banned=lib.config[this.bannedname]||[];
-					if(banned.contains(name)){
+			if (node._banning) {
+				var clickBanned = function () {
+					var banned = lib.config[this.bannedname] || [];
+					if (banned.includes(name)) {
 						banned.remove(name);
 					}
-					else{
+					else {
 						banned.push(name);
 					}
-					game.saveConfig(this.bannedname,banned);
+					game.saveConfig(this.bannedname, banned);
 					this.classList.toggle('on');
-					if(node.updateBanned){
+					if (node.updateBanned) {
 						node.updateBanned();
 					}
 				};
-				var modeorder=lib.config.modeorder||[];
-				for(var i in lib.mode){
+				var modeorder = lib.config.modeorder || [];
+				for (var i in lib.mode) {
 					modeorder.add(i);
 				}
-				var list=[];
-				uiintro.contentContainer.listen(function(e){
+				var list = [];
+				uiintro.contentContainer.listen(function (e) {
 					ui.click.touchpop();
 					e.stopPropagation();
 				});
-				for(var i=0;i<modeorder.length;i++){
-					if(node._banning=='online'){
-						if(!lib.mode[modeorder[i]].connect) continue;
+				for (var i = 0; i < modeorder.length; i++) {
+					if (node._banning == 'online') {
+						if (!lib.mode[modeorder[i]].connect) continue;
 					}
-					else if(modeorder[i]=='connect'||modeorder[i]=='brawl'){
+					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
 						continue;
 					}
-					if(lib.config.all.mode.contains(modeorder[i])){
+					if (lib.config.all.mode.includes(modeorder[i])) {
 						list.push(modeorder[i]);
 					}
 				}
-				if(lib.card[name]&&lib.card[name].type=='trick') list.push('zhinang_tricks');
-				var page=ui.create.div('.menu-buttons.configpopped',uiintro.content);
-				var banall=false;
-				for(var i=0;i<list.length;i++){
-					var cfg=ui.create.div('.config',list[i]=='zhinang_tricks'?'设为智囊':(lib.translate[list[i]]+'模式'),page);
+				if (lib.card[name] && lib.card[name].type == 'trick') list.push('zhinang_tricks');
+				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
+				var banall = false;
+				for (var i = 0; i < list.length; i++) {
+					var cfg = ui.create.div('.config', list[i] == 'zhinang_tricks' ? '设为智囊' : (lib.translate[list[i]] + '模式'), page);
 					cfg.classList.add('toggle');
-					if(list[i]=='zhinang_tricks'){
-						cfg.bannedname=((node._banning=='offline')?'':'connect_')+'zhinang_tricks';
+					if (list[i] == 'zhinang_tricks') {
+						cfg.bannedname = ((node._banning == 'offline') ? '' : 'connect_') + 'zhinang_tricks';
 					}
-					else if(node._banning=='offline'){
-						cfg.bannedname=list[i]+'_bannedcards';
+					else if (node._banning == 'offline') {
+						cfg.bannedname = list[i] + '_bannedcards';
 					}
-					else{
-						cfg.bannedname='connect_'+list[i]+'_bannedcards';
+					else {
+						cfg.bannedname = 'connect_' + list[i] + '_bannedcards';
 					}
 					cfg.listen(clickBanned);
 					ui.create.div(ui.create.div(cfg));
-					var banned=lib.config[cfg.bannedname]||[];
-					if(banned.contains(name)==(list[i]=='zhinang_tricks')){
+					var banned = lib.config[cfg.bannedname] || [];
+					if (banned.includes(name) == (list[i] == 'zhinang_tricks')) {
 						cfg.classList.add('on');
-						banall=true;
+						banall = true;
 					}
 				}
-				ui.create.div('.menubutton.pointerdiv',banall?'全部禁用':'全部启用',uiintro.content,function(){
-					if(this.innerHTML=='全部禁用'){
-						for(var i=0;i<page.childElementCount;i++){
-							if(page.childNodes[i].bannedname.indexOf('zhinang_tricks')==-1&&page.childNodes[i].bannedname&&page.childNodes[i].classList.contains('on')){
+				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
+					if (this.innerHTML == '全部禁用') {
+						for (var i = 0; i < page.childElementCount; i++) {
+							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
 								clickBanned.call(page.childNodes[i]);
 							}
 						}
-						this.innerHTML='全部启用';
+						this.innerHTML = '全部启用';
 					}
-					else{
-						for(var i=0;i<page.childElementCount;i++){
-							if(page.childNodes[i].bannedname.indexOf('zhinang_tricks')==-1&&page.childNodes[i].bannedname&&!page.childNodes[i].classList.contains('on')){
+					else {
+						for (var i = 0; i < page.childElementCount; i++) {
+							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
 								clickBanned.call(page.childNodes[i]);
 							}
 						}
-						this.innerHTML='全部禁用';
+						this.innerHTML = '全部禁用';
 					}
-				}).style.marginTop='-10px';
-				ui.create.div('.placeholder.slim',uiintro.content);
+				}).style.marginTop = '-10px';
+				ui.create.div('.placeholder.slim', uiintro.content);
 			}
-			else{
-				if(lib.translate[name+'_info']){
-					if(!uiintro.nosub){
-						if(lib.card[name]&&lib.card[name].derivation){
-							if(typeof lib.card[name].derivation=='string'){
-								uiintro.add('<div class="text center">来源：'+get.translation(lib.card[name].derivation)+'</div>');
+			else {
+				if (lib.translate[name + '_info']) {
+					if (!uiintro.nosub) {
+						if (lib.card[name] && lib.card[name].derivation) {
+							if (typeof lib.card[name].derivation == 'string') {
+								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivation) + '</div>');
 							}
-							else if(lib.card[name].derivationpack){
-								uiintro.add('<div class="text center">来源：'+get.translation(lib.card[name].derivationpack+'_card_config')+'包</div>');
-							}
-						}
-						let typeinfo='';
-						if(lib.card[name].unique){
-							typeinfo+=('特殊'+get.translation(lib.card[name].type)+'牌');
-						}
-						else if(lib.card[name].type&&lib.translate[lib.card[name].type]){
-							typeinfo+=(get.translation(lib.card[name].type)+'牌');
-						}
-						if(get.subtype(name,false)){
-							typeinfo+=('-'+get.translation(get.subtype(name,false)));
-						}
-						if(typeinfo){
-							uiintro.add('<div class="text center">'+typeinfo+'</div>');
-						}
-						if(lib.card[name].unique&&lib.card[name].type=='equip'){
-							if(lib.cardPile.guozhan&&lib.cardPack.guozhan.contains(name)){
-								uiintro.add('<div class="text center">专属装备</div>').style.marginTop='-5px';
-							}
-							else{
-								uiintro.add('<div class="text center">特殊装备</div>').style.marginTop='-5px';
+							else if (lib.card[name].derivationpack) {
+								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivationpack + '_card_config') + '包</div>');
 							}
 						}
-						if(lib.card[name]&&lib.card[name].addinfomenu){
-							uiintro.add('<div class="text center">'+lib.card[name].addinfomenu+'</div>');
+						let typeinfo = '';
+						if (lib.card[name] && lib.card[name].unique) {
+							typeinfo += ('特殊' + get.translation(lib.card[name].type) + '牌');
 						}
-						if(get.subtype(name,false)=='equip1'){
-							var added=false;
-							if(lib.card[node.name]&&lib.card[node.name].distance){
-								var dist=lib.card[node.name].distance;
-								if(dist.attackFrom){
-									added=true;
-									uiintro.add('<div class="text center">攻击范围：'+(-dist.attackFrom+1)+'</div>');
+						else if (lib.card[name] && lib.card[name].type && lib.translate[lib.card[name].type]) {
+							typeinfo += (get.translation(lib.card[name].type) + '牌');
+						}
+						if (get.subtype(name, false)) {
+							typeinfo += ('-' + get.translation(get.subtype(name, false)));
+						}
+						if (typeinfo) {
+							uiintro.add('<div class="text center">' + typeinfo + '</div>');
+						}
+						if (lib.card[name].unique && lib.card[name].type == 'equip') {
+							if (lib.cardPile.guozhan && lib.cardPack.guozhan.includes(name)) {
+								uiintro.add('<div class="text center">专属装备</div>').style.marginTop = '-5px';
+							}
+							else {
+								uiintro.add('<div class="text center">特殊装备</div>').style.marginTop = '-5px';
+							}
+						}
+						if (lib.card[name] && lib.card[name].addinfomenu) {
+							uiintro.add('<div class="text center">' + lib.card[name].addinfomenu + '</div>');
+						}
+						if (get.subtype(name, false) == 'equip1') {
+							var added = false;
+							if (lib.card[node.name] && lib.card[node.name].distance) {
+								var dist = lib.card[node.name].distance;
+								if (dist.attackFrom) {
+									added = true;
+									uiintro.add('<div class="text center">攻击范围：' + (-dist.attackFrom + 1) + '</div>');
 								}
 							}
-							if(!added){
+							if (!added) {
 								uiintro.add('<div class="text center">攻击范围：1</div>');
 							}
 						}
 					}
-					if(lib.card[name].cardPrompt){
-						var str=lib.card[name].cardPrompt(node.link||node),placetext=uiintro.add('<div class="text" style="display:inline">'+str+'</div>');
-						if(!str.startsWith('<div class="skill"')){
-							uiintro._place_text=placetext;
+					if (lib.card[name].cardPrompt) {
+						var str = lib.card[name].cardPrompt(node.link || node), placetext = uiintro.add('<div class="text" style="display:inline">' + str + '</div>');
+						if (!str.startsWith('<div class="skill"')) {
+							uiintro._place_text = placetext;
 						}
 					}
-					else if(lib.translate[name+'_info']){
-						var placetext=uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_info']+'</div>');
-						if(!lib.translate[name+'_info'].startsWith('<div class="skill"')){
-							uiintro._place_text=placetext;
+					else if (lib.translate[name + '_info']) {
+						var placetext = uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_info'] + '</div>');
+						if (!lib.translate[name + '_info'].startsWith('<div class="skill"')) {
+							uiintro._place_text = placetext;
 						}
 					}
-					if(get.is.yingbianConditional(node.link||node)){
-						const yingbianEffects=get.yingbianEffects(node.link||node);
-						if(!yingbianEffects.length){
-							const defaultYingbianEffect=get.defaultYingbianEffect(node.link||node);
-							if(lib.yingbian.prompt.has(defaultYingbianEffect)) yingbianEffects.push(defaultYingbianEffect);
+					if (get.is.yingbianConditional(node.link || node)) {
+						const yingbianEffects = get.yingbianEffects(node.link || node);
+						if (!yingbianEffects.length) {
+							const defaultYingbianEffect = get.defaultYingbianEffect(node.link || node);
+							if (lib.yingbian.prompt.has(defaultYingbianEffect)) yingbianEffects.push(defaultYingbianEffect);
 						}
-						if(yingbianEffects.length) uiintro.add(`<div class="text" style="font-family: yuanli">应变：${yingbianEffects.map(value=>lib.yingbian.prompt.get(value)).join('；')}</div>`);
+						if (yingbianEffects.length && showCardIntro) uiintro.add(`<div class="text" style="font-family: yuanli">应变：${yingbianEffects.map(value => lib.yingbian.prompt.get(value)).join('；')}</div>`);
 					}
-					if(lib.translate[name+'_append']){
-						uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_append']+'</div>');
+					if (lib.translate[name + '_append']) {
+						uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_append'] + '</div>');
 					}
 				}
 				uiintro.add(ui.create.div('.placeholder.slim'));
 			}
 		}
-		else if(node.classList.contains('character')){
-			const character=node.link,characterInfo=get.character(node.link);
-			let capt=get.translation(character);
-			if(characterInfo){
-				const infoSex=characterInfo[0];
-				if(infoSex&&lib.config.show_sex) capt+=`&nbsp;&nbsp;${infoSex=='none'?'无':lib.translate[infoSex]}`;
-				const infoGroup=characterInfo[1];
-				if(infoGroup&&lib.config.show_group){
-					const group=get.is.double(character,true);
-					if(group) capt+=`&nbsp;&nbsp;${group.map(value=>get.translation(value)).join('/')}`;
-					else capt+=`&nbsp;&nbsp;${lib.translate[infoGroup]}`;
+		else if (node.classList.contains('character')) {
+			const character = node.link, characterInfo = get.character(node.link);
+			let capt = get.translation(character);
+			if (characterInfo) {
+				const infoSex = characterInfo[0];
+				if (infoSex && lib.config.show_sex) capt += `&nbsp;&nbsp;${infoSex == 'none' ? '无' : lib.translate[infoSex]}`;
+				const infoGroup = characterInfo[1];
+				if (infoGroup && lib.config.show_group) {
+					const group = get.is.double(character, true);
+					if (group) capt += `&nbsp;&nbsp;${group.map(value => get.translation(value)).join('/')}`;
+					else capt += `&nbsp;&nbsp;${lib.translate[infoGroup]}`;
 				}
 			}
 			uiintro.add(capt);
 
-			if(lib.characterTitle[node.link]){
+			if (lib.characterTitle[node.link]) {
 				uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
 			}
 
-			if(node._banning){
-				var clickBanned=function(){
-					var banned=lib.config[this.bannedname]||[];
-					if(banned.contains(character)){
+			if (get.characterInitFilter(node.link)) {
+				const initFilters = get.characterInitFilter(node.link).filter(tag => {
+					if (!lib.characterInitFilter[node.link]) return true;
+					return lib.characterInitFilter[node.link](tag) !== false;
+				});
+				if(initFilters.length){
+					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
+					uiintro.addText(str);
+				}
+			}
+
+			if (node._banning) {
+				var clickBanned = function () {
+					var banned = lib.config[this.bannedname] || [];
+					if (banned.includes(character)) {
 						banned.remove(character);
 					}
-					else{
+					else {
 						banned.push(character);
 					}
-					game.saveConfig(this.bannedname,banned);
+					game.saveConfig(this.bannedname, banned);
 					this.classList.toggle('on');
-					if(node.updateBanned){
+					if (node.updateBanned) {
 						node.updateBanned();
 					}
 				};
-				var modeorder=lib.config.modeorder||[];
-				for(var i in lib.mode){
+				var modeorder = lib.config.modeorder || [];
+				for (var i in lib.mode) {
 					modeorder.add(i);
 				}
-				var list=[];
-				uiintro.contentContainer.listen(function(e){
+				var list = [];
+				uiintro.contentContainer.listen(function (e) {
 					ui.click.touchpop();
 					e.stopPropagation();
 				});
-				for(var i=0;i<modeorder.length;i++){
-					if(node._banning=='online'){
-						if(!lib.mode[modeorder[i]].connect) continue;
-						if(!lib.config['connect_'+modeorder[i]+'_banned']){
-							lib.config['connect_'+modeorder[i]+'_banned']=[];
+				for (var i = 0; i < modeorder.length; i++) {
+					if (node._banning == 'online') {
+						if (!lib.mode[modeorder[i]].connect) continue;
+						if (!lib.config['connect_' + modeorder[i] + '_banned']) {
+							lib.config['connect_' + modeorder[i] + '_banned'] = [];
 						}
 					}
-					else if(modeorder[i]=='connect'||modeorder[i]=='brawl'){
+					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
 						continue;
 					}
-					if(lib.config.all.mode.contains(modeorder[i])){
+					if (lib.config.all.mode.includes(modeorder[i])) {
 						list.push(modeorder[i]);
 					}
 				}
-				var page=ui.create.div('.menu-buttons.configpopped',uiintro.content);
-				var banall=false;
-				for(var i=0;i<list.length;i++){
-					var cfg=ui.create.div('.config',lib.translate[list[i]]+'模式',page);
+				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
+				var banall = false;
+				for (var i = 0; i < list.length; i++) {
+					var cfg = ui.create.div('.config', lib.translate[list[i]] + '模式', page);
 					cfg.classList.add('toggle');
-					if(node._banning=='offline'){
-						cfg.bannedname=list[i]+'_banned';
+					if (node._banning == 'offline') {
+						cfg.bannedname = list[i] + '_banned';
 					}
-					else{
-						cfg.bannedname='connect_'+list[i]+'_banned';
+					else {
+						cfg.bannedname = 'connect_' + list[i] + '_banned';
 					}
 					cfg.listen(clickBanned);
 					ui.create.div(ui.create.div(cfg));
-					var banned=lib.config[cfg.bannedname]||[];
-					if(!banned.contains(character)){
+					var banned = lib.config[cfg.bannedname] || [];
+					if (!banned.includes(character)) {
 						cfg.classList.add('on');
-						banall=true;
+						banall = true;
 					}
 				}
-				if(node._banning=='offline'){
-					var cfg=ui.create.div('.config','随机选将可用',page);
+				if (node._banning == 'offline') {
+					var cfg = ui.create.div('.config', '随机选将可用', page);
 					cfg.classList.add('toggle');
-					cfg.listen(function(){
+					cfg.listen(function () {
 						this.classList.toggle('on');
-						if(this.classList.contains('on')){
+						if (this.classList.contains('on')) {
 							lib.config.forbidai_user.remove(character);
 						}
-						else{
+						else {
 							lib.config.forbidai_user.add(character);
 						}
-						game.saveConfig('forbidai_user',lib.config.forbidai_user);
+						game.saveConfig('forbidai_user', lib.config.forbidai_user);
 					});
 					ui.create.div(ui.create.div(cfg));
-					if(!lib.config.forbidai_user.contains(character)){
+					if (!lib.config.forbidai_user.includes(character)) {
 						cfg.classList.add('on');
 					}
 				}
-				ui.create.div('.menubutton.pointerdiv',banall?'全部禁用':'全部启用',uiintro.content,function(){
-					if(this.innerHTML=='全部禁用'){
-						for(var i=0;i<page.childElementCount;i++){
-							if(page.childNodes[i].bannedname&&page.childNodes[i].classList.contains('on')){
+				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
+					if (this.innerHTML == '全部禁用') {
+						for (var i = 0; i < page.childElementCount; i++) {
+							if (page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
 								clickBanned.call(page.childNodes[i]);
 							}
 						}
-						this.innerHTML='全部启用';
+						this.innerHTML = '全部启用';
 					}
-					else{
-						for(var i=0;i<page.childElementCount;i++){
-							if(page.childNodes[i].bannedname&&!page.childNodes[i].classList.contains('on')){
+					else {
+						for (var i = 0; i < page.childElementCount; i++) {
+							if (page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
 								clickBanned.call(page.childNodes[i]);
 							}
 						}
-						this.innerHTML='全部禁用';
+						this.innerHTML = '全部禁用';
 					}
-				}).style.marginTop='-10px';
-				ui.create.div('.placeholder.slim',uiintro.content);
+				}).style.marginTop = '-10px';
+				ui.create.div('.placeholder.slim', uiintro.content);
 			}
-			else{
-				var infoitem=get.character(character);
-				var skills=infoitem[3];
-				for(i=0;i<skills.length;i++){
-					if(lib.translate[skills[i]+'_info']){
-						if(lib.translate[skills[i]+'_ab']) translation=lib.translate[skills[i]+'_ab'];
-						else{
-							translation=get.translation(skills[i]);
-							if(!lib.skill[skills[i]].nobracket) translation=translation.slice(0,2);
+			else {
+				var infoitem = get.character(character);
+				var skills = infoitem[3];
+				for (i = 0; i < skills.length; i++) {
+					if (lib.translate[skills[i] + '_info']) {
+						if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
+						else {
+							translation = get.translation(skills[i]);
+							if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
 						}
 
-						uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i])+'</div></div>');
+						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i]) + '</div></div>');
 
-						if(lib.translate[skills[i]+'_append']){
-							uiintro._place_text=uiintro.add('<div class="text">'+lib.translate[skills[i]+'_append']+'</div>')
+						if (lib.translate[skills[i] + '_append']) {
+							uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
 						}
 					}
 				}
-				var modepack=lib.characterPack['mode_'+get.mode()];
-				if(lib.config.show_favourite&&
-				lib.character[node.link]&&(!modepack||!modepack[node.link])&&(!simple||get.is.phoneLayout())){
-					var addFavourite=ui.create.div('.text.center.pointerdiv');
-					addFavourite.link=node.link;
-					addFavourite.style.marginBottom='15px';
-					if(lib.config.favouriteCharacter.contains(node.link)){
-						addFavourite.innerHTML='移除收藏';
+				var modepack = lib.characterPack['mode_' + get.mode()];
+				if (lib.config.show_favourite &&
+					lib.character[node.link] && (!modepack || !modepack[node.link]) && (!simple || get.is.phoneLayout())) {
+					var addFavourite = ui.create.div('.text.center.pointerdiv');
+					addFavourite.link = node.link;
+					addFavourite.style.marginBottom = '15px';
+					if (lib.config.favouriteCharacter.includes(node.link)) {
+						addFavourite.innerHTML = '移除收藏';
 					}
-					else{
-						addFavourite.innerHTML='添加收藏';
+					else {
+						addFavourite.innerHTML = '添加收藏';
 					}
-					addFavourite.listen(ui.click.favouriteCharacter)
+					addFavourite.listen(ui.click.favouriteCharacter);
 					uiintro.add(addFavourite);
 				}
-				else{
+				else {
 					uiintro.add(ui.create.div('.placeholder.slim'));
 				}
-				var addskin=false;
-				if(node.parentNode.classList.contains('menu-buttons')){
-					addskin=!lib.config.show_charactercard;
+				var addskin = false;
+				if (node.parentNode.classList.contains('menu-buttons')) {
+					addskin = !lib.config.show_charactercard;
 				}
-				else{
-					addskin=lib.config.change_skin||lib.skin;
+				else {
+					addskin = lib.config.change_skin || lib.skin;
 				}
-				if(addskin&&(!simple||get.is.phoneLayout())){
-					var num=1;
-					var introadded=false;
-					var nameskin=node.link;
-					var nameskin2=nameskin;
-					var gzbool=false;
-					if(nameskin.startsWith('gz_shibing')){
-						nameskin=nameskin.slice(3,11);
+				if (addskin && (!simple || get.is.phoneLayout())) {
+					var num = 1;
+					var introadded = false;
+					var nameskin = node.link;
+					var nameskin2 = nameskin;
+					var gzbool = false;
+					if (nameskin.startsWith('gz_shibing')) {
+						nameskin = nameskin.slice(3, 11);
 					}
-					else if(nameskin.startsWith('gz_')){
-						nameskin=nameskin.slice(3);
-						gzbool=true;
+					else if (nameskin.startsWith('gz_')) {
+						nameskin = nameskin.slice(3);
+						gzbool = true;
 					}
-					var createButtons=function(num){
-						if(!num) return;
-						if(!introadded){
-							introadded=true;
+					var createButtons = function (num) {
+						if (!num) return;
+						if (!introadded) {
+							introadded = true;
 							uiintro.add('<div class="text center">更改皮肤</div>');
 						}
-						var buttons=ui.create.div('.buttons.smallzoom.scrollbuttons');
+						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
 						lib.setMousewheel(buttons);
-						for(var i=0;i<=num;i++){
-							var button=ui.create.div('.button.character.pointerdiv',buttons,function(){
-								if(this._link){
-									lib.config.skin[nameskin]=this._link;
-									node.style.backgroundImage=this.style.backgroundImage;
-									game.saveConfig('skin',lib.config.skin);
+						for (var i = 0; i <= num; i++) {
+							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
+								if (this._link) {
+									lib.config.skin[nameskin] = this._link;
+									node.style.backgroundImage = this.style.backgroundImage;
+									game.saveConfig('skin', lib.config.skin);
 								}
-								else{
+								else {
 									delete lib.config.skin[nameskin];
-									if(gzbool&&lib.character[nameskin2][4].contains('gzskin')&&lib.config.mode_config.guozhan.guozhanSkin) node.setBackground(nameskin2,'character');
-									else node.setBackground(nameskin,'character');
-									game.saveConfig('skin',lib.config.skin);
+									if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.setBackground(nameskin2, 'character');
+									else node.setBackground(nameskin, 'character');
+									game.saveConfig('skin', lib.config.skin);
 								}
 							});
-							button._link=i;
-							if(i){
-								button.setBackgroundImage('image/skin/'+nameskin+'/'+i+'.jpg');
+							button._link = i;
+							if (i) {
+								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
 							}
-							else{
-								if(gzbool&&lib.character[nameskin2][4].contains('gzskin')&&lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2,'character','noskin');
-								else button.setBackground(nameskin,'character','noskin');
+							else {
+								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
+								else button.setBackground(nameskin, 'character', 'noskin');
 							}
 						}
 						uiintro.add(buttons);
 					};
-					var loadImage=function(){
-						var img=new Image();
-						img.onload=function(){
+					var loadImage = function () {
+						var img = new Image();
+						img.onload = function () {
 							num++;
 							loadImage();
-						}
-						img.onerror=function(){
+						};
+						img.onerror = function () {
 							num--;
 							createButtons(num);
-						}
-						img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.jpg';
-					}
-					if(lib.config.change_skin){
+						};
+						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
+					};
+					if (lib.config.change_skin) {
 						loadImage();
 					}
-					else{
-						setTimeout(function(){
+					else {
+						setTimeout(function () {
 							createButtons(lib.skin[nameskin]);
 						});
 					}
 				}
 			}
 		}
-		else if(node.classList.contains('equips')&&ui.arena.classList.contains('selecting')){
-			(function(){
+		else if (node.classList.contains('equips') && ui.arena.classList.contains('selecting')) {
+			(function () {
 				uiintro.add('选择装备');
-				uiintro.addSmall(Array.from(node.childNodes).filter(node=>!node.classList.contains('feichu')),true);
-				uiintro.clickintro=true;
+				uiintro.addSmall(Array.from(node.childNodes).filter(node => !node.classList.contains('emptyequip') && !node.classList.contains('feichu')), true);
+				uiintro.clickintro = true;
 				ui.control.hide();
-				uiintro._onclose=function(){
+				uiintro._onclose = function () {
 					ui.control.show();
-				}
+				};
 				var confirmbutton;
-				for(var i=0;i<uiintro.buttons.length;i++){
-					var button=uiintro.buttons[i];
+				for (var i = 0; i < uiintro.buttons.length; i++) {
+					var button = uiintro.buttons[i];
 					button.classList.add('pointerdiv');
-					if(button.link.classList.contains('selected')){
+					if (button.link.classList.contains('selected')) {
 						button.classList.add('selected');
 					}
-					button.listen(function(e){
-						ui.click.card.call(this.link,'popequip');
-						ui.click.window.call(ui.window,e);
-						if(this.link.classList.contains('selected')){
+					button.listen(function (e) {
+						ui.click.card.call(this.link, 'popequip');
+						ui.click.window.call(ui.window, e);
+						if (this.link.classList.contains('selected')) {
 							this.classList.add('selected');
 						}
-						else{
+						else {
 							this.classList.remove('selected');
 						}
-						if(ui.confirm&&ui.confirm.str&&ui.confirm.str.includes('o')){
+						if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
 							confirmbutton.classList.remove('disabled');
 						}
-						else{
+						else {
 							confirmbutton.classList.add('disabled');
 						}
 					});
 				}
-				var buttoncontainer=uiintro.add(ui.create.div());
-				buttoncontainer.style.display='block';
-				confirmbutton=ui.create.div('.menubutton.large.pointerdiv','确定',function(){
-					if(ui.confirm&&ui.confirm.str&&ui.confirm.str.includes('o')){
+				var buttoncontainer = uiintro.add(ui.create.div());
+				buttoncontainer.style.display = 'block';
+				confirmbutton = ui.create.div('.menubutton.large.pointerdiv', '确定', function () {
+					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
 						uiintro._clickintro();
 						ui.click.ok(ui.confirm.firstChild);
 					}
-				},buttoncontainer);
-				confirmbutton.style.position='relative';
-				setTimeout(function(){
-					if(ui.confirm&&ui.confirm.str&&ui.confirm.str.includes('o')){
+				}, buttoncontainer);
+				confirmbutton.style.position = 'relative';
+				setTimeout(function () {
+					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
 						confirmbutton.classList.remove('disabled');
 					}
-					else{
+					else {
 						confirmbutton.classList.add('disabled');
 					}
-				},300);
+				}, 300);
 			}());
 		}
-		else if(node.classList.contains('identity')&&node.dataset.career){
-			var career=node.dataset.career;
+		else if (node.classList.contains('identity') && node.dataset.career) {
+			var career = node.dataset.career;
 			uiintro.add(get.translation(career));
-			uiintro.add('<div class="text center" style="padding-bottom:5px">'+lib.translate['_'+career+'_skill_info']+'</div>');
+			uiintro.add('<div class="text center" style="padding-bottom:5px">' + lib.translate['_' + career + '_skill_info'] + '</div>');
 		}
-		else if(node.classList.contains('skillbar')){
-			if(node==ui.friendBar){
+		else if (node.classList.contains('skillbar')) {
+			if (node == ui.friendBar) {
 				uiintro.add('友方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">'+_status.friendRage+'/100</div>');
+				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.friendRage + '/100</div>');
 			}
-			else if(node==ui.enemyBar){
+			else if (node == ui.enemyBar) {
 				uiintro.add('敌方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">'+_status.enemyRage+'/100</div>');
+				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.enemyRage + '/100</div>');
 			}
 		}
-		else if(node.parentNode==ui.historybar){
-			if(node.dead){
-				if(!node.source||node.source==node.player){
-					uiintro.add('<div class="text center">'+get.translation(node.player)+'阵亡</div>');
+		else if (node.parentNode == ui.historybar) {
+			if (node.dead) {
+				if (!node.source || node.source == node.player) {
+					uiintro.add('<div class="text center">' + get.translation(node.player) + '阵亡</div>');
 					uiintro.addSmall([node.player]);
 				}
-				else{
-					uiintro.add('<div class="text center">'+get.translation(node.player)+'被'+get.translation(node.source)+'杀害</div>');
+				else {
+					uiintro.add('<div class="text center">' + get.translation(node.player) + '被' + get.translation(node.source) + '杀害</div>');
 					uiintro.addSmall([node.source]);
 				}
 			}
-			if(node.skill){
-				uiintro.add('<div class="text center">'+get.translation(node.skill,'skill')+'</div>');
-				uiintro._place_text=uiintro.add('<div class="text" style="display:inline">'+get.translation(node.skill,'info')+'</div>');
+			if (node.skill) {
+				uiintro.add('<div class="text center">' + get.translation(node.skill, 'skill') + '</div>');
+				uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + get.translation(node.skill, 'info') + '</div>');
 			}
-			if(node.targets&&get.itemtype(node.targets)=='players'){
+			if (node.targets && get.itemtype(node.targets) == 'players') {
 				uiintro.add('<div class="text center">目标</div>');
 				uiintro.addSmall(node.targets);
 			}
-			if(node.players&&node.players.length>1){
+			if (node.players && node.players.length > 1) {
 				uiintro.add('<div class="text center">使用者</div>');
 				uiintro.addSmall(node.players);
 			}
-			if(node.cards&&node.cards.length){
+			if (node.cards && node.cards.length) {
 				uiintro.add('<div class="text center">卡牌</div>');
 				uiintro.addSmall(node.cards);
 			}
-			for(var i=0;i<node.added.length;i++){
+			for (var i = 0; i < node.added.length; i++) {
 				uiintro.add(node.added[i]);
 			}
-			if(node.added.length){
+			if (node.added.length) {
 				uiintro.add(ui.create.div('.placeholder.slim'));
 			}
-			if(uiintro.content.firstChild){
-				uiintro.content.firstChild.style.paddingTop='3px';
+			if (uiintro.content.firstChild) {
+				uiintro.content.firstChild.style.paddingTop = '3px';
 			}
 		}
-		if(lib.config.touchscreen){
+		if (lib.config.touchscreen) {
 			lib.setScroll(uiintro.contentContainer);
 		}
 		return uiintro;
@@ -1361,15 +1416,15 @@ content:function(config, pack){
 	// lib.groupnature.qun='metal';
 	
 	// 先删除再添加
-	lib.namePrefix.delete('经典')
+	lib.namePrefix.delete('经典');
 	lib.namePrefix.set('经典',{
 		showName:'经典',
 	});
-	lib.namePrefix.delete('骰子')
+	lib.namePrefix.delete('骰子');
 	lib.namePrefix.set('骰子',{
 		
 	});
-	lib.namePrefix.delete('手杀')
+	lib.namePrefix.delete('手杀');
 	lib.namePrefix.set('手杀',{
 		getSpan:(prefix,name)=>{
 			const simple=lib.config.buttoncharacter_prefix=='simple',span=document.createElement('span');
@@ -1378,6 +1433,54 @@ content:function(config, pack){
 				span.style.fontFamily='NonameSuits';
 				span.textContent='';
 			}
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('SP');
+	lib.namePrefix.set('SP',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.6px';
+			span.textContent = 'SP';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('OL');
+	lib.namePrefix.set('OL',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '1px';
+			span.textContent = 'OL';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('RE');
+	lib.namePrefix.set('RE',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.6px';
+			span.textContent = 'RE';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('TW');
+	lib.namePrefix.set('TW',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = 'TW';
 			return span.outerHTML;
 		},
 	});
@@ -1927,6 +2030,7 @@ content:function(config, pack){
 				
 				this.name=character;
 				this.name1=character;
+				this.tempname = [];
 				this.sex=info[0];
 				this.group=info[1];
 				this.hp=hp1;
@@ -2725,13 +2829,17 @@ content:function(config, pack){
 					game.enemy[i].node.identity.dataset.color=get.translation(!_status.color+'Color');
 				}
 				if(lib.storage.zhu&&lib.storage.main_zhu){
-					game.friendZhu.maxHp++;
-					game.friendZhu.hp++;
-					game.friendZhu.update();
+					if(!game.friendZhu.isInitFilter('noZhuHp')){
+						game.friendZhu.maxHp++;
+						game.friendZhu.hp++;
+						game.friendZhu.update();
+					}
 
-					game.enemyZhu.maxHp++;
-					game.enemyZhu.hp++;
-					game.enemyZhu.update();
+					if(!game.enemyZhu.isInitFilter('noZhuHp')){
+						game.enemyZhu.maxHp++;
+						game.enemyZhu.hp++;
+						game.enemyZhu.update();
+					}
 				}
 				_status.friend.splice(0,num);
 				_status.enemy.splice(0,num);
@@ -3262,15 +3370,18 @@ content:function(config, pack){
 			// 新版
 			/*
 			if(typeof card === 'string'){
+				// @ts-ignore
 				card = {name:card};
 			}
+			// @ts-ignore
 			if(get.itemtype(sex) === 'player'){
+				// @ts-ignore
 				sex = (sex.sex == 'female'?'female':'male');
 			}else if(typeof sex == 'string'){
 				sex = (sex == 'female'?'female':'male');
 			}
 			if(!lib.config.background_audio||get.type(card)=='equip'&&!lib.config.equip_audio) return;
-			var nature=get.natureList(card)[0];
+			let nature=get.natureList(card)[0];
 			if(lib.natureAudio[card.name]){
 				let useAudio = lib.natureAudio[card.name][nature];
 				if(useAudio === 'default'){
@@ -3671,6 +3782,10 @@ content:function(config, pack){
 		if(lib.skill.psliushang != undefined){
 			lib.skill.psliushang.marktext = "流殇";
 		}
+		// 袁胤墨守标记修改
+		if(lib.skill.dcmoshou != undefined){
+			lib.skill.dcmoshou.marktext = "墨守";
+		}
 		// 节钺于禁节标记修改
 		if(lib.skill.jieyue2 != undefined){
 			lib.skill.jieyue2.marktext = "节";
@@ -3953,6 +4068,10 @@ content:function(config, pack){
 		if(lib.skill.sbzhiji != undefined){
 			lib.skill.sbzhiji.subSkill.beifa.marktext = "北伐";
 		}
+		// OL谋姜维逐日标记修改
+		if(lib.skill.olsbzhuri != undefined){
+			lib.skill.olsbzhuri.subSkill.block.marktext = '<span style="text-decoration: line-through;">逐日</span>';
+		}
 		// 谋吕蒙夺荆标记修改
 		if(lib.skill.sbduojing != undefined){
 			lib.skill.sbduojing.subSkill.add.marktext = "夺荆";
@@ -3984,10 +4103,6 @@ content:function(config, pack){
 		// 郤正文灿标记修改
 		if(lib.skill.dcwencan != undefined){
 			lib.skill.dcwencan.subSkill.paoxiao.marktext = "文灿";
-		}
-		// 黄承彦解阵标记修改
-		if(lib.skill.dcjiezhen != undefined){
-			lib.skill.dcjiezhen.subSkill.blocker.marktext = "解阵";
 		}
 		// 神孙策平定标记修改
 		if(lib.skill.yingba != undefined){
@@ -4025,10 +4140,6 @@ content:function(config, pack){
 		if(lib.skill.dcnutao != undefined){
 			lib.skill.dcnutao.subSkill.sha.marktext = "怒涛";
 		}
-		// 孙瑜劝守标记修改
-		if(lib.skill.dcquanshou != undefined){
-			lib.skill.dcquanshou.subSkill.sha.marktext = "劝守";
-		}
 		// 牵招势吓标记修改
 		if(lib.skill.mbshihe != undefined){
 			lib.skill.mbshihe.subSkill.prevent.marktext = "势吓";
@@ -4057,6 +4168,18 @@ content:function(config, pack){
 		if(lib.skill.sbyingzi != undefined){
 			lib.skill.sbyingzi.subSkill.limit.marktext = "英姿";
 		}
+		// 黄承彦解阵、择才标记修改
+		if(lib.skill.dcjiezhen != undefined){
+			lib.skill.dcjiezhen.subSkill.blocker.marktext = "解阵";
+		}
+		if(lib.skill.dczecai != undefined){
+			lib.skill.dczecai.subSkill.effect.marktext = "择才";
+		}
+		// 孙瑜劝守标记修改
+		if(lib.skill.dcquanshou != undefined){
+			lib.skill.dcquanshou.subSkill.sha.marktext = "劝守";
+			lib.skill.dcquanshou.subSkill.respond.marktext = '<span style="text-decoration: line-through;">劝守</span>';
+		}
 		// 司马徽龙印、凤印标记修改
 		if(lib.skill.jianjie != undefined){
 			lib.skill.jianjie.subSkill.huoji.marktext = "龙印";
@@ -4084,6 +4207,10 @@ content:function(config, pack){
 		}
 		if(lib.skill.new_canyun != undefined){
 			lib.skill.new_canyun.marktext = "残韵";
+		}
+		// 谋关羽义绝标记修改
+		if(lib.skill.sbyijue != undefined){
+			lib.skill.sbyijue.marktext = "义绝";
 		}
 		// TW神关羽梦魇标记修改
 		if(lib.skill.twwuhun != undefined){
@@ -4142,6 +4269,12 @@ content:function(config, pack){
 			lib.skill.dctongguan.subSkill.duomou.marktext = "多谋";
 			lib.skill.dctongguan.subSkill.guojue.marktext = "果决";
 			lib.skill.dctongguan.subSkill.renzhi.marktext = "仁智";
+		}
+		// 朱灵基本、锦囊、装备标记修改
+		if(lib.skill.dczhanyi != undefined){
+			lib.skill.dczhanyi.subSkill.basic.marktext = "基本";
+			lib.skill.dczhanyi.subSkill.trick.marktext = "锦囊";
+			lib.skill.dczhanyi.subSkill.equip.marktext = "装备";
 		}
 		// 孟节乐泉、藿溪、瘴气、芸香标记修改
 		if(lib.skill.dcyinlu != undefined){
@@ -4566,6 +4699,7 @@ content:function(config, pack){
 		lib.translate.qiaosi_info = "出牌阶段限一次，你可以表演「水转百戏图」并根据表演结果获得相应的牌。然后，你选择一项：1.弃置X张牌。2.将X张牌交给一名其他角色。（X为你以此法得到的牌数）";
 		lib.translate.qiaosi_map_info = "<br><li>王：锦囊牌*2<br><li>商：装备牌/【杀】/【酒】*1<br><li>工：【杀】/【酒】*1<br><li>农：【闪】/【桃】*1<br><li>士：锦囊牌/【闪】/【桃】*1<br><li>将：装备牌*2";
 		// 高达一号技能描述修改
+		lib.translate.boss_juejing_info = "锁定技，摸牌阶段开始前，你跳过此阶段。当你得到牌/失去手牌后，若你的手牌数大于4/小于4，则你将手牌弃置至4张/摸至4张。";
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
 		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
 		// 凌人、整肃、蛊惑、军令、协力卡牌显示修复
@@ -4589,6 +4723,8 @@ content:function(config, pack){
 		lib.card.cooperation_use = {fullskin:true,cardimage:'cooperation_use',};
 		// 修复界孙笨的彩蛋
 		lib.translate.re_sunben = "界孙策";
+		// 修改合大小虎为原名
+		lib.translate.jsrg_sunlubansunluyu = "合孙鲁班孙鲁育";
 		// 本体配音修复
 		lib.skill.jie.audio = 2;
 		lib.skill.kuiwei.audio = true;
@@ -6069,6 +6205,7 @@ content:function(config, pack){
 								}
 								if (node._replaceButton) {
 									var intro = ui.create.div('.button.replaceButton', node);
+									intro[lib.experimental.symbol.itemType] = 'button';
 									node.node.replaceButton = intro;
 									intro.innerHTML = '切换';
 									intro._node = node;
@@ -6137,7 +6274,8 @@ content:function(config, pack){
 						return buttons;
 					},
 					
-		/*			confirm:function(str, func){
+					/*
+					confirm:function(str, func){
 						if (ui.confirm && ui.confirm.str == str) return;
 						
 						switch (str) {
@@ -6680,12 +6818,11 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 			lib.config.low_performance = true;
 
 			game.check = function(event){
-				var i, j, range;
+				var i, range;
 				if (event == undefined) event = _status.event;
 				event._checked=true;
 				var custom = event.custom || {};
-				var ok = true,
-				auto = true;
+				var ok = true, auto = true;
 				var player = event.player;
 				var auto_confirm = lib.config.auto_confirm;
 				var players = game.players.slice(0);
@@ -6861,7 +6998,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 								ok = false;
 							}
 						}
-
+						
+						// 注释掉？
 						// if (lib.config.popequip && get.is.phoneLayout() && typeof event.position == 'string' && event.position.indexOf('e') != -1 && player.node.equips.querySelector('.card.selectable')) {
 							// player.node.equips.classList.add('popequip');
 							// auto_confirm = false;
@@ -6920,6 +7058,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 								selectableTargets = true;
 							}
 							
+							// 新增？
 							if (players[i].classList.contains('selected') || players[i].classList.contains('selectable')) {
 								players[i].classList.remove('un-selectable');
 							} else {
@@ -6953,12 +7092,9 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					}
 				}
 				if (!event.skill && get.noSelected() && !_status.noconfirm) {
-					var skills = [],
-					enable,
-					info;
-					var skills2;
+					var skills = [];
 					if (event._skillChoice) {
-						skills2 = event._skillChoice;
+						var skills2 = event._skillChoice;
 						for (var i = 0; i < skills2.length; i++) {
 							if (event.isMine() || !event._aiexclude.contains(skills2[i])) {
 								skills.push(skills2[i]);
@@ -6974,9 +7110,10 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						skills2 = game.filterSkills(skills2.concat(lib.skill.global), player, player.getSkills('e').concat(lib.skill.global));
 						event._skillChoice = [];
 						game.expandSkills(skills2);
-						for (i = 0; i < skills2.length; i++) {
-							info = get.info(skills2[i]);
-							enable = false;
+						for (let i = 0; i < skills2.length; i++) {
+							const info = get.info(skills2[i]);
+							if (!info) throw new ReferenceError(`Cannot find ${skills2[i]} in lib.skill`);
+							let enable = false;
 							if (typeof info.enable == 'function') enable = info.enable(event);
 							else if(Array.isArray(info.enable)) enable = info.enable.contains(event.name);
 							else if (info.enable == 'phaseUse') enable = (event.type == 'phase');
@@ -6991,7 +7128,18 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 								if (info.usable && get.skillCount(skills2[i]) >= info.usable) enable = false;
 								if (info.chooseButton && _status.event.noButton) enable = false;
 								if (info.round && (info.round - (game.roundNumber - player.storage[skills2[i] + '_roundcount']) > 0)) enable = false;
-								if(player.storage[`temp_ban_${skills2[i]}`]===true) enable=false;
+								for (const item in player.storage) {
+									if (item.startsWith('temp_ban_')) {
+										if(player.storage[item] !== true) continue;
+										const skillName = item.slice(9);
+										if (lib.skill[skillName]) {
+											const skills=game.expandSkills([skillName]);
+											if(skills.includes(skills2[i])) {
+												enable = false; break;
+											}
+										}
+									}
+								}
 							}
 							
 							if (enable) {
@@ -7626,6 +7774,11 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					$dynamicWrap: decadeUI.element.create('dynamic-wrap'),
 				}
 				
+				
+				// 优化手牌过百时严重卡顿到玩不了的问题
+				playerExtend.node.handcards1._childNodesWatcher = new ChildNodesWatcher(playerExtend.node.handcards1);
+				playerExtend.node.handcards2._childNodesWatcher = new ChildNodesWatcher(playerExtend.node.handcards2);
+				
 				decadeUI.get.extend(player, extend);
 				decadeUI.get.extend(player, playerExtend);
 				
@@ -8217,12 +8370,15 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 			
 			lib.element.content.addJudge = function(){
 				"step 0";
+				const cardName = typeof card == 'string' ? card : card.name , cardInfo = lib.card[cardName];
 				if (cards){
 					var owner = get.owner(cards[0]);
 					if (owner) {
-						event.relatedLose = owner.lose(cards, 'visible', ui.special).set('getlx', false);
-					} else if (get.position(cards[0]) == 'c') event.updatePile = true;
-				};
+						event.relatedLose = owner.lose(cards, ui.special).set('getlx', false);
+						if (cardInfo && !cardInfo.blankCard) event.relatedLose.set('visible',true);
+					}
+					else if (get.position(cards[0]) == 'c') event.updatePile = true;
+				}
 				"step 1";
 				if (cards[0].destroyed){
 					if(cards[0].willBeDestroyed('judge',player,event)){
@@ -8928,6 +9084,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				}
 				
 				var cards = get.cards(num);
+				game.addCardKnower(cards, player);
 				var guanxing = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length);
 				if (this.getParent() && this.getParent().name && get.translation(this.getParent().name) != this.getParent().name) {
 					guanxing.caption = '【' + get.translation(this.getParent().name) + '】';
@@ -8985,9 +9142,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					event.switchToAuto();
 				}
 				"step 1"
-				game.addCardKnower(top,player);
-				game.addCardKnower(bottom,player);
-				
 				player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
 				game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) +'张牌置于牌堆底');
 				game.updateRoundNumber()
@@ -9117,6 +9271,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				
 				this.name = undefined;
 				this.name1 = undefined;
+				this.tempname = undefined;
 				this.sex = undefined;
 				this.group = undefined;
 				this.hp = undefined;
@@ -12380,24 +12535,6 @@ precontent:function(){
 			this.js(decadeUIPath + 'dynamicSkin.js');
 			this.js(decadeUIPath + 'menu.js');
 			
-			// Show-K修复版搬运
-			const decadeExtCardImage = lib.decade_extCardImage || (lib.decade_extCardImage = {});
-			if(lib.node&&lib.node.fs) new Promise((resolve, reject) => lib.node.fs.readdir(`${__dirname}/${decadeUIPath}image/card/`, (errnoException, files) => {
-				if (errnoException) reject(errnoException);
-				else resolve(files);
-			})).then(files => files.forEach(file => {
-				const fileName = lib.path.parse(file).name;
-				if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${file}`;
-			}));
-			else if (typeof resolveLocalFileSystemURL == 'function') new Promise((resolve, reject) => {
-				resolveLocalFileSystemURL(`${decadeUIPath}image/card/`, resolve, reject);
-			}).then(directoryEntry => new Promise((resolve, reject) => {
-				directoryEntry.createReader().readEntries(resolve, reject);
-			})).then(entries => entries.forEach(entry => {
-				const entryName = entry.name, fileName = lib.path.parse(entryName).name;
-				if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${entryName}`;
-			}));
-			
 			return this;
 		};
 		decadeModule.js = function (path) {
@@ -12498,7 +12635,9 @@ config:{
 				'<br>- 国战其他魔改：鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
 				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
 				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
-				'<br>- 新增自动换肤选项，增加自动换肤选项；修复bug：选将后，若游戏时间超过换肤时间无法自动换肤；除本体自动换肤选项（点击触屏按钮，选项-选项-外观-自动换肤）外，还可通过本扩展自动换肤选项设置自动换肤；重启后扩展自动换肤设置与本体自动换肤设置保持一致。'+
+				'<br>- 本体皮肤修改：'+
+				'<br>① 新增功能选项。开启无名杀换肤：关闭千幻聆音扩展后，可通过功能选项开启无名杀换肤（相当于点击触屏按钮，选项-选项-外观-开启换肤），点击选项后自动重启生效。清空皮肤设置：开启无名杀自带的换肤功能后，可清空全部角色、场上所有角色、除“我”（玩家）外场上其他角色的皮肤设置'+
+				'<br>② 新增自动换肤选项，增加子选项；修复bug：选将后，若游戏时间超过换肤时间无法自动换肤；除本体自动换肤选项（点击触屏按钮，选项-选项-外观-自动换肤）外，还可通过本扩展自动换肤选项设置自动换肤；重启后扩展自动换肤设置与本体自动换肤设置保持一致。'+
 				'<br>- 音效修改：'+
 				'<br>① 新增伤害音效配置选项，可设置新版和旧版伤害音效的使用，即时生效。（手机端可长按/电脑端可右击选项查看配置）'+
 				'<br>② 新增旧版配音系统开关选项，开启后，将启用旧版配音系统，支持.ogg格式配音播放（默认开启）。'+
@@ -12619,6 +12758,68 @@ config:{
 		intro: "开启后，将启用旧版发送交互表情函数",
 		init: true,
 	},
+	szn_fenjiexian1:{
+		clear:true,
+		name:"<font size='3'><li>本体皮肤相关修改</font>",
+	},
+	"bentipifu_gn":{
+		"name":"功能",
+		"intro":"点击选项后自动重启生效",
+		"init":"a",
+		"item":{
+			"a":"开启无名杀换肤",
+			"b":"清空皮肤设置(全部角色)",
+			"c":"清空皮肤设置(场上所有角色)",
+			"d":"清空皮肤设置(场上其他角色)",
+		},
+		onclick:function(item){
+			if(item == 'a'){
+				if (lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable']) {
+					alert('您开启了千幻聆音扩展，无法使用无名杀原有的换肤功能；若想使用无名杀自带的换肤功能（相当于点击触屏按钮，选项-选项-外观-开启换肤），请关闭千幻聆音扩展后再使用本功能');
+				} else {
+					game.saveConfig('change_skin', true);
+					game.reload();
+				}
+			}
+			if(item == 'b'){
+				if (!lib.config.change_skin) {
+					alert('您未开启无名杀自带的换肤功能，请先开启后再使用本功能。开启方式1；功能-开启无名杀换肤；开启方式2；点击触屏按钮，选项-选项-外观-开启换肤。');
+				} else {
+					lib.config.skin={};
+					game.saveConfig('skin', lib.config.skin);
+					game.reload();
+				}
+			}
+			if(item == 'c'){
+				if (!lib.config.change_skin) {
+					alert('您未开启无名杀自带的换肤功能，请先开启后再使用本功能。开启方式1；功能-开启无名杀换肤；开启方式2；点击触屏按钮，选项-选项-外观-开启换肤。');
+				} else {
+					for (var i = 0; i < game.players.length; i++) {
+						var name1=game.players[i].name;
+						if (lib.config.skin[name1]) {
+							delete lib.config.skin[name1];
+							game.saveConfig('skin', lib.config.skin);
+						}
+					}
+					game.reload();
+				}
+			}
+			if(item == 'd'){
+				if (!lib.config.change_skin) {
+					alert('您未开启无名杀自带的换肤功能，请先开启后再使用本功能。开启方式1；功能-开启无名杀换肤；开启方式2；点击触屏按钮，选项-选项-外观-开启换肤。');
+				} else {
+					for (var i = 0; i < game.players.length; i++) {
+						var name1=game.players[i].name;
+						if (game.players[i]!=game.me && lib.config.skin[name1]) {
+							delete lib.config.skin[name1];
+							game.saveConfig('skin', lib.config.skin);
+						}
+					}
+					game.reload();
+				}
+			}
+		},
+	},
 	zidonghuanfu: {
 		name: '自动换肤',
 		intro: "修复本体自动换肤功能，增加选项<br>除本体自动换肤选项（点击触屏按钮，选项-选项-外观-自动换肤）外，还可通过本扩展自动换肤选项设置自动换肤<br>重启后扩展自动换肤设置与本体自动换肤设置保持一致",
@@ -12646,20 +12847,20 @@ config:{
 			}
 		}
 	},
-	szn_fenjiexian1:{
+	szn_fenjiexian2:{
 		clear:true,
 		name:"<font size='3'><li>字体相关修改</font>",
 	},
 	zitijiazai: {
 		name: '字体加载优化',
-		intro: '优化字体加载功能<br><li>电脑端：当前设备如果已经安装local里的字体，请选择不优化选项，可以极致提升游戏字体加载速度；若未安装字体，请选择不优化选项，将加载本体路径下的字体文件<br><li>手机端：第一次加载后会缓存字体，所以有没有都无所谓',
+		intro: '优化字体加载功能<br><li>电脑端：当前设备如果已经安装font文件夹里的字体（注意更新后要重新安装），请选择优化选项，可以极致提升游戏字体加载速度；若未安装字体，请选择不优化选项，将加载本体路径下的字体文件<br><li>手机端：第一次加载后会缓存字体，所以有没有都无所谓',
 		init: 'local',
 		item:{
 			'local' : '优化',
 			'url' : '不优化',
 		},
 	},
-	szn_fenjiexian2:{
+	szn_fenjiexian3:{
 		clear:true,
 		name:"<font size='3'><li>音效相关修改</font>",
 	},

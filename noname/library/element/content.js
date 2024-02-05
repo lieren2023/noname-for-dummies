@@ -17,7 +17,7 @@ export const Content = {
 		event.gaintag.forEach(tag => player.addGaintag(showingCards, tag));
 		if (!(event.cards = showingCards.filter(showingCard => !shown.includes(showingCard))).length) return;
 		game.log(player, '明置了', event.cards);
-		if (event.animate != false) player.$give(event.cards, player, false);
+		//if (event.animate != false) player.$give(event.cards, player, false);
 		event.trigger('addShownCardsAfter');
 	},
 	//隐藏明置手牌
@@ -39,7 +39,7 @@ export const Content = {
 		hidingCards.removeArray(player.getShownCards());
 		if (!hidingCards.length) return;
 		game.log(player, '取消明置了', event.cards = hidingCards);
-		if (event.animate != false) player.$give(hidingCards, player, false);
+		//if (event.animate != false) player.$give(hidingCards, player, false);
 		event.trigger('hideShownCardsAfter');
 	},
 	//Execute the delay card effect
@@ -682,7 +682,7 @@ export const Content = {
 					game.resume();
 					_status.imchoosing = false;
 					if (roundmenu) ui.roundmenu.style.display = '';
-					if (ui.backgroundMusic) ui.backgroundMusic.play();
+					if (ui.backgroundMusic && !isNaN(ui.backgroundMusic.duration)) ui.backgroundMusic.play();
 					hitsound_audio.remove();
 				}, 1000);
 			};
@@ -870,7 +870,7 @@ export const Content = {
 			if (dialog) {
 				dialog.close();
 			}
-			if (ui.backgroundMusic) ui.backgroundMusic.play();
+			if (ui.backgroundMusic && !isNaN(ui.backgroundMusic.duration)) ui.backgroundMusic.play();
 		}, event.videoId, event.time);
 		var result = event.result || result;
 		event.result = result;
@@ -1049,7 +1049,10 @@ export const Content = {
 			card.cards = cards.slice(0);
 			event.card = card;
 		}
-		if (!lib.filter.cardEnabled(card, player) || (event.addCount !== false && !lib.filter.cardUsable(card, player))) {
+		let evt = event.getParent('chooseToUse');
+		if (get.itemtype(evt) !== 'event') evt = event;
+		if (!lib.filter.cardEnabled(card, player) || event.addCount !== false &&
+			!lib.filter.cardUsable(card, player, evt)) {
 			event.result = { bool: false };
 			event.finish();
 			return;
@@ -1372,7 +1375,9 @@ export const Content = {
 		if (!evt.orderingCards) evt.orderingCards = [];
 		if (!evt.noOrdering && !evt.cardsOrdered) {
 			evt.cardsOrdered = true;
-			var next = game.createEvent('orderingDiscard', false, evt.getParent());
+			var next = game.createEvent('orderingDiscard', false);
+			event.next.remove(next);
+			evt.after.push(next);
 			next.relatedEvent = evt;
 			next.setContent('orderingDiscard');
 		}
@@ -2162,7 +2167,7 @@ export const Content = {
 		next.player = player;
 		next._trigger = trigger;
 		next.triggername = event.triggername;
-		
+
 		// if ("contents" in info && Array.isArray(info.contents)) {
 		// 	next.setContents(info.contents);
 		// } else {
@@ -2431,6 +2436,10 @@ export const Content = {
 	 */
 	phase: function () {
 		'step 0';
+		//规则集中的“回合开始后③（处理“游戏开始时”的时机）”
+		//提前phaseBefore时机解决“游戏开始时”时机和“一轮开始时”先后
+		event.trigger('phaseBefore');
+		'step 1';
 		//初始化阶段列表
 		if (!event.phaseList) {
 			event.phaseList = ['phaseZhunbei', 'phaseJudge', 'phaseDraw', 'phaseUse', 'phaseDiscard', 'phaseJieshu'];
@@ -2489,12 +2498,9 @@ export const Content = {
 		if (isRound) {
 			game.getGlobalHistory().isRound = true;
 		}
-		'step 1';
+		'step 2';
 		//规则集中的“回合开始后②（1v1武将登场专用）”
 		event.trigger('phaseBeforeStart');
-		'step 2';
-		//规则集中的“回合开始后③（处理“游戏开始时”的时机）”
-		event.trigger('phaseBefore');
 		'step 3';
 		//规则集中的“回合开始后④（卑弥呼〖纵傀〗的时机）”
 		event.trigger('phaseBeforeEnd');
@@ -2774,6 +2780,23 @@ export const Content = {
 		if (!event.logged) {
 			game.log(player, '进入了出牌阶段');
 			event.logged = true;
+			const stat = player.getStat();
+			for (let i in stat.skill) {
+				let bool = false;
+				const info = lib.skill[i];
+				if (!info) continue;
+				if (info.enable != undefined) {
+					if (typeof info.enable == 'string' && info.enable == 'phaseUse') bool = true;
+					else if (typeof info.enable == 'object' && info.enable.includes('phaseUse')) bool = true;
+				}
+				if (bool) stat.skill[i] = 0;
+			}
+			for (let i in stat.card) {
+				let bool = false;
+				const info = lib.card[i];
+				if (!info) continue;
+				if (info.updateUsable == 'phaseUse') stat.card[i] = 0;
+			}
 		}
 		var next = player.chooseToUse();
 		if (!lib.config.show_phaseuse_prompt) {
@@ -2790,24 +2813,6 @@ export const Content = {
 				delete ui.tempnowuxie;
 			}
 		});
-		"step 2";
-		var stat = player.getStat();
-		for (var i in stat.skill) {
-			var bool = false;
-			var info = lib.skill[i];
-			if (!info) continue;
-			if (info.enable != undefined) {
-				if (typeof info.enable == 'string' && info.enable == 'phaseUse') bool = true;
-				else if (typeof info.enable == 'object' && info.enable.includes('phaseUse')) bool = true;
-			}
-			if (bool) stat.skill[i] = 0;
-		}
-		for (var i in stat.card) {
-			var bool = false;
-			var info = lib.card[i];
-			if (!info) continue;
-			if (info.updateUsable == 'phaseUse') stat.card[i] = 0;
-		}
 	},
 	phaseDiscard: function () {
 		"step 0";
@@ -7512,7 +7517,9 @@ export const Content = {
 			if (!evt.orderingCards) evt.orderingCards = [];
 			if (!evt.noOrdering && !evt.cardsOrdered) {
 				evt.cardsOrdered = true;
-				var next = game.createEvent('orderingDiscard', false, evt.getParent());
+				var next = game.createEvent('orderingDiscard', false);
+				event.next.remove(next);
+				evt.after.push(next);
 				next.relatedEvent = evt;
 				next.setContent('orderingDiscard');
 			}
@@ -8111,10 +8118,12 @@ export const Content = {
 	},
 	addJudge: function () {
 		"step 0";
+		const cardName = typeof card == 'string' ? card : card.name , cardInfo = lib.card[cardName];
 		if (cards) {
 			var owner = get.owner(cards[0]);
 			if (owner) {
-				event.relatedLose = owner.lose(cards, 'visible', ui.special).set('getlx', false);
+				event.relatedLose = owner.lose(cards, ui.special).set('getlx', false);
+				if (cardInfo && !cardInfo.blankCard) event.relatedLose.set('visible',true);
 			}
 			else if (get.position(cards[0]) == 'c') event.updatePile = true;
 		}

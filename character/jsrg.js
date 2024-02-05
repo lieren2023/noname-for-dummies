@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'jsrg',
@@ -62,7 +62,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jsrg_simayi:['male','wei',4,['jsrgyingshi','jsrgtuigu']],
 			jsrg_guoxun:['male','wei',4,['jsrgeqian','jsrgfusha']],
 			jsrg_sunlubansunluyu:['female','wu',3,['jsrgdaimou','jsrgfangjie']],
-			jsrg_caofang:['male','wei','3/4',['jsrgzhaotu','jsrgjingju','jsrgweizhui']],
+			jsrg_caofang:['male','wei','3/4',['jsrgzhaotu','jsrgjingju','jsrgweizhui'],['zhu']],
 			jsrg_sunjun:['male','wu',4,['jsrgyaoyan','jsrgbazheng']],
 			jsrg_liuyong:['male','shu',3,['jsrgdanxin','jsrgfengxiang']],
 			jsrg_weiwenzhugezhi:['male','wu',4,['jsrgfuhai']],
@@ -1214,6 +1214,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:'chooseToUse',
 				viewAs:{name:'lebu'},
 				position:'hes',
+				round:1,
 				viewAsFilter(player){
 					return player.countCards('hes');
 				},
@@ -1806,23 +1807,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				frequent:true,
 				async content(event,trigger,player){
-					player.judge().set('callback',()=>{
-						const red=[],black=[];
-						game.getGlobalHistory('cardMove',evt=>{
-							if(evt.name!='cardsDiscard'){
-								if(evt.name!='lose'||evt.position!=ui.discardPile) return false;
-							}
-							const cards=evt.cards.filter(card=>get.position(card,true)=='d');
-							red.addArray(cards.filter(i=>get.color(i,false)=='red'));
-							black.addArray(cards.filter(i=>get.color(i,false)=='black'));
-						});
-						if(event.judgeResult.color=='red'&&red.length){
-							player.draw(red.length);
+					const {result} = await player.judge();
+					let num = 0;
+					game.getGlobalHistory('cardMove',evt=>{
+						if(evt.name!='cardsDiscard'){
+							if(evt.name!='lose'||evt.position!=ui.discardPile) return false;
 						}
-						else if(event.judgeResult.color=='black'&&black.length){
-							player.draw(black.length);
-						}
-					})
+						num += (evt.cards.filter(i=>get.color(i,false) == result.color).length);
+					});
+					if (num > 0) player.draw(num);
 				},
 			},
 			jsrgzunwei:{
@@ -3485,10 +3478,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						prompt2:`${undamaged.length?'选择一张牌弃置并选择一名未对你造成过伤害的角色，你对其造成1点伤害':''}${undamaged.length&&damaged.length?'；<br>或':''}${damaged.length?'仅选择一名对你造成过伤害的角色，你令其摸两张牌':''}。`,
 						damaged:damaged,
 						aiTarget:(()=>{
-							if(!undamaged.some(i=>{
-								if(get.attitude(player,i)>0) return true;
-								if(i.getHp(true)+i.hujia<2) return true;
-								return false;
+							if(undamaged.includes(player)&&!undamaged.some(i=>{
+								if(i===player) return false;
+								let att=get.attitude(player,i);
+								if(att>0) return true;
+								return att<0&&i.getHp(true)+i.hujia<2;
 							})&&(player.hp>2||get.damageEffect(player,player,player)>=0)) return player;
 							var info=game.filterPlayer().map(current=>{
 								let damage=undamaged.includes(current),card={name:damage?'damage':'draw'};
@@ -4276,7 +4270,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					result:{
 						target:function(player,target){
 							var eff=get.effect(target,{name:'sha',nature:'fire'},player,target)/30;
-							if(!target.mayHaveShan(player,'use')) eff*=2;
+							if(!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+								return i.hasGaintag('sha_notshan');
+							}))) eff*=2;
 							var del=target.countCards('h')-player.countCards('h')+1.5;
 							eff*=Math.sqrt(del);
 							return eff;
@@ -6856,19 +6852,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 6'
 					if(result.bool&&result.links.length){
 						var link=result.links[0];
-						if(get.position(link)=='h'){
-							event.targets[1].gain(link);
-						}
-						else if(get.position(link)=='e'){
-							event.targets[1].equip(link);
-						}
-						else if(link.viewAs){
-							event.targets[1].addJudge({name:link.viewAs},[link]);
-						}
+						if(get.position(link)=='h') event.targets[1].gain(link,event.targets[0],'giveAuto');
 						else{
-							event.targets[1].addJudge(link);
+							event.targets[0].$give(link,event.targets[1],false);
+							if(get.position(link)=='e') event.targets[1].equip(link);
+							else if(link.viewAs) event.targets[1].addJudge({name:link.viewAs},[link]);
+							else event.targets[1].addJudge(link);
 						}
-						event.targets[0].$give(link,event.targets[1],false);
 						game.log(event.targets[0],'的',get.position(link)=='h'?'一张手牌':link,'被移动给了',event.targets[1]);
 						game.delay();
 					}
@@ -7128,7 +7118,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(_status.event.all) return 1;
 						if(ui.selected.buttons.length) return 0;
 						return Math.random();
-					}).set('all',!target.mayHaveShan(player,'use')&&Math.random()<0.75).set('forceAuto',true);
+					}).set('all',!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+						return i.hasGaintag('sha_notshan');
+					}))&&Math.random()<0.75).set('forceAuto',true);
 					'step 1'
 					if(result.bool){
 						var cards=result.cards;
@@ -8251,7 +8243,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jsrgeqian_info:'①结束阶段，你可以蓄谋任意次。②当你使用【杀】或蓄谋牌指定其他角色为唯一目标后，你可以令此牌不计入次数限制并获得目标一张牌，然后其可以令你本回合至其的距离+2。',
 			jsrgfusha:'伏杀',
 			jsrgfusha_info:'限定技。出牌阶段，若你的攻击范围内仅有一名角色，你可以对其造成X点伤害（X为你的攻击范围，至多为游戏人数）。',
-			jsrg_sunlubansunluyu:'合孙鲁班孙鲁育',
+			jsrg_sunlubansunluyu:'合大小虎',
 			jsrg_sunlubansunluyu_prefix:'合',
 			jsrgdaimou:'殆谋',
 			jsrgdaimou_info:'每回合各限一次。当一名角色使用【杀】指定其他角色/你为目标时，你可以用牌堆顶的牌蓄谋/你须弃置你区域里的一张蓄谋牌。',

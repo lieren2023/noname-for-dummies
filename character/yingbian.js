@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'yingbian',
@@ -121,7 +121,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				content:function*(event,map){
 					var player=map.player,trigger=map.trigger;
-					if(!trigger.card||!trigger.cards.length){
+					if(!trigger.card||!trigger.cards||!trigger.cards.length){
 						trigger.num++;
 						event.finish();
 						return;
@@ -273,12 +273,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				ai:{
-					order:function(item,player){
-						return 10;
-					},
+					order:10,
 					respondShan:true,
 					respondSha:true,
-					skillTagFilter:function(player,tag){
+					skillTagFilter:function(player,tag,arg){
+						if(arg=='respond') return false;
 						var hs=player.getCards('h');
 						if(hs.length!=Math.max(0,hs.length)) return false;
 						if(hs.length>1){
@@ -971,7 +970,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						charlotte:true,
 						forced:true,
 						popup:false,
-						trigger:{global:['equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','loseAfter','gainAfter','addToExpansionAfter']},
+						trigger:{global:['equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','loseAfter','addToExpansionAfter']},
 						usable:1,
 						filter:function(event,player){
 							var target=player.storage.qimei_draw;
@@ -1623,7 +1622,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var list,skills=[];
 					if(get.mode()=='guozhan'){
 						list=[];
-						for(var i in lib.characterPack.mode_guozhan) list.push(i);
+						for(var i in lib.characterPack.mode_guozhan){
+							if(lib.character[i])list.push(i);
+						}
 					}
 					else if(_status.connectMode) list=get.charactersOL();
 					else {

@@ -921,9 +921,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.chooseButtonOL(list,function(player,result){
 						if(game.online||player==game.me){
 							player.init(result.links[0]);
-							player.hp++;
-							player.maxHp++;
-							player.$update();
+							if(!player.isInitFilter('noZhuHp')){
+								player.hp++;
+								player.maxHp++;
+								player.$update();
+							}
 						}
 					});
 					"step 5"
@@ -944,9 +946,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						for(var i in result){
 							if(!lib.playerOL[i].name){
 								lib.playerOL[i].init(result[i][0],result[i][1]);
-								lib.playerOL[i].hp++;
-								lib.playerOL[i].maxHp++;
-								lib.playerOL[i].update();
+								if(!lib.playerOL[i].isInitFilter('noZhuHp')){
+									lib.playerOL[i].hp++;
+									lib.playerOL[i].maxHp++;
+									lib.playerOL[i].$update();
+								}
 							}
 						}
 					},result);
@@ -1102,12 +1106,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.map[event.bZhu].remove(character);
 						game.bZhu.init(character);
 					}
-					game.rZhu.maxHp++;
-					game.rZhu.hp++;
-					game.rZhu.update();
-					game.bZhu.maxHp++;
-					game.bZhu.hp++;
-					game.bZhu.update();
+					if(!game.rzhu.isInitFilter('noZhuHp')){
+						game.rzhu.maxHp++;
+						game.rzhu.hp++;
+						game.rzhu.update();
+					}
+					if(!game.bzhu.isInitFilter('noZhuHp')){
+						game.bzhu.maxHp++;
+						game.bzhu.hp++;
+						game.bzhu.update();
+					}
 					if(!event.isZhu){
 						var group=game.me.identity.indexOf('r')==0?event.rZhu:event.bZhu;
 						game.me.chooseButton(true,['请选择您的武将牌',[event.map[group].randomRemove(5),'character']]);
@@ -1395,9 +1403,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.init(listc[0]);
 						}
 						if(player.identity=='mingzhong'){
-							player.hp++;
-							player.maxHp++;
-							player.update();
+							if(!player.isInitFilter('noZhuHp')){
+								player.hp++;
+								player.maxHp++;
+								player.$update();
+							}
 						}
 					}
 					else if(player.identity=='zhu'&&!stratagemMode){
@@ -1423,9 +1433,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.init(choice);
 						}
 						if(game.players.length>4){
-							player.hp++;
-							player.maxHp++;
-							player.update();
+							if(!player.isInitFilter('noZhuHp')){
+								player.hp++;
+								player.maxHp++;
+								player.$update();
+							}
 						}
 					}
 					else if(player.identity=='zhong'&&(Math.random()<0.5||['sunliang','key_akane'].includes(game.zhu.name))&&!stratagemMode){
@@ -2118,9 +2130,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list.remove(get.sourceCharacter(game.me.name1));
 					event.list.remove(get.sourceCharacter(game.me.name2));
 					if(!event.stratagemMode&&game.me==game.zhu&&game.players.length>4){
-						game.me.hp++;
-						game.me.maxHp++;
-						game.me.update();
+						if(!game.me.isInitFilter('noZhuHp')){
+							game.me.hp++;
+							game.me.maxHp++;
+							game.me.$update();
+						}
 					}
 					for(var i=0;i<game.players.length;i++){
 						if((event.stratagemMode||game.players[i]!=game.zhu)&&game.players[i]!=game.me){
@@ -2362,18 +2376,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list2.remove(get.sourceCharacter(game.zhu.name2));
 
 					if(game.players.length>4){
-						game.zhu.maxHp++;
-						game.zhu.hp++;
-						game.zhu.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 					}
 					game.broadcast(function(zhu,name,name2,addMaxHp){
 						if(!zhu.name){
 							zhu.init(name,name2);
 						}
 						if(addMaxHp){
-							zhu.maxHp++;
-							zhu.hp++;
-							zhu.update();
+							if(!zhu.isInitFilter('noZhuHp')){
+								zhu.maxHp++;
+								zhu.hp++;
+								zhu.update();
+							}
 						}
 					},game.zhu,result.links[0],result.links[1],game.players.length>4);
 

@@ -6,13 +6,85 @@ import { Game as game } from '../game/index.js';
 import { status as _status } from '../status/index.js';
 import { UI as ui } from '../ui/index.js';
 
-import { userAgent } from '../util/index.js';
+import { userAgent, nonameInitialized } from '../util/index.js';
 import * as config from '../util/config.js';
 import { promiseErrorHandlerMap } from '../util/browser.js';
 import { gnc } from '../gnc/index.js';
 
 import { importCardPack, importCharacterPack, importExtension, importMode } from './import.js';
 import { onload } from './onload.js';
+
+// 判断是否从file协议切换到http/s协议
+export function canUseHttpProtocol() {
+	// 如果是http了就不用
+	if (location.protocol.startsWith('http')) return false;
+	if (typeof nonameInitialized == 'string') {
+		// 手机端
+		if (window.cordova) {
+			// 直接确定包名
+			if (nonameInitialized.endsWith('com.noname.shijian/')) {
+				// 每个app自定义能升级的渠道，比如判断版本
+				// @ts-ignore
+				return window.noname_shijianInterfaces.getApkVersion() >= 16000;
+			}
+		}
+		// 电脑端
+		else if (typeof window.require == 'function' && typeof window.process == 'object') {
+			// 从json判断版本号
+			const fs = require('fs');
+			const path = require('path');
+			if (fs.existsSync(path.join(__dirname, 'package.json'))) {
+				// @ts-ignore
+				const json = require('./package.json');
+				// 诗笺电脑版的判断
+				return json && Number(json.installerVersion) >= 1.7;
+			}
+		}
+		// 浏览器端
+		else {
+			return location.protocol.startsWith('http');
+		}
+	}
+	return false;
+}
+
+/**
+ * 传递升级完成的信息
+ * @returns { string | void } 返回一个网址
+ */
+export function sendUpdate() {
+	// 手机端
+	if (window.cordova) {
+		// 直接确定包名
+		if (nonameInitialized && nonameInitialized.includes('com.noname.shijian')) {
+			// 给诗笺版apk的java层传递升级完成的信息
+			// @ts-ignore
+			return window.noname_shijianInterfaces.sendUpdate() + '?sendUpdate=true';
+		}
+	}
+	// 电脑端
+	else if (typeof window.require == 'function' && typeof window.process == 'object') {
+		// 从json判断版本号
+		const fs = require('fs');
+		const path = require('path');
+		if (fs.existsSync(path.join(__dirname, 'package.json'))) {
+			// @ts-ignore
+			const json = require('./package.json');
+			// 诗笺电脑版的判断
+			if (json && Number(json.installerVersion) >= 1.7) {
+				fs.writeFileSync(path.join(__dirname, 'Home', 'saveProtocol.txt'), '');
+				// 启动http
+				const cp = require('child_process');
+				cp.exec(`start /min ${__dirname}\\noname-server.exe -platform=electron`, (err, stdout, stderr) => { });
+				return `http://localhost:8089/app.html?sendUpdate=true`;
+			}
+		}
+	}
+	// 浏览器端
+	else {
+		return location.href;
+	}
+}
 
 // 无名杀，启动！
 export async function boot() {
@@ -864,9 +936,9 @@ async function setOnError() {
 			}
 			//解析parsex里的content fun内容(通常是技能content) 
 			// @ts-ignore
-			else if (err && err.stack && ['at Object.eval [as content]', 'at Proxy.content'].some(str =>{
+			else if (err && err.stack && ['at Object.eval [as content]', 'at Proxy.content'].some(str => {
 				let stackSplit1 = err.stack.split('\n')[1];
-				if(stackSplit1){
+				if (stackSplit1) {
 					return stackSplit1.trim().startsWith(str);
 				}
 				return false;

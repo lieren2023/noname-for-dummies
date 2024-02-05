@@ -527,15 +527,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(event.name=='phase'){
 						if(game.phaseNumber!=0) return false;
 						if(!player._start_cards) return false;
-						var hs=player.getCards('h');
-						for(var card of player._start_cards){
+						let hs=player.getCards('h');
+						for(let card of player._start_cards){
 							if(get.name(card,player)=='du'&&hs.includes(card)) return true;
 						}
 					}
 					else{
 						if(event.getParent().name!='draw') return false;
-						var hs=player.getCards('h');
-						for(var card of event.cards){
+						let hs=player.getCards('h');
+						for(let card of event.getg(player)){
 							if(get.name(card,player)=='du'&&hs.includes(card)) return true;
 						}
 					}

@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'shenhua',
@@ -3676,7 +3676,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				ai:{
 					effect:{
 						target:function(card,player,target,current){
-							if(typeof card==='object'&&get.name(card)==='sha'&&target.mayHaveShan(player,'use')) return [0.6,0.75];
+							if(typeof card==='object'&&get.name(card)==='sha'&&target.mayHaveShan(player,'use',target.getCards('h',i=>{
+								return i.hasGaintag('sha_notshan');
+							}))) return [0.6,0.75];
 							if(!target.hasFriend()&&!player.hasUnknown()) return;
 							if(_status.currentPhase==target||get.type(card)==='delay') return;
 							if(card.name!='shuiyanqijunx'&&get.tag(card,'loseCard')&&target.countCards('he')){
@@ -6218,7 +6220,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								}
 								if(!target.isHealthy()) club+=2;
 								if(!club&&!spade) return 1;
-								if(!target.mayHaveShan(player)) return 1-0.1*Math.min(5,target.countCards('hs'));
+								if(card.name==='sha'){
+									if(!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+										return i.hasGaintag('sha_notshan');
+									}))) return;
+								}
+								else if(!target.mayHaveShan(player)) return 1-0.1*Math.min(5,target.countCards('hs'));
 								if(!target.hasSkillTag('rejudge')) return [1,(club+spade)/4];
 								let pos=player.hasSkillTag('viewHandcard',null,target,true)?'hes':'e',better=club>spade?'club':'spade',max=0;
 								target.hasCard(function(cardx){
@@ -7201,7 +7208,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							},true)&&game.hasPlayer(function(current){
 								return get.attitude(target,current)<0&&get.damageEffect(current,target,target,'thunder')>0;
 							})){
-								if(!target.mayHaveShan(player)) return 1-0.1*Math.min(5,target.countCards('hs'));
+								if(card.name==='sha'){
+									if(!target.mayHaveShan(player,'use',target.getCards('h',i=>{
+										return i.hasGaintag('sha_notshan');
+									}))) return;
+								}
+								else if(!target.mayHaveShan(player)) return 1-0.1*Math.min(5,target.countCards('hs'));
 								if(!target.hasSkillTag('rejudge')) return [1,1];
 								let pos=player.hasSkillTag('viewHandcard',null,target,true)?'hes':'e';
 								if(target.hasCard(function(cardx){
@@ -7710,7 +7722,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuji:['xin_yuji','re_yuji','yuji'],
 			zhangjiao:['sp_zhangjiao','re_zhangjiao','sb_zhangjiao','zhangjiao'],
 			dianwei:['dianwei','ol_dianwei','re_dianwei'],
-			xunyu:['xunyu','ol_xunyu','re_xunyu'],
+			xunyu:['xunyu','ol_xunyu','re_xunyu','sb_xunyu'],
 			sp_zhugeliang:['sp_zhugeliang','ol_sp_zhugeliang','re_sp_zhugeliang','sb_sp_zhugeliang'],
 			pangtong:['pangtong','ol_pangtong','re_pangtong','sb_pangtong'],
 			re_jsp_pangtong:['re_jsp_pangtong','jsrg_pangtong','sp_pangtong'],

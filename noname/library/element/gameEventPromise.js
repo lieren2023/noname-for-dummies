@@ -63,6 +63,7 @@ export class GameEventPromise extends Promise {
 						// 得新执行一个只执行这个异步事件的game.loop
 
 						// 事件自行处理skip情况
+						_status.event.next.remove(eventPromise);
 						if (event.player && event.player.skipList.includes(event.name)) {
 							_status.event.trigger(event.name + 'Skipped');
 							event.player.skipList.remove(event.name);
@@ -160,5 +161,98 @@ export class GameEventPromise extends Promise {
 			};
 			game.promises.prompt('debugger调试').then(inputCallback);
 		});
+	}
+
+	/**
+	 * 
+	 * 直接获得result中的信息。
+	 * 
+	 * 
+	 * @example
+	 * ①
+	 * let chooseCardResult = await player.chooseCard().forResult();
+	 * 选择的卡牌：chooseCardResult.cards
+	 * ②
+	 * let cards = await player.chooseCard().forResult('cards');
+	 * 选择的卡牌：cards
+	 * ③
+	 * let [success,cards,targets] = await player.chooseCardTarget().forResult('bool','cards','targets');
+	 * success:是否做出选择。
+	 * cards:选择的牌。
+	 * targets:选择的目标。
+	 * 
+	 * @returns {Promise} 返回的结果
+	 */
+	forResult(){
+		if(arguments.length == 0){
+			return this.then(event=>{
+				return Promise.resolve(event.result);
+			});
+		}else if(arguments.length == 1){
+			return this.then(event=>{
+				return Promise.resolve(event.result[arguments[0]]);
+			});
+		}else{
+			return this.then(event=>{
+				return Promise.resolve(Array.from(arguments).map(key=>event.result[key]));
+			});
+		}
+	}
+
+	/**
+	 * 返回result中的bool项。
+	 * 
+	 * @returns {Promise<boolean>} 返回的bool项
+	 */
+	forResultBool(){
+		return this.forResult('bool');
+	}
+
+	/**
+	 * 返回result中的targets项。
+	 * 
+	 * @returns {Promise<Player[]>} 返回的targets项。
+	 * 
+	 */
+	forResultTargets(){
+		return this.forResult('targets');
+	}
+
+	/**
+	 * 返回result中的cards项
+	 * 
+	 * @returns {Promise<Card[]>} 返回的cards项。
+	 * 
+	 */
+	forResultCards(){
+		return this.forResult('cards');
+	}
+
+	/**
+	 * 返回result中的card项
+	 * 
+	 * @returns {Promise<VCard>|Promise<Card>} 返回的card项。
+	 * 
+	 */
+	forResultCard(){
+		return this.forResult('card');
+	}
+
+	/**
+	 * 返回result中的control项。
+	 * 
+	 * @returns {Promise<string>} 返回的control项。
+	 */
+	forResultControl(){
+		return this.forResult('control');
+	}
+
+	/**
+	 * 返回result中的links项。
+	 * 
+	 * @returns {Promise<Array<any>>} 返回的links项。
+	 */
+	forResultLinks(){
+		return this.forResult('links');
 	}
 }
