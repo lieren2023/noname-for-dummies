@@ -1939,9 +1939,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else choiceList[0]='<span style="opacity:0.5">'+choiceList[0]+'</span>';
 					if(player.countCards('he',function(card){
 						return get.suit(card)=='diamond'&&get.type2(card)!='trick'&&player.canUse(get.autoViewAs({name:'lebu'},[card]),target);
-					})||(player.countCards('he',function(card){
+					})||player.countCards('he',function(card){
 						return get.suit(card)=='club'&&get.type2(card)!='trick'&&player.canUse(get.autoViewAs({name:'bingliang'},[card]),target);
-					}))) list.push('选项二');
+					})) list.push('选项二');
 					else choiceList[1]='<span style="opacity:0.5">'+choiceList[1]+'</span>';
 					if(target.isUnseen(2)&&!player.isUnseen(2)) list.push('背水！');
 					else choiceList[2]='<span style="opacity:0.5">'+choiceList[2]+'</span>';
@@ -1961,10 +1961,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.choice=result.control;
 					if(event.choice!='选项二'&&target.countDiscardableCards(player,'he')) player.discardPlayerCard(target,'he',true);
 					'step 2'
-					if(event.choice!='选项一'&&!player.isUnseen(2)&&target.isUnseen(2)&&
-					player.hasCard(function(card){
+					if(event.choice!='选项一'&&(player.hasCard(function(card){
 						return get.suit(card)=='diamond'&&get.type2(card)!='trick'&&player.canUse(get.autoViewAs({name:'lebu'},[card]),target);
-					},'he')||(player.hasCard(function(card){
+					},'he')||player.hasCard(function(card){
 						return get.suit(card)=='club'&&get.type2(card)!='trick'&&player.canUse(get.autoViewAs({name:'bingliang'},[card]),target,false);
 					},'he'))){
 						var next=game.createEvent('gzzhenxi_use');
@@ -3530,7 +3529,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					]).set('prompt',get.prompt('gzliegong',trigger.target)).setHiddenSkill('gzliegong').set('ai',function(){
 						var player=_status.event.player,target=_status.event.getTrigger().target;
 						if(get.attitude(player,target)>0) return 2;
-						return target.mayHaveShan(player,'use')?1:0;
+						return target.mayHaveShan(player,'use',target.getCards('h',i=>{
+							return i.hasGaintag('sha_notshan');
+						}))?1:0;
 					});
 					'step 1'
 					if(result.control!='cancel2'){
@@ -10656,7 +10657,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									goon=false;
 								}
 								else if(trigger.card.name=='sha'){
-									if(trigger.target.mayHaveShan(player,'use')||trigger.target.hp>=3){
+									if(trigger.target.mayHaveShan(player,'use',trigger.target.getCards('h',i=>{
+										return i.hasGaintag('sha_notshan');
+									}))||trigger.target.hp>=3){
 										goon=false;
 									}
 								}

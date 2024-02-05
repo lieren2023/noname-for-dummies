@@ -186,6 +186,7 @@ content:function(config,pack){
 		lib.characterTitle.old_huaxiong = "魔将";
 		lib.characterTitle.yujin = "讨暴坚垒";
 		// yingbian:'文德武备',
+		lib.characterTitle.chengjichengcui = "袒忿半瓦";
 		lib.characterTitle.wangxiang = "沂川跃鲤";
 		lib.characterTitle.jin_jiachong = "鲁郡公";
 		lib.characterTitle.xuangongzhu = "高陵公主";
@@ -226,6 +227,7 @@ content:function(config,pack){
 		lib.characterTitle.clan_zhongyu = "础润殷忧";
 		lib.characterTitle.clan_wanglun = "半缘修道";
 		lib.characterTitle.clan_xunyou = "深密绝谟";
+		lib.characterTitle.clan_wuqiao = "孤节卅岁";
 		// xinghuoliaoyuan:'星火燎原',
 		lib.characterTitle.wangcan = "七子之冠冕";
 		lib.characterTitle.sp_taishici = "北海酬恩";
@@ -240,6 +242,7 @@ content:function(config,pack){
 		lib.characterTitle.liuyao = "宗英外镇";
 		lib.characterTitle.liuyan = "裂土之宗";
 		// extra:'神将',
+		lib.characterTitle.shen_lusu = "兴吴之邓禹";
 		lib.characterTitle.shen_huatuo = "悬壶济世";
 		lib.characterTitle.le_shen_jiaxu = "倒悬云衢";
 		lib.characterTitle.shen_dianwei = "襢裼暴虎";
@@ -2804,7 +2807,7 @@ content:function(config,pack){
 	
 	// 资料卡修改
 	if(config.byzy_zlkxg && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable'])) {
-		lib.notshowSkillNamePinyin=['阵亡','胜利','注意事项','关卡说明'];
+		lib.notshowSkillNamePinyin=['阵亡','胜利','注意事项','关卡说明','五子良将纛','五虎将大旗','缘江烽火图','黄巾天兵符','大键角色图','水转百戏图','太平要术'];
 		
 		if (ui.css.characterbutton)
 			ui.css.characterbutton.remove();
@@ -3144,7 +3147,7 @@ content:function(config,pack){
 						for(var i=0;i<derivation.length;i++){
 							var derivationname=get.translation(derivation[i]);
 							var derivationtranslationinfo=get.skillInfoTranslation(derivation[i]);
-							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1){
+							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
 								var derivationpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?derivation[i]:get.pinyin(derivationname);
 								intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+derivationpinyin+']'+'</span>'+'  '+derivationtranslationinfo;
 							}else{
@@ -3397,7 +3400,7 @@ content:function(config,pack){
 							derivationNameSpanStyle.fontWeight='bold';
 							const derivationName=get.translation(derivation);
 							derivationNameSpan.innerHTML=derivationName;
-							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1){
+							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
 								const ruby=document.createElement('ruby');
 								ruby.appendChild(derivationNameSpan);
 								const leftParenthesisRP=document.createElement('rp');
@@ -5584,9 +5587,11 @@ precontent:function(){
 						player.init(listc[0]);
 					}
 					if(player.identity=='mingzhong'){
-						player.hp++;
-						player.maxHp++;
-						player.update();
+						if(!player.isInitFilter('noZhuHp')){
+							player.hp++;
+							player.maxHp++;
+							player.update();
+						}
 					}
 				}
 				else if(player.identity=='zhu'&&!stratagemMode){
@@ -5612,9 +5617,11 @@ precontent:function(){
 						player.init(choice);
 					}
 					if(game.players.length>4){
-						player.hp++;
-						player.maxHp++;
-						player.update();
+						if(!player.isInitFilter('noZhuHp')){
+							player.hp++;
+							player.maxHp++;
+							player.update();
+						}
 					}
 				}
 				else if(player.identity=='zhong'&&(Math.random()<0.5||['sunliang','key_akane'].contains(game.zhu.name))&&!stratagemMode){
@@ -6305,9 +6312,11 @@ precontent:function(){
 				event.list.remove(get.sourceCharacter(target.name2));
 				if (target == game.zhu && _status.mode != 'purple') {
 					if (!event.stratagemMode&&game.players.length > 4 || get.mode() == 'doudizhu') {
-						target.hp++;
-						target.maxHp++;
-						target.update();
+						if(!target.isInitFilter('noZhuHp')){
+							target.hp++;
+							target.maxHp++;
+							target.update();
+						}
 					}
 					if (get.mode() == 'identity') {
 						var enhance_zhu = false;
@@ -6396,9 +6405,11 @@ precontent:function(){
 				}
 				if (_status.mode == 'purple') {
 					if (target == game.rZhu || target == game.bZhu) {
-						target.hp++;
-						target.maxHp++;
-						target.update();
+						if(!target.isInitFilter('noZhuHp')){
+							target.hp++;
+							target.maxHp++;
+							target.update();
+						}
 					}
 				}
 				/*for(var i=0;i<game.players.length;i++){
@@ -10565,7 +10576,7 @@ config:{
 	author:"无名玩家<br>自写&搬运：<span class='bluetext'>棘手怀念摧毁</span>",
 	diskURL:"",
 	forumURL:"",
-	version:"1.10.6.1",
+	version:"1.10.7",
 },
 files:{"character":[],"card":[],"skill":[]}}})
 
@@ -10577,7 +10588,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 总双势力武将等统计错误
 // 场上所有角色禁将+解除场上其他角色禁将无法禁用“我”（玩家）的武将、禁将名出现undefined
 // 选项导航功能的搜索，未输入点确定弹出提示内容不正确，未输入时保持请输入关键字显示
-// 手牌上限显示无法及时更新
+// 手牌上限显示无法及时更新（未game.check？）
 // 控制台从牌堆&弃牌堆获得牌不能选择多名角色
 // 对决-对抗自由选将无法加载搜索功能（十周年UI的问题？若十周年UI原先的流畅模式开启则无此问题，但选将时连点几次反贼按钮会报错）
 
@@ -10596,7 +10607,8 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 自由选将-搜索功能、选项导航功能保留搜索历史（可通过选项选择）
 // 导航功能不遮挡选项
 // 2-17人addPlayer会自动安排布局
-// 禁将功能-禁用AI禁用的武将、禁用或启用无原画武将
+// 禁将功能-禁用AI禁用的武将、禁用或启用无原画武将（剪影原画武将）
+// AI禁将/禁将：收藏武将，最近武将
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
 // 利用控制台命令代码绘制效果图（计划加入测试功能）
@@ -10634,7 +10646,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 资料页试听胜利配音【暂不可用，等本体更新中】。思路1：更改游戏结束音效读取路径（随机播放一名胜利阵营角色的胜利配音，优先播放存活的角色）；思路2：更改阵亡配音为胜利配音（但在一些特殊模式无法识别）。可参考假装无敌MVP？
 // 一将成名2023武将称号待补充
 // card.nature修改，包括④教程及说明.txt？
-// 懒人包按钮宽度调整通过修改本体临时修复；非懒人包可开启临时修复开关
+// 懒人包临时修改本体css以适配控制台按钮显示，按钮宽度调整通过修改本体临时修复；非懒人包可开启临时修复开关（请等待后续更新）
 // AI优化：卡牌价值修改
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？

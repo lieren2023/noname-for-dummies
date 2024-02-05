@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'xianjian',
@@ -26,7 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
 			pal_yuntianhe:['male','wu',4,['longxi','zhuyue','guanri']],
 			pal_hanlingsha:['female','shu',3,['tannang','tuoqiao']],
-			pal_liumengli:['female','wei',3,['tianxian','runxin','zhimeng']],
+			pal_liumengli:['female','wei',3,['tianxian','runxin','xjzhimeng']],
 			pal_murongziying:['male','wei',4,['xuanning','poyun','qianfang']],
 			pal_xuanxiao:['male','wei',4,['xuanyan','ningbin','xfenxin']],
 
@@ -3858,17 +3858,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					threaten:1.5
 				}
 			},
-			zhimeng:{
+			xjzhimeng:{
 				trigger:{player:'phaseEnd'},
 				direct:true,
 				locked:true,
 				unique:true,
 				gainable:true,
 				// alter:true,
-				group:'zhimeng3',
+				group:'xjzhimeng3',
 				content:function(){
 					"step 0"
-					player.chooseTarget(get.prompt('zhimeng'),function(card,player,target){
+					player.chooseTarget(get.prompt('xjzhimeng'),function(card,player,target){
 						return player!=target;
 					}).ai=function(target){
 						var num=get.attitude(player,target);
@@ -3888,35 +3888,35 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					if(result.bool){
 						var target=result.targets[0];
-						if(get.is.altered('zhimeng')){
+						if(get.is.altered('xjzhimeng')){
 							target.draw();
 						}
 						else{
 							var card=get.cards()[0];
 							target.$draw(card);
-							target.storage.zhimeng2=card;
-							game.addVideo('storage',target,['zhimeng2',get.cardInfo(card),'card']);
-							target.addSkill('zhimeng2');
+							target.storage.xjzhimeng2=card;
+							game.addVideo('storage',target,['xjzhimeng2',get.cardInfo(card),'card']);
+							target.addSkill('xjzhimeng2');
 						}
-						player.logSkill('zhimeng',target);
+						player.logSkill('xjzhimeng',target);
 					}
 				},
 				ai:{
 					expose:0.2
 				}
 			},
-			zhimeng2:{
+			xjzhimeng2:{
 				intro:{
 					content:'card',
 					onunmark:function(storage,player){
-						delete player.storage.zhimeng2;
+						delete player.storage.xjzhimeng2;
 					}
 				},
 				mark:'card',
 				trigger:{target:'useCardToBegin'},
 				frequent:true,
 				filter:function(event,player){
-					return player.storage.zhimeng2&&get.type(event.card,'trick')==get.type(player.storage.zhimeng2,'trick');
+					return player.storage.xjzhimeng2&&get.type(event.card,'trick')==get.type(player.storage.xjzhimeng2,'trick');
 				},
 				content:function(){
 					player.draw();
@@ -3924,14 +3924,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				ai:{
 					effect:{
 						target:function(card,player,target){
-							if(target.storage.zhimeng2&&get.type(card,'trick')==get.type(target.storage.zhimeng2,'trick')){
+							if(target.storage.xjzhimeng2&&get.type(card,'trick')==get.type(target.storage.xjzhimeng2,'trick')){
 								return [1,0.5];
 							}
 						}
 					}
 				}
 			},
-			zhimeng3:{
+			xjzhimeng3:{
 				trigger:{player:['phaseBegin','dieBegin']},
 				silent:true,
 				content:function(){
@@ -3941,16 +3941,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					if(event.num<event.players.length){
 						var player=event.players[event.num];
-						if(player.storage.zhimeng2){
+						if(player.storage.xjzhimeng2){
 							if(trigger.name=='die'&&player==trigger.player){
-								player.storage.zhimeng2.discard();
+								player.storage.xjzhimeng2.discard();
 							}
 							else{
-								game.log(player,'发动织梦，获得了',player.storage.zhimeng2);
-								player.gain(player.storage.zhimeng2,'gain2');
-								player.popup('zhimeng');
+								game.log(player,'发动织梦，获得了',player.storage.xjzhimeng2);
+								player.gain(player.storage.xjzhimeng2,'gain2');
+								player.popup('xjzhimeng');
 							}
-							player.removeSkill('zhimeng2');
+							player.removeSkill('xjzhimeng2');
 						}
 						event.num++;
 						event.redo();
@@ -4348,11 +4348,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			guanri_info:'限制技，你可以弃置两张红色手牌并失去1点体力，然后对一名体力值不少于你的其他角色造成2点火焰伤害并弃置其所有装备牌。',
 			tianxian:'天弦',
 			tianxian_info:'锁定技，你的杀无视距离且可指定任意多个目标，目标须进行一次判定，若结果为黑色则取消之。',
-			zhimeng:'织梦',
-			zhimeng2:'织梦',
-			zhimeng3:'织梦',
-			zhimeng_info:'结束阶段，你可以选择一名其他角色将牌堆顶的一张牌置于该角色的武将牌上，直到你的下个准备阶段将其收入手牌。当一名角色武将牌上有织梦牌时，每当其成为与此牌类型相同的卡牌的目标，可以摸一张牌。',
-			zhimeng_info_alter:'结束阶段，你可以令一名其他角色摸一张牌。',
+			xjzhimeng:'织梦',
+			xjzhimeng2:'织梦',
+			xjzhimeng3:'织梦',
+			xjzhimeng_info:'结束阶段，你可以选择一名其他角色将牌堆顶的一张牌置于该角色的武将牌上，直到你的下个准备阶段将其收入手牌。当一名角色武将牌上有织梦牌时，每当其成为与此牌类型相同的卡牌的目标，可以摸一张牌。',
+			xjzhimeng_info_alter:'结束阶段，你可以令一名其他角色摸一张牌。',
 			runxin:'润心',
 			runxin_info:'每当你使用或打出一张红桃牌，你可以令一名角色回复1点体力。',
 			tannang:'探囊',

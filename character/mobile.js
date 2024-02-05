@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'mobile',
@@ -27,7 +27,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		character:{
 			xin_huojun:['male','shu',4,['sidai','jieyu'],['character:tw_huojun','die_audio:tw_huojun']],
-			muludawang:['male','qun','3/3/1',['shoufa','yuxiang','zhoulin']],
+			muludawang:['male','qun','3/3/1',['shoufa','zhoulin','yuxiang']],
 			mb_chengui:['male','qun',3,['guimou','zhouxian']],
 			mb_huban:['male','wei',4,['mbyilie']],
 			mb_xianglang:['male','shu',3,['naxue','yijie']],
@@ -581,7 +581,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							target.damage('nosource');
 							break;
 						case '鹰':
-							player.gain(target.getGainableCards(player,'he'),target,'giveAuto');
+							player.gain(target.getGainableCards(player,'he').randomGet(),target,'giveAuto');
 							break;
 						case '熊':
 							target.discard(target.getGainableCards(player,'e').randomGet()).discarder=player;
@@ -4112,7 +4112,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 1'
 							var hp=player.hp-1,maxhp=player.maxHp-1;
 							if(hp>0&&maxhp>0){
-								player.chooseControl(choices).set('prompt','安国：请选择一项').set('choiceList',[
+								player.chooseControl().set('prompt','安国：请选择一项').set('choiceList',[
 									'失去'+hp+'点体力，令'+get.translation(trigger.player)+'获得1点护甲',
 									'减'+maxhp+'点体力上限，令'+get.translation(trigger.player)+'获得1点护甲'
 								]).set('ai',()=>'选项一');
@@ -7523,6 +7523,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			//钟会
 			requanji:{
 				audio:2,
+				mod:{
+					aiOrder:(player,card,num)=>{
+						if(num<=0||typeof card!=='object'||!player.isPhaseUsing()||!player.hasSkill('zili')||player.needsToDiscard()) return num;
+						if(player.getExpansions('quanji').length<3&&player.getUseValue(card)<Math.min(4,player.hp*player.hp/4)) return 0;
+					}
+				},
 				trigger:{player:['damageEnd','phaseUseEnd']},
 				frequent:true,
 				locked:false,
@@ -9137,7 +9143,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					]).set('ai',function(){
 						var target=_status.event.getTrigger().target;
 						var player=_status.event.player;
-						var num=target.mayHaveShan(player,'use')?0:1;
+						var num=target.mayHaveShan(player,'use',target.getCards('h',i=>{
+							return i.hasGaintag('sha_notshan');
+						}))?0:1;
 						if(get.attitude(player,target)>0) num=1-num;
 						return num;
 					});
@@ -15644,7 +15652,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'你随机弃置其装备区的一张牌',
 					'令其摸一张牌',
 				][['豹','鹰','熊','兔'].indexOf(zhoufa)];
-				return str;
+				return str+'。';
 			},
 		},
 		perfectPair:{

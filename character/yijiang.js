@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'yijiang',
@@ -1182,7 +1182,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							getv=(name,player)=>{
 								let v=trigger.getTempCache('sangu',player.id+name);
 								if(typeof v==='number') return v;
-								v=player.getUseValue({name:name,storage:{sangu:true}},arg);
+								v=player.getUseValue({name:name,storage:{sangu:true}});
 								trigger.putTempCache('sangu',player.id+name,v);
 								return v;
 							};
@@ -2228,7 +2228,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							case 2:{
 								var num=1.3;
 								if(event.card.name=='sha'&&event.targets.filter(function(current){
-									if(current.mayHaveShan(player,'use')&&get.attitude(player,current)<=0){
+									if(current.mayHaveShan(player,'use',current.getCards('h',i=>{
+										return i.hasGaintag('sha_notshan');
+									}))&&get.attitude(player,current)<=0){
 										if(current.hasSkillTag('useShan')) num=1.9;
 										return true;
 									}
@@ -8094,7 +8096,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						const chooseToPutCard = async function(target){
 							await target.draw();
 							if(target.countCards('he')){
-								const {result:{cards,bool}} = 
+								const {result:{cards,bool}} =
 								await target.chooseCard('选择一张牌置于牌堆顶','he',true);
 								if(bool){
 									await target.lose(cards,ui.cardPile,'insert');
@@ -8106,7 +8108,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									player.$throw(cardx,1000,'nobroadcast');
 								},target);
 								if(player == game.me){
-									game.delay(0.5);
+									await game.asyncDelay(0.5);
 								}
 							}
 						};
@@ -11905,6 +11907,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
+					filterDamage:true,
+					skillTagFilter:(player,tag,arg)=>{
+						return arg&&arg.jiu==true;
+					},
 					effect:{
 						target:(card,player,target)=>{
 							if(target.hp<=0&&target.hasSkill('zhenlie_lose')&&get.tag(card,'recover')) return [1,1.2];

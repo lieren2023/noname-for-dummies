@@ -9,7 +9,7 @@ import { UI as ui } from '../ui/index.js';
 // 改为HTMLDivElement.prototype.addTempClass
 HTMLDivElement.prototype.animate = function (keyframes, options) {
 	if (typeof keyframes == 'string') {
-		console.warn(this, '无名杀开发者修改的animate方法已废弃，请改为使用addTempClass方法');
+		console.trace(this, '无名杀开发者修改的animate方法已废弃，请改为使用addTempClass方法');
 		return HTMLDivElement.prototype.addTempClass.call(this, keyframes, options);
 	}
 	else return HTMLElement.prototype.animate.call(this, keyframes, options);
@@ -255,7 +255,7 @@ HTMLTableElement.prototype.get = function (row, col) {
 };
 /*处理lib.nature等从array改为map的兼容性问题*/
 const mapHasFunc = function (item) {
-	console.warn(this, '已经从array改为map，请改为使用has方法');
+	console.trace(this, '已经从array改为map，请改为使用has方法');
 	return this.has(item);
 }
 Object.defineProperty(Map.prototype, "contains", {
@@ -271,7 +271,7 @@ Object.defineProperty(Map.prototype, "includes", {
 	value: mapHasFunc
 });
 const mapAddFunc = function (item) {
-	console.warn(this, '已经从array改为map，请改为使用set方法');
+	console.trace(this, '已经从array改为map，请改为使用set方法');
 	this.set(item, 0);
 	return this;
 }
@@ -303,7 +303,7 @@ Object.defineProperty(Map.prototype, "remove", {
 	enumerable: false,
 	writable: true,
 	value: function (item) {
-		console.warn(this, '已经从array改为map，请改为使用delete方法');
+		console.trace(this, '已经从array改为map，请改为使用delete方法');
 		this.delete(item);
 		return this;
 	}

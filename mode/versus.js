@@ -1607,9 +1607,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							choice=list[0];
 						}
 						player.init(choice);
-						player.hp++;
-						player.maxHp++;
-						player.update();
+						if(!player.isInitFilter('noZhuHp')){
+							player.hp++;
+							player.maxHp++;
+							player.$update();
+						}
 					}
 					else if(Math.random()<0.5){
 						var choice=0;
@@ -1873,9 +1875,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.list.remove(event.current.name1);
 						event.list2.remove(event.current.name1);
 						if(event.current.identity=='zhu'){
-							event.current.hp++;
-							event.current.maxHp++;
-							event.current.update();
+							if(!event.current.isInitFilter('noZhuHp')){
+								event.current.hp++;
+								event.current.maxHp++;
+								event.current.$update();
+							}
 						}
 						event.current.node.name_seat.remove();
 					}
@@ -2038,13 +2042,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.friend[i].node.identity.dataset.color=get.translation(_status.color+'Color');
 						game.enemy[i].node.identity.dataset.color=get.translation(!_status.color+'Color');
 					}
-					game.friendZhu.maxHp++;
-					game.friendZhu.hp++;
-					game.friendZhu.update();
+					if(!game.friendZhu.isInitFilter('noZhuHp')){
+						game.friendZhu.maxHp++;
+						game.friendZhu.hp++;
+						game.friendZhu.update();
+					}
 
-					game.enemyZhu.maxHp++;
-					game.enemyZhu.hp++;
-					game.enemyZhu.update();
+					if(!game.enemyZhu.isInitFilter('noZhuHp')){
+						game.enemyZhu.maxHp++;
+						game.enemyZhu.hp++;
+						game.enemyZhu.update();
+					}
 
 					game.onSwapControl();
 				});
@@ -2528,13 +2536,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.enemy[i].node.identity.dataset.color=get.translation(!_status.color+'Color');
 					}
 					if(lib.storage.zhu&&lib.storage.main_zhu){
-						game.friendZhu.maxHp++;
-						game.friendZhu.hp++;
-						game.friendZhu.update();
-
-						game.enemyZhu.maxHp++;
-						game.enemyZhu.hp++;
-						game.enemyZhu.update();
+						if(!game.friendZhu.isInitFilter('noZhuHp')){
+							game.friendZhu.maxHp++;
+							game.friendZhu.hp++;
+							game.friendZhu.update();
+						}
+	
+						if(!game.enemyZhu.isInitFilter('noZhuHp')){
+							game.enemyZhu.maxHp++;
+							game.enemyZhu.hp++;
+							game.enemyZhu.update();
+						}
 					}
 					_status.friend.splice(0,num);
 					_status.enemy.splice(0,num);
@@ -2898,9 +2910,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					},event.current,result.links[0]);
 					if(event.current.identity=='zhu'){
-						event.current.hp++;
-						event.current.maxHp++;
-						event.current.update();
+						if(!event.current.isInitFilter('noZhuHp')){
+							event.current.maxHp++;
+							event.current.hp++;
+							event.current.update();
+						}
 					}
 					event.current.classList.remove('selectedx');
 					for(var i=0;i<game.players.length;i++){

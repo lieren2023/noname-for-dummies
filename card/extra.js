@@ -330,7 +330,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 								res = 0.9;
 							if(f&&t || target.hasSkillTag('nodamage')) return 0;
 							if(f || t) res = 0.45;
-							if(target.getEquip('tengjia')) res *= 2;
+							if(!f&&target.getEquip('tengjia')) res *= 2;
 							if(!target.isLinked()) res = -res;
 							if(ui.selected.targets.length) return res;
 							let fs = 0,

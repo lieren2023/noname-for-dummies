@@ -93,9 +93,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ganning:['lingtong','xf_sufei'],
 			guanyu:['zhangfei','liaohua'],
 		},
-		/**
-		 * @type { { [key: string]: Skill } }
-		 */
 		skill:{
 			//标准版甘夫人
 			stdshushen:{
@@ -593,6 +590,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						for(const i in event.given_map){
 							const source=(_status.connectMode?lib.playerOL:game.playerMap)[i];
 							player.line(source,'green');
+							if(player!==source&&(get.mode()!=='identity'||player.identity!=='nei')) player.addExpose(0.2);
 							list.push([source, event.given_map[i]]);
 						}
 						game.loseAsync({
@@ -1582,14 +1580,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				async content(event,trigger,player){
 					const target=event.target;
-					const {result:{control}}=await target.chooseControl('heart2','diamond2','club2','spade2').set('ai',event=>{
+					const control=await target.chooseControl('heart2','diamond2','club2','spade2').set('ai',event=>{
 						switch(Math.floor(Math.random()*6)){
 							case 0:return 'heart2';
 							case 1:case 4:case 5:return 'diamond2';
 							case 2:return 'club2';
 							case 3:return 'spade2';
 						}
-					});
+					})
+					.forResultControl();
 					game.log(target,'选择了'+get.translation(control));
 					event.choice=control;
 					target.chat('我选'+get.translation(event.choice));
@@ -1644,7 +1643,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				async content(event,trigger,player){
-					const {result:{bool,targets,cards}}=await player.chooseCardTarget({
+					const [bool,targets,cards]=await player.chooseCardTarget({
 						position:'he',
 						filterCard:lib.filter.cardDiscardable,
 						filterTarget:(card,player,target)=>{
@@ -1674,7 +1673,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						prompt2:'弃置一张牌，将此【杀】转移给攻击范围内的一名其他角色',
 						source:trigger.player,
 						card:trigger.card,
-					}).setHiddenSkill(event.name);
+					})
+					.setHiddenSkill(event.name)
+					.forResult('bool','targets','cards');
 					if(bool){
 						const target=targets[0];
 						player.logSkill(event.name,target);
@@ -2213,7 +2214,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				async content(event,trigger,player){
 					const list=['弃牌','摸牌','取消'];
 					if(!player.countCards('he')) list.remove('弃牌');
-					const {result:{control}}=await player.chooseControl(list,()=>{
+					const control=await player.chooseControl(list,()=>{
 						const player=_status.event.player;
 						if(list.includes('弃牌')){
 							if(player.countCards('h')>3&&player.countCards('h','sha')>1){
@@ -2227,7 +2228,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return '摸牌';
 						}
 						return 'cancel2';
-					}).set('prompt',get.prompt2('new_jiangchi'));
+					})
+					.set('prompt',get.prompt2('new_jiangchi'))
+					.forResultControl();
+
 					if(control=='弃牌'){
 						player.chooseToDiscard(true,'he');
 						player.addTempSkill('jiangchi2','phaseUseEnd');

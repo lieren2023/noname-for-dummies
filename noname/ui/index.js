@@ -2862,11 +2862,43 @@ class Create extends Uninstantable {
 							}
 						}
 						if (list2.length) {
-							var cfgnodeX = createConfig({
-								name: '其他',
-								_name: 'others',
-								clear: true,
-							});
+							var boolx=false;
+							for(var i=0;i<list2.length;i++){
+								if(!listb.contains(list2[i])) boolx=true;
+							}
+							var cfgnodeY={
+								name:'等待分包',
+								_name:'others',
+								init:boolx,
+								onclick:function(bool){
+									var banned=[];
+									if(connectMenu){
+										var modex=menux.pages[0].firstChild.querySelector('.active');
+										if(modex&&modex.mode){
+											banned=lib.config['connect_'+modex.mode+'_banned'];
+										}
+									}
+									else if(_status.connectMode) return;
+									else banned=lib.config[get.mode()+'_banned']||[];
+									if(bool){
+										for(var i=0;i<list2.length;i++){
+											banned.remove(list2[i]);
+										}
+									}
+									else{
+										for(var i=0;i<list2.length;i++){
+											banned.add(list2[i]);
+										}
+									}
+									game.saveConfig(connectMenu?('connect_'+modex.mode+'_banned'):(get.mode()+'_banned'),banned);
+									updateActive();
+								},
+							};
+							if(mode.startsWith('mode_')&&!mode.startsWith('mode_extension_')&&!mode.startsWith('mode_guozhan')){
+								cfgnodeY.clear=true;
+								delete cfgnodeY.onclick;
+							}
+							var cfgnodeX=createConfig(cfgnodeY);
 							page.appendChild(cfgnodeX);
 							var buttons = ui.create.buttons(list2, 'character', page);
 							for (var i = 0; i < buttons.length; i++) {
@@ -3703,7 +3735,13 @@ class Create extends Uninstantable {
 				// if(!get.config('menu_loadondemand')) node._initLink();
 				return node;
 			};
-			for (var i in lib.extensionMenu) {
+			let extensionsInMenu = Object.keys(lib.extensionMenu);
+			if(lib.config.extensionSort && Array.isArray(lib.config.extensionSort)){
+				extensionsInMenu.sort((a,b)=>{
+					return lib.config.extensionSort.indexOf(a) - lib.config.extensionSort.indexOf(b);
+				});
+			}
+			for (let i of extensionsInMenu) {
 				if (lib.config.all.stockextension.includes(i) && !lib.config.all.plays.includes(i)) continue;
 				if (lib.config.hiddenPlayPack.includes(i)) continue;
 				createModeConfig(i, start.firstChild);
@@ -14149,6 +14187,18 @@ export class UI extends Uninstantable {
 	 * @type { HTMLAudioElement }
 	 */
 	static backgroundMusic;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static special;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static fakeme;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static chess;
 	static refresh(node) {
 		void window.getComputedStyle(node, null).getPropertyValue("opacity");
 	}
@@ -14714,6 +14764,6 @@ export class UI extends Uninstantable {
 	static updateRoundNumber(roundNumber, cardPileNumber) {
 		if (ui.cardPileNumber) ui.cardPileNumber.innerHTML = `${roundNumber}轮 剩余牌: ${cardPileNumber}`;
 	}
-};
+}
 
 export const ui = UI;

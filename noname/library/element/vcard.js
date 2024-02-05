@@ -119,6 +119,9 @@ export class VCard {
 		if (nature == 'linked') return natures.some(n => lib.linked.includes(n));
 		return get.is.sameNature(natures, nature);
 	}
+	getCacheKey(){
+		return `[vc:${this.name}+${this.suit?this.suit:'none'}+${this.number===undefined?'none':this.number}${this.nature?'+':''}${this.nature?this.nature:''}]`;
+	}
 	hasGaintag(tag) {
 		return this.gaintag && this.gaintag.includes(tag);
 	}

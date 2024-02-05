@@ -1439,7 +1439,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				event.ingame=game.hasPlayer(function(current){
 					return ['re_xushu','xin_xushu','xushu','dc_xushu'].contains(current.name)||['re_xushu','xin_xushu','xushu','dc_xushu'].contains(current.name2);
 				})?true:false;
-				var prompt='请选择一名角色，令其回复一点体力并摸一张牌';
+				var prompt='请选择一名角色，令其回复1点体力并摸一张牌';
 				prompt+=event.ingame?'，然后你摸一张牌。':'。';
 				player.chooseTarget(prompt).set('ai',function(target){
 					var player=_status.event.player;
@@ -1838,7 +1838,6 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		},
 		
 		// 萌新（转型中）修改
-		// 注：暂未适配新本体代码
 		
 		// 棘手怀念摧毁修改（搬运本体代码并修复，若后续本体更新后需要校对该部分代码是否更改，若更改需重新搬运并修复这些代码）
 		// 曹金玉技能按钮魔改
@@ -1933,7 +1932,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		xinlonghun:{
 			audio:true,
 			enable:['chooseToUse','chooseToRespond'],
-			prompt:'将♠牌当做无懈可击，♣牌当做闪，♥牌当做桃，♦牌当做火杀使用或打出',
+			prompt:'将一张♠牌当做【无懈可击】，♣牌当做【闪】，♥牌当做【桃】，♦牌当做火【杀】使用或打出',
 			viewAs:function(cards,player){
 				var name=false;
 				var nature=null;
@@ -2261,14 +2260,19 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		jxlianpo:{
 			audio:2,
 			derivation:['jxlianpo_faq'],
+			init:()=>{
+				game.addGlobalSkill('jxlianpo_global');
+			},
+			onremove:()=>{
+				if(!game.hasPlayer(i=>i.hasSkill('jxlianpo'),true)) game.removeGlobalSkill('jxlianpo_global');
+			},
 			trigger:{global:'dieAfter'},
-			filter:function(event,player){
+			filter(event,player){
 				if(lib.skill.jxlianpo.getMax().length<=1) return false;
 				return event.source&&event.source.isIn();
 			},
 			forced:true,
 			logTarget:'source',
-			global:'jxlianpo_global',
 			getMax:()=>{
 				const map={
 					zhu:game.countPlayer(current=>{
@@ -2309,7 +2313,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				return identities;
 			},
 			group:'jxlianpo_show',
-			content:function*(event,map){
+			*content(event,map){
 				var source=map.trigger.source;
 				source.draw(2);
 				source.recover();
@@ -2321,7 +2325,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					return get.translation(i+'2');
 				}).join('、')}`,
 			},
-			$createButton:function(item,type,position,noclick,node){
+			$createButton(item,type,position,noclick,node){
 				node=ui.create.identityCard(item,position,noclick);
 				node.link=item;
 				return node;
@@ -2330,7 +2334,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				show:{
 					audio:'jxlianpo',
 					trigger:{global:'roundStart'},
-					filter:function(event,player){
+					filter(event,player){
 						// var list=lib.config.mode_config.identity.identity.lastItem.slice();
 						var list=['zhu','zhong','zhong','zhong','nei','nei','fan','fan','fan','fan'];
 						list.removeArray(game.filterPlayer().map(i=>{
@@ -2341,7 +2345,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						return list.length;
 					},
 					forced:true,
-					content:function(){
+					content(){
 						'step 0'
 						// var list=lib.config.mode_config.identity.identity.lastItem.slice();
 						var list=['zhu','zhong','zhong','zhong','nei','nei','fan','fan','fan','fan'];
@@ -2389,13 +2393,13 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				},
 				global:{
 					mod:{
-						maxHandcard:function(player,num){
+						maxHandcard(player,num){
 							if(!lib.skill.jxlianpo.getMax().includes('fan')) return;
 							return num-game.countPlayer(current=>{
 								return current!=player&&current.hasSkill('jxlianpo');
 							});
 						},
-						cardUsable:function(card,player,num){
+						cardUsable(card,player,num){
 							if(card.name=='sha'){
 								if(!lib.skill.jxlianpo.getMax().includes('fan')) return;
 								return num+game.countPlayer(current=>{
@@ -2403,29 +2407,89 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 								});
 							}
 						},
-						attackRange:function(player,num){
+						attackRange(player,num){
 							if(!lib.skill.jxlianpo.getMax().includes('fan')) return;
 							return num+game.countPlayer(current=>{
 								return current.hasSkill('jxlianpo');
 							});
 						},
-						cardSavable:function(card,player,target){
-							if(card.name=='tao'){
+						cardSavable(card,player,target){
+							if(card.name=='tao'&&!player.hasSkill('jxlianpo')){
 								if(!lib.skill.jxlianpo.getMax().includes('zhu')) return;
 								if(player==target) return;
 								return false;
 							}
 						},
-						playerEnabled:function(card,player,target){
-							if(card.name=='tao'){
+						playerEnabled(card,player,target){
+							if(card.name=='tao'&&!player.hasSkill('jxlianpo')){
 								if(!lib.skill.jxlianpo.getMax().includes('zhu')) return;
 								if(player==target) return;
 								return false;
 							}
 						}
 					},
+					trigger:{player:'dieAfter'},
+					filter:()=>{
+						return !game.hasPlayer(i=>i.hasSkill('jxlianpo'),true);
+					},
+					silent:true,
+					forceDie:true,
+					content:()=>{
+						game.removeGlobalSkill('jxlianpo_global');
+					}
 				},
 			},
+		},
+		
+		// 临时修复洛神卡死的bug
+		// 注：暂时先用旧代码，未适配新本体代码（async content）
+		luoshen:{
+			audio:2,
+			trigger:{player:'phaseZhunbeiBegin'},
+			frequent:true,
+			preHidden:true,
+			content:function(){
+				"step 0"
+				if(event.cards==undefined) event.cards=[];
+				var next=player.judge(function(card){
+					if(get.color(card)=='black') return 1.5;
+					return -1.5;
+				});
+				next.judge2=function(result){
+					return result.bool;
+				};
+				if(get.mode()!='guozhan'&&!player.hasSkillTag('rejudge')) next.set('callback',function(){
+					if(event.judgeResult.color=='black'&&get.position(card,true)=='o') player.gain(card,'gain2');
+				});
+				else next.set('callback',function(){
+					if(event.judgeResult.color=='black') event.getParent().orderingCards.remove(card);
+				});
+				"step 1"
+				if(result.judge>0){
+					event.cards.push(result.card);
+					player.chooseBool('是否再次发动【洛神】？').set('frequentSkill','luoshen');
+				}
+				else{
+					for(var i=0;i<event.cards.length;i++){
+						if(get.position(event.cards[i],true)!='o'){
+							event.cards.splice(i,1);i--;
+						}
+					}
+					if(event.cards.length){
+						player.gain(event.cards,'gain2');
+					}
+					event.finish();
+				}
+				"step 2"
+				if(result.bool){
+					event.goto(0);
+				}
+				else{
+					if(event.cards.length){
+						player.gain(event.cards,'gain2');
+					}
+				}
+			}
 		},
 		
 	};

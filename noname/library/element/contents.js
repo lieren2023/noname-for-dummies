@@ -8,6 +8,11 @@ import { GNC as gnc } from '../../gnc/index.js';
 
 export const Contents = {
 	phase: [
+		async (event) => {
+			//规则集中的“回合开始后③（处理“游戏开始时”的时机）”
+			//提前phaseBefore时机解决“游戏开始时”时机和“一轮开始时”先后
+			event.trigger('phaseBefore');
+		},
 		async (event, _trigger, player) => {
 			// 初始化阶段列表
 			if (!event.phaseList) {
@@ -83,10 +88,6 @@ export const Contents = {
 			event.trigger('phaseBeforeStart');
 		},
 		async (event) => {
-			//规则集中的“回合开始后③（处理“游戏开始时”的时机）”
-			event.trigger('phaseBefore');
-		},
-		async (event) => {
 			//规则集中的“回合开始后④（卑弥呼〖纵傀〗的时机）”
 			event.trigger('phaseBeforeEnd');
 		},
@@ -96,6 +97,12 @@ export const Contents = {
 				event.cancel();
 				player.turnOver();
 				player.phaseSkipped = true;
+				var players = game.players.slice(0).concat(game.dead);
+				for (var i = 0; i < players.length; i++) {
+					var current = players[i];
+					current.getHistory().isSkipped = true;
+					current.getStat().isSkipped = true;
+				}
 			}
 			else {
 				player.phaseSkipped = false;

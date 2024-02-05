@@ -12,7 +12,7 @@ window.noname_package={
 		huicui:'群英荟萃',
 		xianding:'限定专属',
 		sp2:'系列专属',
-		extra:'神将',		
+		extra:'神将',
 		mobile:'移动版',
 		shiji:'始计篇',
 		sb:'谋攻篇',

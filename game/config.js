@@ -4,7 +4,7 @@ window.config={
 		FastGit:'https://raw.fgit.cf/libccy/noname-extension/master/',
 		GitHub:'https://raw.githubusercontent.com/libccy/noname-extension/master/'
 	},
-	extension_source:'Coding',
+	extension_source:'GitHub Proxy',
 	forbidai:[],
 	forbidai_user:[],
 	forbidall:[],
@@ -251,6 +251,9 @@ window.config={
 			revive:true,
 			continue_game:true,
 			show_replay:true,
+		},
+		versus:{
+			olfeiyang_four:false,
 		},
 	},
 	current_mode:{},

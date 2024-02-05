@@ -364,30 +364,25 @@ export class GameEvent {
 	 */
 	getParent(level = 1, forced, includeSelf) {
 		let event = this;
+		let i = 0;
 		const toreturn = forced ? null : {};
-		if (!includeSelf || typeof level === 'number') {
-			if (event._modparent && game.online) event = event._modparent;
-			else event = this.parent;
-		}
-		if (typeof level === 'number') {
-			for (let i = 1; i < level; i++) {
-				if (!event) return toreturn;
-				event = event.parent;
-			}
-			return event;
-		}
 		const historys = [];
-		const filter = typeof level === 'function' ? level : evt => evt.name === level;
+		const filter =
+			typeof level === 'function' ? level : 
+			typeof level === 'number' ? evt => i === level :
+			evt => evt.name === level;
 		while (true) {
 			if (!event) return toreturn;
 			historys.push(event);
-			if (filter(event)) return event;
-			event = event.parent;
+			if (filter(event) && (includeSelf || i !== 0)) return event;
+			if (game.online && event._modparent) event = event._modparent;
+			else event = event.parent;
 			if (historys.includes(event)) return toreturn;
+			i++;
 		}
 	}
 	getTrigger() {
-		return this.getParent('arrangeTrigger')._trigger;
+		return this.getParent(e => e._trigger, false, true)._trigger;
 	}
 	getRand(name) {
 		if (name) {

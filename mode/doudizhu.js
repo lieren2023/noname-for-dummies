@@ -113,8 +113,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addGlobalSkill('binglin_bingjin');
 					break;
 				default:
-					game.zhu.addSkill('feiyang');
-					game.zhu.addSkill('bahu');
+					if(!game.zhu.isInitFilter('noZhuSkill')){
+						game.zhu.addSkill('feiyang');
+						game.zhu.addSkill('bahu');
+					}
 			}
 			game.syncState();
 			event.trigger('gameStart');
@@ -489,9 +491,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						else player.addSkill('binglin_neihong');
 					}
-					game.zhu.hp++;
-					game.zhu.maxHp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 					for(var i=0;i<game.players.length;i++){
 						_status.characterlist.remove(game.players[i].name1);
 						_status.characterlist.remove(game.players[i].name2);
@@ -575,9 +579,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var player of game.players){
 						if(player!=game.me) player.init(event.map[player.playerid].randomGet());
 					}
-					game.zhu.hp++;
-					game.zhu.maxHp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 					for(var i=0;i<game.players.length;i++){
 						_status.characterlist.remove(game.players[i].name1);
 						_status.characterlist.remove(game.players[i].name2);
@@ -654,9 +660,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.characterlist.remove(game.players[i].name1);
 						_status.characterlist.remove(game.players[i].name2);
 						if(game.players[i]==game.zhu){
-							game.players[i].hp++;
-							game.players[i].maxHp++;
-							game.players[i].update();
+							if(!game.zhu.isInitFilter('noZhuHp')){
+								game.zhu.maxHp++;
+								game.zhu.hp++;
+								game.zhu.update();
+							}
 						}
 					}
 					setTimeout(function(){
@@ -707,9 +715,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.init(listc[0]);
 					}
 					if(player==game.zhu){
-						player.hp++;
-						player.maxHp++;
-						player.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 					}
 					if(back){
 						list.remove(get.sourceCharacter(player.name1));
@@ -1084,9 +1094,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list.remove(get.sourceCharacter(game.me.name1));
 					event.list.remove(get.sourceCharacter(game.me.name2));
 					if(game.me==game.zhu){
-						game.me.hp++;
-						game.me.maxHp++;
-						game.me.update();
+						if(!game.me.isInitFilter('noZhuHp')){
+							game.me.hp++;
+							game.me.maxHp++;
+							game.me.update();
+						}
 					}
 
 					for(var i=0;i<game.players.length;i++){
@@ -1196,9 +1208,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
-					game.zhu.maxHp++;
-					game.zhu.hp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 
 					game.broadcast(function(result,zhu){
 						for(var i in result){
@@ -1207,9 +1221,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						game.zhu=zhu;
-						zhu.maxHp++;
-						zhu.hp++;
-						zhu.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 
 						setTimeout(function(){
 							ui.arena.classList.remove('choose-character');
@@ -1325,9 +1341,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
-					game.zhu.maxHp++;
-					game.zhu.hp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 
 					game.broadcast(function(result,zhu){
 						for(var i in result){
@@ -1336,9 +1354,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						game.zhu=zhu;
-						zhu.maxHp++;
-						zhu.hp++;
-						zhu.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 
 						setTimeout(function(){
 							ui.arena.classList.remove('choose-character');
@@ -1463,9 +1483,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
-					game.zhu.maxHp++;
-					game.zhu.hp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 
 					game.broadcast(function(result,zhu){
 						for(var i in result){
@@ -1474,9 +1496,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						game.zhu=zhu;
-						zhu.maxHp++;
-						zhu.hp++;
-						zhu.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 
 						setTimeout(function(){
 							ui.arena.classList.remove('choose-character');
@@ -1751,9 +1775,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
-					game.zhu.maxHp++;
-					game.zhu.hp++;
-					game.zhu.update();
+					if(!game.zhu.isInitFilter('noZhuHp')){
+						game.zhu.maxHp++;
+						game.zhu.hp++;
+						game.zhu.update();
+					}
 
 					game.broadcast(function(result,zhu){
 						for(var i in result){
@@ -1762,9 +1788,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						game.zhu=zhu;
-						zhu.maxHp++;
-						zhu.hp++;
-						zhu.update();
+						if(!game.zhu.isInitFilter('noZhuHp')){
+							game.zhu.maxHp++;
+							game.zhu.hp++;
+							game.zhu.update();
+						}
 
 						setTimeout(function(){
 							ui.arena.classList.remove('choose-character');
