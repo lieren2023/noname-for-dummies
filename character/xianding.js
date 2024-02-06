@@ -5095,58 +5095,77 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return game.hasPlayer(current=>current.countDiscardableCards(player,'hej')>0);
 				},
 				direct:true,
-				content:function(){
-					'step 0'
-					var num=4-player.countMark('dcluochong');
-					var dialog=[];
-					dialog.push('###'+get.prompt('dcluochong')+'###<div class="text center">弃置任意名角色区域内共计至多'+get.cnNumber(num)+'张牌</div>');
-					game.filterPlayer().sortBySeat().forEach(target=>{
-						if(target.countDiscardableCards(player,'hej')<=0) return false;
-						var name=(target==player?'你':get.translation(target));
-						if(target.countCards('h')){
-							dialog.add('<div class="text center">'+name+'的手牌区</div>');
-							if(player.hasSkillTag('viewHandcard',null,target,true)||player==target) dialog.push(target.getCards('h'));
-							else dialog.push([target.getCards('h'),'blank']);
-						}
-						if(target.countCards('e')) dialog.addArray(['<div class="text center">'+name+'的装备区</div>',target.getCards('e')]);
-						if(target.countCards('j')) dialog.addArray(['<div class="text center">'+name+'的判定区</div>',target.getCards('j')]);
-					});
-					player.chooseButton([1,num]).set('createDialog',dialog).set('filterButton',button=>{
-						return lib.filter.canBeDiscarded(button.link,_status.event.player,get.owner(button.link));
-					}).set('ai',button=>{
-						var player=_status.event.player,
-							target=get.owner(button.link),
-							num=ui.selected.buttons.filter(i=>get.owner(i.link)==target).length;
-						if(num>1&&player.hp+player.hujia>2) return 0;
-						if(target==player){
-							if(num) return -get.value(button.link,target);
-							if(ui.cardPile.childNodes.length>80) return 6-get.value(button.link,player);
-							return 0;
-						}
-						var val=get.buttonValue(button);
-						if(num===2) val/=4;
-						if(get.attitude(player,target)>0) return -val;
-						return val;
-						//return -(get.position(card)!='h'?get.value(card,target):(4.5+Math.random()-0.2*(num>2?1:0)))*get.attitude(player,target);
-					});
-					'step 1'
-					if(result.bool){
-						var links=result.links;
-						var lose_list=[];
-						var log=false;
-						for(var target of game.players){
-							var cards=links.filter(card=>get.owner(card)==target);
-							if(cards.length){
-								if(cards.length>2){
-									player.addMark('dcluochong',1,false);
-									log=true;
-								}
-								lose_list.push([target,cards]);
+				async content(event,trigger,player){
+					if(_status.connectMode) game.broadcastAll(function(){_status.noclearcountdown=true});
+					const lose_list = [];
+					let num = 4 - player.countMark('dcluochong');
+					while (num>0) {
+						const result = await player.chooseTarget(
+							get.prompt('dcluochong'),
+							`弃置任意名角色区域内的累计至多${num}张牌`,
+							(card,player,target)=>{
+								return target.hasCard(card => {
+									const discarded = _status.event.lose_list.find(item => item[0] == target);
+									if (discarded && discarded[1].includes(card)) return false;
+									return lib.filter.canBeDiscarded(card,player,target,'dcluochong');
+								}, 'hej')
+							}
+						).set('ai',target=>{
+							const player = _status.event.player, discarded = _status.event.lose_list.find(item => item[0] == target);
+							if(discarded){
+								if (target == player) return 0;
+								const num = discarded[1].length;
+								if (num > 1 && player.hp + player.hujia > 2) return 0;
+							}
+							if (target == player){
+								if(ui.cardPile.childNodes.length > 80 && player.hasCard(card => get.value(card) < 8)) return 20;
+								return 0;
+							}
+							return get.effect(target, {name:'guohe_copy2'}, player, player);
+						}).set('lose_list',lose_list).forResult();
+						if (result.bool) {
+							const target = result.targets[0];
+							const cards = await player.choosePlayerCard(target, true, 'hej', [1,num], `选择弃置${get.translation(target)}区域内的牌`, (button) => {
+								const card = button.link, target = _status.event.target;
+								const discarded = _status.event.lose_list.find(item => item[0] == target);
+								if (discarded && discarded[1].includes(card)) return false;
+								return lib.filter.canBeDiscarded(card,player,target,'dcluochong');
+							}).set('lose_list',lose_list).set('ai', button => {
+								if (ui.selected.buttons.length>0) return false;
+								var val = get.buttonValue(button);
+								if (get.attitude(_status.event.player, _status.event.target) > 0) return -val;
+								return val;
+							}).forResultCards();
+							num -= cards.length;
+							const index = lose_list.find(item => item[0] == target);
+							if (!index) {
+								lose_list.push([target, cards]);
+							}
+							else {
+								index[1].addArray(cards);
 							}
 						}
-						player.logSkill('dcluochong',lose_list.map(i=>i[0]));
-						if(log) game.log(player,'可弃置牌数','#g-1');
-						if(lose_list[0].length==1) lose_list[0][0].discard(lose_list[0][1]);
+						else {
+							break;
+						}
+					}
+					if (_status.connectMode) {
+						game.broadcastAll(function(){delete _status.noclearcountdown;game.stopCountChoose()});
+					}
+					if (lose_list.length>0) {
+						lib.tempSortSeat = trigger.player;
+						lose_list.sort((a,b)=>{
+							return lib.sort.seat(a[0],b[0]);
+						});
+						delete lib.tempSortSeat;
+						player.logSkill('dcluochong',lose_list.map(i => i[0]));
+						if (lose_list.some(i => i[1].length > 2)) {
+							game.log(player,'可弃置牌数','#g-1');
+							player.addMark('dcluochong',1,false);
+						}
+						if (lose_list[0].length==1) {
+							lose_list[0][0].discard(lose_list[0][1]);
+						}
 						else{
 							game.loseAsync({
 								lose_list:lose_list,

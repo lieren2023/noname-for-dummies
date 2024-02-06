@@ -123,7 +123,9 @@ new Promise(resolve => {
 					const result = ts.transpile(code, {
 						module: ts.ModuleKind.CommonJS,
 						target: ts.ScriptTarget.ES2019,
-						inlineSourceMap: true
+						inlineSourceMap: true,
+						resolveJsonModule: true,
+						esModuleInterop: true,
 					}, fileName);
 					// 使用默认的js编译函数获取返回值
 					return _compile.call(this, result, fileName);
