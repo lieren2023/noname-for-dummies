@@ -1106,15 +1106,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.map[event.bZhu].remove(character);
 						game.bZhu.init(character);
 					}
-					if(!game.rzhu.isInitFilter('noZhuHp')){
-						game.rzhu.maxHp++;
-						game.rzhu.hp++;
-						game.rzhu.update();
+					if(!game.rZhu.isInitFilter('noZhuHp')){
+						game.rZhu.maxHp++;
+						game.rZhu.hp++;
+						game.rZhu.update();
 					}
-					if(!game.bzhu.isInitFilter('noZhuHp')){
-						game.bzhu.maxHp++;
-						game.bzhu.hp++;
-						game.bzhu.update();
+					if(!game.bZhu.isInitFilter('noZhuHp')){
+						game.bZhu.maxHp++;
+						game.bZhu.hp++;
+						game.bZhu.update();
 					}
 					if(!event.isZhu){
 						var group=game.me.identity.indexOf('r')==0?event.rZhu:event.bZhu;

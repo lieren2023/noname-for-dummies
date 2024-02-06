@@ -21,24 +21,6 @@ content:function(config, pack){
 	
     if (!(extension && extension.enable && extension.enable.init)) return;
 	
-	// Show-K修复版搬运
-	const decadeExtCardImage = lib.decade_extCardImage || (lib.decade_extCardImage = {});
-	if(lib.node&&lib.node.fs) new Promise((resolve, reject) => lib.node.fs.readdir(`${__dirname}/${decadeUIPath}image/card/`, (errnoException, files) => {
-		if (errnoException) reject(errnoException);
-		else resolve(files);
-	})).then(files => files.forEach(file => {
-		const fileName = lib.path.parse(file).name;
-		if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${file}`;
-	}));
-	else if (typeof resolveLocalFileSystemURL == 'function') new Promise((resolve, reject) => {
-		resolveLocalFileSystemURL(`${decadeUIPath}image/card/`, resolve, reject);
-	}).then(directoryEntry => new Promise((resolve, reject) => {
-		directoryEntry.createReader().readEntries(resolve, reject);
-	})).then(entries => entries.forEach(entry => {
-		const entryName = entry.name, fileName = lib.path.parse(entryName).name;
-		if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${entryName}`;
-	}));
-	
 	// 其他-帮助-关于游戏内容添加提示
 	lib.help['关于游戏']=
 		'<div style="margin:10px">无名杀简介</div><ul style="margin-top:0"><li>无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>'+
@@ -3642,6 +3624,10 @@ content:function(config, pack){
 		if(lib.skill.baonu != undefined){
 			lib.skill.baonu.marktext = "暴怒";
 		}
+		// 吕伯奢缚豕标记修改
+		if(lib.skill.olfushi != undefined){
+			lib.skill.olfushi.marktext = "缚豕";
+		}
 		// 神貂蝉魅惑标记修改
 		if(lib.skill.huoxin != undefined){
 			lib.skill.huoxin.marktext = "魅惑";
@@ -3903,6 +3889,10 @@ content:function(config, pack){
 		if(lib.skill.twgongsun_shadow != undefined){
 			lib.skill.twgongsun_shadow.marktext = "共损";
 		}
+		// 谋卧龙看破标记修改
+		if(lib.skill.sbkanpo != undefined){
+			lib.skill.sbkanpo.marktext = "看破";
+		}
 		// 神诸葛亮狂风、大雾标记修改
 		if(lib.skill.kuangfeng2 != undefined){
 			lib.skill.kuangfeng2.marktext = "狂风";
@@ -3916,13 +3906,6 @@ content:function(config, pack){
 		}
 		if(lib.skill.zhuangdan_mark != undefined){
 			lib.skill.zhuangdan_mark.marktext = "壮胆";
-		}
-		// 王粲七哀、登楼标记修改
-		if(lib.skill.xinfu_qiai != undefined){
-			lib.skill.xinfu_qiai.marktext = "七哀";
-		}
-		if(lib.skill.xinfu_denglou != undefined){
-			lib.skill.xinfu_denglou.marktext = "登楼";
 		}
 		// 蒋济急筹、机论标记修改
 		if(lib.skill.twjichou != undefined){
@@ -4175,6 +4158,11 @@ content:function(config, pack){
 		if(lib.skill.dczecai != undefined){
 			lib.skill.dczecai.subSkill.effect.marktext = "择才";
 		}
+		// 濮阳兴征建标记修改
+		if(lib.skill.twzhengjian != undefined){
+			lib.skill.twzhengjian.subSkill.eff0.marktext = "征建";
+			lib.skill.twzhengjian.subSkill.eff1.marktext = "征建";
+		}
 		// 孙瑜劝守标记修改
 		if(lib.skill.dcquanshou != undefined){
 			lib.skill.dcquanshou.subSkill.sha.marktext = "劝守";
@@ -4208,9 +4196,33 @@ content:function(config, pack){
 		if(lib.skill.new_canyun != undefined){
 			lib.skill.new_canyun.marktext = "残韵";
 		}
+		// 谋黄月英奇才标记修改
+		if(lib.skill.sbqicai != undefined){
+			lib.skill.sbqicai.marktext = "奇才";
+			lib.skill.sbqicai.initSkill = skill=>{
+				if(!lib.skill[skill]){
+					lib.skill[skill]={
+						onremove:true,
+						mark:true,
+						marktext:'奇才',
+						intro:{
+							markcount:function(storage){
+								return (storage||0).toString();
+							},
+							content:function(storage){
+								return '已被掠夺'+get.cnNumber(storage||0)+'张普通锦囊牌';
+							},
+						},
+					};
+					lib.translate[skill]='奇才';
+					lib.translate[skill+'_bg']='奇才';
+				}
+			}
+		}
 		// 谋关羽义绝标记修改
 		if(lib.skill.sbyijue != undefined){
 			lib.skill.sbyijue.marktext = "义绝";
+			lib.skill.sbyijue.subSkill.effect.marktext = "义绝";
 		}
 		// TW神关羽梦魇标记修改
 		if(lib.skill.twwuhun != undefined){
@@ -4407,6 +4419,8 @@ content:function(config, pack){
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
+		// 合曹芳诏图标记修改
+		lib.translate.jsrgzhaotu_bg = "诏图";
 		// 袁涣请决标记修改
 		lib.translate.qingjue_bg = "请决";
 		// 手杀朱儁厚俸标记修改
@@ -4423,6 +4437,44 @@ content:function(config, pack){
 		lib.translate.identity_junshi_bg = "军师";
 		lib.translate.identity_dajiang_bg = "大将";
 		lib.translate.identity_zeishou_bg = "贼首";
+		// 唯我独尊（乱斗）战神标记修改
+		if(lib.config.mode=='brawl'){
+			lib.brawl.weiwoduzun.init=function(){
+				game.identityVideoName='唯我独尊';
+				lib.skill.weiwoduzun={
+					mark:true,
+					intro:{
+						content:'杀造成的伤害+1'
+					},
+					group:['weiwoduzun_damage','weiwoduzun_lose'],
+					subSkill:{
+						damage:{
+							trigger:{source:'damageBegin'},
+							forced:true,
+							filter:function(event){
+								return event.card&&event.card.name=='sha'&&event.notLink();
+							},
+							content:function(){
+								trigger.num++;
+							}
+						},
+						lose:{
+							trigger:{player:'damageEnd'},
+							forced:true,
+							filter:function(event){
+								return event.source&&event.source.isAlive();
+							},
+							content:function(){
+								player.removeSkill('weiwoduzun');
+								trigger.source.addSkill('weiwoduzun');
+							}
+						}
+					}
+				};
+				lib.translate.weiwoduzun='战神';
+				lib.translate.weiwoduzun_bg='战神';
+			};
+		}
 	}
 	// 解除本体AI禁将
 	lib.config.forbidai.remove('ns_liuzhang');
@@ -12612,6 +12664,27 @@ precontent:function(){
 			writable: true
 		}
 	});
+	
+	// 通过定时器既让lib.path.parse先加载，避免报错，又能实现卡牌美化（斗地主-智斗）
+	setTimeout(function () {
+		// Show-K修复版搬运
+		const decadeExtCardImage = lib.decade_extCardImage || (lib.decade_extCardImage = {});
+		if(lib.node&&lib.node.fs) new Promise((resolve, reject) => lib.node.fs.readdir(`${__dirname}/${decadeUIPath}image/card/`, (errnoException, files) => {
+			if (errnoException) reject(errnoException);
+			else resolve(files);
+		})).then(files => files.forEach(file => {
+			const fileName = lib.path.parse(file).name;
+			if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${file}`;
+		}));
+		else if (typeof resolveLocalFileSystemURL == 'function') new Promise((resolve, reject) => {
+			resolveLocalFileSystemURL(`${decadeUIPath}image/card/`, resolve, reject);
+		}).then(directoryEntry => new Promise((resolve, reject) => {
+			directoryEntry.createReader().readEntries(resolve, reject);
+		})).then(entries => entries.forEach(entry => {
+			const entryName = entry.name, fileName = lib.path.parse(entryName).name;
+			if (!decadeExtCardImage[fileName]) decadeExtCardImage[fileName] = `${decadeUIPath}image/card/${entryName}`;
+		}));
+	}, 100);
 	
 },help:{},
 config:{

@@ -43,51 +43,58 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'trick',
 				enable:true,
-				filterTarget:function(card,player,target){
+				filterTarget(card,player,target){
 					return target!=player&&!target.isMinHp();
 				},
-				content:function(){
-					'step 0'
-					event.list=game.filterPlayer(function(current){
+				async content(event,trigger,player){
+					const target=event.target;
+					if(!target.isIn()) return;
+					const str=get.translation(target);
+					const card=new lib.element.VCard({name:'sha'});
+					const targets=game.filterPlayer(current=>{
 						return current!=target;
 					}).sortBySeat();
-					'step 1'
-					if(!target.isIn()){
-						event.finish();
-						return;
+					for(const current of targets){
+						if(!target.isIn()) return;
+						if(!current||!current.isIn()||current.hasSkill('diaohulishan')) continue;
+						let choiceList=[
+							'弃置一张牌，视为对'+str+'使用一张【杀】',
+							'弃置'+str+'一张牌',
+						],choices=['出杀','弃牌','cancel2'];
+						if(current.identity=='wei'){
+							choiceList[0]=choiceList[0].slice(6);
+							choiceList[1]='获得'+choiceList[1].slice(2);
+							choices[1]='得牌';
+						}
+						if(!current.canUse(card,target,false)||(current.identity!='wei'&&!current.countDiscardableCards(current,'he'))){
+							choiceList[0]='<span style="opacity:0.5">'+choiceList[0]+'</span>';
+							choices.remove('出杀');
+						}
+						if(!target.countCards('he')){
+							choiceList[1]='<span style="opacity:0.5">'+choiceList[1]+'</span>';
+							choices.remove(current.identity=='wei'?'得牌':'弃牌');
+						}
+						if(choices.length>1){
+							const {result:{control}}=await current.chooseControl(choices)
+							.set('prompt','号令天下：请选择其中一项').set('target',target)
+							.set('ai',()=>{
+								const player=get.event('player'),target=get.event('target'),choices=get.event('controls');
+								const guohe=new lib.element.VCard({name:'guohe_copy2'}),shunshou=new lib.element.VCard({name:'shunshou_copy2'}),sha=new lib.element.VCard({name:'sha'});
+								const num=Math.max(0,choices.includes('弃牌')?get.effect(target,guohe,player):0,choices.includes('得牌')?get.effect(target,shunshou,player):0);
+								if(choices.includes('出杀')&&get.effect(player,guohe,player)+get.effect(target,sha,player)>num) return '出杀';
+								if(choices.includes('得牌')&&num>0) return '得牌';
+								if(choices.includes('弃牌')&&num>0) return '弃牌';
+								return 'cancel2';
+							});
+							if(control!='cancel2'){
+								if(control=='出杀'){
+									if(current.identity!='wei') await current.chooseToDiscard('he',true);
+									await current.useCard(card,target,false);
+								}
+								else await current[current.identity=='wei'?'gainPlayerCard':'discardPlayerCard'](target,true,'he').set('boolline',true);
+							}
+						}
 					}
-					var current=event.list.shift();
-					if(!current||!current.isIn()||current.hasSkill('diaohulishan')){
-						if(event.list.length) event.redo();
-						else event.finish();
-						return;
-					}
-					event.current=current;
-					if(current.identity!='wei'){
-						current.chooseToDiscard('he','弃置一张牌，并视为对'+get.translation(target)+'使用一张【杀】，或点击「取消」弃置其一张牌').set('ai',function(card){
-							if(!_status.event.goon) return 0;
-							return 5-get.value(card);
-						}).set('goon',(get.effect(target,{name:'guohe'},current)<get.effect(current,{name:'guohe'},current)+get.effect(target,{name:'sha'},current)));
-					}
-					else{
-						current.chooseBool('是否视为对'+get.translation(target)+'使用一张【杀】？','若点击「取消」则改为获得其一张牌').set('ai',function(){
-							var player=_status.event.player,target=_status.event.getParent().target;
-							return (get.effect(target,{name:'shunshou'},player)<=get.effect(target,{name:'sha'},player))
-						});
-					}
-					'step 2'
-					if(!target.isIn()){
-						event.finish();
-						return;
-					}
-					var current=event.current;
-					if(result.bool){
-						if(current.isIn()&&current.canUse({name:'sha',isCard:true},target,false)) current.useCard({name:'sha',isCard:true},target,false);
-					}
-					else{
-						current[current.identity=='wei'?'gainPlayerCard':'discardPlayerCard'](target,true,'he').set('boolline',true);
-					}
-					if(event.list.length) event.goto(1);
 				},
 				ai:{
 					order:6,
@@ -99,7 +106,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						loseCard:1,
 					},
 					result:{
-						target:function(player,target){
+						target(player,target){
 							return -1.5*(game.countPlayer()-1);
 						},
 					},
@@ -1844,7 +1851,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			huxinjing_info:'此牌可对其他角色使用。当你受到伤害时，若伤害值大于1或大于等于你的体力值，则你可以将所有【护心镜】置入弃牌堆，然后防止此伤害。',
 			huxinjing_info_guozhan:'当你受到伤害时，若伤害值大于等于你的体力值，则你可以将所有【护心镜】置入弃牌堆，然后防止此伤害。',
 			gz_haolingtianxia:'号令天下',
-			gz_haolingtianxia_info:'出牌阶段，对一名体力值不为全场最少的角色使用。所有其他角色依次选择一项：①弃置一张牌（魏势力角色无需弃牌），视为对目标角色使用一张【杀】；②弃置目标角色的一张牌（魏势力角色改为获得其一张牌）。',
+			gz_haolingtianxia_info:'出牌阶段，对一名体力值不为全场最少的角色使用。所有其他角色依次可以选择一项：①弃置一张牌（魏势力角色无需弃牌），视为对目标角色使用一张【杀】；②弃置目标角色的一张牌（魏势力角色改为获得其一张牌）。',
 			gz_kefuzhongyuan:'克复中原',
 			gz_kefuzhongyuan_info:'出牌阶段，对任意名角色使用。目标角色选择一项：①视为使用一张【杀】（蜀势力角色以此法使用【杀】的伤害值基数+1）；②摸一张牌（蜀势力角色改为摸两张牌）。',
 			gz_guguoanbang:'固国安邦',
