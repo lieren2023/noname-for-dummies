@@ -217,13 +217,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				derivation:"xinfu_zhanji",
 				trigger:{global:"dieAfter"},
 				logTarget:'player',
-				content:function (){
+				async content(e,t,player){
 					player.awakenSkill('xinfu_songsang');
 					if(player.isDamaged()){
 						player.recover();
 					}
 					else player.gainMaxHp();
-					player.addSkill('xinfu_zhanji');
+					player.addSkills('xinfu_zhanji');
 				},
 			},
 			"xinfu_jixu":{

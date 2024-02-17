@@ -11,6 +11,114 @@ export const Content = {
 	emptyEvent: () => {
 		event.trigger(event.name);
 	},
+	//变更武将牌
+	async changeCharacter(event,trigger,player) {
+		const rawPairs = [player.name1];
+		if (player.name2 && lib.character[player.name2]) rawPairs.push(player.name2);
+		event.rawPairs = rawPairs;
+		const newPairs = event.newPairs;
+		for(let name of newPairs){
+			if(!lib.character[name]){
+				console.warn(`警告：Player[${player.name}]试图将武将牌变更为不存在的武将:`,name);
+				return;
+			}
+		}
+		const removeSkills = [], addSkills = [];
+		//进行Log
+		if(event.log !== false) {
+			//变更前后数量相同的情况
+			if (rawPairs.length == newPairs.length){
+				for (let i = 0; i<Math.min(2, rawPairs.length); i++){
+					let rawName = rawPairs[i], newName = newPairs[i];
+					if (rawName != newName) {
+						game.log(player, `将${i == 0 ? '主' : '副'}将从`, `#b${get.translation(rawName)}`, '变更为了', `#b${get.translation(newName)}`);
+					}
+				}
+			}
+			else if (rawPairs.length == 1 && newPairs.length == 2){
+				game.log(player,'将单将', `#b${get.translation(rawPairs[0])}`, '变更为了双将', `#b${get.translation(newPairs[0])}+${get.translation(newPairs[1])}`);
+			}
+			else if (rawPairs.length == 2 && newPairs.length == 1){
+				game.log(player,'将双将', `#b${get.translation(rawPairs[0])}+${get.translation(rawPairs[1])}`, '变更为了单将', `#b${get.translation(newPairs[0])}`);
+			}
+		}
+		//确定要失去和获得的技能
+		//失去技能时全部失去，但获得技能时，非主公角色不能获得主公技。
+		rawPairs.forEach(name => {
+			removeSkills.addArray(lib.character[name][3]);
+		})
+		newPairs.forEach(name => {
+			addSkills.addArray(lib.character[name][3].filter(skill => {
+				const info = get.info(skill);
+				if (!info || (info.zhuSkill && !player.isZhu2())) return false;
+				return true;
+			}));
+		})
+		//实际变更武将牌
+		player.reinit2(newPairs);
+		//操作武将牌堆
+		if (_status.characterlist) {
+			_status.characterlist.removeArray(newPairs);
+			_status.characterlist.addArray(rawPairs);
+		}
+		//变更一下获得前后的技能
+		await player.changeSkills(addSkills, removeSkills);
+		//变更角色的所属势力。如果新将是双势力，重选一下势力。
+		if(event.changeGroup !== false){
+			let newGroups = [];
+			if (!player.isUnseen(1)) {
+				newGroups = (get.is.double(player.name1, true) || [get.character(player.name1, 1)]);
+			}
+			else if (player.name2 && !player.isUnseen(2)) {
+				newGroups = (get.is.double(player.name2, true) || [get.character(player.name2, 1)]);
+			}
+			if (newGroups.length > 1) {
+				const newGroup = await player.chooseControl(newGroups).set('prompt','请选择一个新的势力').forResult('control');
+				if (newGroup != player.group) {
+					await player.changeGroup(newGroup);
+				}
+			}
+			else if(newGroups.length == 1 && newGroups[0] != player.group){
+				await player.changeGroup(newGroups[0]);
+			}
+		}
+	},
+	//变更技能
+	async changeSkills (event,trigger,player) {
+		//去重检查
+		event.addSkill.unique();
+		event.removeSkill.unique();
+		const duplicatedSkills = event.addSkill.filter(skill => event.removeSkill.includes(skill));
+		if (duplicatedSkills.length) {
+			event.addSkill.removeArray(duplicatedSkills);
+			event.removeSkill.removeArray(duplicatedSkills);
+		}
+		if (!event.addSkill.length&&!event.removeSkill.length) return;
+		//手动触发时机
+		await event.trigger('changeSkillsBefore');
+		await event.trigger('changeSkillsBegin');
+		//处理失去和获得的技能
+		if (event.$handle) {
+			event.$handle(player, event.addSkill, event.removeSkill, event);
+		}
+		else {
+			if(event.addSkill.length){
+				player.addSkill(event.addSkill);
+				game.log(player, '获得了技能', ...event.addSkill.map(i => {
+					return '#g【' + get.translation(i) + '】';
+				}));
+			}
+			if(event.removeSkill.length){
+				player.removeSkill(event.removeSkill);
+				game.log(player, '失去了技能', ...event.removeSkill.map(i => {
+					return '#g【' + get.translation(i) + '】';
+				}));
+			}
+		}
+		//手动触发时机
+		await event.trigger('changeSkillsEnd');
+		await event.trigger('changeSkillsAfter');
+	},
 	//增加明置手牌
 	addShownCards: () => {
 		const hs = player.getCards('h'), showingCards = event._cards.filter(showingCard => hs.includes(showingCard)), shown = player.getShownCards();
@@ -1043,7 +1151,7 @@ export const Content = {
 	},
 	chooseUseTarget: function () {
 		'step 0';
-		if (get.is.object(card) && !event.viewAs) card.isCard = true;
+		if (get.is.object(card) && event.viewAs === false) card.isCard = true;
 		if (cards && get.itemtype(card) != 'card') {
 			card = get.copy(card);
 			card.cards = cards.slice(0);
@@ -8123,7 +8231,10 @@ export const Content = {
 			var owner = get.owner(cards[0]);
 			if (owner) {
 				event.relatedLose = owner.lose(cards, ui.special).set('getlx', false);
-				if (cardInfo && !cardInfo.blankCard) event.relatedLose.set('visible',true);
+				if (cardInfo && !cardInfo.blankCard) {
+					event.relatedLose.set('visible', true);
+					event.set('visible', true);
+				}
 			}
 			else if (get.position(cards[0]) == 'c') event.updatePile = true;
 		}

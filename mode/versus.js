@@ -1610,7 +1610,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(!player.isInitFilter('noZhuHp')){
 							player.hp++;
 							player.maxHp++;
-							player.$update();
+							player.update();
 						}
 					}
 					else if(Math.random()<0.5){
@@ -1878,7 +1878,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if(!event.current.isInitFilter('noZhuHp')){
 								event.current.hp++;
 								event.current.maxHp++;
-								event.current.$update();
+								event.current.update();
 							}
 						}
 						event.current.node.name_seat.remove();

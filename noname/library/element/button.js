@@ -23,7 +23,7 @@ export class Button extends HTMLDivElement {
 		if (typeof type == 'function') button = type(item, type, position, noClick, button);
 		else if (ui.create.buttonPresets[type]) button = ui.create.buttonPresets[type](item, type, position, noClick, button);
 		if (button) {
-			Object.setPrototypeOf(button, Button.prototype);
+			Object.setPrototypeOf(button, (lib.element.Button || Button).prototype);
 			if (!noClick) button.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', ui.click.button);
 			else {
 				button.classList.add('noclick');

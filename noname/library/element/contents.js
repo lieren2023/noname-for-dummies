@@ -6,6 +6,9 @@ import { status as _status } from '../../status/index.js';
 import { UI as ui } from '../../ui/index.js';
 import { GNC as gnc } from '../../gnc/index.js';
 
+/**
+ * @type { SMap<((event: GameEventPromise, trigger: GameEventPromise, player: Player) => Promise<any>)[]> }
+ */
 export const Contents = {
 	phase: [
 		async (event) => {

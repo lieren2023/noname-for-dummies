@@ -22,7 +22,7 @@ export class Control extends HTMLDivElement {
 		 */
 		// @ts-ignore
 		const control = ui.create.div('.control');
-		Object.setPrototypeOf(control, Control.prototype);
+		Object.setPrototypeOf(control, (lib.element.Control || Control).prototype);
 		ui.control.insertBefore(control, _status.createControl || ui.confirm);
 		controls.forEach(argument => {
 			if (argument == 'nozoom') return;
