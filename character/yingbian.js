@@ -867,7 +867,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('dezhang');
 					player.loseMaxHp();
-					player.addSkill('weishu');
+					player.addSkills('weishu');
 				},
 			},
 			weishu:{
@@ -1722,9 +1722,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							else event.finish();
 							'step 2'
 							target.line(player);
-							player.addTempSkill(result.control,'phaseUseEnd');
+							player.addTempSkills(result.control,'phaseUseEnd');
 							player.popup(result.control);
-							game.log(player,'获得了','#g【'+get.translation(result.control)+'】');
 						},
 						ai:{
 							order:function(item,player){
@@ -3340,14 +3339,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.addTempSkill('yanxi2');
 					var card2=result.links[0];
 					if(card2==card){
-						player.popup('洗具');
+						player.popup('猜对了');
 						cards.remove(card2);
 						player.$gain2(cards);
 						player.gain(cards,'log').gaintag.add('yanxi');
 						player.gain(card,target,'bySelf','give').gaintag.add('yanxi');
 					}
 					else{
-						player.popup('杯具');
+						player.popup('猜错了');
 						player.gain(card2,'gain2').gaintag.add('yanxi');
 					}
 				},
@@ -3445,7 +3444,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('zhaotao');
 					player.loseMaxHp();
-					player.addSkillLog('pozhu');
+					player.addSkills('pozhu');
 				},
 				derivation:'pozhu',
 			},
@@ -3774,7 +3773,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterReplace:{
 			yanghu:['jin_yanghu','dc_yanghu','sp_yanghu'],
-			jiachong:['jin_jiachong','jiachong'],
+			jiachong:['dc_jiachong','jin_jiachong','jiachong'],
 			yangyan:['yangyan','old_yangyan'],
 			yangzhi:['yangzhi','old_yangzhi'],
 		},

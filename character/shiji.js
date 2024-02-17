@@ -2168,8 +2168,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.awakenSkill('rechuhai');
 							game.log(player,'成功完成使命');
 							if(player.isDamaged()) player.recover(player.maxHp-player.hp);
-							player.removeSkill('xianghai');
-							player.addSkill('zhangming');
+							player.changeSkills(['zhangming'],['xianghai']);
 						},
 					},
 					fail:{
@@ -2741,7 +2740,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					if(cards.length) player.gain(cards,'gain2');
 					'step 1'
-					player.addSkill('xinmouli');
+					player.addSkills('xinmouli');
 				},
 				group:['mibei_fail','mibei_silent'],
 				derivation:'xinmouli',
@@ -3179,7 +3178,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						content:function(){
 							game.log(player,'成功完成使命');
 							player.awakenSkill('qingyu');
-							player.addSkillLog('xuancun');
+							player.addSkills('xuancun');
 						},
 					},
 					fail:{
@@ -5767,7 +5766,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('spsanchen');
 					player.gainMaxHp();
 					player.recover();
-					player.addSkillLog('spmiewu');
+					player.addSkills('spmiewu');
 				},
 				ai:{
 					combo:'wuku',
@@ -6532,7 +6531,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			qiaogong:['qiaogong','tw_qiaogong'],
 			sp_chendong:['sp_chendong','tw_chendong','chendong'],
 			sp_jiangqing:['sp_jiangqing','tw_jiangqing','jiangqing'],
-            kongrong:['sp_kongrong','jsrg_kongrong','kongrong','zy_kongrong'],
+            kongrong:['dc_kongrong','sp_kongrong','jsrg_kongrong','kongrong'],
 			dc_mifuren:['dc_mifuren','sp_mifuren'],
 		},
 		translate:{

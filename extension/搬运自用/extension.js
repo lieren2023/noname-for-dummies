@@ -1,3 +1,4 @@
+import {nonameInitialized} from '../../noname/util/index.js'
 game.import("extension",function(lib,game,ui,get,ai,_status){
 	// 关闭扩展后，自动将游戏人数恢复为八人，避免报错
 	if(!game.getExtensionConfig('搬运自用','enable') && lib.config.youxirenshu_identityguozhan!=false){
@@ -242,6 +243,7 @@ content:function(config,pack){
 		lib.characterTitle.liuyao = "宗英外镇";
 		lib.characterTitle.liuyan = "裂土之宗";
 		// extra:'神将',
+		lib.characterTitle.shen_xuzhu = "嗜战的熊罴";
 		lib.characterTitle.shen_lusu = "兴吴之邓禹";
 		lib.characterTitle.shen_huatuo = "悬壶济世";
 		lib.characterTitle.le_shen_jiaxu = "倒悬云衢";
@@ -1535,17 +1537,46 @@ content:function(config,pack){
 	
 	// 手牌上限显示，搬运自假装无敌扩展，已征得清瑶的“徒弟”的修改许可
 	if (config.byzy_shoupaishangxian) {
-		var libUpdate = player => {
-			var numh = player.countCards('h');
-			var nummh = player.getHandcardLimit();
-			if (nummh == Infinity) nummh = '∞';
-			player.node.count.innerHTML = numh + '/' + nummh;
-		}
-		if (Array.isArray(lib.element.player.updates)) {
-			lib.element.player.updates.unshift(libUpdate)
-		} else {
-			lib.element.player.updates = [libUpdate]
-		}
+		// var libUpdate = player => {
+			// var numh = player.countCards('h');
+			// var nummh = player.getHandcardLimit();
+			// if (nummh == Infinity) nummh = '∞';
+			// player.node.count.innerHTML = numh + '/' + nummh;
+		// }
+		// if (Array.isArray(lib.element.player.updates)) {
+			// lib.element.player.updates.unshift(libUpdate)
+		// } else {
+			// lib.element.player.updates = [libUpdate]
+		// }
+		
+		// 临时修复手牌上限显示无法及时更新的bug
+		lib.skill._showMaxHandCard = {
+			trigger: {
+				global: ['gameStart', 'roundStart'],
+			},
+			forced: true,
+			popup: false,
+			silent: true,
+			content: function () {
+				var libUpdate = player => {
+					var numh = player.countCards('h');
+					var nummh = player.getHandcardLimit();
+					if (nummh == Infinity) nummh = '∞';
+					player.node.count.innerHTML = numh + '/' + nummh;
+				}
+				if (Array.isArray(lib.element.player.updates)) {
+					lib.element.player.updates.unshift(libUpdate)
+				} else {
+					lib.element.player.updates = [libUpdate]
+				}
+				
+				var interval = setInterval(() => {
+					if (!ui.window.contains(player)) return clearInterval(interval);
+					libUpdate(player);
+				}, 500);
+			},
+		};
+		
 	}
 	
 	// 交换位置功能，搬运自祖安武将扩展，分离自原功能【游戏自定义工具】，已征得Helasisy星云的修改许可
@@ -8198,7 +8229,7 @@ precontent:function(){
 					var obj = array.shift();
 					// 新增当扩展文件夹内缺少extension.js时报错提示
 					if (lib.device) {
-						window.resolveLocalFileSystemURL(lib.assetURL + 'extension/' + obj + '/' + 'extension.js', function(entry) {
+						window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + obj + '/' + 'extension.js', function(entry) {
 							// alert('导入成功');
 						}, function() {
 							// 手机端用window.resolveLocalFileSystemURL无法检测文件是否存在，故更改了弹窗内容
@@ -10576,7 +10607,7 @@ config:{
 	author:"无名玩家<br>自写&搬运：<span class='bluetext'>棘手怀念摧毁</span>",
 	diskURL:"",
 	forumURL:"",
-	version:"1.10.7",
+	version:"1.10.8",
 },
 files:{"character":[],"card":[],"skill":[]}}})
 
@@ -10588,7 +10619,6 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 总双势力武将等统计错误
 // 场上所有角色禁将+解除场上其他角色禁将无法禁用“我”（玩家）的武将、禁将名出现undefined
 // 选项导航功能的搜索，未输入点确定弹出提示内容不正确，未输入时保持请输入关键字显示
-// 手牌上限显示无法及时更新（未game.check？）
 // 控制台从牌堆&弃牌堆获得牌不能选择多名角色
 // 对决-对抗自由选将无法加载搜索功能（十周年UI的问题？若十周年UI原先的流畅模式开启则无此问题，但选将时连点几次反贼按钮会报错）
 
@@ -10645,8 +10675,8 @@ files:{"character":[],"card":[],"skill":[]}}})
 
 // 资料页试听胜利配音【暂不可用，等本体更新中】。思路1：更改游戏结束音效读取路径（随机播放一名胜利阵营角色的胜利配音，优先播放存活的角色）；思路2：更改阵亡配音为胜利配音（但在一些特殊模式无法识别）。可参考假装无敌MVP？
 // 一将成名2023武将称号待补充
-// card.nature修改，包括④教程及说明.txt？
 // 懒人包临时修改本体css以适配控制台按钮显示，按钮宽度调整通过修改本体临时修复；非懒人包可开启临时修复开关（请等待后续更新）
 // AI优化：卡牌价值修改
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
+// 适配“获得/失去技能时”的时机代码player.addSkills/player.removeSkills/player.changeSkills、card.nature修改？，包括④教程及说明.txt

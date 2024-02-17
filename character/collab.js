@@ -44,6 +44,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				collab_remake:['dc_caocao','dc_liubei','dc_sunquan','nezha','dc_sunce','dc_zhaoyun'],
 			},
 		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill:{
 			//新InitFilter测试高达一号
 			//打赢复活赛的牢达[哭]
@@ -52,7 +53,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:['chooseToUse','chooseToRespond'],
 				prompt:'将♦牌当做火【杀】，♥牌当做【桃】，♣牌当做【闪】，♠牌当做【无懈可击】使用或打出',
 				viewAs(cards,player){
-					var name=false;
+					var name;
 					var nature=null;
 					switch(get.suit(cards[0],player)){
 						case 'club':name='shan';break;
@@ -617,7 +618,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.addMark('dcbianzhuang',1,false);
 						if(player.countMark('dcbianzhuang')>2){
 							player.storage.dcbianzhuang_inited=true;
-							player.reinit('zhutiexiong','wu_zhutiexiong');
+							player.reinitCharacter('zhutiexiong','wu_zhutiexiong');
 						}
 					}
 				},

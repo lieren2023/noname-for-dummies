@@ -3026,7 +3026,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var target=result.targets[0];
 						event.target=target;
 						player.line(target,'thunder');
-						target.addSkill('new_canyun');
+						target.addSkills('new_canyun');
 						target.discardPlayerCard('是否弃置自己区域内的一张梅花牌，获得技能〖绝响〗？',target,'hej').set('ai',function(card){
 							if(get.position(card)=='j') return 100+get.value(card);
 							return 100-get.value(card);
@@ -3036,7 +3036,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					else event.finish();
 					"step 3"
-					if(result.bool) target.addSkill('new_juexiang');
+					if(result.bool) target.addSkills('new_juexiang');
 				},
 			},
 			"new_canyun":{
@@ -3590,7 +3590,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					'step 3'
 					if(result.bool&&result.autochoose&&result.cards.length==result.rawcards.length){
-						player.removeSkill('jiexun');
+						player.removeSkills('jiexun');
 						player.addSkill('funan_jiexun');
 					}
 				}
@@ -4013,7 +4013,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var target=result.targets[0]
 						player.logSkill('juexiang',target);
-						target.addSkill(lib.skill.juexiang.derivation.randomGet());
+						target.addSkills(lib.skill.juexiang.derivation.randomGet());
 						target.addTempSkill('juexiang_club',{player:'phaseZhunbeiBegin'});
 					}
 				},
@@ -6750,6 +6750,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			xinxianzhen2:{
 				audio:'xianzhen',
+				audioname2:{
+					ol_gaoshun:'rexianzhen',
+				},
 				mod:{
 					targetInRange:function(card,player,target){
 						if(target==player.storage.xinxianzhen) return true;
@@ -8139,7 +8142,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var es=target.getCards('e');
 						target.give(es,player,'give');
-						player.removeSkill('yanzhu');
+						player.removeSkills('yanzhu');
 					}
 					else{
 						target.chooseToDiscard(true,'he');
@@ -10924,14 +10927,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
+					player.awakenSkill('zili');
 					player.chooseDrawRecover(2,true,function(event,player){
 						if(player.hp==1&&player.isDamaged()) return 'recover_hp';
 						return 'draw_card';
 					});
 					"step 1"
 					player.loseMaxHp();
-					player.addSkill('paiyi');
-					player.awakenSkill('zili');
+					player.addSkills('paiyi');
 				}
 			},
 			paiyi:{
@@ -13715,11 +13718,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('zbaijiang');
 					player.gainMaxHp();
-					player.removeSkill('zquanji');
-					player.removeSkill('zzhenggong');
-					game.log(player,'失去了技能','#g【权计】、【争功】');
-					player.addSkillLog('zyexin');
-					player.addSkillLog('zzili');
+					player.changeSkills(['zyexin','zzili'],['zquanji','zzhenggong']);
 				}
 			},
 			zyexin:{
@@ -13777,10 +13776,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.getExpansions('zyexin').length>=4;
 				},
 				forced:true,
-				content:function(){
+				async content(e,t,player){
 					player.awakenSkill('zzili');
 					player.loseMaxHp();
-					player.addSkill('zpaiyi');
+					player.addSkills('zpaiyi');
 				},
 				// intro:{
 				// 	content:'limited'
@@ -13912,7 +13911,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xusheng:['xusheng','xin_xusheng','re_xusheng','old_xusheng'],
 			wuguotai:['wuguotai','xin_wuguotai','re_wuguotai'],
 			lingtong:['lingtong','xin_lingtong','ol_lingtong','re_lingtong','old_lingtong'],
-			gaoshun:['gaoshun','xin_gaoshun','re_gaoshun','old_gaoshun'],
+			gaoshun:['gaoshun','xin_gaoshun','ol_gaoshun','re_gaoshun','old_gaoshun'],
 			zhonghui:['zhonghui','xin_zhonghui','re_zhonghui','old_zhonghui','pe_zhonghui'],
 			wangyi:['wangyi','re_wangyi','old_wangyi'],
 			caozhang:['caozhang','ol_caozhang','re_caozhang','xin_caozhang'],

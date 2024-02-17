@@ -915,7 +915,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_huatuo:['male','shen',6,['chulao','mazui','boss_shengshou','guizhen','wuqin'],['qun','boss','bossallowed'],'wu'],
 				boss_dongzhuo:['male','shen',20,['jiuchi','boss_qiangzheng','boss_baolin'],['qun','boss','bossallowed'],'shu'],
 
-				"boss_sunce":["male","shen","1/8",["boss_jiang","boss_hunzi","boss_hunyou","boss_taoni"],['qun','boss','bossallowed'],'wu'],
+				"boss_sunce":["male","shen","1/8",["boss_jiang","boss_hunzi","boss_hunyou","boss_taoni"],['qun','boss','bossallowed','InitFilter:noZhuHp:noZhuSkill'],'wu'],
 
 				// boss_nianshou:['male','shen',Infinity,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
 				// boss_yuji:['male','qun',8,[],['boss','bossallowed'],'nei'],
@@ -6480,11 +6480,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						};
 						if(trigger.result.judge>0){
 							trigger.result.bool=true;
-							trigger.player.popup('洗具');
+							trigger.player.popup('改命成功');
 						}
 						if(trigger.result.judge<0){
 							trigger.result.bool=false;
-							trigger.player.popup('杯具');
+							trigger.player.popup('改命失败');
 						}
 						game.log(trigger.player,'的判定结果为',card);
 						trigger.direct=true;

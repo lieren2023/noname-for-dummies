@@ -1045,6 +1045,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return `令${get.translation(event.card)}不计入次数限制，且你获得${get.translation(event.target)}一张牌，然后其可以令你本回合至其的距离+2`;
 				},
 				group:'jsrgeqian_prepare',
+				logTarget:'target',
 				async content(event,trigger,player){
 					if(trigger.addCount!==false){
 						trigger.addCount=false;
@@ -1071,14 +1072,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						},
 						direct:true,
 						async content(event,trigger,player){
-							while(true){
+							while(player.countCards('h')>0){
 								const {result:{bool,cards}}=await player.chooseCard(get.prompt('jsrgeqian'),'你可以蓄谋任意次').set('ai',card=>{
 									const player=get.player();
 									if(player.hasValueTarget(card)) return player.getUseValue(card);
 									return 0;
 								});
 								if(!bool) break;
-								player.addJudge({name:'xumou_jsrg'},cards);
+								await player.addJudge({name:'xumou_jsrg'},cards);
 							}
 						},
 					},
@@ -1203,7 +1204,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(bool){
 							player.logSkill('jsrgfangjie');
 							await player.discard(links);
-							player.removeSkillLog('jsrgfangjie');
+							player.removeSkills('jsrgfangjie');
 						}
 					}
 				},
@@ -2028,7 +2029,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return lib.filter.canBeDiscarded(card,player,target);
 					},'e')){
 						player.discardPlayerCard(target,'e',true);
-						target.addAdditionalSkill('jsrgqingzi_'+player.playerid,'xinshensu');
+						target.addAdditionalSkills('jsrgqingzi_'+player.playerid,'xinshensu');
 						player.markAuto('jsrgqingzi_clear',[target]);
 					}
 					event.num++;
@@ -3964,9 +3965,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('jsrgzhasi');
 					trigger.cancel();
-					player.removeSkill('jsrgzhiheng');
-					game.log(player,'失去了技能','#g【猘横】');
-					player.addSkillLog('rezhiheng');
+					player.changeSkills(['rezhiheng'],['jsrgzhiheng']);
 					player.addSkill('jsrgzhasi_undist');
 				},
 				derivation:'rezhiheng',
@@ -6271,8 +6270,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger.targets.forEach(i=>i.removeSkill('huogong2'));
 					}
 					else{
-						player.removeSkill('jsrgguanhuo');
-						game.log(player,'失去了技能','#g【观火】');
+						player.removeSkills('jsrgguanhuo');
 					}
 				},
 				ai:{
@@ -7651,8 +7649,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('jsrghuilie');
 					player.loseMaxHp();
 					'step 1'
-					player.addSkillLog('jsrgpingrong');
-					player.addSkillLog('feiying');
+					player.addSkills(['jsrgpingrong','feiying']);
 				}
 			},
 			jsrgpingrong:{

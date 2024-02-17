@@ -218,6 +218,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hs_jaina:['hs_antonidas'],
 			hs_malfurion:['hs_malorne'],
 		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill:{
 			hshuanyu:{
 				trigger:{player:'damageEnd'},
