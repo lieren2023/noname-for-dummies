@@ -47,37 +47,14 @@ export class Library extends Uninstantable {
 	static connectBanned = [];
 	static characterIntro = {};
 	static characterTitle = {};
-	static characterPack = new Proxy({}, {
-		set(target, prop, newValue) {
-			if (typeof prop == 'string') {
-				// 新增武将包，且不是“收藏”和“禁用”
-				if (!['mode_favourite', 'mode_banned'].includes(prop) && !Reflect.has(target, prop)) {
-					Promise.resolve().then(() => {
-						ui.updateCharacterPackMenu.forEach(fun => fun(prop));
-					});
-				}
-			}
-			return Reflect.set(target, prop, newValue);
-		}
-	});
+	static characterPack = {};
 	static characterFilter = {};
 	static characterSort = {};
 	static characterReplace = {};
 	static characterInitFilter = {};
 	static characterGuozhanFilter = ["mode_guozhan"];
 	static dynamicTranslate = {};
-	static cardPack = new Proxy({}, {
-		set(target, prop, newValue) {
-			if (typeof prop == 'string') {
-				if (!Reflect.has(target, prop)) {
-					Promise.resolve().then(() => {
-						ui.updateCardPackMenu.forEach(fun => fun(prop));
-					});
-				}
-			}
-			return Reflect.set(target, prop, newValue);
-		}
-	});
+	static cardPack = {};
 	/**
 	 * @type { SMap<number> }
 	 */
@@ -1132,15 +1109,9 @@ export class Library extends Uninstantable {
 					},
 					unfrequent: true,
 				},
-				extension_alert: {
-					name: '无视扩展报错',
-					init: false,
-					unfrequent: true,
-				},
 				fuck_sojson: {
 					name: '检测加密扩展',
 					init: false,
-					unfrequent: true,
 				},
 				errstop: {
 					name: '出错时停止游戏',
@@ -7924,11 +7895,7 @@ export class Library extends Uninstantable {
 								var icon = document.createElement("span");
 								var className = "cm-completionIcon cm-completionIcon-";
 								if (obj) {
-									// 解决访问caller报错等问题
-									let type;
-									try {
-										type = typeof obj[text];
-									} catch {}
+									const type = typeof obj[text];
 									if (type == 'function') {
 										className += 'function';
 									}
@@ -9445,14 +9412,7 @@ export class Library extends Uninstantable {
 		charge: '蓄力值',
 		expandedSlots: '扩展装备栏',
 		stratagem_fury: '怒气',
-		_stratagem_add_buff: '强化',
-
-		phaseZhunbei: '准备阶段',
-		phaseJudge: '判定阶段',
-		phaseDraw: '摸牌阶段',
-		phaseUse: '出牌阶段',
-		phaseDiscard: '弃牌阶段',
-		phaseJieshu: '结束阶段',
+		_stratagem_add_buff: '强化'
 	};
 
 	static experimental = Experimental
@@ -13216,8 +13176,8 @@ export class Library extends Uninstantable {
 		ignore: () => void 0
 	};
 	static InitFilter = {
-		'noZhuHp': '不享受主公的额外体力上限',
-		'noZhuSkill': '不享受地主的额外技能',
+		'noZhuHp': '做主公不增加体力上限',
+		'noZhuSkill': '做主公不获得飞扬跋扈',
 	};
 }
 

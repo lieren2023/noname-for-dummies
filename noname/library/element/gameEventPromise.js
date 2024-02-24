@@ -70,7 +70,6 @@ export class GameEventPromise extends Promise {
 							if (lib.phaseName.includes(event.name)) event.player.getHistory('skipped').add(event.name);
 							_status.event.next.remove(eventPromise);
 							event.finish();
-							// @ts-ignore
 							resolve();
 							return eventPromise;
 						}

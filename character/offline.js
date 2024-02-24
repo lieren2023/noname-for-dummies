@@ -11,7 +11,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				offline_yijiang:['ol_xinxianying'],
 				offline_luanwu:["ns_lijue","ns_zhangji","ns_fanchou"],
 				offline_yongjian:["ns_chendao","yj_caoang","yj_caocao",'yj_liru','yj_caohong','yj_zhangfei','yongjian_ganning','yj_dongzhuo','yj_xuyou','yj_jiaxu','yj_zhenji'],
-				offline_piracyE:['shen_jiaxu','pe_wangyun','pe_zhonghui','pe_sunchen','pe_mengda','pe_wenqin','ns_caoanmin','chendong','jiangqing','kongrong','jiling','tianfeng','mateng'],
+				offline_piracyE:['shen_jiaxu','pe_wangyun','pe_zhonghui','pe_sunchen','pe_mengda','pe_wenqin','ns_caoanmin','chendong','jiangqing','zy_kongrong','jiling','tianfeng','mateng'],
 				offline_piracyS:['ns_jiaxu','longyufei','ps_guanyu','ps1059_guojia','ps2070_guojia','ps2063_zhaoyun','ps2067_zhaoyun','ps1062_zhouyu','ps2080_zhouyu','ps_caozhi','ps_jin_simayi','ps_caopi','ps_simayi','ps2068_simayi','ps_machao','ps_zhugeliang','ps2066_zhugeliang','ps_jiaxu','ps_lvbu','ps_shen_machao','jsp_liubei'],
 				offline_piracyK:['pk_sp_duyu'],
 				offline_vtuber:['vtb_xiaosha','vtb_xiaoshan','vtb_xiaotao','vtb_xiaole','vtb_xiaojiu'],
@@ -33,7 +33,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mateng:['male','qun',4,['mashu','xiongyi']],
 			tianfeng:['male','qun',3,['sijian','gzsuishi']],
 			jiling:['male','qun',4,['shuangren']],
-			kongrong:['male','qun',3,['zymingshi','lirang']],
+			zy_kongrong:['male','qun',3,['zymingshi','lirang']],
 			chendong:['male','wu',4,['duanxie','fenming']],
 			jiangqing:['male','wu',4,['zyshangyi']],
 			pk_sp_duyu:['male','qun',4,['pkwuku','pksanchen']],
@@ -1075,7 +1075,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('pksanchen');
 					player.gainMaxHp();
 					player.recover();
-					player.addSkills('pkmiewu');
+					player.addSkillLog('pkmiewu');
 				},
 				ai:{
 					combo:'wuku',
@@ -5324,7 +5324,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.storage.suiren=true;
 						player.awakenSkill('suiren');
 						player.logSkill('suiren',result.targets);
-						player.removeSkills('reyicong');
+						player.removeSkill('reyicong');
 						player.gainMaxHp();
 						player.recover();
 						result.targets[0].draw(3);
@@ -5914,7 +5914,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							delete player._mouduan_mark;
 						}
 					},player);
-					player.removeAdditionalSkills('mouduan');
+					player.removeAdditionalSkill('mouduan');
 				},
 				trigger:{player:'loseEnd'},
 				forced:true,
@@ -5930,7 +5930,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player._mouduan_mark.firstChild.innerHTML='文';
 						player._mouduan_mark.info.content='拥有技能【英姿】、【克己】';
 					},player);
-					player.addAdditionalSkills('mouduan',['yingzi','keji']);
+					player.addAdditionalSkill('mouduan',['yingzi','keji']);
 				},
 				group:'mouduan2'
 			},
@@ -5956,7 +5956,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player._mouduan_mark.firstChild.innerHTML='武';
 							player._mouduan_mark.info.content='拥有技能【激昂】、【谦逊】';
 						},player);
-						player.addAdditionalSkills('mouduan',['jiang','qianxun']);
+						player.addAdditionalSkill('mouduan',['jiang','qianxun']);
 					}
 				}
 			},
@@ -6799,8 +6799,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tianfeng_prefix:'战役篇',
 			jiling:'战役篇纪灵',
 			jiling_prefix:'战役篇',
-			kongrong:'战役篇孔融',
-			kongrong_prefix:'战役篇',
+			zy_kongrong:'战役篇孔融',
+			zy_kongrong_prefix:'战役篇',
 			mateng:'战役篇马腾',
 			mateng_prefix:'战役篇',
 

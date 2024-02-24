@@ -28,24 +28,16 @@ export const importMode = generateImportFunction('mode', (name) => `../../mode/$
 /**
  * 生成导入
  * 
- * @param { 'card' | 'character' | 'extension' | 'mode' } type 
+ * @param {string} type 
  * @param {(name: string) => string} pathParser 
  * @returns {(name: string) => Promise<void>}
  */
 function generateImportFunction(type, pathParser) {
 	return async (name) => {
-		// if (type == 'extension' && !game.hasExtension(name) && !lib.config.all.stockextension.includes(name)) {
-			// @ts-ignore
-			// await game.import(type, await createEmptyExtension(name));
+		// if(type == 'extension' && !game.hasExtension(name) && !lib.config.all.stockextension.includes(name)){
+			// await game.import(type,await createEmptyExtension(name));
 			// return;
 		// }
-		if(type == 'mode' && lib.mode[name] && lib.mode[name].fromextension){
-			let loadModeMethod = lib.init['setMode_'+name];
-			if(typeof loadModeMethod === 'function'){
-				await Promise.resolve(loadModeMethod());
-				return;
-			}
-		}
 		let path = pathParser(name);
 		// 通过浏览器自带的script标签导入可直接获取报错信息，且不会影响JS运行
 		// 此时代码内容也将缓存在浏览器中，故再次import后将不会重新执行代码内容（测试下来如此）
@@ -58,22 +50,12 @@ function generateImportFunction(type, pathParser) {
 				return script;
 			};
 			let script = createScript();
-			script.onerror = (e) => {
-				if (path.endsWith('.js') && window.isSecureContext) {
+			script.onerror = () => {
+				if (path.endsWith('.js')) {
 					path = path.slice(0, -3) + '.ts';
 					script.remove();
 					let ts = createScript();
-					ts.onerror = (e2) => {
-						if (lib.path.basename(path) === 'extension.js' && lib.path.dirname(path).endsWith('/extension')) {
-							console.error(`扩展《${name}》加载失败`, e, e2);
-							let remove = confirm(`扩展《${name}》加载失败，是否移除此扩展？此操作不会移除目录下的文件。`);
-							if (remove) {
-								lib.config.extensions.remove(name);
-								game.saveConfig('extensions', lib.config.extensions);
-							}
-						}
-						resolve(['error', ts]);
-					}
+					ts.onerror = () => resolve(['error', ts]);
 					document.head.appendChild(ts);
 				} else {
 					resolve(['error', script]);
@@ -82,69 +64,52 @@ function generateImportFunction(type, pathParser) {
 			document.head.appendChild(script);
 		});
 		script.remove();
-		if (status === 'error') {
-			if (type === 'character') {
-				console.error('如果您在扩展中使用了game.import创建武将包，请将以下代码删除: lib.config.all.characters.push(\'武将包名\');');
-			}
-			return;
-		}
+		if (status === 'error') return;
 		const modeContent = await import(path);
 		if (!modeContent.type) return;
 		if (modeContent.type !== type) throw new Error(`Loaded Content doesn't conform to "${type}" but "${modeContent.type}".`);
-		// @ts-ignore
 		await game.import(type, modeContent.default);
 	}
 }
 
-async function createEmptyExtension(name) {
+async function createEmptyExtension(name){
 	const extensionInfo = await lib.init.promises.json(`${lib.assetURL}extension/${name}/info.json`)//await import(`../../extension/${name}/info.json`,{assert:{type:'json'}})
-		.then(info => info, () => {
-			return {
-				name: name,
-				intro: `扩展<b>《${name}》</b>尚未开启，请开启后查看信息。（建议扩展添加info.json以在关闭时查看信息）`,
-				author: "未知",
-				diskURL: "",
-				forumURL: "",
-				version: "1.0",
-			};
-		});
-	return {
-		name: extensionInfo.name,
-		content: function (config, pack) { },
-		precontent: function () { },
-		config: {},
-		help: {},
-		package: {
-			character: {
-				character: {
-				},
-				translate: {
-				},
+	.then(info=>{
+		return info;
+	},()=>{
+		return {
+			name:name,
+			intro:`扩展<b>《${name}》</b>尚未开启，请开启后查看信息。（建议扩展添加info.json以在关闭时查看信息）`,
+			author:"未知",
+			diskURL:"",
+			forumURL:"",
+			version:"1.0",
+		};
+	});
+	return {name:extensionInfo.name,content:function(config,pack){},precontent:function(){},config:{},help:{},package:{
+		character:{
+			character:{
 			},
-			card: {
-				card: {
-				},
-				translate: {
-				},
-				list: [],
+			translate:{
 			},
-			skill: {
-				skill: {
-				},
-				translate: {
-				},
-			},
-			intro: extensionInfo.intro ? extensionInfo.intro.replace("${assetURL}", lib.assetURL) : "",
-			author: extensionInfo.author ? extensionInfo.author : "未知",
-			diskURL: extensionInfo.diskURL ? extensionInfo.diskURL : "",
-			forumURL: extensionInfo.forumURL ? extensionInfo.forumURL : "",
-			version: extensionInfo.version ? extensionInfo.version : "1.0.0",
 		},
-		files: {
-			"character": [],
-			"card": [],
-			"skill": [],
-			"audio": []
-		}
-	}
+		card:{
+			card:{
+			},
+			translate:{
+			},
+			list:[],
+		},
+		skill:{
+			skill:{
+			},
+			translate:{
+			},
+		},
+		intro:extensionInfo.intro?extensionInfo.intro.replace("${assetURL}",lib.assetURL):"",
+		author:extensionInfo.author?extensionInfo.author:"未知",
+		diskURL:extensionInfo.diskURL?extensionInfo.diskURL:"",
+		forumURL:extensionInfo.forumURL?extensionInfo.forumURL:"",
+		version:extensionInfo.version?extensionInfo.version:"1.0.0",
+	},files:{"character":[],"card":[],"skill":[],"audio":[]}}
 }

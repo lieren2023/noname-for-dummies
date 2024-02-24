@@ -1,0 +1,15 @@
+._*
+.DS_Store
+.DS_Store?
+.idea
+.Spotlight-V100
+.Trashes
+.vscode
+app
+app.html
+ehthumbs.db
+jsconfig.json
+localStorage.json
+noname.ico
+package-lock.json
+Thumbs.db

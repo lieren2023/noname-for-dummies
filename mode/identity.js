@@ -924,7 +924,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if(!player.isInitFilter('noZhuHp')){
 								player.hp++;
 								player.maxHp++;
-								player.update();
+								player.$update();
 							}
 						}
 					});
@@ -949,7 +949,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								if(!lib.playerOL[i].isInitFilter('noZhuHp')){
 									lib.playerOL[i].hp++;
 									lib.playerOL[i].maxHp++;
-									lib.playerOL[i].update();
+									lib.playerOL[i].$update();
 								}
 							}
 						}
@@ -1406,7 +1406,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if(!player.isInitFilter('noZhuHp')){
 								player.hp++;
 								player.maxHp++;
-								player.update();
+								player.$update();
 							}
 						}
 					}
@@ -1436,7 +1436,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if(!player.isInitFilter('noZhuHp')){
 								player.hp++;
 								player.maxHp++;
-								player.update();
+								player.$update();
 							}
 						}
 					}
@@ -2133,7 +2133,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(!game.me.isInitFilter('noZhuHp')){
 							game.me.hp++;
 							game.me.maxHp++;
-							game.me.update();
+							game.me.$update();
 						}
 					}
 					for(var i=0;i<game.players.length;i++){
@@ -2804,7 +2804,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								return info&&info.zhuSkill;
 							});
 							if(skills.length){
-								player.addSkills(skills);
+								for(var i of skills) player.addSkillLog(i);
 							}
 							game.zhu.node.identity.classList.remove('guessing');
 							if(lib.config.animation&&!lib.config.low_performance) game.zhu.$legend();
@@ -2819,6 +2819,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						},game.zhu);
 						game.delay(2);
 						game.zhu.playerfocus(1000);
+						_status.event.trigger('zhuUpdate');
 					}
 
 					if(!_status.over){
@@ -3893,13 +3894,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.recover();
 					player.draw();
-					const skills = player.getStockSkills(true,true).forEach(stockSkill=>{
+					player.getStockSkills(true,true).forEach(stockSkill=>{
 						if(player.hasSkill(stockSkill)) return;
 						var info=get.info(stockSkill);
 						if(!info||!info.zhuSkill) return;
-						return true;
+						player.addSkillLog(stockSkill);
 					});
-					if(skills.length) player.addSkills(skills)
 				}
 			},
 			stratagem_revitalization:{

@@ -16,7 +16,7 @@ import { Library as lib } from '../library/index.js';
 import { status as _status } from '../status/index.js';
 import { UI as ui } from '../ui/index.js';
 import { GNC as gnc } from '../gnc/index.js';
-import { userAgent, Uninstantable, GeneratorFunction, AsyncFunction, delay, nonameInitialized } from "../util/index.js";
+import { userAgent, Uninstantable, GeneratorFunction, AsyncFunction, delay } from "../util/index.js";
 
 import { DynamicStyle } from "./dynamic-style/index.js";
 import { GamePromises } from "./promises.js";
@@ -1644,7 +1644,7 @@ export class Game extends Uninstantable {
 				return;
 			}
 		}
-		const audio = get.dynamicVariable(lib.card[card.name].audio,card,sex);
+		const audio = lib.card[card.name].audio;
 		if (typeof audio == 'string') {
 			const audioInfo = audio.split(':');
 			if (audio.startsWith('db:')) game.playAudio(`${audioInfo[0]}:${audioInfo[1]}`, audioInfo[2], `${card.name}_${sex}.${audioInfo[3] || 'mp3'}`);
@@ -1753,7 +1753,8 @@ export class Game extends Uninstantable {
 	static import(type, content, url) {
 		if (type == 'extension') {
 			const promise = game.loadExtension(content).then((name) => {
-				if (typeof _status.extensionLoaded == "undefined") _status.extensionLoaded = [];
+				if (typeof _status.extensionLoaded == "undefined")
+					_status.extensionLoaded = [];
 				_status.extensionLoaded.add(name);
 				return name;
 			});
@@ -1880,18 +1881,11 @@ export class Game extends Uninstantable {
 				help: help,
 				config: objectConfig
 			}
-			try{
-    			if (precontent) {
-    				_status.extension = name;
-    				
-    				await (gnc.is.generatorFunc(precontent) ? gnc.of(precontent) : precontent).call(object, config);
-    				delete _status.extension;
-    			}
-			}catch(e1){
-				console.log(`加载《${name}》扩展的precontent时出现错误。`,e1);
-				if(!lib.config.extension_alert) alert(`加载《${name}》扩展的precontent时出现错误。\n该错误本身可能并不影响扩展运行。您可以在“设置→通用→无视扩展报错”中关闭此弹窗。\n${decodeURI(e1.stack)}`);
+			if (precontent) {
+				_status.extension = name;
+				await (gnc.is.generatorFunc(precontent) ? gnc.of(precontent) : precontent).call(object, config);
+				delete _status.extension;
 			}
-			
 			if (content) lib.extensions.push([name, content, config, _status.evaluatingExtension, objectPackage || {}]);
 		}
 		catch (e) {
@@ -1907,7 +1901,7 @@ export class Game extends Uninstantable {
 	 */
 	static createDir(directory, successCallback, errorCallback) {
 		const paths = directory.split('/').reverse();
-		if (window.resolveLocalFileSystemURL) return new Promise((resolve, reject) => window.resolveLocalFileSystemURL(nonameInitialized, resolve, reject)).then(directoryEntry => {
+		if (window.resolveLocalFileSystemURL) return new Promise((resolve, reject) => window.resolveLocalFileSystemURL(lib.assetURL, resolve, reject)).then(directoryEntry => {
 			const redo = entry => new Promise((resolve, reject) => entry.getDirectory(paths.pop(), {
 				create: true
 			}, resolve, reject)).then(resolvedDirectoryEntry => {
@@ -2034,7 +2028,7 @@ export class Game extends Uninstantable {
 					}
 					game.ensureDirectory(`extension/${extensionName}`).then(writeFile).catch(UHP);
 				}
-				else new Promise((resolve, reject) => window.resolveLocalFileSystemURL(nonameInitialized, resolve, reject)).then(directoryEntry => new Promise((resolve, reject) => directoryEntry.getDirectory(`extension/${extensionName}`, {
+				else new Promise((resolve, reject) => window.resolveLocalFileSystemURL(lib.assetURL, resolve, reject)).then(directoryEntry => new Promise((resolve, reject) => directoryEntry.getDirectory(`extension/${extensionName}`, {
 					create: true
 				}, resolve, reject))).then(directoryEntry => {
 					//扩展文件夹
@@ -4386,16 +4380,7 @@ export class Game extends Uninstantable {
 					}
 				}
 				if (lib[i][j] == undefined) {
-					// 判断扩展武将包是否开启
-					if (i == 'character') {
-						// if (!game.hasExtension(extname) || !game.hasExtensionLoaded(extname)) continue;
-						if (lib.config[`extension_${extname}_characters_enable`] === undefined) {
-							game.saveExtensionConfig(extname, 'characters_enable', true);
-						}
-						if (lib.config[`extension_${extname}_characters_enable`] === true) {
-							lib[i][j] = pack[i][j];
-						}
-					} else lib[i][j] = pack[i][j];
+					lib[i][j] = pack[i][j];
 				}
 			}
 		}
@@ -4475,22 +4460,20 @@ export class Game extends Uninstantable {
 					if (pack[i][j].audio == true) {
 						pack[i][j].audio = 'ext:' + extname;
 					}
-					if(!pack[i][j].image){
-						if (pack[i][j].fullskin) {
-							if (_status.evaluatingExtension) {
-								pack[i][j].image = 'db:extension-' + extname + ':' + j + '.png';
-							}
-							else {
-								pack[i][j].image = 'ext:' + extname + '/' + j + '.png';
-							}
+					if (pack[i][j].fullskin) {
+						if (_status.evaluatingExtension) {
+							pack[i][j].image = 'db:extension-' + extname + ':' + j + '.png';
 						}
-						else if (pack[i][j].fullimage) {
-							if (_status.evaluatingExtension) {
-								pack[i][j].image = 'db:extension-' + extname + ':' + j + '.jpg';
-							}
-							else {
-								pack[i][j].image = 'ext:' + extname + '/' + j + '.jpg';
-							}
+						else {
+							pack[i][j].image = 'ext:' + extname + '/' + j + '.png';
+						}
+					}
+					else if (pack[i][j].fullimage) {
+						if (_status.evaluatingExtension) {
+							pack[i][j].image = 'db:extension-' + extname + ':' + j + '.jpg';
+						}
+						else {
+							pack[i][j].image = 'ext:' + extname + '/' + j + '.jpg';
 						}
 					}
 					lib.cardPack[packname].push(j);
@@ -4500,18 +4483,7 @@ export class Game extends Uninstantable {
 						pack[i][j].audio = 'ext:' + extname + ':' + pack[i][j].audio;
 					}
 				}
-				if (lib[i][j] == undefined) {
-					// 判断扩展卡牌包是否开启
-					if (i == 'card') {
-						// if (!game.hasExtension(extname) || !game.hasExtensionLoaded(extname)) continue;
-						if (lib.config[`extension_${extname}_cards_enable`] === undefined) {
-							game.saveExtensionConfig(extname, 'cards_enable', true);
-						}
-						if (lib.config[`extension_${extname}_cards_enable`] === true) {
-							lib[i][j] = pack[i][j];
-						}
-					} else lib[i][j] = pack[i][j];
-				}
+				if (lib[i][j] == undefined) lib[i][j] = pack[i][j];
 			}
 		}
 	}
@@ -4641,9 +4613,6 @@ export class Game extends Uninstantable {
 	 * @param { string } extensionName
 	 */
 	static hasExtension(extensionName) {
-		if (typeof lib.config[`extension_${extensionName}_enable`] != 'boolean') {
-			game.saveExtensionConfig(extensionName, 'enable', true);
-		}
 		return this.hasExtensionInstalled(extensionName) && lib.config[`extension_${extensionName}_enable`];
 	}
 	/**
@@ -4708,9 +4677,9 @@ export class Game extends Uninstantable {
 			deleteFolderRecursive(`${__dirname}/extension/${extensionName}`);
 		}
 			catch (error) {
-				console.error(error);
+				console.log(error);
 			}
-		else new Promise((resolve, reject) => window.resolveLocalFileSystemURL(`${nonameInitialized}extension/${extensionName}`, resolve, reject)).then(directoryEntry => directoryEntry.removeRecursively());
+		else new Promise((resolve, reject) => window.resolveLocalFileSystemURL(`${lib.assetURL}extension/${extensionName}`, resolve, reject)).then(directoryEntry => directoryEntry.removeRecursively());
 	}
 	static addRecentCharacter() {
 		let list = get.config('recentCharacter') || [];
@@ -5461,13 +5430,10 @@ export class Game extends Uninstantable {
 	 */
 	static executingAsyncEventMap = new Map();
 	/**
-	 * @type { GameEventPromise[] }
-	 */
-	static belongAsyncEventList = [];
-	/**
 	 * @param { GameEventPromise } [belongAsyncEvent]
 	 */
 	static async loop(belongAsyncEvent) {
+		if (!game.belongAsyncEventList) game.belongAsyncEventList = [];
 		if (belongAsyncEvent) {
 			game.belongAsyncEventList.push(belongAsyncEvent);
 		} else if (game.belongAsyncEventList.length) {
@@ -5673,21 +5639,10 @@ export class Game extends Uninstantable {
 				run(event).then(() => {
 					// 其实这个if几乎一定执行了
 					if (game.executingAsyncEventMap.has(event.toEvent())) {
-						if (!game.executingAsyncEventMap.get(_status.event.toEvent())) {
-							console.warn(`game.executingAsyncEventMap中包括了event，但不包括_status.event！`);
-							console.log('event :>> ', event.toEvent());
-							console.log('_status.event :>> ', _status.event.toEvent());
-							// debugger;
-							game.executingAsyncEventMap.set(event.toEvent(), game.executingAsyncEventMap.get(event.toEvent()).then(() => {
-								event.finish();
-								resolve();
-							}));
-						} else {
-							game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
-								event.finish();
-								resolve();
-							}));
-						}
+						game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
+							event.finish();
+							resolve();
+						}));
 					} else {
 						event.finish();
 						resolve();
@@ -5726,21 +5681,10 @@ export class Game extends Uninstantable {
 				event.content(event, trigger, player).then(() => {
 					// 其实这个if几乎一定执行了
 					if (game.executingAsyncEventMap.has(event.toEvent())) {
-						if (!game.executingAsyncEventMap.get(_status.event.toEvent())) {
-							console.warn(`game.executingAsyncEventMap中包括了event，但不包括_status.event！`);
-							console.log('event :>> ', event.toEvent());
-							console.log('_status.event :>> ', _status.event.toEvent());
-							// debugger;
-							game.executingAsyncEventMap.set(event.toEvent(), game.executingAsyncEventMap.get(event.toEvent()).then(() => {
-								event.finish();
-								resolve();
-							}));
-						} else {
-							game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
-								event.finish();
-								resolve();
-							}));
-						}
+						game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
+							event.finish();
+							resolve();
+						}));
 					} else {
 						event.finish();
 						resolve();
@@ -8178,7 +8122,7 @@ export class Game extends Uninstantable {
 	/**
 	 * @param { string } key 
 	 * @param { * } [value] 
-	 * @param { string | boolean } [local] 
+	 * @param { string } [local] 
 	 * @param { Function } [callback] 
 	 */
 	static saveConfig(key, value, local, callback) {
@@ -8438,10 +8382,8 @@ export class Game extends Uninstantable {
 		return skills.addArray(skills.reduce((previousValue, currentValue) => {
 			const info = get.info(currentValue);
 			if (info) {
-				if (info.group) {
-					const adds = (Array.isArray(info.group) ? info.group : [info.group]).filter(i => lib.skill[i]);
-					previousValue.push(...adds);
-				}
+				if (Array.isArray(info.group)) previousValue.push(...info.group);
+				else if (info.group) previousValue.push(info.group);
 			}
 			else console.log(currentValue);
 			return previousValue;

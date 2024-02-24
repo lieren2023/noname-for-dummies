@@ -2103,7 +2103,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					const cards=player.getEquips(1);
 					if(cards.length) player.discard(cards);
 					player.loseMaxHp();
-					player.addSkills(['mashu','shenji']);
+					player.addSkill('mashu');
+					player.addSkill('shenji');
 				},
 				derivation:['mashu','shenji'],
 			},
@@ -2339,16 +2340,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sp_zhangliao:['sp_zhangliao','yj_zhangliao','jsrg_zhangliao'],
 			xiahoudun:['xiahoudun','re_xiahoudun','xin_xiahoudun'],
 			liubei:['liubei','re_liubei','sb_liubei','dc_liubei','junk_liubei'],
-			guanyu:['guanyu','re_guanyu','ol_sb_guanyu','sb_guanyu','ps_guanyu','old_guanyu'],
+			guanyu:['guanyu','re_guanyu','ps_guanyu','old_guanyu'],
 			zhangfei:['zhangfei','re_zhangfei','old_zhangfei','xin_zhangfei','sb_zhangfei','tw_zhangfei','jsrg_zhangfei','yj_zhangfei'],
 			zhaoyun:['zhaoyun','re_zhaoyun','old_zhaoyun','sb_zhaoyun','jsrg_zhaoyun','ps2063_zhaoyun','ps2067_zhaoyun'],
 			sp_zhaoyun:['sp_zhaoyun','jsp_zhaoyun'],
 			machao:['machao','re_machao','sb_machao','ps_machao'],
 			sp_machao:['sp_machao','dc_sp_machao','jsrg_machao','old_machao'],
-			zhugeliang:['zhugeliang','re_zhugeliang','sb_zhugeliang','ps2066_zhugeliang','ps_zhugeliang'],
+			zhugeliang:['zhugeliang','re_zhugeliang','sb_zhugeliang','jsrg_zhugeliang','ps2066_zhugeliang','ps_zhugeliang'],
 			huangyueying:['huangyueying','re_huangyueying','junk_huangyueying','sb_huangyueying'],
 			sunquan:['sunquan','re_sunquan','sb_sunquan','dc_sunquan'],
-			zhouyu:['zhouyu','re_zhouyu','dc_sb_zhouyu','sb_zhouyu','ps1062_zhouyu','ps2080_zhouyu'],
+			zhouyu:['zhouyu','re_zhouyu','sb_zhouyu','ps1062_zhouyu','ps2080_zhouyu'],
 			luxun:['luxun','re_luxun','jsrg_luxun'],
 			lvmeng:['lvmeng','re_lvmeng','sb_lvmeng'],
 			huanggai:['huanggai','re_huanggai','sb_huanggai'],
