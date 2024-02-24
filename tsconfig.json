@@ -27,7 +27,7 @@
 		/* Modules */
 		"module": "ESNext", /* Specify what module code is generated. */
 		// "rootDir": "./",                                  /* Specify the root folder within your source files. */
-		// "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
+		"moduleResolution": "Bundler",                       /* Specify how TypeScript looks up a file from a given module specifier. */
 		// "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
 		// "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
 		// "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
@@ -42,7 +42,7 @@
 		"resolveJsonModule": true,                        /* Enable importing .json files */
 		// "noResolve": true,                                /* Disallow `import`s, `require`s or `<reference>`s from expanding the number of files TypeScript should add to a project. */
 		/* JavaScript Support */
-		// "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */
+		"allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */
 		// "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
 		// "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from `node_modules`. Only applicable with `allowJs`. */
 		/* Emit */
@@ -80,7 +80,7 @@
 		// "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type.. */
 		// "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
 		// "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
-		// "strictBindCallApply": true,                      /* Check that the arguments for `bind`, `call`, and `apply` methods match the original function. */
+		"strictBindCallApply": true,                      /* Check that the arguments for `bind`, `call`, and `apply` methods match the original function. */
 		// "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
 		// "noImplicitThis": true,                           /* Enable error reporting when `this` is given the type `any`. */
 		// "useUnknownInCatchVariables": true,               /* Type catch clause variables as 'unknown' instead of 'any'. */

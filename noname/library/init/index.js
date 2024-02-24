@@ -263,6 +263,11 @@ export class LibInit extends Uninstantable {
 		const xmlHttpRequest = new XMLHttpRequest();
 		let data;
 		xmlHttpRequest.addEventListener("load", () => {
+			if (![0, 200].includes(xmlHttpRequest.status)) {
+				// @ts-ignore
+				if (typeof onError == 'function') onError(new Error(oReq.statusText || oReq.status));
+				return;
+			}
 			data = xmlHttpRequest.responseText;
 			if (!data) {
 				if (typeof onError == 'function') onError(new Error(`${scriptSource}加载失败！`));
@@ -303,7 +308,14 @@ export class LibInit extends Uninstantable {
 			sScriptURL = url + str;
 		}
 		const oReq = new XMLHttpRequest();
-		if (typeof onload == 'function') oReq.addEventListener("load", onload);
+		if (typeof onload == 'function') oReq.addEventListener("load", result => {
+			if (![0, 200].includes(oReq.status)) {
+				// @ts-ignore
+				if (typeof onerror == 'function') onerror(new Error(oReq.statusText || oReq.status));
+				return;
+			}
+			onload(result);
+		});
 		if (typeof onerror == 'function') oReq.addEventListener("error", onerror);
 		oReq.open("GET", sScriptURL);
 		oReq.send();
@@ -330,7 +342,14 @@ export class LibInit extends Uninstantable {
 			sScriptURL = url + str;
 		}
 		const oReq = new XMLHttpRequest();
-		if (typeof onload == 'function') oReq.addEventListener("load", onload);
+		if (typeof onload == 'function') oReq.addEventListener("load", result => {
+			if (![0, 200].includes(oReq.status)) {
+				// @ts-ignore
+				if (typeof onerror == 'function') onerror(new Error(oReq.statusText || oReq.status));
+				return;
+			}
+			onload(result);
+		});
 		if (typeof onerror == 'function') oReq.addEventListener("error", onerror);
 		oReq.open("GET", sScriptURL, false);
 		oReq.send();
@@ -340,6 +359,11 @@ export class LibInit extends Uninstantable {
 	static json(url, onload, onerror) {
 		const oReq = new XMLHttpRequest();
 		if (typeof onload == 'function') oReq.addEventListener("load", () => {
+			if (![0, 200].includes(oReq.status)) {
+				// @ts-ignore
+				if (typeof onerror == 'function') onerror(new Error(oReq.statusText || oReq.status));
+				return;
+			}
 			let result;
 			try {
 				result = JSON.parse(oReq.responseText);
@@ -368,6 +392,11 @@ export class LibInit extends Uninstantable {
 		}
 		const oReq = new XMLHttpRequest();
 		if (typeof onload == 'function') oReq.addEventListener("load", () => {
+			if (![0, 200].includes(oReq.status)) {
+				// @ts-ignore
+				if (typeof onerror == 'function') onerror(new Error(oReq.statusText || oReq.status));
+				return;
+			}
 			let result;
 			try {
 				result = JSON.parse(oReq.responseText);
@@ -683,7 +712,10 @@ export class LibInit extends Uninstantable {
 							result: result
 						});
 						var res = gen.next((lastEvent && (typeof lastEvent == 'object') && ("result" in lastEvent)) ? lastEvent.result : lastEvent);
-						if (res.done) return event.finish();
+						if (res.done){
+							gen = null;
+							return event.finish();
+						}
 						var currentResult = res.value;
 						// TODO: use `event.debugger` to replace source
 						if (typeof currentResult == "function") yield currentResult;

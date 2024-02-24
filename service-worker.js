@@ -5,17 +5,23 @@ var ts;
 importScripts('./game/typescript.js');
 // @ts-ignore
 if (typeof ts != 'undefined') {
-	console.log(ts);
+	console.log(`ts loaded`);
 } else {
 	console.log(`ts undefined`);
 }
 
-console.log('version 2.1');
+console.log('serviceWorker version 2.2');
 
 self.addEventListener("install", (event) => {
 	// The promise that skipWaiting() returns can be safely ignored.
 	// @ts-ignore
 	self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+	// 当一个 service worker 被初始注册时，页面在下次加载之前不会使用它。 claim() 方法会立即控制这些页面
+	// @ts-ignore
+	event.waitUntil(clients.claim());
 });
 
 self.addEventListener('message', event => {

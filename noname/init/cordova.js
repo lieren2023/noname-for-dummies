@@ -7,7 +7,6 @@ import { UI as ui } from '../ui/index.js';
 import { nonameInitialized } from '../util/index.js';
 
 export async function cordovaReady() {
-	lib.path = (await import('../library/path.js')).default;
 	if (lib.device == 'android') {
 		document.addEventListener("pause", function () {
 			if (!_status.paused2 && (typeof _status.event.isMine == 'function' && !_status.event.isMine())) {

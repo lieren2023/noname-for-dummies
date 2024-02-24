@@ -13,7 +13,7 @@ export class GamePromises extends Uninstantable {
 	 *	(alertOption: 'alert', title: string): Promise<true>;
 	 * }}
 	 *
-	 * @param { string } title 设置prompt标题与input内容
+	 * @param { string } [title] 设置prompt标题与input内容
 	 * @param { boolean } [forced] 为true的话将没有"取消按钮"
 	 * @param { string } alertOption 设置prompt是否模拟alert
 	 * @example

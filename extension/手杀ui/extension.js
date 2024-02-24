@@ -25,8 +25,8 @@ game.import('extension', function(lib, game, ui, get, ai, _status) {
 		
 		// 从lbtn/main.js移至此处
 		          lib.skill._uicardupdate = {
-			// 正确的时机应为“我”（玩家）失去或获得技能后（等待本体更新中）
-                trigger: { player: 'phaseEnd' },
+			// 技能刷新时机
+                trigger: { player: 'changeSkillsAfter',global: 'phaseBefore' },
                 forced: true,
                 unique: true,
                 popup: false,
