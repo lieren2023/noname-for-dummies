@@ -31,7 +31,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mb_chengui:['male','qun',3,['guimou','zhouxian']],
 			mb_huban:['male','wei',4,['mbyilie']],
 			mb_xianglang:['male','shu',3,['naxue','yijie']],
-			yanxiang:['male','qun',3,['kujian','twruilian'],['die_audio:tw_yanxiang']],
+			yanxiang:['male','qun',3,['kujian','twruilian'],['character:tw_yanxiang','die_audio:tw_yanxiang']],
 			mb_sunluyu:['female','wu',3,['mbmeibu','mbmumu']],
 			xin_wuban:['male','shu',4,['xinjintao'],['clan:陈留吴氏','character:wuban']],
 			baoxin:['male','qun',4,['mutao','yimou'],['die_audio:tw_baoxin']],
@@ -5907,7 +5907,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var es=target.getCards('e');
 						target.give(es,player,'give');
-						player.removeSkills('mobileyanzhu');
+						player.removeSkill('mobileyanzhu');
 						player.storage.mobileyanzhu=true;
 						player.popup('兴学');
 						game.log(player,'修改了技能','#g【兴学】');
@@ -6783,7 +6783,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('moucuan');
 					player.loseMaxHp();
-					player.addSkills('binghuo');
+					player.addSkill('binghuo');
 				},
 				ai:{combo:'jibing'},
 			},
@@ -9783,8 +9783,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.skills=skills;
 					player.chooseControl(skills).set('dialog',['选择令'+get.translation(target)+'获得一个技能',[chara,'character']]);
 					'step 2'
-					target.addSkills(result.control);
+					target.addSkillLog(result.control);
 					target.setAvatarQueue(target.name1||target.name,[event.chara[event.skills.indexOf(result.control)]]);
+					'step 3'
+					if(target.isZhu2()) event.trigger('zhuUpdate');
 				},
 			},
 			hongyi:{
@@ -9896,13 +9898,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.awakenSkill('requanfeng');
-					player.removeSkills('hongyi');
+					player.removeSkill('hongyi');
 					var skills=trigger.player.getStockSkills('仲村由理','天下第一').filter(function(skill){
 						var info=get.info(skill);
 						return info&&!info.hiddenSkill&&!info.zhuSkill&&!info.charlotte;
 					});
 					if(skills.length){
-						player.addSkills(skills);
+						for(var i of skills) player.addSkillLog(i);
 						game.broadcastAll(function(list){
 							game.expandSkills(list);
 							for(var i of list){
@@ -9943,7 +9945,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return list.randomGet();
 					});
 					'step 1'
-					player.addSkills(result.control);
+					player.addSkillLog(result.control);
 					game.broadcastAll(function(skill){
 						var list=[skill];game.expandSkills(list);
 						for(var i of list){
@@ -11584,7 +11586,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gain(gains,'gain2');
 					}
 					'step 3'
-					player.addSkills('reqingce');
+					player.addSkill('reqingce');
+					game.log(player,'获得了技能','#g【清侧】');
 					player.loseMaxHp();
 				},
 			},
@@ -12959,7 +12962,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if(result.bool){
 						player.line(trigger.source,'fire');
-						trigger.source.addSkills(['new_rewusheng','redangxian']);
+						trigger.source.addSkillLog('new_rewusheng');
+						trigger.source.addSkillLog('redangxian');
 					}
 				},
 			},
@@ -13108,7 +13112,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				animationColor:'thunder',
 				content:function(){
 					player.awakenSkill('remoucheng');
-					player.changeSkills(['jingong','relianji']);
+					player.removeSkill('relianji');
+					player.addSkill('jingong');
 					player.gainMaxHp();
 					player.recover();
 				},

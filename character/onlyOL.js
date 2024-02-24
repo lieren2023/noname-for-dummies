@@ -10,11 +10,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_lingtong:['male','wu',4,['olxuanfeng'],['die_audio:re_lingtong']],
 			ol_sb_guanyu:['male','shu',4,['olsbweilin','olsbduoshou']],
 			ol_sb_taishici:['male','wu',4,['olsbdulie','olsbdouchan']],
-			ol_gaoshun:['male','qun',4,['olxianzhen','decadejinjiu'],['die_audio:re_gaoshun']],
 		},
 		characterSort:{
 			onlyOL:{
-				onlyOL_yijiang1:['ol_jianyong','ol_lingtong','ol_gaoshun'],
+				onlyOL_yijiang1:['ol_jianyong','ol_lingtong'],
 				onlyOL_yijiang2:['ol_caozhang'],
 				onlyOL_sb:['ol_sb_jiangwei','ol_sb_guanyu','ol_sb_taishici'],
 			},
@@ -24,40 +23,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterReplace:{
 		},
 		skill:{
-			//界高顺
-			olxianzhen:{
-				audio:'rexianzhen',
-				inherit:'xianzhen',
-				async content(event,trigger,player){
-					const target=event.target;
-					const {result:{bool}}=await player.chooseToCompare(target);
-					if(bool){
-						player.storage.xinxianzhen=target;
-						player.addTempSkill('xinxianzhen2');
-					}
-					else{
-						player.markAuto('olxianzhen_buff',[target]);
-						player.addTempSkill('olxianzhen_buff');
-					}
-				},
-				subSkill:{
-					buff:{
-						charlotte:true,
-						onremove:true,
-						mod:{
-							playerEnabled(card,player,target){
-								if(get.name(card,player)=='sha'&&player.getStorage('olxianzhen_buff').includes(target)) return false;
-							},
-							ignoredHandcard(card,player){
-								if(get.name(card,player)=='sha') return true;
-							},
-							cardDiscardable(card,player,name){
-								if(name=='phaseDiscard'&&get.name(card,player)=='sha') return false;
-							},
-						},
-					},
-				},
-			},
 			//新OL谋关羽
 			olsbweilin:{
 				audio:2,
@@ -519,13 +484,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var trigger=map.trigger;
 					player.awakenSkill('olsbranji');
 					var num=lib.skill.olsbranji.getNum(trigger,player);
-					const skills = [];
 					if(num>=player.getHp()){
-						skills.push('kunfen');
+						player.addSkillLog('kunfen');
 						player.storage.kunfen=true;
 					}
-					if(num<=player.getHp()) skills.push('zhaxiang');
-					player.addSkills(skills);
+					if(num<=player.getHp()) player.addSkillLog('zhaxiang');
 					if(player.countCards('h')!=player.getHandcardLimit()||player.isDamaged()){
 						var result,num1=player.countCards('h')-player.getHandcardLimit();
 						if(!num1) result={index:1};
@@ -767,14 +730,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			olsbweilin_info:'每回合限一次，你可以将一张牌当作任意【杀】或【酒】使用，且你以此法使用的牌指定最后一个目标后，你令所有目标角色本回合与此牌颜色相同的手牌均视为【杀】。',
 			olsbduoshou:'夺首',
 			olsbduoshou_info:'锁定技。①你每回合使用的第一张红色牌无距离限制。②你每回合使用的第一张基本牌不计入使用次数。③你每回合第一次造成伤害后，你摸一张牌。',
-			ol_gaoshun:'OL界高顺',
-			ol_gaoshun_prefix:'OL界',
-			olxianzhen:'陷阵',
-			olxianzhen_info:'出牌阶段限一次，你可以与一名角色拼点。若你赢，本回合你无视该角色的防具且对其使用牌没有次数和距离限制，且当你使用【杀】或普通锦囊牌指定其他角色为唯一目标时可以令该角色也成为此牌的目标；若你没赢，本回合你不能对其使用【杀】且你的【杀】不计入手牌上限。',
 
 			onlyOL_yijiang1:'OL专属·将1',
 			onlyOL_yijiang2:'OL专属·将2',
-			onlyOL_sb:'OL专属·谋武将',
+			onlyOL_sb:'OL专属·上兵伐谋',
 		},
 	};
 });

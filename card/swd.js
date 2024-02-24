@@ -3413,11 +3413,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						};
 						if(trigger.result.judge>0){
 							trigger.result.bool=true;
-							trigger.player.popup('判定生效');
+							trigger.player.popup('洗具');
 						}
 						if(trigger.result.judge<0){
 							trigger.result.bool=false;
-							trigger.player.popup('判定失效');
+							trigger.player.popup('杯具');
 						}
 						game.log(trigger.player,'的判定结果为',card);
 						trigger.direct=true;

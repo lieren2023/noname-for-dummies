@@ -25,7 +25,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ddd_liuhong:['male','qun',4,['dddshixing','ddddanggu','dddfuzong'],['zhu']],
 			ddd_xiahouxuan:['male','wei',3,['dddlanghuai','dddxuanlun']],
 			ddd_zhangkai:['male','qun','3/4',['dddjiexing','dddbailei']],
-			ddd_liangxi:['male','wei',4,['dddtongyu']],
+			ddd_liangxi:['male','wei',3,['dddtongyu']],
 			ddd_wangkanglvkai:['male','shu',4,['dddbingjian']],
 			// ddd_sunliang:['male','wu',3,['ddddiedang','dddanliu','dddguiying'],['zhu']],
 			ddd_lie:['female','wu',3,['dddyeshen','dddqiaoduan']],
@@ -2812,7 +2812,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								});
 							}
 							else{
-								player.removeSkills('dddqice');
+								game.log(player,'失去了技能','#g【齐策】');
+								player.removeSkill('dddqice');
 								event.finish();
 							}
 							'step 1'
@@ -3164,7 +3165,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else{
 						if(!targets.includes(player)) player.loseMaxHp();
 						if(targets.length==1){
-							player.removeSkills('dddxiaheng');
+							player.removeSkill('dddxiaheng');
+							game.log(player,'失去了技能','#g【侠横】');
 						}
 					}
 					'step 5'
@@ -3270,7 +3272,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}).setContent('gaincardMultiple');
 					if(!lose) event.finish();
 					'step 5'
-					player.removeSkills('dddfengzheng');
+					player.removeSkill('dddfengzheng');
+					game.log(player,'失去了技能','#g【丰政】');
 				},
 				subSkill:{
 					global:{
@@ -4432,7 +4435,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						// 	return event.source&&event.source.isIn()&&event.source.getEquips(1).length>0;
 						// },
 						content(){
-							player.removeSkills('dddxiaoxing');
+							player.removeSkill('dddxiaoxing');
+							game.log(player,'失去了技能','#g【枭行】');
 						},
 						content_old(){
 							'step 0'
@@ -4444,7 +4448,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(result.bool){
 								trigger.source.logSkill('dddxiaoxing',player);
 								trigger.source.disableEquip(1);
-								player.removeSkills('dddxiaoxing');
+								player.removeSkill('dddxiaoxing');
+								game.log(player,'失去了技能','#g【枭行】');
 							}
 						}
 					}
@@ -4536,7 +4541,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gain(cards,'log');
 					}
 					'step 5'
-					player.removeSkills('dddlangzhi');
+					player.removeSkill('dddlangzhi');
+					game.log(player,'失去了技能','#g【狼志】');
 					event.finish();
 					'step 6'
 					game.broadcastAll('closeDialog',event.videoId);
@@ -4566,7 +4572,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					const skills=player.getStockSkills(true,true).filter(skill=>{
 						return !player.hasSkill(skill,null,false,false);
 					});
-					return skills.length>0;
+					return skills.length;
 				},
 				filter_old(event,player){
 					var evt=event.getParent();
@@ -4604,7 +4610,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else event.finish();
 					'step 2'
 					var skill=result.control;
-					player.addSkills(skill);
+					player.addSkillLog(skill);
 				},
 				content_old(){
 					'step 0'
@@ -4642,11 +4648,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.draw(3);
 						}
 						else event.finish();
-						player.addSkills(skills);
+						for(var i of skills){
+							player.addSkillLog(i);
+						}
 					}
 					else event.finish();
 					'step 2'
-					player.removeSkills('dddfuyi');
+					player.removeSkill('dddfuyi');
+					game.log(player,'失去了技能','#g【附义】');
 				},
 				subSkill:{
 					sha:{
@@ -4668,7 +4677,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{global:'phaseUseBegin'},
 				filter(event,player){
-					return player.countCards('h')>0&&event.player!=player;
+					return player.countCards('h')&&event.player!=player;
 				},
 				direct:true,
 				content(){
@@ -4782,7 +4791,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:'useCardAfter'},
 				filter(event,player){
-					return event.cards.filterInD('od').length>0&&get.color(event.card)=='red';
+					return event.cards.filterInD('od').length&&get.color(event.card)=='red';
 				},
 				content(){
 					'step 0'
@@ -5281,7 +5290,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else event.finish();
 					'step 3'
 					if(target.isIn()){event.finish(); return};
-					player.removeSkills('dddbailei');
+					player.removeSkill('dddbailei');
+					game.log(player,'失去了技能','#g【拜泪】');
 				},
 				subSkill:{
 					animate:{

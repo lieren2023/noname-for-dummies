@@ -75,7 +75,7 @@
 
 #### 下载途径
 
-下载途径1：项目的[Releases](https://github.com/lieren2023/noname-for-dummies/releases)（一步到位懒人包）
+下载途径1：项目的Releases（一步到位懒人包）
 
 - 手机版：noname-for-dummies-Android.apk
 - 电脑版：noname-for-dummies-Windows.zip
@@ -114,7 +114,7 @@
 贡献代码：
 
 - 请前往无名杀原版/懒人包开源地址提Pull requests
-- 本懒人包提交Pull requests时请推送到“[update-Branch](https://github.com/lieren2023/noname-for-dummies/tree/update-branch)”分支（另：玩家可通过此分支体验最新内测版无名杀懒人包）
+- 本懒人包提交Pull requests时请推送到“update-Branch”分支
 
 bug反馈：
 

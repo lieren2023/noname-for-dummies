@@ -1,5 +1,3 @@
-/** @type { string } */
-// @ts-ignore
 export const nonameInitialized = localStorage.getItem('noname_inited');
 export const assetURL = location.protocol.startsWith('http') || typeof nonameInitialized != 'string' || nonameInitialized == 'nodejs' ? '' : nonameInitialized;
 export const GeneratorFunction = (function* () {}).constructor;
