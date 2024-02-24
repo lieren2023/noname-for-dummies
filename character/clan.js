@@ -33,6 +33,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				clan_zhong:['clan_zhongyan','clan_zhonghui','clan_zhongyu'],
 			},
 		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill:{
 			//族吴乔
 			clanqiajue:{
@@ -42,7 +43,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.countCards('he',card=>{
 						if(_status.connectMode&&get.position(card)=='h') return true;
 						return get.color(card,player)=='black'&&lib.filter.cardDiscardable(card,player);
-					});
+					})>0;
 				},
 				direct:true,
 				async content(event,trigger,player){
@@ -99,9 +100,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var key=`${suit}+${get.type2(trigger.card)}`;
 						if(key in storage){
 							if(!player.hasSkill('qice')){
-								player.addTempSkill('qice','roundStart');
+								player.addTempSkills('qice','roundStart');
 								player.popup('奇策');
-								game.log(player,'获得了技能','#g【奇策】');
+								// game.log(player,'获得了技能','#g【奇策】');
 							}
 							event.goto(2);
 						}
@@ -440,9 +441,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else event.goto(2);
 					'step 1'
 					if(result.bool){
-						player.removeSkill('clanbaozu');
-						player.popup('保族');
-						game.log(player,'失去了技能','#g【保族】');
+						player.removeSkills('clanbaozu');
 					}
 					else player.loseHp();
 					'step 2'
@@ -1058,7 +1057,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 										var owner=_status.event.getParent().owner;
 										if(owner) owner.$throw(card.cards);
 									});
-									if(card.name!=cardx.name||!get.is.sameNature(card,cardx)) next.viewAs=true;
+									if(card.name===cardx.name&&get.is.sameNature(card,cardx,true)) next.viewAs=false;
 									var owner=get.owner(card);
 									if(owner!=player&&get.position(card)=='h'){
 										next.throw=false;
@@ -1541,7 +1540,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return player.getStorage('clanfangzhen_remove').includes(game.roundNumber);
 						},
 						content(){
-							player.removeSkill('clanfangzhen');
+							player.removeSkills('clanfangzhen');
 						}
 					}
 				}
@@ -1811,9 +1810,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.finish();
 					}
 					'step 6'
-					player.removeSkill(result.control);
-					player.popup(result.control);
-					game.log(player,'失去了技能','#g【'+get.translation(result.control)+'】');
+					player.removeSkills(result.control);
 				},
 				ai:{
 					expose:0.1,
@@ -2391,9 +2388,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 					'step 1'
 					if(result.control!='cancel2'){
-						player.removeSkill(result.control);
-						player.popup(result.control);
-						game.log(player,'失去了技能','#g【'+get.translation(result.control)+'】');
+						player.removeSkills(result.control);
 					}
 					else{
 						player.loseHp();

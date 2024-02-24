@@ -38,7 +38,7 @@ export class Dialog extends HTMLDivElement {
 		/** @type { this } */
 		// @ts-ignore
 		const dialog = ui.create.div('.dialog');
-		Object.setPrototypeOf(dialog, Dialog.prototype);
+		Object.setPrototypeOf(dialog, (lib.element.Dialog || Dialog).prototype);
 		dialog.contentContainer = ui.create.div('.content-container', dialog);
 		dialog.content = ui.create.div('.content', dialog.contentContainer);
 		dialog.bar1 = ui.create.div('.bar.top', dialog);

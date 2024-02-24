@@ -155,7 +155,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						next.set('useShan',(()=>{
 							if(target.hasSkillTag('noShan',null,event)) return false;
 							if(target.hasSkillTag('useShan',null,event)) return true;
-							if(event.baseDamage+event.extraDamage<=0 || get.attitude(target,player._trueMe||player)>0) return false;
+							if(event.baseDamage+event.extraDamage<=0 || target.isLinked()&&game.hasNature(event.card)&&get.attitude(target,player._trueMe||player)>0) return false;
 							if(event.shanRequired>1&&target.mayHaveShan(target,'use',null,'count')<event.shanRequired-(event.shanIgnored||0)) return false;
 							if(event.baseDamage+event.extraDamage>=target.hp+
 								((player.hasSkillTag('jueqing',false,target)||target.hasSkill('gangzhi'))?target.hujia:0)) return true;
@@ -1145,6 +1145,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target.draw(2);
 				},
 				ai:{
+					wuxie:function(target,card,player,viewer){
+						if(get.mode()=='guozhan'){
+							if(!_status._aozhan){
+								if(!player.isMajor()){
+									if(!viewer.isMajor()) return 0;
+								}
+							}
+						}
+					},
 					basic:{
 						order:7.2,
 						useful:4.5,
@@ -1262,33 +1271,39 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						value:5.5
 					},
 					result:{
-						target:-1.5,
-						player:function(player,target,card){
-							if(player.hasSkillTag('directHit_ai',true,{
-								target:target,
-								card:card,
-							},true)){
-								return 0;
-							}
-							if(get.damageEffect(target,player,target)>0&&get.attitude(player,target)>0&&get.attitude(target,player)>0){
-								return 0;
-							}
-							var hs1=target.getCards('h','sha');
-							var hs2=player.getCards('h','sha');
-							if(hs1.length>hs2.length+1){
+						player(player, target, card) {
+							if (player.hasSkillTag('directHit_ai', true, {
+								target: target,
+								card: card
+							}, true)) return 0;
+							if (get.damageEffect(target, player, target) >= 0) return 0;
+							let pd = get.damageEffect(player, target, player), att = get.attitude(player, target);
+							if (att > 0 && get.damageEffect(target, player, player) > pd) return 0;
+							let ts = target.mayHaveSha(player, 'respond', null, 'count'), ps = player.mayHaveSha(player, 'respond', null, 'count');
+							if (ts < 1 && ts << 3 < Math.pow(player.hp, 2)) return 0;
+							if (att > 0) {
+								if (ts < 1) return 0;
 								return -2;
 							}
-							var hsx=target.getCards('h');
-							if(hsx.length>2&&hs2.length==0&&hsx[0].number<6){
-								return -2;
-							}
-							if(hsx.length>3&&hs2.length==0){
-								return -2;
-							}
-							if(hs1.length>hs2.length&&(!hs2.length||hs1[0].number>hs2[0].number)){
-								return -2;
-							}
-							return -0.5;
+							if (ts - ps + Math.exp(0.8 - player.hp) < 1) return -ts;
+							if (pd >= 0) return pd / get.attitude(player, player);
+							return -2 - ts;
+						},
+						target(player, target, card) {
+							if (player.hasSkillTag('directHit_ai', true, {
+								target: target,
+								card: card
+							}, true)) return -2;
+							let td = get.damageEffect(target, player, target);
+							if (td >= 0) return td / get.attitude(target, target);
+							let pd = get.damageEffect(player, target, player), att = get.attitude(player, target);
+							if (att > 0 && get.damageEffect(target, player, player) > pd) return -2;
+							let ts = target.mayHaveSha(player, 'respond', null, 'count'), ps = player.mayHaveSha(player, 'respond', null, 'count');
+							if (ts < 1) return -1.5;
+							if (att > 0) return -2;
+							if (ts - ps < 1) return -2 - ts;
+							if (pd >= 0) return -1;
+							return -ts;
 						}
 					},
 					tag:{

@@ -2168,8 +2168,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.awakenSkill('rechuhai');
 							game.log(player,'成功完成使命');
 							if(player.isDamaged()) player.recover(player.maxHp-player.hp);
-							player.removeSkill('xianghai');
-							player.addSkill('zhangming');
+							player.changeSkills(['zhangming'],['xianghai']);
 						},
 					},
 					fail:{
@@ -2741,7 +2740,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					if(cards.length) player.gain(cards,'gain2');
 					'step 1'
-					player.addSkill('xinmouli');
+					player.addSkills('xinmouli');
 				},
 				group:['mibei_fail','mibei_silent'],
 				derivation:'xinmouli',
@@ -3179,7 +3178,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						content:function(){
 							game.log(player,'成功完成使命');
 							player.awakenSkill('qingyu');
-							player.addSkillLog('xuancun');
+							player.addSkills('xuancun');
 						},
 					},
 					fail:{
@@ -4987,7 +4986,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var num=Math.max(1,player.hp),target=trigger.player;
 					player.chooseCard('he',get.prompt('sheyi',target),'交给其至少'+get.cnNumber(num)+'张牌，防止即将受到的伤害（'+trigger.num+'点）',[num,player.countCards('he')]).set('goon',function(){
 						if(get.attitude(player,target)<0) return false;
-						if(trigger.num<target.hp&&get.damageEffect(target,trigger.source,player,trigger.nature)>=0)	return false;
+						if(trigger.num<target.hp&&get.damageEffect(target,trigger.source,player,trigger.nature)>=0) return false;
 						if(trigger.num<2&&target.hp>trigger.num) return 6/Math.sqrt(num);
 						if(target==get.zhu(player)) return 9;
 						return 8/Math.sqrt(num);
@@ -5767,7 +5766,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('spsanchen');
 					player.gainMaxHp();
 					player.recover();
-					player.addSkillLog('spmiewu');
+					player.addSkills('spmiewu');
 				},
 				ai:{
 					combo:'wuku',
@@ -6532,7 +6531,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			qiaogong:['qiaogong','tw_qiaogong'],
 			sp_chendong:['sp_chendong','tw_chendong','chendong'],
 			sp_jiangqing:['sp_jiangqing','tw_jiangqing','jiangqing'],
-            kongrong:['sp_kongrong','jsrg_kongrong','kongrong','zy_kongrong'],
+            kongrong:['dc_kongrong','sp_kongrong','jsrg_kongrong','kongrong'],
 			dc_mifuren:['dc_mifuren','sp_mifuren'],
 		},
 		translate:{

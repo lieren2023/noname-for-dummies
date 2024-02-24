@@ -571,7 +571,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 											if(list.length==3) break;
 										}
 										if(!list.length){event.finish();return;}
-										if(player.storage._lingli>0)	list.push('刷新');
+										if(player.storage._lingli>0) list.push('刷新');
 										event.list=list;
 										var dialog=game.getSkillDialog(event.list,'选择获得一个技能');
 										player.chooseControl(event.list).set('ai',function(){

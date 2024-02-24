@@ -2029,8 +2029,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.gain(cards,'gain2');
 					if(get.color(cards[0])!=get.color(cards[1])){
-						player.addTempSkill('wusheng');
-						player.addTempSkill('paoxiao');
+						player.addTempSkills(['wusheng','paoxiao']);
 					}
 				},
 				derivation:['wusheng','paoxiao'],
@@ -3026,7 +3025,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var target=result.targets[0];
 						event.target=target;
 						player.line(target,'thunder');
-						target.addSkill('new_canyun');
+						target.addSkills('new_canyun');
 						target.discardPlayerCard('是否弃置自己区域内的一张梅花牌，获得技能〖绝响〗？',target,'hej').set('ai',function(card){
 							if(get.position(card)=='j') return 100+get.value(card);
 							return 100-get.value(card);
@@ -3036,7 +3035,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					else event.finish();
 					"step 3"
-					if(result.bool) target.addSkill('new_juexiang');
+					if(result.bool) target.addSkills('new_juexiang');
 				},
 			},
 			"new_canyun":{
@@ -3590,7 +3589,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					'step 3'
 					if(result.bool&&result.autochoose&&result.cards.length==result.rawcards.length){
-						player.removeSkill('jiexun');
+						player.removeSkills('jiexun');
 						player.addSkill('funan_jiexun');
 					}
 				}
@@ -4013,7 +4012,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var target=result.targets[0]
 						player.logSkill('juexiang',target);
-						target.addSkill(lib.skill.juexiang.derivation.randomGet());
+						target.addSkills(lib.skill.juexiang.derivation.randomGet());
 						target.addTempSkill('juexiang_club',{player:'phaseZhunbeiBegin'});
 					}
 				},
@@ -6750,6 +6749,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			xinxianzhen2:{
 				audio:'xianzhen',
+				audioname2:{
+					ol_gaoshun:'rexianzhen',
+				},
 				mod:{
 					targetInRange:function(card,player,target){
 						if(target==player.storage.xinxianzhen) return true;
@@ -8139,7 +8141,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var es=target.getCards('e');
 						target.give(es,player,'give');
-						player.removeSkill('yanzhu');
+						player.removeSkills('yanzhu');
 					}
 					else{
 						target.chooseToDiscard(true,'he');
@@ -9536,16 +9538,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				group:'fuhun2'
 			},
 			fuhun2:{
+				audio:'fuhun',
+				audioname:['re_guanzhang'],
 				trigger:{source:'damageSource'},
 				forced:true,
 				filter:function(event,player){
-					if(player.hasSkill('fuhun3')) return false;
+					if(['new_rewusheng','olpaoxiao'].every(skill=>player.hasSkill(skill,null,false,false))) return false;
 					return event.getParent().skill=='fuhun';
 				},
 				content:function(){
-					player.addTempSkill('new_rewusheng');
-					player.addTempSkill('olpaoxiao');
-					player.addTempSkill('fuhun3');
+					player.addTempSkills(['new_rewusheng','olpaoxiao']);
+					// player.addTempSkill('fuhun3');
 				}
 			},
 			fuhun3:{},
@@ -10924,14 +10927,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
+					player.awakenSkill('zili');
 					player.chooseDrawRecover(2,true,function(event,player){
 						if(player.hp==1&&player.isDamaged()) return 'recover_hp';
 						return 'draw_card';
 					});
 					"step 1"
 					player.loseMaxHp();
-					player.addSkill('paiyi');
-					player.awakenSkill('zili');
+					player.addSkills('paiyi');
 				}
 			},
 			paiyi:{
@@ -13715,11 +13718,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('zbaijiang');
 					player.gainMaxHp();
-					player.removeSkill('zquanji');
-					player.removeSkill('zzhenggong');
-					game.log(player,'失去了技能','#g【权计】、【争功】');
-					player.addSkillLog('zyexin');
-					player.addSkillLog('zzili');
+					player.changeSkills(['zyexin','zzili'],['zquanji','zzhenggong']);
 				}
 			},
 			zyexin:{
@@ -13777,10 +13776,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.getExpansions('zyexin').length>=4;
 				},
 				forced:true,
-				content:function(){
+				async content(e,t,player){
 					player.awakenSkill('zzili');
 					player.loseMaxHp();
-					player.addSkill('zpaiyi');
+					player.addSkills('zpaiyi');
 				},
 				// intro:{
 				// 	content:'limited'
@@ -13912,7 +13911,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xusheng:['xusheng','xin_xusheng','re_xusheng','old_xusheng'],
 			wuguotai:['wuguotai','xin_wuguotai','re_wuguotai'],
 			lingtong:['lingtong','xin_lingtong','ol_lingtong','re_lingtong','old_lingtong'],
-			gaoshun:['gaoshun','xin_gaoshun','re_gaoshun','old_gaoshun'],
+			gaoshun:['gaoshun','xin_gaoshun','ol_gaoshun','re_gaoshun','old_gaoshun'],
 			zhonghui:['zhonghui','xin_zhonghui','re_zhonghui','old_zhonghui','pe_zhonghui'],
 			wangyi:['wangyi','re_wangyi','old_wangyi'],
 			caozhang:['caozhang','ol_caozhang','re_caozhang','xin_caozhang'],
@@ -14329,7 +14328,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xinxuanhuo_info:'摸牌阶段开始时，你可以改为令一名其他角色摸两张牌，然后该角色需对其攻击范围内你选择的另一名角色使用一张【杀】，否则你获得其两张牌。',
 			fuhun:'父魂',
 			fuhun2:'父魂',
-			fuhun_info:'你可以将两张手牌当做【杀】使用或打出；出牌阶段，若你以此法使用的【杀】造成了伤害，你获得技能〖武圣〗和〖咆哮〗直到回合结束。',
+			fuhun_info:'你可以将两张手牌当做【杀】使用或打出；当你于出牌阶段以此法使用的【杀】造成伤害后，你获得〖武圣〗和〖咆哮〗直到回合结束。',
 			yuce:'御策',
 			yuce_info:'当你受到伤害后，你可以展示一张手牌，并令伤害来源选择一项：弃置一张与此牌类型不同的手牌，或令你回复1点体力。',
 			xiansi:'陷嗣',
@@ -14529,7 +14528,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			oldmiji:'秘计',
 			oldmiji_info:'准备/结束阶段开始时，若你已受伤，你可以判定，若判定结果为黑色，你观看牌堆顶的X张牌（X为你已损失的体力值），然后将这些牌交给一名角色。',
 			old_fuhun:'父魂',
-			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得技能“武圣”、“咆哮”，直到回合结束。',
+			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得〖武圣〗和〖咆哮〗直到回合结束。',
 			rejueqing:'绝情',
 			rejueqing_info:'当你对其他角色造成伤害时，你可以令此伤害值+X。若如此做，你失去X点体力并修改〖绝情〗（X为伤害值）。',
 			rejueqing_1st:'绝情',

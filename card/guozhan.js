@@ -137,7 +137,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
-					order:3,
+					wuxie:function(target,card,player,viewer){
+						if(get.mode()=='guozhan'){
+							if(!_status._aozhan){
+								if(!player.isMajor()){
+									if(!viewer.isMajor()) return 0;
+								}
+							}
+						}
+					},
+					order:4,
 					value:9,
 					useful:6,
 					tag:{
@@ -194,6 +203,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
+					wuxie:function(target,card,player,viewer){
+						if(get.mode()=='guozhan'){
+							if(!_status._aozhan){
+								if(!player.isMajor()){
+									if(!viewer.isMajor()) return 0;
+								}
+							}
+						}
+					},
 					order:6,
 					value:9,
 					useful:6,
@@ -299,7 +317,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(player.hasSkill('gzzongyu')) return 9;
 						if(game.hasPlayer(function(current){
 							return current.hasSkill('gzzongyu')&&get.attitude(player,current)<=0;
-						}))	return 1;
+						})) return 1;
 						return 7.2;
 					},
 					basic:{
@@ -604,9 +622,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					order:7.5,
 					value:4,
 					useful:2,
-					wuxie:function(){
-						return 0;
-					},
 					result:{
 						target:function(player,target){
 							if(get.mode()=='versus'){
@@ -678,7 +693,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 									list.push('摸'+(num-i)+'回'+i);
 								}
 								target.chooseControl(list).set('prompt','请分配自己的摸牌数和回复量').ai=function(){
-									return Math.min(_status.event.player.getDamagedHp(),list.length)-1;
+									return 0;
 								};
 							}
 						}
@@ -697,7 +712,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
-					order:3,
+					wuxie:function(target,card,player,viewer){
+						if(get.mode()=='guozhan'){
+							if(!_status._aozhan){
+								if(!player.isMajor()){
+									if(!viewer.isMajor()) return 0;
+								}
+							}
+						}
+					},
+					order:6,
 					value:4,
 					useful:2,
 					result:{
@@ -821,7 +845,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target.addTempSkill('diaohulishan');
 				},
 				ai:{
-					order:10,
+					order:function(item, player){
+						if(!player) player=get.player();
+						if(player.hasCard(function(card){
+							return ['gz_haolingtianxia','gz_guguoanbang','gz_kefuzhongyuan','wuzhong','yuanjiao','lianjunshengyan','lulitongxin','yiyi'].includes(get.name(card));
+						},'hs')) return 3.5;
+						if(player.hasCard(function(card){
+							return get.name(card)=='taoyuan';
+						},'hs')) return get.order({name:'taoyuan'},player)-1;
+						return 9.5;
+					},
 					value:4,
 					useful:[2,1],
 					wuxie:function(){
@@ -947,6 +980,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.draw(3);
 				},
 				ai:{
+					wuxie:function(target,card,player,viewer){
+						if(get.mode()=='guozhan'){
+							if(!_status._aozhan){
+								if(!player.isMajor()){
+									if(!viewer.isMajor()) return 0;
+								}
+							}
+						}
+					},
 					basic:{
 						useful:4,
 						value:8,

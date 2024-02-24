@@ -882,3 +882,12 @@ span[data-nature='qunmm'] {
 	text-shadow: rgba(199, 182, 101, 1) 0 0 2px,rgba(199, 182, 101, 1) 0 0 2px,rgba(199, 182, 101, 1) 0 0 2px,
 		rgba(199, 182, 101, 1) 0 0 2px,black 0 0 1px;
 }
+
+/* 更改菜单按钮字体 */
+.menubutton.large.minifont {
+	font-size: 18.2px !important;
+	text-indent: -2px;
+}
+.menu.main>.menu-content>div>.left.pane>div {
+	font-size: 25px;
+}

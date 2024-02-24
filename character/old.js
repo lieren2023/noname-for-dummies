@@ -200,7 +200,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if(result.bool){
 						player.logSkill('junkguixin');
-						player.addSkillLog(result.links[0]);
+						player.addSkills(result.links[0]);
 					}
 				},
 				content_修改势力:function(){
@@ -499,7 +499,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					var next=target.insertPhase();
 					next._noTurnOver=true;
-					next.setContent(lib.skill.oldmingjian.phase);
+					next.phaseList=['phaseUse'];
+					//next.setContent(lib.skill.oldmingjian.phase);
 				},
 				phase:function(){
 					'step 0'

@@ -1,6 +1,6 @@
 {
 	"name": "noname-typings",
-	"version": "2024.01.16",
+	"version": "2024.02.06",
 	"description": "Noname typings, mainly for showing type hints when creating extensions of the Sanguosha-like game Noname.",
 	"repository": {
 		"type": "git",

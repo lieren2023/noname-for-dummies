@@ -559,8 +559,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					player.drawTo(player.maxHp);
 					'step 2'
-					player.addSkillLog('benghuai');
-					player.addSkillLog('reweizhong');
+					player.addSkills(['benghuai','reweizhong']);
 				}
 			},
 			reweizhong:{
@@ -3861,7 +3860,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('xsqianxin');
 					player.loseMaxHp();
-					player.addSkill('rejianyan');
+					player.addSkills('rejianyan');
 				},
 				derivation:'rejianyan',
 			},
@@ -4059,23 +4058,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			decadejinjiu:{
 				global:'decadejinjiu_global',
 				mod:{
-					cardname:function(card){
+					cardname(card){
 						if(card.name=='jiu') return 'sha';
 					},
-					cardnumber:function(card){
+					cardnumber(card){
 						if(card.name=='jiu') return 13;
 					},
 				},
+				audio:2,
+				audioname2:{
+					ol_gaoshun:'rejinjiu',
+				},
+				trigger:{player:['useCard1','respond']},
+				filter(event,player){
+					return event.card.name=='sha'&&!event.skill&&event.cards&&event.cards.length==1&&event.cards[0].name=='jiu';
+				},
+				forced:true,
+				firstDo:true,
+				content(){},
 				subSkill:{
 					global:{
 						mod:{
-							cardEnabled:function(card,player){
+							cardEnabled(card,player){
 								if(card.name=='jiu'){
 									var source=_status.currentPhase;
 									if(source&&source!=player&&source.hasSkill('decadejinjiu')) return false;
 								}
 							},
-							cardSavable:function(card,player){
+							cardSavable(card,player){
 								if(card.name=='jiu'){
 									var source=_status.currentPhase;
 									if(source&&source!=player&&source.hasSkill('decadejinjiu')) return false;
@@ -5577,7 +5587,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.recover();
 					player.draw(2);
 					player.loseMaxHp();
-					player.addSkill('xinpaiyi');
+					player.addSkills('xinpaiyi');
 				},
 			},
 			xinpaiyi:{
@@ -6091,8 +6101,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseDrawRecover(2,true);
 					"step 1"
 					player.loseMaxHp();
-					player.storage.olzhiji=true;
-					player.addSkill('reguanxing');
+					player.addSkills('reguanxing');
 				}
 			},
 			//界郭图张嶷
@@ -7722,7 +7731,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('olzaoxian');
 					player.loseMaxHp();
-					player.addSkill('jixi');
+					player.addSkills('jixi');
 					player.insertPhase();
 				}
 			},
@@ -8338,7 +8347,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return get.value(button.link,_status.event.getTrigger().target);
 						});
 					}
-					if(draw)	event.draw=true;
+					if(draw) event.draw=true;
 					'step 3'
 					if(event.equip&&result.links&&result.links.length){
 						trigger.target.loseToDiscardpile(result.links);
@@ -8514,7 +8523,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.discardPlayerCard(trigger.target,get.prompt('rejianchu',trigger.target)).set('ai',function(button){
 						if(!_status.event.att) return 0;
 						if(get.position(button.link)=='e'){
-							if(get.subtype(button.link)=='equip2')	return 2*get.value(button.link);
+							if(get.subtype(button.link)=='equip2') return 2*get.value(button.link);
 							return get.value(button.link);
 						}
 						return 1;
@@ -8913,7 +8922,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{source:'damageBegin1'},
 				forced:true,
 				audio:'paoxiao',
-				audioname:['re_zhangfei','guanzhang','xiahouba'],
+				audioname:['re_zhangfei','guanzhang','xiahouba','re_guanzhang'],
 				filter:function(event,player){
 					return event.card&&event.card.name=='sha'&&player.countMark('olpaoxiao2')>0;
 				},
@@ -9592,7 +9601,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return ['olhuoji','bazhen'].randomGet();
 					};
 					'step 6'
-					player.addSkillLog(result.control);
+					player.addSkills(result.control);
 				},
 				derivation:['bazhen','olhuoji','olkanpo'],
 				ai:{
@@ -10104,10 +10113,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.gainMaxHp();
 					'step 1'
 					if(player.hp<3) player.recover(3-player.hp);
-					player.addSkillLog('sishu');
-					player.addSkillLog('rejijiang');
-					'step 2'
-					if(player.isZhu2()) event.trigger('zhuUpdate');
+					player.addSkills(['sishu', 'rejijiang']);
 				}
 			},
 			olfangquan:{
@@ -10265,14 +10271,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audioname:['re_sunyi'],
 				inherit:'hunzi',
 				content:function(){
+					player.awakenSkill(event.name);
 					player.loseMaxHp();
 					//player.recover();
-					player.addSkill('reyingzi');
-					player.addSkill('gzyinghun');
+					player.addSkills(['reyingzi','gzyinghun']);
 					player.addTempSkill('olhunzi_effect');
-					game.log(player,'获得了技能','#g【英姿】','和','#g【英魂】');
-					player.awakenSkill(event.name);
-					player.storage[event.name]=true;
 				},
 				subSkill:{
 					effect:{
@@ -10586,10 +10589,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var link=result.control;
 					player.storage.rehuashen.current2=link;
 					if(!player.additionalSkills.rehuashen||!player.additionalSkills.rehuashen.includes(link)){
-						player.addAdditionalSkill('rehuashen',link);
+						player.addAdditionalSkills('rehuashen',link);
 						player.flashAvatar('rehuashen',event.card);
-						game.log(player,'获得了技能','#g【'+get.translation(link)+'】');
-						player.popup(link);
 						player.syncStorage('rehuashen');
 						player.updateMarks('rehuashen');
 						// lib.skill.rehuashen.createAudio(event.card,link,'re_zuoci');
@@ -10600,6 +10601,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						character:[],
 						map:{},
 					}
+					player.when('dieBegin').then(()=>{
+						const name=player.name?player.name:player.name1;
+						if(name){
+							const sex=get.character(name,0);
+							const group=get.character(name,1);
+							if(player.sex!=sex){
+								game.broadcastAll((player,sex)=>{
+									player.sex=sex;
+								},player,sex);
+								game.log(player,'将性别变为了','#y'+get.translation(sex)+'性');
+							}
+							if(player.group!=group) player.changeGroup(group);
+						}
+					});
 				},
 				banned:['lisu','sp_xiahoudun','xushao','jsrg_xushao','zhoutai','old_zhoutai','shixie','xin_zhoutai','dc_shixie','old_shixie'],
 				bannedType:['Charlotte','主公技','觉醒技','限定技','隐匿技','使命技'],
@@ -11027,7 +11042,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if(!result.bool) target.loseHp();
 					'step 2'
-					target.addSkillLog('rechanyuan');
+					target.addSkills('rechanyuan');
 					if(targets.length) event.goto(0);
 				},
 			},
@@ -11443,10 +11458,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			reshuangxiong1:{
 				audio:"shuangxiong1",
-				audioname:['re_yanwen'],
-				trigger:{
-					player:"phaseDrawBegin1",
+				audioname2:{
+					re_yanwen:'shuangxiong_re_yanwen1',
 				},
+				trigger:{player:"phaseDrawBegin1"},
 				check:function (event,player){
 					if(player.countCards('h')>player.hp) return true;
 					if(player.countCards('h')>3) return true;
@@ -12047,7 +12062,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						if(get.type(he[i])=='equip'){
 							var subtype=get.subtype(he[i]);
-							if(subtype=='equip3'||subtype=='equip4'){
+							if(subtype=='equip3'||subtype=='equip4'||subtype=='equip6'){
 								num++;
 							}
 						}
@@ -12063,7 +12078,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						if(get.type(he[i])=='equip'){
 							var subtype=get.subtype(he[i]);
-							if(subtype=='equip3'||subtype=='equip4'){
+							if(subtype=='equip3'||subtype=='equip4'||subtype=='equip6'){
 								list.push(he[i]);
 							}
 						}
@@ -13147,7 +13162,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('qinxue');
 					player.loseMaxHp();
 					player.chooseDrawRecover(2,true);
-					player.addSkill('gongxin');
+					player.addSkills('gongxin');
 				}
 			},
 			qingjian:{
@@ -13864,7 +13879,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var card=result.cards[0];
 						if(get.position(card)=='d'){
-							if(get.subtype(card)=='equip3'||get.subtype(card)=='equip4'){
+							if(get.subtype(card)=='equip3'||get.subtype(card)=='equip4'||get.subtype(card)=='equip6'){
 								player.gain(card,player,'gain2');
 							}
 						}
@@ -13887,7 +13902,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var card=result.cards[0];
 						if(get.position(card)=='d'){
-							if(get.subtype(card)=='equip3'||get.subtype(card)=='equip4'){
+							if(get.subtype(card)=='equip3'||get.subtype(card)=='equip4'||get.subtype(card)=='equip6'){
 								player.gain(card,player,'gain2');
 							}
 						}
@@ -14017,7 +14032,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.awakenSkill('qianxin');
-					player.addSkill('jianyan');
+					player.addSkills('jianyan');
 					player.loseMaxHp();
 				}
 			},

@@ -2220,8 +2220,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			},
 			content:function(){
 				player.awakenSkill(event.name);
-				player.addSkill('tianxing');
-				player.addSkill('new_rejianxiong');
+				player.addSkills(['tianxing','new_rejianxiong']);
 				player.loseMaxHp();
 				player.gain(player.getExpansions('chuyuan'),'gain2','fromStorage');
 			},
@@ -2243,7 +2242,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				player.loseMaxHp();
 				player.gain(player.getExpansions('chuyuan'),'gain2','fromStorage');
 				"step 1"
-				player.removeSkill('chuyuan');
+				player.removeSkills('chuyuan');
 				player.chooseControl('rerende','rezhiheng','olluanji','olfangquan').set('prompt','选择获得一个技能').set('ai',function(){
 					var player=_status.event.player;
 					if(!player.hasSkill('luanji')&&!player.hasSkill('olluanji')&&player.getUseValue({name:'wanjian'})>4) return 'olluanji';
@@ -2252,7 +2251,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					return 'rerende';
 				});
 				'step 2'
-				player.addSkillLog(result.control);
+				player.addSkills(result.control);
 			},
 		},
 		

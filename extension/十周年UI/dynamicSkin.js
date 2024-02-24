@@ -109,7 +109,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				x: [0, 0.5],
 				y: [10, 0.3],
 				scale: 0.5,
-				background: 'skin_daqiaoxiaoqiao_ZhanChang.png',
+				background: 'skin_daqiaoxiaoqiao_ZhanChang_bg.png',
 			},
 		},
 		diaochan:{

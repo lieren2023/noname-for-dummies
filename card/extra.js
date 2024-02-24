@@ -308,12 +308,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(status*get.attitude(viewer,player._trueMe||player)>0 || target.hasSkillTag('nodamage') || target.hasSkillTag('nofire') || target.hasSkillTag('nothunder') || get.attitude(viewer,player)>0 || (1+target.countCards('hs'))*_status.event.getRand()>1.57) return 0;
 					},
 					basic:{
-						order:(item,player)=>{
-							if(player.hasCard(card=>{
-								return get.tag(card,'damage')&&game.hasNature(card)&&player.hasValueTarget(card);
-							},'hs')) return 7.3;
-							return 4.1;
-						},
+						order:7.3,
 						useful:1.2,
 						value:4
 					},

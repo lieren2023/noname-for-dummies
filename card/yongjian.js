@@ -486,7 +486,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 						return event.card2.name=='du';
 					}
-					if(event.name!='equip'&&event.name!='addJudge'&&!event.visible) return false;
+					if(event.name!='equip'&&!event.visible) return false;
 					var evt=event.getl(player);
 					if(!evt||!evt.hs||!evt.hs.filter(function(i){
 						return get.name(i,player)=='du';

@@ -10,7 +10,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sb_guanyu:['male','shu',4,['sbwusheng','sbyijue']],
 			sb_huangyueying:['female','shu',3,['sbjizhi','sbqicai']],
 			sb_sp_zhugeliang:['male','shu',3,['sbhuoji','sbkanpo']],
-			sb_zhugeliang:['male','shu',3,['sbguanxing','sbkongcheng']],
+			sb_zhugeliang:['male','shu',3,['sbguanxing','sbkongcheng'],['unseen']],
 			sb_zhanghe:['male','wei',4,['sbqiaobian']],
 			sb_yujin:['male','wei',4,['sbxiayuan','sbjieyue']],
 			sb_huaxiong:['male','qun','3/4/1',['new_reyaowu','sbyangwei']],
@@ -551,8 +551,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 													game.log(player,'选择了',target2);
 													const skills=target2.getStockSkills(true,true);
 													const skills2=player.getStockSkills(true,true);
-													player.addSkillLog(skills);
-													player.removeSkillLog(skills2);
+													player.changeSkills(skills,skills2);
 												}
 										}
 									},
@@ -781,7 +780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						animationColor:'thunder',
 						async content(event,trigger,player){
 							player.awakenSkill('sbsongwei_delete');
-							event.target.removeSkillLog(event.target.getStockSkills(false,true));
+							event.target.removeSkills(event.target.getStockSkills(false,true));
 						},
 						ai:{
 							order:13,
@@ -904,7 +903,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(card.name=='sha'&&typeof player.storage.sbwusheng_effect[target.playerid]=='number') return true;
 							},
 							cardUsableTarget:function(card,player,target){
-								if(card.name=='sha'&&typeof player.storage.sbwusheng_effect[target.playerid]=='number') return true;
+								if(card.name!=='sha'||typeof player.storage.sbwusheng_effect[target.playerid]!=='number') return;
+								return player.storage.sbwusheng_effect[target.playerid]<3;
 							},
 							playerEnabled:function(card,player,target){
 								if(card.name!='sha'||typeof player.storage.sbwusheng_effect[target.playerid]!='number') return;
@@ -1244,17 +1244,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						locked:false,
 						skillAnimation:true,
 						animationColor:'fire',
-						content:function(){
+						async content(event,trigger,player){
 							player.awakenSkill('sbhuoji');
 							game.log(player,'成功完成使命');
-							var list=[];
-							if(player.name&&get.character(player.name)[3].includes('sbhuoji')) list.add(player.name);
-							if(player.name1&&get.character(player.name1)[3].includes('sbhuoji')) list.add(player.name1);
-							if(player.name2&&get.character(player.name2)[3].includes('sbhuoji')) list.add(player.name2);
-							if(list.length) list.forEach(name=>player.reinit(name,'sb_zhugeliang'));
+							if (get.character(player.name1)[3].includes('sbhuoji')) {
+								player.reinitCharacter(player.name1, 'sb_zhugeliang', false);
+							}
+							else if (player.name2&&get.character(player.name2)[3].includes('sbhuoji')) {
+								player.reinitCharacter(player.name2, 'sb_zhugeliang', false);
+							}
 							else{
-								player.removeSkill(['sbhuoji','sbkanpo']);
-								player.addSkill(['sbguanxing','sbkongcheng']);
+								player.changeSkills(['sbguanxing','sbkongcheng'],['sbhuoji','sbkanpo']);
 							}
 						},
 					},
@@ -1321,31 +1321,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						const event=get.event();
 						const controls=[link=>{
 							const evt=get.event();
-							if(link=='cancel2') ui.click.cancel();
-							else{
-								if(evt.dialog&&evt.dialog.buttons){
-									for(let i=0;i<evt.dialog.buttons.length;i++){
-										const button=evt.dialog.buttons[i];
-										button.classList.remove('selectable');
-										button.classList.remove('selected');
-										const counterNode=button.querySelector('.caption');
-										if(counterNode){
-											counterNode.childNodes[0].innerHTML=``;
-										}
+							if(evt.dialog&&evt.dialog.buttons){
+								for(let i=0;i<evt.dialog.buttons.length;i++){
+									const button=evt.dialog.buttons[i];
+									button.classList.remove('selectable');
+									button.classList.remove('selected');
+									const counterNode=button.querySelector('.caption');
+									if(counterNode){
+										counterNode.childNodes[0].innerHTML=``;
 									}
-									ui.selected.buttons.length=0;
-									game.check();
 								}
-								return;
+								ui.selected.buttons.length=0;
+								game.check();
 							}
+							return;
 						}];
-						event.controls=['清除选择','cancel2'].map(control=>{
-							return ui.create.control(controls.concat(control=='清除选择'?[control,'stayleft']:control));
-						});
+						event.controls=[ui.create.control(controls.concat(['清除选择','stayleft']))];
 					};
 					if(event.isMine()) func();
 					else if(event.isOnline()) event.player.send(func);
-					var result=yield player.chooseButton(['看破：是否记录至多'+get.cnNumber(sum)+'个牌名？',[list,'vcard']],[1,sum],true).set('ai',function(button){
+					var result=yield player.chooseButton(['看破：是否记录至多'+get.cnNumber(sum)+'个牌名？',[list,'vcard']],[1,sum],false).set('ai',function(button){
 						if(ui.selected.buttons.length>=Math.max(3,game.countPlayer()/2)) return 0;
 						switch(button.link[2]){
 							case 'wuxie':return 5+Math.random();
@@ -1385,7 +1380,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								}
 								if(!ui.selected.buttons.length){
 									const evt=event.parent;
-									if(evt.controls) evt.controls[0].hide();
+									if(evt.controls) evt.controls[0].classList.add('disabled');
 								}
 							},
 						},
@@ -1409,7 +1404,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									counterNode.style.bottom='2px';
 								}
 								const evt=event.parent;
-								if(evt.controls) evt.controls[0].show();
+								if(evt.controls) evt.controls[0].classList.remove('disabled');
 								game.check();
 							},
 						}
@@ -1754,7 +1749,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								target.removeSkill(skills);
 								num+=skills.length;
 							});
-							if(get.mode()=='versus'&&_status.mode=='two') num+=3;
+							if(get.mode()!='identity') num+=2;
 							player.draw(num);
 						},
 					},
@@ -2301,8 +2296,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.draw(3);
 					'step 3'
-					player.addSkillLog('sbyingzi');
-					player.addSkillLog('gzyinghun');
+					player.addSkills(['sbyingzi','gzyinghun']);
 				},
 				ai:{
 					threaten:function(player,target){
@@ -3654,8 +3648,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.recover(3);
 					'step 1'
-					player.removeSkill('sbrende');
-					game.log(player,'失去了技能','#g【'+get.translation('sbrende')+'】');
+					player.removeSkills('sbrende');
 					game.delayx();
 				},
 				ai:{
@@ -5913,7 +5906,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.awakenSkill('sbdujiang');
-					player.addSkillLog('sbduojing');
+					player.addSkills('sbduojing');
 					player.storage.sbkeji=true;
 				}
 			},
@@ -6682,8 +6675,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sb_xiaoqiao:'谋小乔',
 			sb_xiaoqiao_prefix:'谋',
 			sbtianxiang:'天香',
-			sbtianxiang_info:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸等量的牌。',
-			sbtianxiang_info_versus_two:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+3）。',
+			sbtianxiang_info_identity:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸等量的牌。',
+			sbtianxiang_info:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+2）。',
 			sb_sp_zhugeliang:'谋卧龙',
 			sb_sp_zhugeliang_prefix:'谋',
 			sb_zhugeliang:'谋诸葛亮',

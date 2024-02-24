@@ -667,7 +667,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gain(gains,'gain2','log');
 					}
 					'step 2'
-					player.addSkill('qingce');
+					player.addSkills('qingce');
 					game.log(player,'获得了技能','#g【清侧】');
 					player.loseMaxHp();
 				},
@@ -808,7 +808,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gain(gains,'gain2','log');
 					}
 					'step 2'
-					player.addSkillLog('drlt_qingce');
+					player.addSkills('drlt_qingce');
 					player.loseMaxHp();
 				},
 			},
@@ -1137,7 +1137,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.addTempSkill('drlt_jueyan2');
 							break;
 						case 'equip5':
-							player.addTempSkill('rejizhi');
+							player.addTempSkills('rejizhi');
 							break;
 					}
 				},
@@ -1209,8 +1209,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					var num=player.maxHp-player.countCards('h');
 					if(num>0) player.draw(num);
-					player.removeSkill('drlt_jueyan');
-					player.addSkill('drlt_huairou');
+					player.changeSkills(['drlt_huairou'],['drlt_jueyan']);
 				},
 			},
 			"drlt_huairou":{
@@ -2648,13 +2647,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 			},
-			"nzry_shenshi1":{
+			nzry_shenshi1:{
 				audio:2,
 				trigger:{
 					global:'phaseJieshuBegin',
 				},
 				forced:true,
 				popup:false,
+				charlotte:true,
 				filter:function(event,player){
 					return player.storage.nzry_shenshi1!=undefined&&player.storage.nzry_shenshi2!=undefined;
 				},
@@ -2762,7 +2762,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.discardPlayerCard(trigger.target,get.prompt('jianchu',trigger.target),true).set('ai',function(button){
 						if(!_status.event.att) return 0;
 						if(get.position(button.link)=='e'){
-							if(get.subtype(button.link)=='equip2')	return 2*get.value(button.link);
+							if(get.subtype(button.link)=='equip2') return 2*get.value(button.link);
 							return get.value(button.link);
 						}
 						return 1;
@@ -3345,10 +3345,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseDrawRecover(2,true);
 					"step 1"
 					player.loseMaxHp();
-					player.storage.zhiji=true;
-					if(player.hp>player.maxHp) player.hp=player.maxHp;
-					player.update();
-					player.addSkill('reguanxing');
+					player.addSkills('reguanxing');
 				}
 			},
 			xiangle:{
@@ -3498,9 +3495,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.gainMaxHp();
 					player.recover();
 					'step 1'
-					player.addSkillLog('rejijiang');
-					'step 2'
-					if(player.isZhu2()) event.trigger('zhuUpdate');
+					player.addSkills('rejijiang');
 				}
 			},
 			qiaobian:{
@@ -3726,7 +3721,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('zaoxian');
 					player.loseMaxHp();
-					player.addSkill('jixi');
+					player.addSkills('jixi');
 				}
 			},
 			jixi:{
@@ -3820,12 +3815,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				//priority:3,
 				content:function(){
-					player.loseMaxHp();
-					player.addSkill('reyingzi');
-					player.addSkill('gzyinghun');
-					game.log(player,'获得了技能','#g【英姿】和【英魂】')
 					player.awakenSkill(event.name);
-					player.storage[event.name]=true;
+					player.loseMaxHp();
+					player.addSkills(['reyingzi','gzyinghun']);
 				},
 				ai:{
 					threaten:function(player,target){
@@ -4188,6 +4180,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							owned:{}
 						};
 					}
+					player.when('dieBegin').then(()=>{
+						const name=player.name?player.name:player.name1;
+						if(name){
+							const sex=get.character(name,0);
+							const group=get.character(name,1);
+							if(player.sex!=sex){
+								game.broadcastAll((player,sex)=>{
+									player.sex=sex;
+								},player,sex);
+								game.log(player,'将性别变为了','#y'+get.translation(sex)+'性');
+							}
+							if(player.group!=group) player.changeGroup(group);
+						}
+					});
 				},
 				intro:{
 					content:function(storage,player){
@@ -4463,10 +4469,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						player.storage.huashen.current2=skill;
 						if(!player.additionalSkills.huashen||!player.additionalSkills.huashen.includes(skill)){
-							player.addAdditionalSkill('huashen',skill);
+							player.addAdditionalSkills('huashen',skill);
 							player.flashAvatar('huashen',character);
-							game.log(player,'获得了技能','#g【'+get.translation(skill)+'】');
-							player.popup(skill);
 							player.syncStorage('huashen');
 							player.updateMarks('huashen');
 							// lib.skill.rehuashen.createAudio(character,skill,'zuoci');
@@ -5948,10 +5952,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				audioname:['re_yanwen'],
 				group:'shuangxiong1',
+				subSkill:{
+					re_yanwen1:{audio:true},
+					re_yanwen2:{audio:true},
+				},
 			},
 			shuangxiong1:{
 				audio:true,
-				audioname:['re_yanwen'],
 				trigger:{player:'phaseDrawBegin1'},
 				check:function(event,player){
 					if(player.countCards('h')>player.hp) return true;
@@ -5977,7 +5984,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				charlotte:true,
 				onremove:true,
 				audio:true,
-				audioname:['re_yanwen'],
+				audioname2:{
+					re_yanwen:'shuangxiong_re_yanwen2',
+				},
 				enable:'chooseToUse',
 				viewAs:{name:'juedou'},
 				position:'hs',
@@ -7652,7 +7661,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					else{
 						event.betrayer.popup('质疑错误','fire');
-						event.betrayer.addSkillLog('chanyuan');
+						event.betrayer.addSkills('chanyuan');
 					}
 					'step 7'
 					game.delay(2);
@@ -7726,22 +7735,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sp_zhugeliang:['sp_zhugeliang','ol_sp_zhugeliang','re_sp_zhugeliang','sb_sp_zhugeliang'],
 			pangtong:['pangtong','ol_pangtong','re_pangtong','sb_pangtong'],
 			re_jsp_pangtong:['re_jsp_pangtong','jsrg_pangtong','sp_pangtong'],
-			taishici:['taishici','re_taishici'],
-			re_yuanshao:['re_yuanshao','ol_yuanshao','xin_yuanshao','sb_yuanshao'],
+			taishici:['taishici','re_taishici','ol_sb_taishici'],
+			re_yuanshao:['re_yuanshao','ol_yuanshao','xin_yuanshao','ol_sb_yuanshao','sb_yuanshao'],
 			pangde:['re_pangde','ol_pangde','pangde'],
 			yanwen:['yanwen','ol_yanwen','re_yanwen'],
 			caopi:['caopi','re_caopi','ps_caopi','sb_caopi'],
 			xuhuang:['re_xuhuang','ol_xuhuang','sb_xuhuang','xuhuang'],
-			menghuo:['menghuo','re_menghuo','sb_menghuo'],
+			menghuo:['menghuo','re_menghuo','sb_menghuo','tw_menghuo'],
 			zhurong:['zhurong','ol_zhurong','re_zhurong','sb_zhurong'],
-			sunjian:['sunjian','ol_sunjian','re_sunjian'],
+			sunjian:['sunjian','ol_sunjian','re_sunjian','tw_ol_sunjian'],
 			jiaxu:['jiaxu','re_jiaxu','ns_jiaxu','ps_jiaxu'],
 			dongzhuo:['dongzhuo','ol_dongzhuo','re_dongzhuo','sp_dongzhuo','yj_dongzhuo'],
 			dengai:['dengai','ol_dengai','re_dengai'],
 			sp_ol_zhanghe:['sp_ol_zhanghe','yj_zhanghe','sp_zhanghe','jsrg_zhanghe'],
-			jiangwei:['jiangwei','ol_jiangwei','re_jiangwei','sb_jiangwei','jsrg_jiangwei'],
+			jiangwei:['jiangwei','ol_jiangwei','re_jiangwei','ol_sb_jiangwei','sb_jiangwei','jsrg_jiangwei'],
 			liushan:['liushan','ol_liushan','re_liushan'],
-			sunce:['sunce','re_sunce','re_sunben','sb_sunce'],
+			sunce:['sunce','re_sunce','re_sunben','sb_sunce','dc_sunce'],
 			zhangzhang:['zhangzhang','ol_zhangzhang','re_zhangzhang'],
 			zuoci:['zuoci','re_zuoci'],
 			caiwenji:['caiwenji','ol_caiwenji','re_caiwenji'],
@@ -7749,7 +7758,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			guanqiujian:['guanqiujian','re_guanqiujian','tw_guanqiujian','old_guanqiujian'],
 			chendao:['chendao','ns_chendao','old_chendao'],
 			zhugezhan:['zhugezhan','old_zhugezhan'],
-			ol_lusu:['re_lusu','ol_lusu'],
+			ol_lusu:['re_lusu','ol_lusu','dc_sb_lusu'],
 			zhanghe:['zhanghe','re_zhanghe','sb_zhanghe'],
 			yl_luzhi:['yl_luzhi','sb_yl_luzhi','tw_yl_luzhi'],
 			sunliang:['sunliang','xin_sunliang'],

@@ -867,7 +867,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('dezhang');
 					player.loseMaxHp();
-					player.addSkill('weishu');
+					player.addSkills('weishu');
 				},
 			},
 			weishu:{
@@ -1673,9 +1673,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					else event.finish();
 					'step 1'
-					player.addTempSkill(result.control,'phaseUseEnd');
+					player.addTempSkills(result.control,'phaseUseEnd');
 					player.popup(result.control);
-					game.log(player,'获得了','#g【'+get.translation(result.control)+'】');
+					// game.log(player,'获得了','#g【'+get.translation(result.control)+'】');
 				},
 				ai:{threaten:0.9},
 				subSkill:{
@@ -1722,9 +1722,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							else event.finish();
 							'step 2'
 							target.line(player);
-							player.addTempSkill(result.control,'phaseUseEnd');
+							player.addTempSkills(result.control,'phaseUseEnd');
 							player.popup(result.control);
-							game.log(player,'获得了','#g【'+get.translation(result.control)+'】');
 						},
 						ai:{
 							order:function(item,player){
@@ -3340,14 +3339,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.addTempSkill('yanxi2');
 					var card2=result.links[0];
 					if(card2==card){
-						player.popup('洗具');
+						player.popup('猜对了');
 						cards.remove(card2);
 						player.$gain2(cards);
 						player.gain(cards,'log').gaintag.add('yanxi');
 						player.gain(card,target,'bySelf','give').gaintag.add('yanxi');
 					}
 					else{
-						player.popup('杯具');
+						player.popup('猜错了');
 						player.gain(card2,'gain2').gaintag.add('yanxi');
 					}
 				},
@@ -3408,13 +3407,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(list.length==result.cards.length){
 							target.draw();
 							player.getStat('skill').sanchen--;
-							if(get.mode()=='guozhan') player.addTempSkill('pozhu');
+							if(get.mode()=='guozhan') player.addTempSkills('pozhu');
 						}
 					}
 					else{
 						target.draw();
 						player.getStat('skill').sanchen--;
-						if(get.mode()=='guozhan') player.addTempSkill('pozhu');
+						if(get.mode()=='guozhan') player.addTempSkills('pozhu');
 					}
 				},
 				ai:{
@@ -3445,7 +3444,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('zhaotao');
 					player.loseMaxHp();
-					player.addSkillLog('pozhu');
+					player.addSkills('pozhu');
 				},
 				derivation:'pozhu',
 			},
@@ -3774,7 +3773,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterReplace:{
 			yanghu:['jin_yanghu','dc_yanghu','sp_yanghu'],
-			jiachong:['jin_jiachong','jiachong'],
+			jiachong:['dc_jiachong','jin_jiachong','jiachong'],
 			yangyan:['yangyan','old_yangyan'],
 			yangzhi:['yangzhi','old_yangzhi'],
 		},
@@ -3955,7 +3954,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dezhang_info:'觉醒技。准备阶段，若你没有“绥”，则你减1点体力上限并获得〖卫戍〗。',
 			weishu:'卫戍',
 			weishu_info:'锁定技。①当你于摸牌阶段外不因〖卫戍①〗而摸牌后，你令一名角色摸一张牌。②当你于弃牌阶段外不因〖卫戍②〗而弃置牌后，你弃置一名其他角色的一张牌。',
-			jin_jiachong:'贾充',
+			jin_jiachong:'晋贾充',
+			jin_jiachong_prefix:'晋',
 			xiongshu:'凶竖',
 			xiongshu_info:'其他角色的出牌阶段开始时，你可弃置X张牌（X为你本轮内此前已发动过此技能的次数，为0则不弃）并展示其一张手牌，然后你预测“其本阶段内是否会使用与展示牌牌名相同的牌”。此阶段结束时，若你的预测正确，则你对其造成1点伤害；否则你获得展示牌。',
 			jianhui:'奸回',
