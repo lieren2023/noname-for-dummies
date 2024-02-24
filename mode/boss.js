@@ -8577,7 +8577,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(!player.hasSkill('olxuanfeng')) list.push('olxuanfeng');
 					if(!player.hasSkill('rewansha')) list.push('rewansha');
 					if(list.length==1){
-						player.addTempSkill(list[0]);
+						player.addTempSkills(list[0]);
 						event.finish();
 					}
 					else{
@@ -8602,8 +8602,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}).set('prompt','选择获得一项技能直到回合结束');
 					}
 					'step 1'
-					player.addTempSkill(result.control);
-					player.popup(get.translation(result.control));
+					player.addTempSkills(result.control);
+					// player.popup(get.translation(result.control));
 				},
 				ai:{
 					order:function(){

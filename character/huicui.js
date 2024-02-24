@@ -1257,9 +1257,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							for(var target of game.filterPlayer()){
 								if(user==target) continue;
 								var targetsx=[user,target];
-								targetsx.forEach(i=>i.addSkill('dcbeini_fengyin'));
+								targetsx.forEach(i=>i.addSkill('dcbeini_fengyin2'));
 								var effx=get.effect(target,sha,user,player);
-								targetsx.forEach(i=>i.removeSkill('dcbeini_fengyin'));
+								targetsx.forEach(i=>i.removeSkill('dcbeini_fengyin2'));
 								if(user==player) effx+=1;
 								if(get.attitude(player,user)>0) effx-=0.1;
 								if(effx>eff){
@@ -1289,6 +1289,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				subSkill:{
 					fengyin:{
+						inherit:'fengyin',
+					},
+					fengyin2:{
 						inherit:'fengyin',
 					},
 				}
@@ -7189,6 +7192,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						mark:true,
 						marktext:'阵',
 						intro:{
+							markcount:()=>0,
 							content:function(storage,player,skill){
 								if(storage.length) return '失效技能：'+get.translation(storage);
 								return '无失效技能';
@@ -7300,12 +7304,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						target.addAdditionalSkills('dczecai_effect','rejizhi');
 						target.addTempSkill('dczecai_effect','roundStart');
 						if(target==event.target){
-							var evt=trigger._trigger;
+							var evt=trigger;
 							target.insertPhase();
 							if(evt.player!=target&&!evt._finished){
 								evt.finish();
 								evt._triggered=5;
-								evt.player.insertPhase();
+								var evtx=evt.player.insertPhase();
+								delete evtx.skill;
 							}
 						}
 					}
@@ -10548,7 +10553,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.line(target,'green');
 						player.markAuto('remeibu_gain',[get.suit(card,player)]);
 						player.addTempSkill('remeibu_gain');
-						target.addTempSkill('rezhixi','phaseUseEnd');
+						target.addTempSkills('rezhixi','phaseUseEnd');
 					}
 				},
 				ai:{

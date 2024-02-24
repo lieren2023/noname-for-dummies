@@ -2029,8 +2029,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.gain(cards,'gain2');
 					if(get.color(cards[0])!=get.color(cards[1])){
-						player.addTempSkill('wusheng');
-						player.addTempSkill('paoxiao');
+						player.addTempSkills(['wusheng','paoxiao']);
 					}
 				},
 				derivation:['wusheng','paoxiao'],
@@ -9539,16 +9538,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				group:'fuhun2'
 			},
 			fuhun2:{
+				audio:'fuhun',
+				audioname:['re_guanzhang'],
 				trigger:{source:'damageSource'},
 				forced:true,
 				filter:function(event,player){
-					if(player.hasSkill('fuhun3')) return false;
+					if(['new_rewusheng','olpaoxiao'].every(skill=>player.hasSkill(skill,null,false,false))) return false;
 					return event.getParent().skill=='fuhun';
 				},
 				content:function(){
-					player.addTempSkill('new_rewusheng');
-					player.addTempSkill('olpaoxiao');
-					player.addTempSkill('fuhun3');
+					player.addTempSkills(['new_rewusheng','olpaoxiao']);
+					// player.addTempSkill('fuhun3');
 				}
 			},
 			fuhun3:{},
@@ -14328,7 +14328,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xinxuanhuo_info:'摸牌阶段开始时，你可以改为令一名其他角色摸两张牌，然后该角色需对其攻击范围内你选择的另一名角色使用一张【杀】，否则你获得其两张牌。',
 			fuhun:'父魂',
 			fuhun2:'父魂',
-			fuhun_info:'你可以将两张手牌当做【杀】使用或打出；出牌阶段，若你以此法使用的【杀】造成了伤害，你获得技能〖武圣〗和〖咆哮〗直到回合结束。',
+			fuhun_info:'你可以将两张手牌当做【杀】使用或打出；当你于出牌阶段以此法使用的【杀】造成伤害后，你获得〖武圣〗和〖咆哮〗直到回合结束。',
 			yuce:'御策',
 			yuce_info:'当你受到伤害后，你可以展示一张手牌，并令伤害来源选择一项：弃置一张与此牌类型不同的手牌，或令你回复1点体力。',
 			xiansi:'陷嗣',
@@ -14528,7 +14528,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			oldmiji:'秘计',
 			oldmiji_info:'准备/结束阶段开始时，若你已受伤，你可以判定，若判定结果为黑色，你观看牌堆顶的X张牌（X为你已损失的体力值），然后将这些牌交给一名角色。',
 			old_fuhun:'父魂',
-			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得技能“武圣”、“咆哮”，直到回合结束。',
+			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得〖武圣〗和〖咆哮〗直到回合结束。',
 			rejueqing:'绝情',
 			rejueqing_info:'当你对其他角色造成伤害时，你可以令此伤害值+X。若如此做，你失去X点体力并修改〖绝情〗（X为伤害值）。',
 			rejueqing_1st:'绝情',

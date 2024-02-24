@@ -2226,6 +2226,12 @@ export class Get extends Uninstantable {
 		}
 		return '';
 	}
+	static menuZoom(){
+		if(game.menuZoom === undefined || game.menuZoom === null){
+			return game.documentZoom;
+		}
+		return game.menuZoom;
+	}
 	static strNumber(num) {
 		switch (num) {
 			case 1: return 'A';

@@ -7305,7 +7305,7 @@ export class Player extends HTMLDivElement {
 		next.forceDie = true;
 		next.addSkill = addSkill.slice(0).unique();
 		next.removeSkill = removeSkill.slice(0).unique();
-		next.setContent('changeSkills');
+		next.setContents('changeSkills');
 		return next;
 	}
 	addSkill(skill, checkConflict, nobroadcast, addToSkills) {
@@ -7462,7 +7462,7 @@ export class Player extends HTMLDivElement {
 		const player = this, skills = this.getRemovableAdditionalSkills(skill, target);
 		if(skills.length){
 			player.removeSkill(skills);
-			if (player.additionalSkills[skill]&&player.additionalSkills[skill].length) delete player.additionalSkills[skill];
+			if (player.additionalSkills[skill]&&!player.additionalSkills[skill].length) delete player.additionalSkills[skill];
 		}
 		_status.event.clearStepCache();
 		return this;
@@ -7475,7 +7475,7 @@ export class Player extends HTMLDivElement {
 					return '#g【' + get.translation(i) + '】';
 				}));
 				player.removeSkill(skills);
-				if (player.additionalSkills[skill]&&player.additionalSkills[skill].length) delete player.additionalSkills[skill];
+				if (player.additionalSkills[skill]&&!player.additionalSkills[skill].length) delete player.additionalSkills[skill];
 			});
 		}
 	}
@@ -7823,7 +7823,7 @@ export class Player extends HTMLDivElement {
 				this.removeAdditionalSkill(i);
 			}
 		}
-		this[all ? 'removeSkill' : 'removeSkillLog'](list);
+		this[all ? 'removeSkill' : 'removeSkills'](list);
 		this.checkConflict();
 		this.checkMarks();
 		return list;

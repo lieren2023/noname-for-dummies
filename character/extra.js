@@ -5548,7 +5548,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.removeMark('baonu',2);
 					player.addTempSkills('wushuang');
 					player.popup('无双');
-					game.log(player,'获得了技能','#g【无双】');
+					// game.log(player,'获得了技能','#g【无双】');
 					target.addTempSkill('ol_wuqian_targeted');
 				},
 				ai:{
@@ -7516,13 +7516,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					else event.finish();
 					'step 2'
-					player.addTempSkill(result.control,{player:'dieAfter'});
-					player.popup(result.control,'thunder');
+					player.addTempSkills(result.control,{player:'dieAfter'});
+					// player.popup(result.control,'thunder');
 					player.storage.drlt_duorui=[result.control];
 					player.storage.drlt_duorui_player=trigger.player;
 					trigger.player.storage.drlt_duorui=[result.control];
 					trigger.player.addTempSkill('drlt_duorui1',{player:'phaseAfter'});
-					game.log(player,'获得了技能','#g【'+get.translation(result.control)+'】')
+					// game.log(player,'获得了技能','#g【'+get.translation(result.control)+'】')
 				},
 				group:['duorui_clear'],
 			},

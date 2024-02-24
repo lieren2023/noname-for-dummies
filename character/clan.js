@@ -100,9 +100,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var key=`${suit}+${get.type2(trigger.card)}`;
 						if(key in storage){
 							if(!player.hasSkill('qice')){
-								player.addTempSkill('qice','roundStart');
+								player.addTempSkills('qice','roundStart');
 								player.popup('奇策');
-								game.log(player,'获得了技能','#g【奇策】');
+								// game.log(player,'获得了技能','#g【奇策】');
 							}
 							event.goto(2);
 						}

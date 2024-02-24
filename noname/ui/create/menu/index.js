@@ -2,7 +2,7 @@ import { ui, game, get, lib, _status } from "../../../../noname.js";
 
 export function openMenu(node, e, onclose) {
 	popupContainer.innerHTML = '';
-	var left = Math.round(e.clientX / game.documentZoom);
+	var left = Math.round(e.clientX / get.menuZoom());
 	var zoom = get.is.phoneLayout() ? 1.3 : 1;
 	popupContainer.appendChild(node);
 	// var rect=node.getBoundingClientRect();
@@ -23,7 +23,7 @@ export function openMenu(node, e, onclose) {
 	// }
 	// if(e){
 	var height = node.offsetHeight;
-	var idealtop = e.clientY / game.documentZoom;
+	var idealtop = e.clientY / get.menuZoom();
 	if (idealtop < 10) {
 		idealtop = 10;
 	}
@@ -141,7 +141,7 @@ export function createMenu(connectMenu, tabs, config) {
 	var menuTab = ui.create.div('.menu-tab', menu);
 	var menuTabBar = ui.create.div('.menu-tab-bar', menu);
 	menuTabBar.style.left = (config.bar || 0) + 'px';
-	if (Math.round(2 * game.documentZoom) < 2) {
+	if (Math.round(2 * get.menuZoom()) < 2) {
 		menuTabBar.style.height = '3px';
 	}
 	var menuContent = ui.create.div('.menu-content', menu);
@@ -153,7 +153,7 @@ export function createMenu(connectMenu, tabs, config) {
 			active._link.remove();
 		}
 		this.classList.add('active');
-		menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) / game.documentZoom + 'px)';
+		menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) / get.menuZoom() + 'px)';
 		menuContent.appendChild(this._link);
 	};
 	ui.click.menuTab = function (tab) {

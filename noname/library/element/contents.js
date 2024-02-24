@@ -295,5 +295,54 @@ export const Contents = {
 				event.cards = result;
 			}
 		}
-	]
+	],
+	changeSkills: [
+		async (event,trigger,player) => {
+			//获取玩家当前已有的技能
+			const ownedSkills = player.getSkills(true, false, false);
+			//去重检查
+			event.addSkill.unique();
+			event.removeSkill.unique();
+			//避免失去还没拥有的技能
+			event.removeSkill = event.removeSkill.filter(skill => ownedSkills.includes(skill));
+			const duplicatedSkills = event.addSkill.filter(skill => event.removeSkill.includes(skill));
+			if (duplicatedSkills.length) {
+				event.addSkill.removeArray(duplicatedSkills);
+				event.removeSkill.removeArray(duplicatedSkills);
+			}
+			if (!event.addSkill.length&&!event.removeSkill.length) return;
+			//手动触发时机
+			await event.trigger('changeSkillsBefore');
+		},
+		async (event,trigger,player) => {
+			await event.trigger('changeSkillsBegin');
+		},
+		async (event,trigger,player) => {
+			//处理失去和获得的技能
+			if (event.$handle) {
+				event.$handle(player, event.addSkill, event.removeSkill, event);
+			}
+			else {
+				if(event.addSkill.length){
+					player.addSkill(event.addSkill);
+					game.log(player, '获得了技能', ...event.addSkill.map(i => {
+						return '#g【' + get.translation(i) + '】';
+					}));
+				}
+				if(event.removeSkill.length){
+					player.removeSkill(event.removeSkill);
+					game.log(player, '失去了技能', ...event.removeSkill.map(i => {
+						return '#g【' + get.translation(i) + '】';
+					}));
+				}
+			}
+		},
+		async (event,trigger,player) => {
+			//手动触发时机
+			await event.trigger('changeSkillsEnd');
+		},
+		async (event,trigger,player) => {
+			await event.trigger('changeSkillsAfter');
+		},
+	],
 };

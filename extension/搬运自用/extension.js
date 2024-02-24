@@ -4089,6 +4089,18 @@ content:function(config,pack){
 							}
 							break;
 						}
+						// 坐骑：equip3防御坐骑、equip4攻击坐骑、equip6特殊装备（如【六龙骖驾】、【长安大舰】等）
+						case 'gainCardequip346':{
+							var cards=[];
+							for(var i=0;i<num;i++){
+								var card2=get.cardPile(function(card){
+								return ['equip3','equip4','equip6'].includes(get.subtype(card))&&(!cards.includes(card));
+								});
+								target.gain(card2);
+								cards.push(card2);
+							}
+							break;
+						}
 						case 'gainCardequip3':{
 							var cards=[];
 							for(var i=0;i<num;i++){
@@ -4105,6 +4117,17 @@ content:function(config,pack){
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
 								return get.subtype(card)=='equip4'&&(!cards.includes(card));
+								});
+								target.gain(card2);
+								cards.push(card2);
+							}
+							break;
+						}
+						case 'gainCardequip6':{
+							var cards=[];
+							for(var i=0;i<num;i++){
+								var card2=get.cardPile(function(card){
+								return get.subtype(card)=='equip6'&&(!cards.includes(card));
 								});
 								target.gain(card2);
 								cards.push(card2);
@@ -4649,6 +4672,11 @@ content:function(config,pack){
 		select.add(option);
 		
 		option=document.createElement('option');
+		option.text="从牌堆&弃牌堆获得装备牌-坐骑";
+		option.value="gainCardequip346";
+		select.add(option);
+		
+		option=document.createElement('option');
 		option.text="从牌堆&弃牌堆获得装备牌-防御坐骑";
 		option.value="gainCardequip3";
 		select.add(option);
@@ -4656,6 +4684,11 @@ content:function(config,pack){
 		option=document.createElement('option');
 		option.text="从牌堆&弃牌堆获得装备牌-攻击坐骑";
 		option.value="gainCardequip4";
+		select.add(option);
+		
+		option=document.createElement('option');
+		option.text="从牌堆&弃牌堆获得装备牌-特殊装备";
+		option.value="gainCardequip6";
 		select.add(option);
 		
 		option=document.createElement('option');
@@ -10679,4 +10712,4 @@ files:{"character":[],"card":[],"skill":[]}}})
 // AI优化：卡牌价值修改
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
-// 适配“获得/失去技能时”的时机代码player.addSkills/player.removeSkills/player.changeSkills、card.nature修改？，包括④教程及说明.txt
+// 适配“获得/失去技能时”的时机代码player.addSkills/player.removeSkills/player.changeSkills/player.addTempSkills、card.nature修改？，包括④教程及说明.txt

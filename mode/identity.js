@@ -2771,7 +2771,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.countPlayer(function(current){
 							var identity=current.identity.slice(1);
 							if(identity!='Zhu'){
-								if(current.identity.indexOf('r')==0)	red.push(current);
+								if(current.identity.indexOf('r')==0) red.push(current);
 								else blue.push(current);
 							}
 						});
@@ -3893,7 +3893,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.recover();
 					player.draw();
-					const skills = player.getStockSkills(true,true).forEach(stockSkill=>{
+					'step 3'
+					const skills = player.getStockSkills(true,true).filter(stockSkill=>{
 						if(player.hasSkill(stockSkill)) return;
 						var info=get.info(stockSkill);
 						if(!info||!info.zhuSkill) return;

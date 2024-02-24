@@ -85,9 +85,13 @@ export const Content = {
 	},
 	//变更技能
 	async changeSkills (event,trigger,player) {
+		//获取玩家当前已有的技能
+		const ownedSkills = player.getSkills(true, false, false);
 		//去重检查
 		event.addSkill.unique();
 		event.removeSkill.unique();
+		//避免失去还没拥有的技能
+		event.removeSkill = event.removeSkill.filter(skill => ownedSkills.includes(skill));
 		const duplicatedSkills = event.addSkill.filter(skill => event.removeSkill.includes(skill));
 		if (duplicatedSkills.length) {
 			event.addSkill.removeArray(duplicatedSkills);

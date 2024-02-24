@@ -11,19 +11,262 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_sb_guanyu:['male','shu',4,['olsbweilin','olsbduoshou']],
 			ol_sb_taishici:['male','wu',4,['olsbdulie','olsbdouchan']],
 			ol_gaoshun:['male','qun',4,['olxianzhen','decadejinjiu'],['die_audio:re_gaoshun']],
+			ol_sb_yuanshao:['male','qun',4,['olsbhetao','olsbshenli','olsbyufeng','olsbshishou'],['zhu']],
 		},
 		characterSort:{
 			onlyOL:{
 				onlyOL_yijiang1:['ol_jianyong','ol_lingtong','ol_gaoshun'],
 				onlyOL_yijiang2:['ol_caozhang'],
-				onlyOL_sb:['ol_sb_jiangwei','ol_sb_guanyu','ol_sb_taishici'],
+				onlyOL_sb:['ol_sb_jiangwei','ol_sb_guanyu','ol_sb_taishici','ol_sb_yuanshao'],
 			},
 		},
 		characterIntro:{
 		},
 		characterReplace:{
 		},
+		card:{
+			sizhaojian:{
+				derivation:'ol_sb_yuanshao',
+				fullskin:true,
+				type:'equip',
+				subtype:'equip1',
+				distance:{attackFrom:-1},
+				ai:{basic:{equipValue:7}},
+				skills:['olsbyufeng_sizhaojian'],
+			},
+		},
 		skill:{
+			//OL谋袁绍
+			//真·四世三公——袁神，启动
+			olsbhetao:{
+				audio:2,
+				trigger:{global:'useCardToPlayered'},
+				filter(event,player){
+					return event.player!=player&&event.isFirstTarget&&event.targets.length>1&&player.countCards('he',card=>{
+						if(get.position(card)=='h'&&_status.connectMode) return true;
+						return get.color(card)==get.color(event.card)&&lib.filter.cardDiscardable(card,player);
+					});
+				},
+				direct:true,
+				async content(event,trigger,player){
+					const {result:{bool,cards,targets}}=await player.chooseCardTarget({
+						prompt:get.prompt('olsbhetao'),
+						filterCard(card,player){
+							return get.color(card)==get.color(get.event().getTrigger().card)&&lib.filter.cardDiscardable(card,player);
+						},
+						position:'he',
+						filterTarget(card,player,target){
+							return get.event().getTrigger().targets.includes(target);
+						},
+						ai1(card){
+							return 7.5-get.value(card);
+						},
+						ai2(target){
+							const player=get.event('player'),trigger=get.event().getTrigger();
+							if(trigger.card.name=='tiesuo'){
+								const att=get.attitude(player,target);
+								return get.agn(att)*(2+get.sgn(att));
+							}
+							const sum=trigger.targets.reduce((i,j)=>i+get.effect(j,trigger.card,trigger.player,player),0);
+							return get.effect(target,trigger.card,trigger.player,player)*2-sum;
+						},
+					}).set('prompt2','弃置一张'+get.translation(get.color(trigger.card))+'牌，令'+get.translation(trigger.card)+'改为对其中一个目标结算两次');
+					if(bool){
+						const target=targets[0];
+						player.logSkill('olsbhetao',target);
+						player.discard(cards);
+						trigger.getParent().effectCount++;
+						trigger.getParent().excluded.addArray(game.filterPlayer(i=>trigger.targets.includes(i)&&target!=i));
+					}
+				},
+				ai:{threaten:3.5},
+				global:'olsbhetao_ai',
+				subSkill:{
+					ai:{
+						effect:{
+							player(card,player){
+								if(!game.hasPlayer(target=>{
+									return target.hasSkill('olsbhetao')&&(get.attitude(player,target)<0||get.attitude(target,player)<0);
+								})) return;
+								const select=get.copy(get.info(card).selectTarget);
+								let range;
+								if(select==undefined) range=[1,1];
+								else if(typeof select=='number') range=[select,select];
+								else if(get.itemtype(select)=='select') range=select;
+								else if(typeof select=='function') range=select(card,player);
+								game.checkMod(card,player,range,'selectTarget',player);
+								if(range[1]==-1||range[1]>1) return 'zeroplayertarget';
+							},
+						},
+					},
+				},
+			},
+			olsbshenli:{
+				audio:2,
+				trigger:{player:'useCardToPlayered'},
+				filter(event,player){
+					if(!player.isPhaseUsing()||player.hasSkill('olsbshenli_used')) return false;
+					return event.card.name=='sha'&&game.hasPlayer(target=>{
+						return !event.targets.includes(target)&&player.canUse(event.card,target,false);
+					})&&event.isFirstTarget;
+				},
+				check(event,player){
+					const targets=game.filterPlayer(target=>player.canUse(event.card,target,false));
+					const num1=event.targets.reduce((sum,target)=>sum+get.effect(target,event.card,player,player),0);
+					const num2=targets.reduce((sum,target)=>sum+get.effect(target,event.card,player,player),0);
+					if(num2>=num1) return true;
+					let num=(event.baseDamage||1);
+					if(event.extraDamage) num+=event.extraDamage;
+					let extra_num=0;
+					for(const target of targets){
+						if(target.mayHaveShan(player,'use',target.getCards('h',i=>{
+							return i.hasGaintag('sha_notshan');
+						}))&&!player.hasSkillTag('directHit_ai',true,{
+							target:target,
+							card:event.card,
+						},true)){
+							if(player.hasSkill('jueqing')||target.hasSkill('gangzhi')) extra_num--;
+							else if(target.hasSkillTag('filterDamage',null,{
+								player:event.player,
+								card:event.card,
+							})) extra_num++;
+						}
+						else extra_num+=num;
+					}
+					const sum=targets.length+extra_num;
+					return num2+(sum>player.countCards('h')?Math.min(5,sum):0)+(sum>player.getHp()?num2:0)>=num1;
+				},
+				async content(event,trigger,player){
+					player.addTempSkill('olsbshenli_used','phaseUseAfter');
+					trigger.getParent().targets.addArray(game.filterPlayer(target=>{
+						return !trigger.targets.includes(target)&&player.canUse(trigger.card,target,false);
+					}));
+					player.when('useCardAfter').filter(evt=>evt==trigger.getParent())
+					.then(()=>{
+						const sum=player.getHistory('sourceDamage',evt=>evt.card&&evt.card==trigger.card).reduce((num,evt)=>{
+							return num+evt.num;
+						},0);
+						const bool=(sum>player.countCards('h')),goon=(sum>player.getHp());
+						if(bool) player.draw(Math.min(5,sum));
+						if(goon){
+							const targets=game.filterPlayer(target=>trigger.targets.includes(target))
+							if(targets.length) player.useCard(trigger.card,targets,false); 
+						}
+					});
+				},
+				ai:{threaten:3.5},
+				subSkill:{used:{charlotte:true}},
+			},
+			olsbyufeng:{
+				audio:1,
+				trigger:{
+					global:'phaseBefore',
+					player:'enterGame',
+				},
+				filter(event,player){
+					if(get.cardPile('sizhaojian','field')||lib.inpile.includes('sizhaojian')) return false;
+					return (event.name!='phase'||game.phaseNumber==0)&&player.hasEquipableSlot(1);
+				},
+				forced:true,
+				locked:false,
+				async content(event,trigger,player){
+					game.broadcastAll(()=>lib.inpile.add('sizhaojian'));
+					const card=game.createCard2('sizhaojian','diamond',6);
+					player.$gain2(card,false);
+					game.delayx();
+					player.equip(card);
+				},
+				subSkill:{
+					sizhaojian:{
+						equipSkill:true,
+						mod:{
+							aiOrder(player,card,num){
+								if(card.name=='sha'&&typeof get.number(card)=='number') return num+get.number(card)/114514;
+							},
+						},
+						trigger:{player:'useCardToPlayered'},
+						filter(event,player){
+							return event.card.name=='sha'&&typeof get.number(event.card)=='number';
+						},
+						forced:true,
+						locked:false,
+						logTarget:'target',
+						async content(event,trigger,player){
+							const target=trigger.target;
+							target.addTempSkill('olsbyufeng_block');
+							target.markAuto('olsbyufeng_block',[trigger.card]);
+						},
+					},
+					block:{
+						mod:{
+							cardEnabled(card,player){
+								if(!player.storage.olsbyufeng_block) return;
+								const storage=player.getStorage('olsbyufeng_block');
+								let evt=_status.event;
+								if(evt.name!='chooseToUse') evt=evt.getParent('chooseToUse');
+								if(!evt||!evt.respondTo||!storage.includes(evt.respondTo[1])) return;
+								const num=get.number(card,player);
+								if(!(typeof num!='number'||num>=get.number(evt.respondTo[1]))) return false;
+							},
+						},
+						onremove(player){
+							delete player.storage.olsbyufeng_block;
+						},
+						charlotte:true,
+						trigger:{
+							player:['damageBefore','damageCancelled','damageZero'],
+							target:['shaMiss','useCardToExcluded','useCardToEnd'],
+							global:['useCardEnd'],
+						},
+						filter(event,player){
+							if(!event.card||!player.storage.olsbyufeng_block) return false;
+							return player.getStorage('olsbyufeng_block').includes(event.card);
+						},
+						forced:true,
+						popup:false,
+						firstDo:true,
+						content(){
+							player.unmarkAuto('olsbyufeng_block',[trigger.card]);
+							if(!player.getStorage('olsbyufeng_block').length) player.removeSkill('olsbyufeng_block');
+						},
+					},
+				},
+			},
+			olsbshishou:{
+				unique:true,
+				audio:2,
+				trigger:{global:['loseAfter','equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','addToExpansionAfter']},
+				filter(event,player){
+					if(!player.hasEquipableSlot(1)||player.getEquip(1)||player.getEquip('sizhaojian')) return false;
+					const card=get.cardPile('sizhaojian','field');
+					if(!card||!player.canEquip(card,true)) return false;
+					return game.hasPlayer(target=>{
+						if(target==player||target.group!='qun') return false;
+						const evt=event.getl(target);
+						return evt&&evt.player==target&&evt.es&&evt.es.length>0;
+					});
+				},
+				direct:true,
+				zhuSkill:true,
+				async content(event,trigger,player){
+					const targets=game.filterPlayer(target=>{
+						if(target==player||target.group!='qun') return false;
+						const evt=trigger.getl(target);
+						return evt&&evt.player==target&&evt.es&&evt.es.length>0;
+					}).sortBySeat();
+					const card=get.cardPile('sizhaojian','field');
+					for(const target of targets){
+						const {result:{bool}}=await target.chooseBool(get.prompt('olsbshishou',player),'将'+get.translation(card)+'置入'+get.translation(player)+'的装备区中').set('choice',get.attitude(target,player)>0);
+						if(bool){
+							target.logSkill('olsbshishou',player);
+							if(get.owner(card)) get.owner(card).$give(card,player,false);
+							player.equip(card);
+							break;
+						}
+					}
+				},
+				ai:{combo:'olsbyufeng'},
+			},
 			//界高顺
 			olxianzhen:{
 				audio:'rexianzhen',
@@ -771,6 +1014,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_gaoshun_prefix:'OL界',
 			olxianzhen:'陷阵',
 			olxianzhen_info:'出牌阶段限一次，你可以与一名角色拼点。若你赢，本回合你无视该角色的防具且对其使用牌没有次数和距离限制，且当你使用【杀】或普通锦囊牌指定其他角色为唯一目标时可以令该角色也成为此牌的目标；若你没赢，本回合你不能对其使用【杀】且你的【杀】不计入手牌上限。',
+			ol_sb_yuanshao:'OL谋袁绍',
+			ol_sb_yuanshao_prefix:'OL谋',
+			olsbhetao:'合讨',
+			olsbhetao_info:'其他角色使用牌执行第一个目标后，若此牌指定的目标数大于1，则你可以弃置一张与此牌颜色相同的牌并令此牌改为对其中一名目标角色结算两次。',
+			olsbshenli:'神离',
+			olsbshenli_info:'出牌阶段限一次，当你使用【杀】指定目标后，你可以令所有可成为此牌目标的其他角色均成为此牌目标，此牌结算完毕后，若你因此牌造成的伤害值X：大于你的手牌数，你摸X张牌（至多摸五张）；大于你的体力值，你令此牌额外结算一次。',
+			olsbyufeng:'玉锋',
+			olsbyufeng_sizhaojian:'思召剑',
+			olsbyufeng_block:'思召剑',
+			olsbyufeng_info:'游戏开始时，若【思召剑】未加入本局游戏，若你可装备【思召剑】，则你将【思召剑】置入装备区。',
+			sizhaojian:'思召剑',
+			sizhaojian_info:'当你使用有点数的【杀】指定目标后，你令目标角色只能使用无点数或点数大于等于此【杀】的【闪】响应此牌。',
+			olsbshishou:'士首',
+			olsbshishou_info:'主公技，其他群势力角色失去装备区的牌后，若你的装备区中没有武器牌，且【思召剑】存在于场上/牌堆/弃牌堆中，其可令你将【思召剑】置入装备区。',
 
 			onlyOL_yijiang1:'OL专属·将1',
 			onlyOL_yijiang2:'OL专属·将2',

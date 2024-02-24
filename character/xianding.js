@@ -213,7 +213,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				frequent:true,
 				async content(event,trigger,player){
 					let cards=get.cards(3);
-					const {result:{bool,links}}=await player.chooseButton(['灵慧：是否使用其中的一张牌并随机获得其中一张剩余牌？',cards]).set('ai',button=>{
+					await game.cardsGotoOrdering(cards);
+					const {result:{bool,links}}=await player.chooseButton(['灵慧：是否使用其中的一张牌并随机获得其中一张剩余牌？',cards]).set('filterButton',button=>{
+						return get.player().hasUseTarget(button.link);
+					}).set('ai',button=>{
 						return get.event('player').getUseValue(button.link);
 					});
 					if(bool){
@@ -222,14 +225,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.$gain2(card,false);
 						await game.asyncDelayx();
 						await player.chooseUseTarget(true,card,false);
-						if(cards.length) await player.gain(cards.randomGet(),'gain2');
-					}
-					if(cards.length){
-						for(let i=cards.length-1;i--;i>=0){
-							ui.cardPile.insertBefore(cards[i],ui.cardPile.firstChild);
+						cards=cards.filterInD();
+						if(cards.length){
+							const cardx=cards.randomRemove();
+							await player.gain(cardx,'gain2');
 						}
 					}
-					game.updateRoundNumber();
+					if(cards.length){
+						cards.reverse();
+						game.cardsGotoPile(cards.filterInD(),'insert');
+						game.log(player,'将',get.cnNumber(cards.length),'张牌置于了牌堆顶');
+					}
 				},
 			},
 			dcxiace:{
@@ -246,6 +252,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}));
 					return bool1||bool2;
 				},
+				direct:true,
 				async content(event,trigger,player){
 					if(trigger.player==player&&!player.hasHistory('custom',evt=>evt.dcxiace=='player')&&game.hasPlayer(target=>target!=player&&!target.hasSkill('fengyin'))){
 						const {result:{bool,targets}}=await player.chooseTarget((card,player,target)=>{
@@ -296,6 +303,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return lib.skill.luanfeng.check(event,player);
 				},
 				logTarget:'player',
+				skillAnimation:true,
+				animationColor:'thunder',
 				async content(event,trigger,player){
 					player.awakenSkill('dcyuxin');
 					trigger.player.recover((trigger.player==player?1:player.getHp())-trigger.player.hp);
@@ -471,7 +480,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return game.getGlobalHistory('cardMove',function(evt){
 								if(evt.name!='lose'||event!=evt.getParent()) return false;
 								for(var i in evt.gaintag_map){
-									if(evt.gaintag_map[i].includes('dclingxi')) return evt.player==player;
+									if(evt.gaintag_map[i].includes('dclingxi')&&evt.player==player) return true;
 								}
 								return false;
 							}).length;
@@ -3365,7 +3374,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var choices=['选项二'];
 						var choiceList=[
 							'令'+get.translation(target)+'回复1点体力',
-							'你于'+get.translation(target)+'各摸一张牌'
+							'你与'+get.translation(target)+'各摸一张牌'
 						];
 						if(target.isDamaged()) choices.unshift('选项一');
 						else choiceList[0]='<span style="opacity:0.5">'+choiceList[0]+'</span>';
@@ -13440,7 +13449,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								});
 								if(card) cards2.push(card);
 							}
-							player.addTempSkill(skill);
+							player.addTempSkills(skill);
 							if(cards2.length) player.gain(cards2,'gain2','log');
 						},
 					},

@@ -603,7 +603,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					]);
 					'step 1'
 					var skill=result.control;
-					player.addTempSkill(skill,'dcbianzhuangAfter');
+					player.addTempSkills(skill,'dcbianzhuangAfter');
 					for(var i in lib.skill.dcbianzhuang.characterMap){
 						if(lib.skill.dcbianzhuang.characterMap[i]==skill){
 							player.flashAvatar('dcbianzhuang',i);

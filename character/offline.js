@@ -4965,9 +4965,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else event.finish();
 					'step 2'
 					var skill=result.control;
-					player.addTempSkill(skill);
-					player.popup(skill,'wood');
-					game.log(player,'获得了技能','#g【'+get.translation(skill)+'】');
+					player.addTempSkills(skill);
+					// player.popup(skill,'wood');
+					// game.log(player,'获得了技能','#g【'+get.translation(skill)+'】');
 				},
 			},
 			sphuangen:{

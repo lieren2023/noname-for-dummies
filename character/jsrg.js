@@ -952,7 +952,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(curLen<=2) return false;
 							for(let i=curLen-2;i>=0;i--){
 								const history=player.actionHistory[i];
-								if(history.isMe&&!history.isSkipped) return false;
+								if(history.isMe&&!history.isSkipped&&!history._jsrgtuigu) return false;
 								if(history.isRound) break;
 							}
 							return true;
@@ -960,12 +960,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						forced:true,
 						locked:false,
 						async content(event,trigger,player){
-							const evt=trigger;
-							player.insertPhase();
+							const evt=trigger,evtx=player.insertPhase();
+							player.when('phaseBeforeStart')
+							.filter(evtt=>evtt==evtx)
+							.then(()=>{
+								game.players.slice().concat(game.dead).forEach(current=>{
+									current.getHistory()._jsrgtuigu=true;
+									current.getStat()._jsrgtuigu=true;
+								});
+							});
 							if(evt.player!=player&&!evt._finished){
 								evt.finish();
 								evt._triggered=5;
-								evt.player.insertPhase();
+								const evtxx=evt.player.insertPhase();
+								delete evtxx.skill;
 							}
 						},
 					},
@@ -7454,6 +7462,42 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			jsrgtushe:{
 				audio:'xinfu_tushe',
+				mod: {
+					aiOrder(player, card, num) {
+						if (get.tag(card, 'multitarget')) {
+							if (player.countCards('h', { type: 'basic' })) return num / 10;
+							return num * 10;
+						}
+						if (get.type(card) === 'basic') return num + 10;
+					},
+					aiValue(player, card, num) {
+						if (card.name === 'zhangba') {
+							let fact = (n) => {
+								if (n > 1) return n * fact(n - 1);
+								return 1;
+							}, basic = 0;
+							return fact(Math.min(player.countCards('hs', i => {
+								if (get.tag(i, 'multitarget')) return 2;
+								if (!['shan', 'tao', 'jiu'].includes(card.name)) return 1;
+								basic++;
+							}) / (1 + basic), player.getCardUsable('sha')));
+						}
+						if (['shan', 'tao', 'jiu'].includes(card.name)) {
+							if (player.getEquip('zhangba') && player.countCards('hs') > 1) return 0.01;
+							return num / 2;
+						}
+						if (get.tag(card, 'multitarget')) return num + game.players.length;
+					},
+					aiUseful(player, card, num) {
+						if (get.name(card, player) === 'shan') {
+							if (player.countCards('hs', i => {
+								if (card === i || card.cards && card.cards.includes(i)) return false;
+								return get.name(i, player) === 'shan';
+							})) return -1;
+							return num / Math.pow(Math.max(1, player.hp), 2);
+						}
+					}
+				},
 				trigger:{
 					player:'useCardToPlayered',
 				},
@@ -7465,6 +7509,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(event,player){
 					return !player.countCards('h',{type:'basic'});
 				},
+				locked: false,
 				content:function (){
 					'step 0'
 					player.showHandcards();
@@ -7480,7 +7525,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					presha:true,
 					pretao:true,
 					threaten:1.8,
-				},
+					effect: {
+						player(card, player, target) {
+							if (typeof card === 'object' && card.name !== 'shan' && get.type(card) !== 'equip' && !player.countCards('h', i => {
+								if (card === i || card.cards && card.cards.includes(i)) return false;
+								return get.type(i) === 'basic';
+							})) {
+								let targets = [], evt = _status.event.getParent('useCard');
+								targets.addArray(ui.selected.targets);
+								if (evt && evt.card == card) targets.addArray(evt.targets);
+								if (targets.length) return [1, targets.length];
+								if (get.tag(card, 'multitarget')) return [1, game.players.length - 1];
+								return [1, 1];
+							}
+						}
+					}
+				}
 			},
 			jsrgtongjue:{
 				audio:2,
@@ -8233,7 +8293,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jsrgyingshi:'鹰眎',
 			jsrgyingshi_info:'当你翻面时，你可以观看牌堆底的三张牌（若死亡角色数大于2则改为五张），然后将其中任意数量的牌以任意顺序置于牌堆顶，其余以任意顺序置于牌堆底。',
 			jsrgtuigu:'蜕骨',
-			jsrgtuigu_info:'①回合开始时，你可以翻面并令你本回合的手牌上限+X，然后摸X张牌并视为使用一张【解甲归田】（X为存活角色数的一半，向下取整），目标角色不能使用以此法得到的牌直到其回合结束。②一轮游戏开始时，若你上一轮未执行过回合，你获得一个额外的回合。③当你失去装备牌里的牌后，你回复1点体力。',
+			jsrgtuigu_info:'①回合开始时，你可以翻面并令你本回合的手牌上限+X，然后摸X张牌并视为使用一张【解甲归田】（X为存活角色数的一半，向下取整），目标角色不能使用以此法得到的牌直到其回合结束。②一轮游戏开始时，若你上一轮未执行过回合（因〖蜕骨②〗执行的回合除外），你获得一个额外的回合。③当你失去装备牌里的牌后，你回复1点体力。',
 			jsrg_guoxun:'合郭循',
 			jsrg_guoxun_prefix:'合',
 			jsrgeqian:'遏前',

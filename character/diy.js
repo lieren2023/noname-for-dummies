@@ -192,6 +192,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			junk_duanwei:['male','qun',4,['junklangmie']],
 			junk_xuyou:["male","qun",3,["nzry_chenglve","junkshicai","nzry_cunmu"]],
 			junk_zhangjiao:['male','shen',3,['yizhao','junksijun','tianjie'],['qun','die_audio:shen_zhangjiao']],
+			junk_guanyu:['male','shu',4,['olsbfumeng','olsbguidao']],
 		},
 		characterFilter:{
 			key_jojiro(mode){
@@ -226,7 +227,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				diy_default:["diy_yuji","diy_caiwenji","diy_lukang","diy_zhenji","old_majun"],
 				diy_noname:['noname'],
 				diy_key:["key_lucia","key_kyousuke","key_yuri","key_haruko","key_umi","key_rei","key_komari","key_yukine","key_yusa","key_misa","key_masato","key_iwasawa","key_kengo","key_yoshino","key_yui","key_tsumugi","key_saya","key_harukakanata","key_inari","key_shiina","key_sunohara","key_rin","key_sasami","key_akane","key_doruji","key_yuiko","key_riki","key_hisako","key_hinata","key_noda","key_tomoya","key_nagisa","key_ayato","key_ao","key_yuzuru","sp_key_kanade","key_mio","key_midori","key_kyoko","key_shizuru","key_shiorimiyuki","key_miki","key_shiori","key_kaori","sp_key_yuri","key_akiko","key_abyusa","key_godan","key_yuu","key_ryoichi","key_kotori","key_jojiro","key_shiroha","key_shizuku","key_hiroto","key_sakuya","key_youta","key_rumi","key_chihaya","key_yukito","key_asara","key_kotomi","key_mia","key_kano","db_key_liyingxia","key_erika","key_satomi","key_iriya","key_fuuko"],
-				diy_trashbin:['junk_zhangjiao','old_jiakui','ol_guohuai','junk_zhangrang','old_bulianshi','junk_sunquan','ol_maliang','junk_liubei','junk_huangyueying','junk_lidian','junk_duanwei','junk_xuyou'],
+				diy_trashbin:['junk_guanyu','junk_zhangjiao','old_jiakui','ol_guohuai','junk_zhangrang','old_bulianshi','junk_sunquan','ol_maliang','junk_liubei','junk_huangyueying','junk_lidian','junk_duanwei','junk_xuyou'],
 			},
 		},
 		characterIntro:{
@@ -5869,7 +5870,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter(event,player){
 					var list=['wei','shu','wu','qun','key','jin'];
 					for(var i in list){
-						if(player.hasMark('kotori_yumo_'+list[i]))	return true;
+						if(player.hasMark('kotori_yumo_'+list[i])) return true;
 					}
 					return false;
 				},
@@ -5878,7 +5879,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var list=['wei','shu','wu','qun','key','jin'];
 					var list2=[];
 					for(var i of list){
-						if(player.hasMark('kotori_yumo_'+i))	list2.push('kotori_skill_'+i);
+						if(player.hasMark('kotori_yumo_'+i)) list2.push('kotori_skill_'+i);
 					}
 					list2.push('cancel2');
 					player.chooseControl(list2).set('prompt','###是否发动【驭魔】？###弃置对应的标记并获得下列技能中的一个，或点取消，不获得技能').set('choice',function(){
@@ -6089,7 +6090,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var list=['wei','shu','wu','qun','key','jin'];
 						var list2=[];
 						for(var i of list){
-							if(player.hasMark('kotori_yumo_'+i)&&!player.getStorage('kotori_huazhan2').includes('kotori_yumo_'+i))	list2.push('kotori_yumo_'+i);
+							if(player.hasMark('kotori_yumo_'+i)&&!player.getStorage('kotori_huazhan2').includes('kotori_yumo_'+i)) list2.push('kotori_yumo_'+i);
 						}
 						list2.push('cancel2');
 						return list2;
@@ -6099,7 +6100,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var list=['wei','shu','wu','qun','key','jin'];
 						var list2=[];
 						for(var i of list){
-							if(player.hasMark('kotori_yumo_'+i)&&!player.getStorage('kotori_huazhan2').includes('kotori_yumo_'+i))	list2.push('kotori_yumo_'+i);
+							if(player.hasMark('kotori_yumo_'+i)&&!player.getStorage('kotori_huazhan2').includes('kotori_yumo_'+i)) list2.push('kotori_yumo_'+i);
 						}
 						if(list2.includes('kotori_yumo_wei')) return 'kotori_yumo_wei';
 						if(list2.includes('kotori_yumo_wu')) return 'kotori_yumo_wu';
@@ -19046,6 +19047,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			junk_zhangjiao_prefix:'OL神',
 			junksijun:'肆军',
 			junksijun_info:'准备阶段，若“黄”数大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得任意张点数之和为36的牌（若牌堆没有点数和为36的组合则获得牌堆顶点数和刚好超过36的牌组）。',
+			junk_guanyu:'旧谋关羽',
+			junk_guanyu_prefix:'旧谋',
 
 			diy_tieba:'吧友设计',
 			diy_xushi:'玩点论杀·虚实篇',

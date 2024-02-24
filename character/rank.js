@@ -51,6 +51,7 @@ window.noname_character_rank={
 	],
 	ap:[
 		'xia_guanyu',
+		'ol_sb_yuanshao',
 		'gjqt_aruan',
 		'gjqt_cenying',
 		'gjqt_ouyangshaogong',
@@ -673,6 +674,7 @@ window.noname_character_rank={
 		'sb_xunyu',
 		'ol_sb_taishici',
 		'tianchou',
+		'ol_sb_guanyu',
 	],
 	bp:[
 		'xin_huojun',
@@ -1055,7 +1057,7 @@ window.noname_character_rank={
 		'shen_xuzhu',
 	],
 	b:[
-		'ol_sb_guanyu',
+		'junk_guanyu',
 		'liyi',
 		'diy_feishi',
 		'diy_liufu',
@@ -1685,6 +1687,7 @@ window.noname_character_rank={
 			'dc_sunce',
 			'xia_yuzhenzi',
 			'xia_guanyu',
+			'ol_sb_yuanshao',
 			'swd_muyun',
 			'swd_zhaoyun',
 			'swd_septem',
@@ -2627,6 +2630,7 @@ window.noname_character_rank={
 		],
 		junk:[
 			'ol_sb_guanyu',
+			'junk_guanyu',
 			'sunshao',
 			'ol_guohuai',
 			'gongsunzan',

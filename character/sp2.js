@@ -1483,10 +1483,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(i!=skills.length-1) str+='、';
 							}
 							game.log(target,'的技能','#g'+str,'失效了');
-							game.log(player,'获得了技能','#g'+str);
+							// game.log(player,'获得了技能','#g'+str);
 							player.popup(skills,'thunder');
 							for(var skill of skills){
-								player.addTempSkill(skill,['phaseUseAfter','phaseAfter']);
+								player.addTempSkills(skill,['phaseUseAfter','phaseAfter']);
 							}
 						}
 					}
@@ -1569,10 +1569,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(i!=skills.length-1) str+='、';
 							}
 							game.log(target,'的技能','#g'+str,'失效了');
-							game.log(player,'获得了技能','#g'+str);
+							// game.log(player,'获得了技能','#g'+str);
 							player.popup(skills,'thunder');
 							for(var skill of skills){
-								player.addTempSkill(skill,['phaseUseAfter','phaseAfter']);
+								player.addTempSkills(skill,['phaseUseAfter','phaseAfter']);
 							}
 						}
 					}

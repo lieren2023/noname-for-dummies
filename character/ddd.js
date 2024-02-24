@@ -2486,7 +2486,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var target=trigger.player,cards=result.cards;
 						player.logSkill('dddqiahua',target);
-						target.addTempSkill('dddxunxun');
+						target.addTempSkills('dddxunxun');
 						player.addShownCards(cards,'visible_dddxianglang');
 						game.log(player,'选择了',cards,'作为“明”');
 						player.showCards(cards,get.translation(player)+'对'+get.translation(target)+'发动了【恰化】');

@@ -1666,7 +1666,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var cards=[];
 					//因为是线下武将 所以同一张牌重复进入只算一张
 					game.getGlobalHistory('cardMove',function(evt){
-						if(evt.name=='cardsDiscard'||(evt.name=='lose'&&evt.position==ui.discardPile))	cards.addArray(evt.cards);
+						if(evt.name=='cardsDiscard'||(evt.name=='lose'&&evt.position==ui.discardPile)) cards.addArray(evt.cards);
 					});
 					return cards.length;
 				},
@@ -8692,12 +8692,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(event.current&&event.current.isAlive()){
 						event.showCharacter=false;
 						var choiceList=['执行该军令，增加1点体力上限，然后回复1点体力','不执行该军令'];
-						if(event.current.isFriendOf(player)) event.current.chooseJunlingControl(player,event.junling,targets).set('prompt','将略').set('choiceList',choiceList).set('ai',function(){return 0});
+						if(event.current.isFriendOf(player)) event.current.chooseJunlingControl(player,event.junling,targets).set('prompt','将略').set('choiceList',choiceList).set('ai',function(){if(event.junling=='junling6'&&(event.current.countCards('h')>3||event.current.countCards('e')>2)) return 1;
+return event.junling=='junling5'?1:0;});
 						else if((event.filterName(event.current.name1)||event.filterName(event.current.name2))&&event.current.wontYe(player.identity)){
 							event.showCharacter=true;
 							choiceList[0]='明置一张武将牌以'+choiceList[0];
 							choiceList[1]='不明置武将牌且'+choiceList[1];
-							event.current.chooseJunlingControl(player,event.junling,targets).set('prompt','将略').set('choiceList',choiceList).set('ai',function(){return 0});
+							event.current.chooseJunlingControl(player,event.junling,targets).set('prompt','将略').set('choiceList',choiceList).set('ai',function(){if(event.junling=='junling6'&&(event.current.countCards('h')>3||event.current.countCards('e')>2)) return 1;
+return event.junling=='junling5'?1:0;});
 						}
 						else event.current.chooseJunlingControl(player,event.junling,targets).set('prompt','将略').set('controls',['ok']);
 					}
@@ -8744,7 +8746,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				skillAnimation:'epic',
 				animationColor:'soil',
 				ai:{
-					order:4,
+					order:10,
 					result:{
 						player:function(player){
 							if(player.isUnseen()&&player.wontYe()){
@@ -10555,7 +10557,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				check:function(card){
 					if(card.name=='tao') return 0;
-					return 5-get.value(card);
+					return 7-get.value(card);
 				},
 				selectCard:[1,3],
 				discard:false,
@@ -10571,7 +10573,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					basic:{
-						order:2
+						order:8
 					},
 					result:{
 						player:function(player,target){
@@ -10585,7 +10587,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if(huoshao&&player.inline(target.getNext())) return -3;
 							if(target.isUnseen()) return 0;
 							if(player.isMajor()) return 0;
-							return 0.5;
+                            if(!player.isMajor()&&huoshao&&player.getNext().isMajor()) return -2;
+                            if(!player.isMajor()&&huoshao&&player.getNext().isMajor()&&player.getNext().getNext().isMajor()) return -3;
+                            if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()&&target.getNext().getNext().isMajor()) return 3;
+                            if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()) return 1.5;
+							return 1;
 						},
 						target:function(player,target){
 							if(target.isUnseen()) return 0;
@@ -11030,9 +11036,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					if(result.control!='cancel2'){
 						var skill='jiahe_'+result.control;
-						player.addTempSkill(skill);
+						player.addTempSkills(skill);
 						if(!event.done) player.logSkill('jiahe_put');
-						game.log(player,'获得了技能','【'+get.translation(skill)+'】');
+						// game.log(player,'获得了技能','【'+get.translation(skill)+'】');
 						if(event.num>=5&&!event.done){
 							event.done=true;
 							event.goto(1);

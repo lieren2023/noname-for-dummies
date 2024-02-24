@@ -499,7 +499,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					var next=target.insertPhase();
 					next._noTurnOver=true;
-					next.setContent(lib.skill.oldmingjian.phase);
+					next.phaseList=['phaseUse'];
+					//next.setContent(lib.skill.oldmingjian.phase);
 				},
 				phase:function(){
 					'step 0'

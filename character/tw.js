@@ -4334,7 +4334,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('twmibei');
 					player.logSkill('twmibei_achieve');
 					game.log(player,'成功完成使命');
-					player.addSkils('twmouli');
+					player.addSkills('twmouli');
 				},
 				intro:{content:'已使用牌名：$'},
 				subSkill:{
@@ -13374,7 +13374,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						case 'equip2':
 							target.draw();
 							break;
-						case 'equip3': case 'equip4': case 'equip5':
+						case 'equip3': case 'equip4': case 'equip5': case 'equip6':
 							target.recover();
 							break;
 					}
@@ -13400,7 +13400,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								var hp=player.hp,hs=player.countCards('h',(card)=>card!=ui.selected.cards[0]);
 								var tp=target.hp,ts=target.countCards('h');
 								if(sub=='equip2') ts++;
-								if(tp<target.maxHp&&(sub=='equip3'||sub=='equip4'||sub=='equip5')) tp++;
+								if(tp<target.maxHp&&(sub=='equip3'||sub=='equip4'||sub=='equip5'||sub=='equip6')) tp++;
 								if(tp<=hp||ts<=hs) eff+=2;
 							}
 							if(sub=='equip1'){
@@ -13418,7 +13418,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							var sub=get.subtype(ui.selected.cards[0],false);
 							var eff=get.effect(target,ui.selected.cards[0],player,target);
 							if(sub=='equip2') eff+=(get.effect(target,{name:'draw'},target,target));
-							if(target.isDamaged()&&(sub=='equip3'||sub=='equip4'||sub=='equip5')) eff+=get.recoverEffect(target,player,player);
+							if(target.isDamaged()&&(sub=='equip3'||sub=='equip4'||sub=='equip5'||sub=='equip6')) eff+=get.recoverEffect(target,player,player);
 							return eff;
 						},
 					},
