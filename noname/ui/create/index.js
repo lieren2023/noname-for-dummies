@@ -1414,7 +1414,7 @@ export class Create extends Uninstantable {
 				packlist.push(lib.config.all.characters[i]);
 			}
 			for (var i in lib.characterPack) {
-				if (!lib.config.all.characters.includes(i)) {
+				if (lib.config.characters.includes(i) && !lib.config.all.characters.includes(i)) {
 					packlist.push(i);
 				}
 			}

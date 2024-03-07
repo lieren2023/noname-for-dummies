@@ -92,11 +92,31 @@ new Promise(resolve => {
 		"safari": [14, 5, 0]
 	}
 	const versions = [major, minor, patch]
+	// require是需求的版本号，current是浏览器环境本身的版本号
+	const check = (require, current) => {
+		// 防止不存在的意外，提前截断当前版本号的长度
+		if (current.length > require.length) current.length = require.length
 
-	// current是需求的版本号，versions[index]是浏览器环境本身的版本号
-	// 如果current > versions[index]，即当前版本的浏览器版本号达不到要求的版本号，则可判定当前版本无法支持
-	// 如果versions[index]为NaN，必然返回false；由于ua信息不可能存在主版本号NaN的情况，故不必考虑次版本号/修补版本号并不存在的情况
-	if (core in supportMap && supportMap[core].some((current, index) => current > versions[index])) {
+		// 考虑到玄学的NaN情况，记录是否存在NaN
+		let flag = false
+		// 从主版本号遍历到修订版本号，只考虑当前版本号的长度
+		for (let i = 0; i < current.length; ++i) {
+			// 当前环境版本号当前位若是NaN，则记录后直接到下一位
+			if (isNaN(current[i])) {
+				flag = true
+				continue
+			}
+			// 如果此时flag为true且current[i]不为NaN，版本号则不合法，直接否
+			if (flag) return false
+			// 上位版本号未达到要求，直接否决
+			if (require[i] > current[i]) return false
+			// 上位版本号已超过要求，直接可行
+			if (current[i] > require[i]) return true
+		}
+		return true
+	}
+
+	if (core in supportMap && !check(supportMap[core], versions)) {
 		const tip = '检测到您的浏览器内核版本无法支持当前无名杀所需的功能，请立即升级浏览器或手机webview内核！';
 		console.error(tip);
 		let redirect_tip = `您使用的浏览器或无名杀客户端内核版本过低，已经无法正常运行无名杀！\n目前使用的浏览器UA信息为：\n${userAgent}\n点击“确认”以前往GitHub下载最新版无名杀客户端（可能需要科学上网）。\n稍后您的无名杀将自动退出（可能的话）`;

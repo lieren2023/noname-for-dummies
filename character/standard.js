@@ -224,7 +224,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(event.responded) return false;
 					if(player.storage.hujiaing) return false;
 					if(!player.hasZhuSkill('hujia')) return false;
-					if(!event.filterCard({name:'shan'},player,event)) return false;
+					if(!event.filterCard({name:'shan',isCard:true},player,event)) return false;
 					return game.hasPlayer(current=>current!=player&&current.group=='wei');
 				},
 				check(event,player){

@@ -131,8 +131,8 @@ export class Is extends Uninstantable {
 	 * @param { Card | VCard } card
 	 */
 	// @ts-ignore
-	static vituralCard(card) {
-		return card.isCard || (!("cards" in card) || !Array.isArray(card.cards) || card.cards.length == 0);
+	static virtualCard(card) {
+		return (!("cards" in card) || !Array.isArray(card.cards) || card.cards.length === 0);
 	}
 	/**
 	 * 是否是转化牌
@@ -147,7 +147,9 @@ export class Is extends Uninstantable {
 	 * @param { Card | VCard } card
 	 */
 	// @ts-ignore
-	static ordinaryCard(card) { return card.isCard && ("cards" in card) && Array.isArray(card.cards) && card.cards.length == 1 }
+	static ordinaryCard(card) {
+		return card.isCard && ("cards" in card) && Array.isArray(card.cards) && card.cards.length === 1
+	}
 	/**
 	 * 押韵判断
 	 * @param { string } str1

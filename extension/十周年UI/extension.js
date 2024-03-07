@@ -2346,9 +2346,9 @@ content:function(config, pack){
 		};
 	}
 	
-	// 修复对决-自由模式选将时按钮偏上的异常
-	// 修改versus.js的函数chooseCharacter:function(){
 	if(lib.config.mode=='versus'){
+		// 修复对决-自由模式选将时按钮偏上的异常
+		// 修改versus.js的函数chooseCharacter:function(){
 		game.chooseCharacter=function(){
 			var next=game.createEvent('chooseCharacter');
 			next.showConfig=true;
@@ -2418,7 +2418,9 @@ content:function(config, pack){
 				};
 				ui.control.style.transition='all 0s';
 				if(get.is.phoneLayout()){
+					// 修改开始
 					ui.control.style.top='calc(100% - 60px)';
+					// 修改结束
 				}
 				else if(game.layout=='newlayout'){
 					ui.control.style.top='calc(100% - 30px)';
@@ -2432,7 +2434,7 @@ content:function(config, pack){
 				_status.color=Math.random()<0.5;
 				var i,list=[];
 				for(i in lib.character){
-					// if(lib.config.forbidversus.contains(i)) continue;
+					// if(lib.config.forbidversus.includes(i)) continue;
 					if(lib.filter.characterDisabled(i)) continue;
 					list.push(i);
 				}
@@ -2789,7 +2791,6 @@ content:function(config, pack){
 						else{
 							game.friend[i].identity='zhong';
 							game.friend[i].setIdentity(_status.color+'Zhong');
-
 						}
 						if(lib.storage.zhu&&get.distance(game.enemy[i],game.me,'pure')==num){
 							game.enemy[i].identity='zhu';
@@ -2849,6 +2850,455 @@ content:function(config, pack){
 				}
 			});
 		};
+		
+		// 修复对决-对抗模式自由选将功能无法加载的bug
+		// 修改versus.js的函数chooseCharacterFour:function(){
+		game.chooseCharacterFour=function(){
+			var next=game.createEvent('chooseCharacter');
+			next.showConfig=true;
+			next.ai=function(player,list,list2){
+				if(player.identity=='zhu'){
+					list2.randomSort();
+					var choice;
+					if(Math.random()-0.8<0&&list2.length){
+						choice=list2[0];
+					}
+					else{
+						choice=list[0];
+					}
+					player.init(choice);
+					if(!player.isInitFilter('noZhuHp')){
+						player.hp++;
+						player.maxHp++;
+						player.update();
+					}
+				}
+				else if(Math.random()<0.5){
+					var choice=0;
+					for(var i=0;i<list.length;i++){
+						if(lib.character[list[i]][1]==game[player.side+'Zhu'].group){
+							choice=i;break;
+						}
+					}
+					player.init(list[choice]);
+				}
+				else{
+					player.init(list[0]);
+				}
+				this.list.remove(player.name1);
+				this.list2.remove(player.name1);
+			}
+			next.setContent(function(){
+				"step 0"
+				ui.arena.classList.add('choose-character');
+				var i;
+				var list;
+				var list2=[];
+
+				event.list=[];
+				event.choiceFour=(get.config('character_four')||lib.choiceFour);
+				event.filterChoice=function(name){
+					if(get.config('enable_all')) return false;
+					return !event.choiceFour.includes(name);
+				}
+				for(i in lib.character){
+					if(event.filterChoice(i)) continue;
+					if(lib.filter.characterDisabled(i)) continue;
+					event.list.push(i);
+					if(lib.character[i][4]&&lib.character[i][4].includes('zhu')){
+						list2.push(i);
+					}
+				}
+				if(_status.brawl&&_status.brawl.chooseCharacterFilter){
+					event.list=_status.brawl.chooseCharacterFilter(event.list);
+				}
+				event.list.randomSort();
+				event.list2=list2;
+				event.four_assign=get.config('four_assign');
+				if(!event.four_assign){
+					event.current=_status.firstAct;
+				}
+				else{
+					event.current=_status.firstAct.next;
+				}
+				event.flipassign=true;
+				if(_status.firstAct.side){
+					for(var i=0;i<game.players.length;i++){
+						game.players[i].side=!game.players[i].side;
+						game.players[i].node.identity.dataset.color=get.translation(game.players[i].side+'Color');
+					}
+				}
+				for(var i=0;i<game.players.length;i++){
+					if(!game.players[i].node.name_seat){
+						game.players[i].node.name_seat=ui.create.div('.name.name_seat',get.verticalStr(get.seatTranslation(_status.firstAct,game.players[i],'absolute')),game.players[i]);
+						game.players[i].node.name_seat.style.opacity=1;
+					}
+				}
+				if(get.config('ladder')){
+					var date=new Date();
+					if(!lib.storage.ladder){
+						lib.storage.ladder={
+							current:900,
+							top:900,
+							month:date.getMonth()
+						};
+						game.save('ladder',lib.storage.ladder);
+					}
+					else if(date.getMonth()!=lib.storage.ladder.month&&get.config('ladder_monthly')){
+						lib.storage.ladder.month=date.getMonth();
+						lib.storage.ladder.current=900;
+						game.save('ladder',lib.storage.ladder);
+					}
+					ui.ladder=ui.create.system(game.getLadderName(lib.storage.ladder.current),null,true);
+					lib.setPopped(ui.ladder,function(uiintro){
+						var uiintro=ui.create.dialog('hidden');
+						uiintro.add('<div class="text center">当前分数：<div style="width:40px;text-align:left;font-family:xinwei">'+(lib.storage.ladder.current+(_status.ladder_tmp?40:0))+'</div></div>');
+						uiintro.add('<div class="text center">历史最高：<div style="width:40px;text-align:left;font-family:xinwei">'+lib.storage.ladder.top+'</div></div>');
+						uiintro.content.lastChild.style.paddingBottom='8px';
+						return uiintro;
+					},180);
+					_status.ladder=true;
+					_status.ladder_mmr=0;
+				}
+				event.addSetting=function(){
+					var cs=function(link,node){
+						game.swapPlayer(node._link);
+						_status.rechoose=true;
+						for(var i=0;i<game.players.length;i++){
+							game.players[i].uninit();
+							if(game.players[i].node.name_seat) game.players[i].node.name_seat.style.display='';
+							game.players[i].classList.remove('selectedx');
+						}
+						game.resume();
+					};
+					if(!event.seatsbutton){
+						event.seatsbutton=[
+							ui.create.control('一号位',cs),
+							ui.create.control('一号位',cs),
+							ui.create.control('一号位',cs),
+							ui.create.control('换边',function(){
+								if(_status.firstAct.side==game.me.side){
+									cs(null,{_link:_status.firstAct.nextSeat});
+								}
+								else{
+									cs(null,{_link:_status.firstAct});
+								}
+							})
+						];
+					}
+					var seats=[];
+					for(var i=0;i<game.players.length;i++){
+						if(game.players[i]!=game.me&&game.players[i].side==game.me.side){
+							seats.add([1+get.distance(_status.firstAct,game.players[i],'absolute'),game.players[i]]);
+						}
+						seats.sort(function(a,b){
+							return a[0]-b[0];
+						});
+					}
+					for(var i=0;i<event.seatsbutton.length;i++){
+						if(i<seats.length){
+							event.seatsbutton[i].firstChild.innerHTML=get.cnNumber(seats[i][0],true)+'号位';
+							event.seatsbutton[i].firstChild._link=seats[i][1];
+						}
+					}
+				};
+				if(!get.config('four_assign')&&!get.config('four_phaseswap')){
+					if(get.config('change_identity')){
+						event.addSetting();
+					}
+					if(get.config('fouralign')&&!event.fouralignbutton){
+						event.fouralignbutton=ui.create.control('变阵',function(){
+							if(!_status.fouralign.length||(_status.fouralign.length==1&&_status.fouralign[0]==0)){
+								_status.fouralign=[0,1,2,3,4];
+							}
+							var list=[
+								['zhong','ezhong','ezhong','zhong','zhong','ezhong','ezhong','zhong'],
+								['zhong','ezhong','zhong','ezhong','ezhong','zhong','ezhong','zhong'],
+								['zhong','ezhong','ezhong','zhong','ezhong','zhong','zhong','ezhong'],
+								['zhong','ezhong','zhong','ezhong','zhong','ezhong','zhong','ezhong'],
+								['zhong','ezhong','ezhong','zhong','ezhong','zhong','ezhong','zhong'],
+							][_status.fouralign.shift()];
+							var rand1=Math.floor(Math.random()*4);
+							var rand2=Math.floor(Math.random()*4);
+							for(var i=0;i<list.length;i++){
+								if(list[i]=='zhong'){
+									if(rand1==0){
+										list[i]='zhu';
+									}
+									rand1--;
+								}
+								else{
+									if(rand2==0){
+										list[i]='ezhu';
+									}
+									rand2--;
+								}
+							}
+
+							var side=Math.random()<0.5;
+							var num=game.players.indexOf(_status.firstAct);
+							list=list.splice(8-num).concat(list);
+
+							for(var i=0;i<8;i++){
+								if(list[i][0]=='e'){
+									game.players[i].side=side;
+									game.players[i].identity=list[i].slice(1);
+								}
+								else{
+									game.players[i].side=!side;
+									game.players[i].identity=list[i];
+								}
+								if(game.players[i].identity=='zhu'){
+									game[game.players[i].side+'Zhu']=game.players[i];
+									game.players[i].isZhu=true;
+								}
+								game.players[i].setIdentity(game.players[i].identity);
+								game.players[i].node.identity.dataset.color=get.translation(game.players[i].side+'Color');
+								if(game.players[i].node.name_seat){
+									game.players[i].node.name_seat.remove();
+									delete game.players[i].node.name_seat;
+								}
+							}
+
+							_status.rechoose=true;
+							for(var i=0;i<game.players.length;i++){
+								game.players[i].uninit();
+								if(game.players[i].node.name_seat) game.players[i].node.name_seat.style.display='';
+								game.players[i].classList.remove('selectedx');
+							}
+							game.resume();
+						});
+					}
+				}
+				// 修改开始
+				game.delay(0.1);
+				// 修改结束
+				"step 1"
+				if(event.current==game.me||(event.four_assign&&event.current.side==game.me.side)){
+					var dialog=event.xdialog;
+					if(!dialog){
+						if(get.config('expand_dialog')){
+							dialog=event.xdialog||ui.create.characterDialog('heightset',event.filterChoice,'expandall');
+						}
+						else{
+							dialog=event.xdialog||ui.create.characterDialog('heightset',event.filterChoice,'precharacter');
+						}
+					}
+					var names=[];
+					for(var i=0;i<game.players.length;i++){
+						if(game.players[i].name1){
+							names.push(game.players[i].name1);
+						}
+					}
+					for(var i=0;i<dialog.buttons.length;i++){
+						if(names.includes(dialog.buttons[i].link)){
+							dialog.buttons[i].classList.add('unselectable');
+							dialog.buttons[i].classList.add('noclick');
+						}
+					}
+					game.me.chooseButton(dialog,true).set('onfree',true).closeDialog=false;
+					event.xdialog=dialog;
+					dialog.static=true;
+					event.current.classList.add('selectedx');
+					game.delay(0.5);
+				}
+				else{
+					event.ai(event.current,event.list.randomGets(3),event.list2);
+					event.current.node.name_seat.style.display='none';
+					if(!event.four_assign){
+						event.current=event.current.next;
+						event.redo();
+					}
+				}
+				"step 2"
+				if(_status.rechoose){
+					delete _status.rechoose;
+					event.goto(0);
+					var dialog=event.xdialog;
+					if(dialog){
+						for(var i=0;i<dialog.buttons.length;i++){
+							dialog.buttons[i].classList.remove('unselectable');
+							dialog.buttons[i].classList.remove('noclick');
+						}
+					}
+					return;
+				}
+				if(event.seatsbutton){
+					for(var i=0;i<event.seatsbutton.length;i++){
+						event.seatsbutton[i].close();
+					}
+					delete event.seatsbutton;
+				}
+				event.current.classList.remove('selectedx');
+				if(event.current.side==game.me.side){
+					event.current.init(result.buttons[0].link);
+					if(event.current==game.me){
+						game.addRecentCharacter(result.buttons[0].link);
+					}
+					event.list.remove(event.current.name1);
+					event.list2.remove(event.current.name1);
+					if(event.current.identity=='zhu'){
+						if(!event.current.isInitFilter('noZhuHp')){
+							event.current.hp++;
+							event.current.maxHp++;
+							event.current.update();
+						}
+					}
+					event.current.node.name_seat.remove();
+				}
+				if(event.four_assign){
+					for(var i=0;i<game.players.length;i++){
+						if(!game.players[i].name1) break;
+					}
+					if(i<game.players.length){
+						var side=event.current.side;
+						event.current=_status.firstAct.next;
+						if(event.flipassign){
+							for(var iwhile=0;iwhile<8;iwhile++){
+								event.current=event.current.next;
+								if(event.current.side!=side&&!event.current.name1){
+									break;
+								}
+							}
+						}
+						else{
+							for(var iwhile=0;iwhile<8;iwhile++){
+								event.current=event.current.previous;
+								if(event.current.side==side&&!event.current.name1){
+									break;
+								}
+							}
+						}
+						event.flipassign=!event.flipassign;
+						event.goto(1);
+					}
+				}
+				else{
+					for(var i=0;i<game.players.length;i++){
+						if(!game.players[i].name1){
+							event.ai(game.players[i],event.list.splice(0,3),event.list2);
+							game.players[i].node.name_seat.remove();
+						}
+					}
+				}
+				"step 3"
+				if(get.config('four_phaseswap')){
+					game.addGlobalSkill('autoswap');
+					if(lib.config.show_handcardbutton){
+						ui.versushs=ui.create.system('手牌',null,true);
+						lib.setPopped(ui.versushs,game.versusHoverHandcards,220);
+					}
+				}
+				if(event.xdialog){
+					event.xdialog.close();
+				}
+				// game.addRecentCharacter(game.me.name,game.me.name2);
+				ui.control.style.transitionDuration='0s';
+				ui.refresh(ui.control);
+				ui.arena.classList.remove('choose-character');
+				setTimeout(function(){
+					ui.control.style.transitionDuration='';
+				},500);
+				lib.init.onfree();
+				delete _status.fouralign;
+				if(event.fouralignbutton){
+					event.fouralignbutton.close();
+					delete event.fouralignbutton;
+				}
+			});
+		};
+		
+		// 修改对决-官渡模式事件显示、Revert官渡之战调整界袁绍主公为OL谋袁绍（OL谋袁绍背景与官渡之战不符，同名武将替换待后续更新）
+		// 修改versus.js的函数chooseCharacterGuandu:function(){
+		game.chooseCharacterGuandu=function(){
+			var next=game.createEvent('chooseCharacter');
+			next.setContent(function(){
+				'step 0'
+				lib.init.onfree();
+				ui.arena.classList.add('choose-character');
+				game.falseZhu.init('re_caocao');
+				game.trueZhu.init('ol_yuanshao');
+				game.trueZhu.hp++;
+				game.trueZhu.maxHp++;
+				game.falseZhu.hp++;
+				game.falseZhu.maxHp++;
+				game.trueZhu.update();
+				game.falseZhu.update();
+				var evt_list=[['huoshaowuchao','chunyuqiong'],['liangcaokuifa','sp_xuyou'],['zhanyanliangzhuwenchou','jsp_guanyu'],['shishengshibai','re_guojia'],['xutuhuanjin','yj_jushou'],['liangjunxiangchi','yj_jushou'],['jianshoudaiyuan','tianfeng'],['yiruoshengqiang','re_caocao'],['shichongerjiao','sp_xuyou']].randomGet();
+				var evt=evt_list[0],character=evt_list[1];
+				game.addGlobalSkill(evt);
+				game.broadcastAll(function(evt){
+					if(lib.config.background_speak) game.playAudio('skill',evt);
+					ui.guanduInfo=ui.create.system('当前事件',null,true);
+					lib.setPopped(ui.guanduInfo,function(){
+						var uiintro=ui.create.dialog('hidden');
+						uiintro.add(get.translation(evt));
+						var list=get.translation(evt+'_info');
+						var intro='<ul style="text-align:left;margin-top:0;width:450px">'+'<li>'+list+'</ul>';
+						uiintro.add('<div class="text center">'+intro+'</div>');
+						var ul=uiintro.querySelector('ul');
+						if(ul){
+							ul.style.width='180px';
+						}
+						uiintro.add(ui.create.div('.placeholder'));
+						return uiintro;
+					},250);
+				},evt);
+				game.me.chooseControl('ok').set('dialog',['###本局特殊事件：'+get.translation(evt)+'###'+get.translation(evt+'_info'),[[character],'character']]);
+				'step 1'
+				event.falseList=['ol_xiahouyuan','litong','zangba','manchong','xunyu','re_guojia','re_zhangliao','xuhuang','caohong','jsp_guanyu','hanhaoshihuan','caoren','yujin','liuye','chengyu','xunyou','zhangxiu','sp_jiaxu'].filter(function(name){
+					if(!Array.isArray(lib.character[name])) return false;
+					lib.character[name][1]='wei';
+					return true;
+				});
+				event.trueList=['xinping','hanmeng','gaogan','yuantanyuanshang','lvkuanglvxiang','xinpi','xunchen','sp_zhanghe','chenlin','re_liubei','yj_jushou','guotufengji','gaolan','sp_xuyou','tianfeng','chunyuqiong','sp_shenpei'].filter(function(name){
+					if(!Array.isArray(lib.character[name])) return false;
+					lib.character[name][1]='qun';
+					return true;
+				});
+				'step 2'
+				if(game.me.identity!='zhu'){
+					event.choose_me=true;
+					game.me.chooseButton(['请选择你的武将牌',[event[game.me.side+'List'].randomRemove(2),'character']],true);
+				}
+				'step 3'
+				if(event.choose_me) game.me.init(result.links[0]);
+				game.countPlayer(function(current){
+					if(current!=game.me&&current.identity=='zhong') current.init(event[current.side+'List'].randomRemove(2)[0]);
+				});
+				setTimeout(function(){
+					ui.arena.classList.remove('choose-character');
+				},500);
+			});
+		};
+		// 十胜十败事件实时显示待后续更新
+		lib.skill.shishengshibai.content=function(){
+			if(event.triggername=='useCard1'){
+				if(!_status.shishengshibai) _status.shishengshibai=0;
+				_status.shishengshibai++;
+				game.broadcastAll(function(num){
+					if(ui.guanduInfo) {
+						lib.setPopped(ui.guanduInfo,function(){
+							var uiintro=ui.create.dialog('hidden');
+							uiintro.add('十胜十败（'+num+'）');
+							var list=get.translation('shishengshibai_info');
+							var intro='<ul style="text-align:left;margin-top:0;width:450px">'+'<li>'+list+'</ul>';
+							uiintro.add('<div class="text center">'+intro+'</div>');
+							var ul=uiintro.querySelector('ul');
+							if(ul){
+								ul.style.width='180px';
+							}
+							uiintro.add(ui.create.div('.placeholder'));
+							return uiintro;
+						},250);
+					}
+				},_status.shishengshibai);
+				if(_status.shishengshibai%10==0&&trigger.targets&&trigger.targets.length>0&&!['delay','equip'].includes(get.type(trigger.card))){
+					trigger.effectCount++;
+				}
+			}
+		};
+		
 	}
 	
 	// 挑战模式神将按钮删除乱入武将
@@ -3083,6 +3533,10 @@ content:function(config, pack){
 	if(lib.character.junk_sunquan){
 		lib.character.junk_sunquan[4].remove('wei');
 		lib.character.junk_sunquan[4].push('wu');
+	}
+	// unseen谋诸葛亮（谋卧龙是双形态谋诸葛亮的初始形态）
+	if(lib.character.sb_zhugeliang){
+		lib.character.sb_zhugeliang[4].push('unseen');
 	}
 	// 修改孙悟空等神话传说武将势力为神
 	if(lib.character.sunwukong){
@@ -3713,10 +4167,6 @@ content:function(config, pack){
 		if(lib.skill.fenyue2 != undefined){
 			lib.skill.fenyue2.marktext = "奋钺";
 		}
-		// 手杀荀谌危迫标记修改
-		if(lib.skill.mjweipo_effect != undefined){
-			lib.skill.mjweipo_effect.marktext = "危迫";
-		}
 		// ☆SP夏侯惇愤勇标记修改
 		if(lib.skill.fenyong2 != undefined){
 			lib.skill.fenyong2.marktext = "愤勇";
@@ -3748,10 +4198,6 @@ content:function(config, pack){
 		// 经典曹操奸雄标记修改
 		if(lib.skill.dcjianxiong != undefined){
 			lib.skill.dcjianxiong.marktext = "奸雄";
-		}
-		// 谋刘备仁望标记修改
-		if(lib.skill.sbrende != undefined){
-			lib.skill.sbrende.marktext = "仁望";
 		}
 		// 马承骋烈标记修改
 		if(lib.skill.olchenglie != undefined){
@@ -3812,10 +4258,6 @@ content:function(config, pack){
 		// 马元义兵标记修改
 		if(lib.skill.jibing != undefined){
 			lib.skill.jibing.marktext = "兵";
-		}
-		// 费祎喻标记修改
-		if(lib.skill.fyjianyux != undefined){
-			lib.skill.fyjianyux.marktext = "喻";
 		}
 		// 蹋顿乱标记修改
 		if(lib.skill.reluanzhan != undefined){
@@ -4136,6 +4578,10 @@ content:function(config, pack){
 		if(lib.skill.twxuechang != undefined){
 			lib.skill.twxuechang.subSkill.add.marktext = "血偿";
 		}
+		// 承甄宓济乡标记修改
+		if(lib.skill.jsrgjixiang != undefined){
+			lib.skill.jsrgjixiang.subSkill.used.marktext = "济乡";
+		}
 		// 谋大乔流离标记修改
 		if(lib.skill.sbliuli != undefined){
 			lib.skill.sbliuli.subSkill.dangxian.marktext = "流离";
@@ -4163,6 +4609,10 @@ content:function(config, pack){
 		// 公孙范收绶标记修改
 		if(lib.skill.twshoushou != undefined){
 			lib.skill.twshoushou.subSkill.distance.marktext = "收绶";
+		}
+		// 界曹叡明鉴标记修改
+		if(lib.skill.remingjian != undefined){
+			lib.skill.remingjian.subSkill.buff.marktext = "明鉴";
 		}
 		// 吕虔虏标记修改
 		if(lib.skill.xinfu_weilu != undefined){
@@ -4225,6 +4675,32 @@ content:function(config, pack){
 		if(lib.skill.new_canyun != undefined){
 			lib.skill.new_canyun.marktext = "残韵";
 		}
+		// 手杀荀谌危迫标记修改
+		if(lib.skill.mjweipo_effect != undefined){
+			lib.skill.mjweipo_effect.marktext = "危迫";
+		}
+		// TW荀谌谋识标记修改
+		if(lib.skill.twmouzhi != undefined){
+			lib.skill.twmouzhi.subSkill.mark.content=function(){
+				if(!trigger.card||get.color(trigger.card)=='none') player.unmarkSkill('twmouzhi');
+				else {
+					player.markSkill('twmouzhi');
+					player.storage.twmouzhi=get.color(trigger.card);
+					game.broadcastAll(function(player,color){
+						if(player.marks.twmouzhi){
+							if(color=='red'){
+								player.marks.twmouzhi.firstChild.innerHTML='<font color='+color+'>谋识</font>';
+							}else player.marks.twmouzhi.firstChild.innerHTML='谋识';
+						}
+						player.storage.twmouzhi=color;
+					},player,player.storage.twmouzhi)
+				}
+			}
+		}
+		// 谋刘备仁望标记修改
+		if(lib.skill.sbrende != undefined){
+			lib.skill.sbrende.marktext = "仁望";
+		}
 		// 侠刘备侠义标记修改
 		if(lib.skill.twshenyi != undefined){
 			lib.skill.twshenyi.createGainTag = function(skill,name){
@@ -4273,6 +4749,13 @@ content:function(config, pack){
 		// TW神关羽梦魇标记修改
 		if(lib.skill.twwuhun != undefined){
 			lib.skill.twwuhun.marktext = "梦魇";
+		}
+		// 承关羽冠绝、念恩标记修改
+		if(lib.skill.jsrgguanjue != undefined){
+			lib.skill.jsrgguanjue.subSkill.ban.marktext = "冠绝";
+		}
+		if(lib.skill.jsrgnianen != undefined){
+			lib.skill.jsrgnianen.subSkill.blocker.marktext = "念恩";
 		}
 		// 周群骤雨、烈暑、严霜、凝雾标记修改
 		if(lib.skill.oltianhou != undefined){
@@ -4465,12 +4948,14 @@ content:function(config, pack){
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
+		// 手杀费祎谏喻标记修改
+		lib.translate.fyjianyu_bg = "谏喻";
 		// 合曹芳诏图标记修改
 		lib.translate.jsrgzhaotu_bg = "诏图";
 		// 袁涣请决标记修改
 		lib.translate.qingjue_bg = "请决";
 		// 手杀朱儁厚俸标记修改
-		lib.translate.houfeng_bg = "厚俸";
+		lib.translate.houfeng_zhengsu_bg = "厚俸";
 		// 赵昂忠节标记修改
 		lib.translate.dczhongjie_bg = "忠节";
 		// 张嫙、合张嫙奢葬标记修改
@@ -4801,7 +5286,7 @@ content:function(config, pack){
 		lib.translate.boss_juejing_info = "锁定技，摸牌阶段开始前，你跳过此阶段。当你得到牌/失去手牌后，若你的手牌数大于4/小于4，则你将手牌弃置至4张/摸至4张。";
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
 		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
-		// 凌人、整肃、蛊惑、军令、协力卡牌显示修复
+		// 凌人、整肃、蛊惑、军令、协力、五禽戏卡牌显示修复
 		lib.card.basic = {fullskin:true};
 		lib.card.equip = {fullskin:true};
 		lib.card.trick = {fullskin:true};
@@ -4820,6 +5305,13 @@ content:function(config, pack){
 		lib.card.cooperation_draw = {fullskin:true,cardimage:'cooperation_draw',};
 		lib.card.cooperation_discard = {fullskin:true,cardimage:'cooperation_discard',};
 		lib.card.cooperation_use = {fullskin:true,cardimage:'cooperation_use',};
+		lib.card.虎 = {fullskin:true};
+		lib.card.鹿 = {fullskin:true};
+		lib.card.熊 = {fullskin:true};
+		lib.card.猿 = {fullskin:true};
+		lib.card.鹤 = {fullskin:true};
+		// 谋卧龙→谋诸葛亮
+		lib.translate.sb_sp_zhugeliang = "谋诸葛亮";
 		// 修复界孙笨的彩蛋
 		lib.translate.re_sunben = "界孙策";
 		// 修改合大小虎为原名
@@ -4849,9 +5341,13 @@ content:function(config, pack){
 		// 武将名过长时减小字体大小（待优化）
 		lib.translate.yuantanyuanxiyuanshang_ab = '<span style="font-size: 12.7px">袁谭袁尚袁熙</span>';
 		lib.translate.ganfurenmifuren_ab = '<span style="font-size: 12.7px">甘夫人糜夫人</span>';
-		lib.translate.jsrg_sunlubansunluyu_ab = '<span style="font-size: 12.5px;font-weight: bold">合</span><span style="font-size: 12.5px">孙鲁班孙鲁育</span>';
-		lib.translate.jsrg_weiwenzhugezhi_ab = '<span style="font-size: 12.7px;font-weight: bold">合</span><span style="font-size: 12.7px">卫温诸葛直</span>';
-		
+		// 武将前缀-不显示前缀
+		if (lib.config.buttoncharacter_prefix == 'off'){
+			lib.translate.jsrg_sunlubansunluyu_ab = '<span style="font-size: 12.7px">孙鲁班孙鲁育</span>';
+		}else{
+			lib.translate.jsrg_sunlubansunluyu_ab = '<span style="font-size: 12.5px;font-weight: bold">合</span><span style="font-size: 12.5px">孙鲁班孙鲁育</span>';
+			lib.translate.jsrg_weiwenzhugezhi_ab = '<span style="font-size: 12.7px;font-weight: bold">合</span><span style="font-size: 12.7px">卫温诸葛直</span>';
+		}
 	});
 	
 	// 非战棋/塔防/炉石模式，弹出使用<新版>布局提示
@@ -6916,6 +7412,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 			
 			lib.config.low_performance = true;
 
+			// 注：暂时先用旧代码，未适配新本体代码
 			game.check = function(event){
 				var i, range;
 				if (event == undefined) event = _status.event;
@@ -7221,7 +7718,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 							if (enable) {
 								if(!game.expandSkills(player.getSkills(false).concat(lib.skill.global)).contains(skills2[i])&&(info.noHidden||get.mode()!='guozhan'||player.hasSkillTag('nomingzhi',false,null,true))) enable=false;
 								if(info.filter && !info.filter(event,player)) enable=false;
-								if (info.viewAs && typeof info.viewAs != 'function' && event.filterCard && !event.filterCard(info.viewAs, player, event)) enable = false;
+								// if (info.viewAs && typeof info.viewAs != 'function' && event.filterCard && !event.filterCard(info.viewAs, player, event)) enable = false;
+								if (info.viewAs && typeof info.viewAs != 'function' && event.filterCard && !event.filterCard(get.autoViewAs(info.viewAs, 'unsure'), player, event)) enable = false;
 								if (info.viewAs && typeof info.viewAs != 'function' && info.viewAsFilter && info.viewAsFilter(player) == false) enable = false;
 								
 								if (info.usable && get.skillCount(skills2[i]) >= info.usable) enable = false;
@@ -7363,6 +7861,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				return ok;
 			};
 			
+			// 注：暂时先用旧代码，未适配新本体代码
 			game.uncheck = function(){
 				var i, j;
 				if (game.chess) {
@@ -7596,25 +8095,37 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					if (!dui.$identityMarkBox) {
 						dui.$identityMarkBox = decadeUI.element.create('identity-mark-box');
 						
-						// 国战势力标记框位置调整
-						if (get.mode() == 'guozhan') {
-							dui.$identityMarkBox.style.top = '-2%';
-							dui.$identityMarkBox.style.left = '23.5%';
-						}
-						// 谋攻篇模式或启用平民时身份标记框位置调整
-						if ((lib.config.mode=='identity'&&get.config('identity_mode')=='stratagem')||get.config('enable_commoner')) {
-							// if (game.zhu&&game.zhu.isZhu&&game.zhu.identityShown||game.me.identity=='zhu') {
-								// dui.$identityMarkBox.style.top = '11%';
-							// } else {
-								dui.$identityMarkBox.style.top = '-2%';
-							// }
-						}
-						
 						dui.$identityMarkBox.ondeactive = function(){
 							dui.$identityMarkBox.remove();
 							_status.clicked = false;
 							if (!ui.arena.classList.contains('menupaused')) game.resume2();
 						}
+					}
+					
+					// 国战势力标记框位置调整
+					if (get.mode() == 'guozhan') {
+						dui.$identityMarkBox.style.top = '-2%';
+						dui.$identityMarkBox.style.left = '23.5%';
+					}
+					// 谋攻篇模式身份标记框位置调整
+					if (get.config('identity_mode')=='stratagem') {
+						if (game.zhu&&game.zhu.isZhu&&game.zhu.identityShown||game.me.identity=='zhu') {
+							dui.$identityMarkBox.style.top = '10%';
+						} else {
+							dui.$identityMarkBox.style.top = '-2%';
+						}
+					}
+					// 明忠模式身份标记框位置调整
+					if (get.config('identity_mode')=='zhong') {
+						if (game.zhu&&game.zhu.isZhu) {
+							dui.$identityMarkBox.style.top = '20%';
+						} else {
+							dui.$identityMarkBox.style.top = '10%';
+						}
+					}
+					// 启用平民时身份标记框位置调整
+					if (get.config('identity_mode')=='normal'&&get.config('enable_commoner')) {
+						dui.$identityMarkBox.style.top = '10%';
 					}
 					
 					var index = 0;
@@ -7634,9 +8145,11 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						}
 						
 						var extensionPath = lib.assetURL + 'extension/十周年UI/';
-          var url = extensionPath + 'image/decoration/identity_' + key + '.png';
-          if (get.mode() == 'guozhan') url = extensionPath + 'image/decoration/name_' + key + '.png';
-             node.style.backgroundImage ='url("' + url + '")';
+						var url = extensionPath + 'image/decoration/identity_' + key + '.png';
+						if (get.mode() == 'guozhan') url = extensionPath + 'image/decoration/name_' + key + '.png';
+						if (_status.mode=='purple'&&key=='cai') url = extensionPath + 'image/decoration/identity_cai_blue.png';
+						if (_status.mode=='purple'&&key=='cai2') url = extensionPath + 'image/decoration/identity_cai_red.png';
+						node.style.backgroundImage ='url("' + url + '")';
 						node.link = key;
 						node.player = this.parentNode;
 					//	node.innerText = identityList[key];
@@ -9368,10 +9881,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				this.node.name2.innerHTML = '';
 				
 				// for (var i = 1; i < 6; i++) if (this.isDisabled(i)) this.$enableEquip('equip' + i);
-				
-				this.expandedSlots = {};
-				this.disabledSlots = {};
-				
+
 				this.name = undefined;
 				this.name1 = undefined;
 				this.tempname = undefined;
@@ -9380,9 +9890,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				this.hp = undefined;
 				this.maxHp = undefined;
 				this.hujia = undefined;
-				
-				this.clearSkills(true);
-				
+
 				if (this.name2) {
 					this.singleHp = undefined;
 					this.name2 = undefined;
@@ -9392,6 +9900,9 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				ui.updatem(this);
 				
 				this.skipList = [];
+				
+				this.clearSkills(true);
+				
 				this.skills=this.skills.filter(skill=>{
 					return lib.skill[skill]&&lib.skill[skill].superCharlotte;
 				});
@@ -9410,6 +9921,10 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				this.tempSkills = {};
 				this.storage = {};
 				this.marks = {};
+				
+				this.expandedSlots = {};
+				this.disabledSlots = {};
+				
 				this.ai = {
 					friend: [],
 					enemy: [],
@@ -9477,8 +9992,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						player.$update();
 					}, this, hp, hpMax, this.hujia);
 					this.$update(...arguments);
-					
-					game.addVideo('update', this, [count, hp, hpMax, this.hujia]);
 				} else {
 					// 虽然上面的 game.addVideo 提供了好几个参数，但是没啥用，因为videoContent里的update缺只给了1个参数。
 					if (!count) count = this.countCards('h');
@@ -9553,7 +10066,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				}
 				
 				this.dataset.maxHp = hpMax;
-				this.updateMarks();
 				
 				if (this.updates) {
 					for (var i = 0; i < this.updates.length; i++) {
@@ -9561,6 +10073,9 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					}
 				}
 				
+				if (!_status.video) game.addVideo('update', this, [count, hp, hpMax, this.hujia]);
+				
+				this.updateMarks();
 				return this;
 			};
 
@@ -11783,14 +12298,25 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						if (!game.me) break;
 						switch (_status.mode) {
 							case 'standard':
-								switch (identity) {
-									case 'trueZhu': return 'shuai';
-									case 'trueZhong': return 'bing';
-									case 'falseZhu': return 'jiang';
-									case 'falseZhong': return 'zu';
+								// switch (identity) {
+									// case 'trueZhu': return 'shuai';
+									// case 'trueZhong': return 'bing';
+									// case 'falseZhu': return 'jiang';
+									// case 'falseZhong': return 'zu';
+								// }
+								// break;
+							case 'three':
+								if (identity == 'zhu') {
+									if (get.translation(player.side + 'Color') == 'wei') {
+										identity = 'bZhu';
+									} else identity = 'rZhu';
+								}
+								else if (identity == 'zhong') {
+									if (get.translation(player.side + 'Color') == 'wei') {
+										identity = 'bZhong';
+									} else identity = 'rZhong';
 								}
 								break;
-							case 'three':
 							case 'four':
 							case 'guandu':
 								if (get.translation(player.side + 'Color') == 'wei') identity += '_blue';
@@ -12782,23 +13308,23 @@ config:{
 				'<br>PS：新版十周年、右手布局或其他样式可自行寻找其他魔改版本替换（替换是删除原目录内的所有文件，再将新的文件复制进去，而不是直接覆盖；另外扩展更新亦建议使用替换）。'+
 				'<br>- 新增护甲上限修改选项，可修改护甲上限（默认为5上限），即时生效；新增护甲失效开关，开启后护甲失效，关闭后护甲生效，即时生效。'+
 				'<br>- 新增怒气上限修改选项，可修改怒气上限（默认为3上限），即时生效。'+
-				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效。'+
-				'<br>- 国战其他魔改：鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
-				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
-				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
-				'<br>- 本体皮肤修改：'+
+				'<br>- 皮肤修改：'+
 				'<br>① 新增功能选项。开启无名杀换肤：关闭千幻聆音扩展后，可通过功能选项开启无名杀换肤（相当于点击触屏按钮，选项-选项-外观-开启换肤），点击选项后自动重启生效。清空皮肤设置：开启无名杀自带的换肤功能后，可清空全部角色、场上所有角色、除“我”（玩家）外场上其他角色的皮肤设置'+
 				'<br>② 新增自动换肤选项，增加子选项；修复bug：选将后，若游戏时间超过换肤时间无法自动换肤；除本体自动换肤选项（点击触屏按钮，选项-选项-外观-自动换肤）外，还可通过本扩展自动换肤选项设置自动换肤；重启后扩展自动换肤设置与本体自动换肤设置保持一致。'+
 				'<br>- 音效修改：'+
 				'<br>① 新增伤害音效配置选项，可设置新版和旧版伤害音效的使用，即时生效。（手机端可长按/电脑端可右击选项查看配置）'+
 				'<br>② 新增旧版配音系统开关选项，开启后，将启用旧版配音系统，支持.ogg格式配音播放（默认开启）。'+
+				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效。'+
+				'<br>- 国战其他魔改：鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
+				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
+				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
 				'<br>- 新增露头皮肤高度调整开关选项，可根据露头皮肤素材直接调整对应的露头皮肤高度（包括选将框、拼点框），即时生效。'+
 				'<br>- 新增座位布局调整开关选项，可调整座位布局（2-8人），即时生效。'+
 				'<br>- 新增折叠手牌开关选项，设置当手牌过多时，是否折叠手牌，即时生效；修复折叠手牌后手牌区可上下移动的bug。'+
-				'<br>- 新增对话框美化开关选项（因短歌修改技能不全，为使对话框样式统一，并为避免旧代码出bug，设置默认关闭），可自行选用短歌修改的对话框美化，手动重启后生效。<br>① 拼点美化：开启后，启用chooseToCompare函数和chooseToCompareMultiple函数，美化拼点对话框。<br>② 观星美化：开启后，启用chooseToGuanxing函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项。'+
 				'<br>- 新增装备栏布局调整开关选项，开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效；显示扩展装备区状态时，同步更新装备栏布局。'+
+				'<br>- 新增对话框美化开关选项（因短歌修改技能不全，为使对话框样式统一，并为避免旧代码出bug，设置默认关闭），可自行选用短歌修改的对话框美化，手动重启后生效。<br>① 拼点美化：开启后，启用chooseToCompare函数和chooseToCompareMultiple函数，美化拼点对话框。<br>② 观星美化：开启后，启用chooseToGuanxing函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项。'+
 				'<br>- 新增不显示托管文字开关（默认开启，托管时不显示“托管中...”文字和阴影），并调整托管区域大小位置。'+
-				'<br>- 新增转圈特效开关（开启后，除受伤和回复外都会转圈，素材来自特效测试扩展），若使用特效测试扩展要记得关闭本开关。'+
+				'<br>- 新增转圈特效开关（开启后，除受伤和回复外都会转圈，素材来自特效测试扩展），若使用特效测试扩展别的特效要记得关闭本开关。'+
 				'<br>- 调色：带属性标签字体颜色修改；觉醒技、限定技等技能特效字体颜色修改；更改势力字体颜色；修改武将前缀及其颜色等。'+
 				'<br>- 使用战火（骨骼动画）替换游戏开始特效。'+
 				'<br>- 兵乐闪电标记魔改（参考零二魔改和光同尘的兵乐闪电标记使用方法）；增加牌名判断区分兵临城下和兵粮寸断标记（该方法可用于分离类似“兵”冲突的情况）。'+
@@ -12829,6 +13355,15 @@ config:{
 				this.innerHTML='<div class="hth_menu">▶更新说明（点击后展开）</div>';
 			};
 		},
+	},
+	// 分割线
+	"sznuifengexian1":{
+		"name":"<font size='4'>------本体的修改------</font>",
+		"clear":true,
+	},
+	szn_fenjiexian11:{
+		clear:true,
+		name:"<font size='3'><li>游戏规则修改</font>",
 	},
 	hujiashangxian: {
 		name: '护甲上限修改(即时生效)',
@@ -12894,24 +13429,9 @@ config:{
 			_status.stratagemFuryMax=Number(item);
 		}
 	},
-	guozhanmogai: {
-		name: '国战魔改',
-		intro: "开启后，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整<br>（注：为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效）",
-		init: true,
-	},
-	biaojixiugai: {
-		name: '标记修改',
-		intro: "修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题",
-		init: true,
-	},
-	jiubanjhbq: {
-		name: '旧版发送交互表情',
-		intro: "开启后，将启用旧版发送交互表情函数",
-		init: true,
-	},
-	szn_fenjiexian1:{
+	szn_fenjiexian12:{
 		clear:true,
-		name:"<font size='3'><li>本体皮肤相关修改</font>",
+		name:"<font size='3'><li>皮肤相关修改</font>",
 	},
 	"bentipifu_gn":{
 		"name":"功能",
@@ -12998,7 +13518,7 @@ config:{
 			}
 		}
 	},
-	szn_fenjiexian2:{
+	szn_fenjiexian13:{
 		clear:true,
 		name:"<font size='3'><li>字体相关修改</font>",
 	},
@@ -13011,7 +13531,7 @@ config:{
 			'url' : '不优化',
 		},
 	},
-	szn_fenjiexian3:{
+	szn_fenjiexian14:{
 		clear:true,
 		name:"<font size='3'><li>音效相关修改</font>",
 	},
@@ -13031,20 +13551,34 @@ config:{
 		intro: "开启后，将启用旧版配音系统，支持.ogg格式配音播放（机制是若读不到.mp3格式配音，则转向读取.ogg格式配音）<br>注：部分配音可能存在bug",
 		init: true,
 	},
+	szn_fenjiexian15:{
+		clear:true,
+		name:"<font size='3'><li>其他相关修改</font>",
+	},
+	guozhanmogai: {
+		name: '国战魔改',
+		intro: "开启后，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整<br>（注：为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效）",
+		init: true,
+	},
+	biaojixiugai: {
+		name: '标记修改',
+		intro: "修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题",
+		init: true,
+	},
+	jiubanjhbq: {
+		name: '旧版发送交互表情',
+		intro: "开启后，将启用旧版发送交互表情函数",
+		init: true,
+	},
 	// 分割线
-	"sznuifengexian":{
+	"sznuifengexian2":{
 		"name":"<font size='4'>------美化与样式------</font>",
 		"clear":true,
 	},
-	/*
-	rightLayout:{
-        name: '右手布局',
-        init: false,
-		update:function(){
-			if (window.decadeUI) ui.arena.dataset.rightLayout = lib.config['extension_十周年UI_rightLayout'] ? 'on' : 'off';
-		}
-    },
-	*/
+	szn_fenjiexian21:{
+		clear:true,
+		name:"<font size='3'><li>动态背景相关设置</font>",
+	},
 	dynamicBackground:{
 		name: '动态背景',
 		init: 'skin_zhenji_才颜双绝',
@@ -13141,6 +13675,10 @@ config:{
 			}
 		}
 	},
+	szn_fenjiexian22:{
+		clear:true,
+		name:"<font size='3'><li>露头皮肤相关设置</font>",
+	},
 	outcropSkin:{
 		name: '露头皮肤(需对应素材)',
         init: false,
@@ -13163,6 +13701,19 @@ config:{
 			if (window.decadeUI) ui.arena.dataset.outcropSkingdtz = lib.config['extension_十周年UI_outcropSkingdtz'];
 		}
 	},
+	szn_fenjiexian23:{
+		clear:true,
+		name:"<font size='3'><li>布局相关设置</font>",
+	},
+	/*
+	rightLayout:{
+        name: '右手布局',
+        init: false,
+		update:function(){
+			if (window.decadeUI) ui.arena.dataset.rightLayout = lib.config['extension_十周年UI_rightLayout'] ? 'on' : 'off';
+		}
+    },
+	*/
 	zwbjtz:{
 		name: '座位布局调整',
 		intro: "可调整座位布局（2-8人），即时生效<br>注意：若关闭本选项，则座位布局调整为原版",
@@ -13177,6 +13728,10 @@ config:{
 		update:function(){
 			if (window.decadeUI) ui.arena.dataset.zwbjtz = lib.config['extension_十周年UI_zwbjtz'];
 		}
+	},
+	szn_fenjiexian24:{
+		clear:true,
+		name:"<font size='3'><li>卡牌相关设置</font>",
 	},
 	foldCardMinWidth: {
 		name: '折叠手牌',
@@ -13203,10 +13758,45 @@ config:{
 			// png:  'PNG 素材',
 		// }
     },
-	campIdentityImageMode:{
-        name: '势力身份美化',
-        init: true,
+	cardAlternateNameVisible:{
+        name: '牌名辅助显示',
+        init: false,
+		update:function(){
+			if (window.decadeUI) ui.window.dataset.cardAlternateNameVisible = lib.config['extension_十周年UI_cardAlternateNameVisible'] ? 'on' : 'off';
+		}
     },
+	szn_fenjiexian25:{
+		clear:true,
+		name:"<font size='3'><li>装备栏相关设置</font>",
+	},
+	equipLayout:{
+		name: '装备栏布局调整',
+		intro: "开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效",
+		init: false,
+		update:function(){
+			if (window.decadeUI) ui.arena.dataset.equipLayout = lib.config['extension_十周年UI_equipLayout'] ? 'on' : 'off';
+		}
+	},
+	szn_fenjiexian26:{
+		clear:true,
+		name:"<font size='3'><li>标记相关设置</font>",
+	},
+	playerMarkStyle:{
+        name: '人物标记样式',
+        init: 'decade',
+        item:{
+			decade: '十周年',
+			yellow:'黄色',
+            red:'红色',
+        },
+		update:function(){
+			if (window.decadeUI) ui.arena.dataset.playerMarkStyle = lib.config['extension_十周年UI_playerMarkStyle'];
+		}
+    },
+	szn_fenjiexian27:{
+		clear:true,
+		name:"<font size='3'><li>其他美化样式设置</font>",
+	},
 	"dhkmh":{
 		"name":"对话框美化",
 		"intro":"可自行选用短歌修改的对话框美化，手动重启后生效<br>①拼点美化：开启后，启用相关函数，美化拼点对话框<br>②观星美化：开启后，启用相关函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项",
@@ -13221,25 +13811,9 @@ config:{
 			game.saveConfig('dhkmh',item);
 		},
 	},
-	equipLayout:{
-		name: '装备栏布局调整',
-		intro: "开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效",
-		init: false,
-		update:function(){
-			if (window.decadeUI) ui.arena.dataset.equipLayout = lib.config['extension_十周年UI_equipLayout'] ? 'on' : 'off';
-		}
-	},
-	playerMarkStyle:{
-        name: '人物标记样式',
-        init: 'decade',
-        item:{
-			decade: '十周年',
-			yellow:'黄色',
-            red:'红色',
-        },
-		update:function(){
-			if (window.decadeUI) ui.arena.dataset.playerMarkStyle = lib.config['extension_十周年UI_playerMarkStyle'];
-		}
+	campIdentityImageMode:{
+        name: '势力身份美化',
+        init: true,
     },
 	gainSkillsVisible:{
 		name: '获得技能显示',
@@ -13253,13 +13827,6 @@ config:{
 			if (window.decadeUI) ui.arena.dataset.gainSkillsVisible = lib.config['extension_十周年UI_gainSkillsVisible'];
 		}
 	},
-	cardAlternateNameVisible:{
-        name: '牌名辅助显示',
-        init: false,
-		update:function(){
-			if (window.decadeUI) ui.window.dataset.cardAlternateNameVisible = lib.config['extension_十周年UI_cardAlternateNameVisible'] ? 'on' : 'off';
-		}
-    },
 	notuoguanzhong: {
 		name: '不显示托管文字',
 		intro: "开启后托管时不显示“托管中...”文字和阴影",
@@ -13282,13 +13849,17 @@ config:{
 	},
 	*/
 	// 分割线
-	"sznuifengexian1":{
+	"sznuifengexian3":{
 		"name":"<font size='4'>------特效与动皮------</font>",
 		"clear":true,
 	},
+	szn_fenjiexian31:{
+		clear:true,
+		name:"<font size='3'><li>特效相关设置</font>",
+	},
 	jinengeffect: {
 		name: '转圈特效',
-		intro: "除受伤和回复外都会转圈，素材来自特效测试扩展（若使用特效测试扩展要记得关闭本开关）",
+		intro: "除受伤和回复外都会转圈，素材来自特效测试扩展（若使用特效测试扩展别的特效要记得关闭本开关）",
 		init: true,
 	},
 	gameAnimationEffect:{
@@ -13326,6 +13897,10 @@ config:{
             game.saveConfig('extension_十周年UI_cardUseEffect', value);
 			if (window.decadeUI) decadeUI.config.cardUseEffect = value;
         },
+	},
+	szn_fenjiexian32:{
+		clear:true,
+		name:"<font size='3'><li>动态皮肤相关设置</font>",
 	},
 	dynamicSkin:{
         name: '动态皮肤',
@@ -13374,7 +13949,7 @@ config:{
 		// },
 	// },
 	// 分割线
-	"sznuifengexian2":{
+	"sznuifengexian4":{
 		"name":"<font size='4'>------其他的设置------</font>",
 		"clear":true,
 	},

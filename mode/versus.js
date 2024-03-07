@@ -2632,7 +2632,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						game.falseZhu.init('re_caocao');
-						game.trueZhu.init('ol_yuanshao');
+						game.trueZhu.init('ol_sb_yuanshao');
 						game.trueZhu.hp++;
 						game.trueZhu.maxHp++;
 						game.falseZhu.hp++;
@@ -2640,13 +2640,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.trueZhu.update();
 						game.falseZhu.update();
 						ui.arena.classList.add('choose-character');
-						if(get.is.phoneLayout()){
-							ui.guanduInfo=ui.create.div('.touchinfo.left',ui.window);
+						if(evt=='shishengshibai'){
+							ui.guanduInfo=get.is.phoneLayout()?ui.create.div('.touchinfo.left',ui.window):ui.create.div(ui.gameinfo);
+							ui.guanduInfo.innerHTML='十胜十败（0）';
 						}
-						else{
-							ui.guanduInfo=ui.create.div(ui.gameinfo);
+						const showGuanduEvent=function(evt){
+							if(ui['GuanduEvent_'+evt]) return;
+							ui['GuanduEvent_'+evt]=ui.create.system(get.translation(evt),null,true);
+							lib.setPopped(ui['GuanduEvent_'+evt],function(){
+								var uiintro=ui.create.dialog('hidden');
+								uiintro.add(get.translation(evt));
+								uiintro.add('<div class="text center">'+get.translation(evt+'_info')+'</div>');
+								var ul=uiintro.querySelector('ul');
+								if(ul) ul.style.width='180px';
+								uiintro.add(ui.create.div('.placeholder'));
+								return uiintro;
+							},250);
+						};
+						for(const i in lib.playerOL){
+							const target=lib.playerOL[i];
+							if(target==game.me){
+								showGuanduEvent(evt);
+							}
+							else if(target.isOnline2()){
+								target.send(showGuanduEvent,evt);
+							}
 						}
-						ui.guanduInfo.innerHTML='当前事件：'+get.translation(evt);
 						if(lib.config.background_speak) game.playAudio('skill',evt);
 						var dialog=ui.create.dialog('本局特殊事件：'+get.translation(evt));
 						dialog.addText(get.translation(evt+'_info'),false);
@@ -2715,7 +2734,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.init.onfree();
 					ui.arena.classList.add('choose-character');
 					game.falseZhu.init('re_caocao');
-					game.trueZhu.init('ol_yuanshao');
+					game.trueZhu.init('ol_sb_yuanshao');
 					game.trueZhu.hp++;
 					game.trueZhu.maxHp++;
 					game.falseZhu.hp++;
@@ -2725,15 +2744,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var evt_list=[['huoshaowuchao','chunyuqiong'],['liangcaokuifa','sp_xuyou'],['zhanyanliangzhuwenchou','jsp_guanyu'],['shishengshibai','re_guojia'],['xutuhuanjin','yj_jushou'],['liangjunxiangchi','yj_jushou'],['jianshoudaiyuan','tianfeng'],['yiruoshengqiang','re_caocao'],['shichongerjiao','sp_xuyou']].randomGet();
 					var evt=evt_list[0],character=evt_list[1];
 					game.addGlobalSkill(evt);
+					const showGuanduEvent=function(evt){
+						if(ui['GuanduEvent_'+evt]) return;
+						ui['GuanduEvent_'+evt]=ui.create.system(get.translation(evt),null,true);
+						lib.setPopped(ui['GuanduEvent_'+evt],function(){
+							var uiintro=ui.create.dialog('hidden');
+							uiintro.add(get.translation(evt));
+							uiintro.add('<div class="text center">'+get.translation(evt+'_info')+'</div>');
+							var ul=uiintro.querySelector('ul');
+							if(ul) ul.style.width='180px';
+							uiintro.add(ui.create.div('.placeholder'));
+							return uiintro;
+						},250);
+					};
+					showGuanduEvent(evt);
 					game.broadcastAll(function(evt){
-						if(get.is.phoneLayout()){
-							ui.guanduInfo=ui.create.div('.touchinfo.left',ui.window);
-						}
-						else{
-							ui.guanduInfo=ui.create.div(ui.gameinfo);
-						}
 						if(lib.config.background_speak) game.playAudio('skill',evt);
-						ui.guanduInfo.innerHTML='当前事件：'+get.translation(evt);
+						if(evt=='shishengshibai'){
+							ui.guanduInfo=get.is.phoneLayout()?ui.create.div('.touchinfo.left',ui.window):ui.create.div(ui.gameinfo);
+							ui.guanduInfo.innerHTML='十胜十败（0）';
+						}
 					},evt);
 					game.me.chooseControl('ok').set('dialog',['###本局特殊事件：'+get.translation(evt)+'###'+get.translation(evt+'_info'),[[character],'character']]);
 					'step 1'
@@ -4688,7 +4718,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(!_status.shishengshibai) _status.shishengshibai=0;
 						_status.shishengshibai++;
 						game.broadcastAll(function(num){
-							if(ui.guanduInfo) ui.guanduInfo.innerHTML='当前事件：十胜十败（'+num+'）';
+							if(ui.guanduInfo) ui.guanduInfo.innerHTML='十胜十败（'+num+'）';
 						},_status.shishengshibai);
 						if(_status.shishengshibai%10==0&&trigger.targets&&trigger.targets.length>0&&!['delay','equip'].includes(get.type(trigger.card))){
 							trigger.effectCount++;

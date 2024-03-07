@@ -1909,6 +1909,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(!Array.isArray(list)||typeof num!='number'||list.length<=num) return false;
 							var card=get.copy(list[num]);
 							delete card.isCard;
+							card=get.autoViewAs(card,'unsure');
 							if(event.filterCard(card,player,event)) return true;
 							return false;
 						},
@@ -2266,10 +2267,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var i of lib.inpile){
 						var type=lib.skill.nsxingyun.getSixiang(i);
 						if(!type||list.includes(type)) continue;
-						if(event.filterCard({name:i},player,event)) return true;
+						if(event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) return true;
 						if(i=='sha'){
 							for(var j of lib.inpile_nature){
-								if(event.filterCard({name:i,nature:j},player,event)) return true;
+								if(event.filterCard(get.autoViewAs({name:i,nature:j},'unsure'),player,event)) return true;
 							}
 						}
 					}
@@ -8202,15 +8203,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				locked:false,
 				mod:{
 					targetInRange(card,player){
-						var list=player.getExpansions('ao_diegui');
-						for(var i=0;i<list.length;i++){
-							if(get.suit(list[i],false)==get.suit(card,false)) return true;
+						const cardSuit = get.suit(card,false);
+						const list = player.getExpansions('ao_diegui');
+						for(let i = 0; i < list.length; i++){
+							if(cardSuit==='unsure'||get.suit(list[i],false)===cardSuit) return true;
 						}
 					},
 					cardUsable(card,player){
-						var list=player.getExpansions('ao_diegui');
-						for(var i=0;i<list.length;i++){
-							if(get.suit(list[i],false)==get.suit(card,false)) return Infinity;
+						const cardSuit = get.suit(card,false);
+						const list = player.getExpansions('ao_diegui');
+						for(let i = 0; i < list.length; i++){
+							if(cardSuit==='unsure'||get.suit(list[i],false)===cardSuit) return Infinity;
 						}
 					},
 					maxHandcard(player,num){
@@ -9508,7 +9511,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(event.type=='wuxie'||!player.countCards('hse',{suit:'diamond'})) return false;
 					for(var i=0;i<lib.inpile.length;i++){
 						var name=lib.inpile[i];
-						if(name!='du'&&name!='shan'&&get.type(name)=='basic'&&event.filterCard({name:name},player,event)) return true;
+						if(name!='du'&&get.type(name)=='basic'&&event.filterCard(get.autoViewAs({name:name},'unsure'),player,event)) return true;
 					}
 					return false;
 				},
@@ -9517,7 +9520,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var list=[];
 						for(var i=0;i<lib.inpile.length;i++){
 							var name=lib.inpile[i];
-							if(name=='du'||name=='shan') continue;
+							if(name=='du') continue;
 							if(name=='sha'){
 								list.push(['基本','','sha']);
 								for(var j of lib.inpile_nature) list.push(['基本','',name,j]);
@@ -9529,7 +9532,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return ui.create.dialog('摆尾',[list,'vcard'],'hidden');
 					},
 					filter(button,player){
-						return _status.event.getParent().filterCard({name:button.link[2]},player,_status.event.getParent());
+						return _status.event.getParent().filterCard(get.autoViewAs({name:button.link[2]},'unsure'),player,_status.event.getParent());
 					},
 					check(button){
 						if(_status.event.getParent().type=='phase'){
@@ -9582,27 +9585,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return tag=='fireAttack'||player.countCards('he',{suit:'diamond'})>0;
 					},
 				},
-				group:['inari_baiwei_shan','inari_baiwei_draw'],
-			},
-			inari_baiwei_shan:{
-				prompt:'将一张♦牌当做闪使用或打出',
-				enable:['chooseToRespond','chooseToUse'],
-				viewAs:{name:'shan'},
-				selectCard:1,
-				filterCard:{suit:'diamond'},
-				popname:true,
-				check(card){
-					return 1/Math.max(0.1,get.value(card));
-				},
-				position:'hse',
-				ai:{
-					order:10,
-					result:{player:1},
-					respondShan:true,
-					skillTagFilter(player){
-						return player.countCards('hse',{suit:'diamond'})>0;
-					},
-				},
+				group:['inari_baiwei_draw'],
 			},
 			inari_baiwei_draw:{
 				trigger:{player:['useCardAfter','respondAfter']},
@@ -14611,7 +14594,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(event.current.needsToDiscard()){
 							att=1;
 						}
-						player.chooseControlList(['令'+name+'摸一张牌展示','令'+name+'手牌上永久+1','弃置一张牌并令'+name+'获得一张本回进入弃牌堆的牌'],function(){
+						player.chooseControlList(['令'+name+'摸一张牌展示','令'+name+'手牌上永久+1','弃置一张牌并令'+name+'获得一张本回合进入弃牌堆的牌'],function(){
 							return _status.event.att;
 						}).set('att',att);
 					}
@@ -17702,8 +17685,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						},
 						async content(event,trigger,player){
 							const skills = player.additionalSkills.junkyuheng;
-							await player.draw(skills.length);
 							await player.removeAdditionalSkills('junkyuheng');
+							await player.draw(skills.length);
 						},
 					},
 				},

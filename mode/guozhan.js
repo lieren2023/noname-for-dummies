@@ -10587,10 +10587,10 @@ return event.junling=='junling5'?1:0;});
 							if(huoshao&&player.inline(target.getNext())) return -3;
 							if(target.isUnseen()) return 0;
 							if(player.isMajor()) return 0;
-                            if(!player.isMajor()&&huoshao&&player.getNext().isMajor()) return -2;
-                            if(!player.isMajor()&&huoshao&&player.getNext().isMajor()&&player.getNext().getNext().isMajor()) return -3;
-                            if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()&&target.getNext().getNext().isMajor()) return 3;
-                            if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()) return 1.5;
+							if(!player.isMajor()&&huoshao&&player.getNext().isMajor()) return -2;
+							if(!player.isMajor()&&huoshao&&player.getNext().isMajor()&&player.getNext().getNext().isMajor()) return -3;
+							if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()&&target.getNext().getNext().isMajor()) return 3;
+							if(!player.isMajor()&&huoshao&&!target.isMajor()&&target.getNext().isMajor()) return 1.5;
 							return 1;
 						},
 						target:function(player,target){

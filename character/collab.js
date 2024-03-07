@@ -101,10 +101,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter(event,player){
 					var filter=event.filterCard;
-					if(filter({name:'sha',nature:'fire'},player,event)&&player.countCards('hes',{suit:'diamond'})) return true;
-					if(filter({name:'shan'},player,event)&&player.countCards('hes',{suit:'club'})) return true;
-					if(filter({name:'tao'},player,event)&&player.countCards('hes',{suit:'heart'})) return true;
-					if(filter({name:'wuxie'},player,event)&&player.countCards('hes',{suit:'spade'})) return true;
+					if(filter(get.autoViewAs({name:'sha',nature:'fire'},'unsure'),player,event)&&player.countCards('hes',{suit:'diamond'})) return true;
+					if(filter(get.autoViewAs({name:'shan'},'unsure'),player,event)&&player.countCards('hes',{suit:'club'})) return true;
+					if(filter(get.autoViewAs({name:'tao'},'unsure'),player,event)&&player.countCards('hes',{suit:'heart'})) return true;
+					if(filter(get.autoViewAs({name:'wuxie'},'unsure'),player,event)&&player.countCards('hes',{suit:'spade'})) return true;
 					return false;
 				},
 				usable:20,

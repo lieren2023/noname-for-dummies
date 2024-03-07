@@ -6758,7 +6758,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return Infinity;
 					},
 					cardUsable:function(card,player){
-						if(card.name=='sha'&&player.storage.xingongji2.includes(get.suit(card))) return Infinity;
+						if(card.name=='sha'){
+							const suit = get.suit(card);
+							return suit === 'unsure' || player.storage.xingongji2.includes(suit);
+						}
 					},
 					aiOrder:function(player,card,num){
 						if(get.name(card)=='sha'&&!player.storage.xingongji2.includes(get.suit(card))) return num+1;
@@ -8739,10 +8742,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter:function(event,player){
 					var filter=event.filterCard;
-					if(filter({name:'sha'},player,event)&&player.countCards('hs','shan')) return true;
-					if(filter({name:'shan'},player,event)&&player.countCards('hs','sha')) return true;
-					if(filter({name:'tao'},player,event)&&player.countCards('hs','jiu')) return true;
-					if(filter({name:'jiu'},player,event)&&player.countCards('hs','tao')) return true;
+					if(filter(get.autoViewAs({name:'sha'},'unsure'),player,event)&&player.countCards('hs','shan')) return true;
+					if(filter(get.autoViewAs({name:'shan'},'unsure'),player,event)&&player.countCards('hs','sha')) return true;
+					if(filter(get.autoViewAs({name:'tao'},'unsure'),player,event)&&player.countCards('hs','jiu')) return true;
+					if(filter(get.autoViewAs({name:'jiu'},'unsure'),player,event)&&player.countCards('hs','tao')) return true;
 					return false;
 				},
 				ai:{
@@ -10822,10 +10825,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(!player.countCards('hs')||player.hasSkill('reguhuo_phase')) return false;
 					for(var i of lib.inpile){
 						var type=get.type(i);
-						if((type=='basic'||type=='trick')&&event.filterCard({name:i},player,event)) return true;
+						if((type=='basic'||type=='trick')&&event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) return true;
 						if(i=='sha'){
 							for(var j of lib.inpile_nature){
-								if(event.filterCard({name:i,nature:j},player,event)) return true;
+								if(event.filterCard(get.autoViewAs({name:i,nature:j},'unsure'),player,event)) return true;
 							}
 						}
 					}
@@ -10845,7 +10848,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					filter:function(button,player){
 						var evt=_status.event.getParent();
-						return evt.filterCard({name:button.link[2],nature:button.link[3]},player,evt);
+						return evt.filterCard(get.autoViewAs({name:button.link[2],nature:button.link[3]},'unsure'),player,evt);
 					},
 					check:function(button){
 						var player=_status.event.player;

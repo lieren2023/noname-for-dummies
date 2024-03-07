@@ -1,13 +1,15 @@
 import { nonameInitialized, assetURL, userAgent, Uninstantable, GeneratorFunction, AsyncFunction } from "../../util/index.js";
-import { AI as ai } from '../../ai/index.js';
-import { Get as get } from '../../get/index.js';
-import { Game as game } from '../../game/index.js';
-import { Library as lib } from "../index.js";
-import { status as _status } from '../../status/index.js';
-import { UI as ui } from '../../ui/index.js';
-import { GNC as gnc } from '../../gnc/index.js';
+import { AI as ai } from '../../ai/index.js'
+import { Get as get } from '../../get/index.js'
+import { Game, Game as game } from '../../game/index.js'
+import { Library as lib } from "../index.js"
+import { status as _status } from '../../status/index.js'
+import { UI as ui } from '../../ui/index.js'
+import { GNC as gnc } from '../../gnc/index.js'
 
-import { LibInitPromises } from "./promises.js";
+import { LibInitPromises } from "./promises.js"
+import { GameEvent } from "../element/gameEvent.js"
+import { GameEventPromise } from "../element/gameEventPromise.js"
 
 export class LibInit extends Uninstantable {
 	/**
@@ -693,30 +695,37 @@ export class LibInit extends Uninstantable {
 				}
 			case "function":
 				if (gnc.is.generatorFunc(item)) {
-					let gen, lastEvent;
-					return function* (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai) {
+					// let gen, lastEvent;
+					let content = function* (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai) {
 						event.step = NaN;
-						if (!gen) gen = item(event, {
-							event: event,
-							step: step,
-							source: source,
-							player: player,
-							target: target,
-							targets: targets,
-							card: card,
-							cards: cards,
-							skill: skill,
-							forced: forced,
-							num: num,
-							trigger: trigger,
-							result: result
+						if (!this.gen) this.gen = item(event, {
+							event,
+							step,
+							source,
+							player,
+							target,
+							targets,
+							card,
+							cards,
+							skill,
+							forced,
+							num,
+							trigger,
+							result
 						});
-						var res = gen.next((lastEvent && (typeof lastEvent == 'object') && ("result" in lastEvent)) ? lastEvent.result : lastEvent);
+
+						let res
+						if (!this.last) res = this.gen.next()
+						else if (typeof this.last !== "object") res = this.gen.next(this.last)
+						else if (this.last instanceof GameEvent || this.last instanceof GameEventPromise)
+							res = this.gen.next(this.last.result)
+						else res = this.gen.next(this.last)
+
 						if (res.done){
-							gen = null;
+							this.gen = null;
 							return event.finish();
 						}
-						var currentResult = res.value;
+						let currentResult = res.value;
 						// TODO: use `event.debugger` to replace source
 						if (typeof currentResult == "function") yield currentResult;
 						else {
@@ -724,9 +733,14 @@ export class LibInit extends Uninstantable {
 								event.step = currentResult[1];
 								currentResult = currentResult[0];
 							}
-							lastEvent = currentResult;
+							this.last = currentResult;
 						}
-					}
+					}.bind({
+						gen: null,
+						last: undefined
+					})
+					content._gen = true
+					return content
 				} else if (item._parsed) return item;
 			// falls through
 			default:

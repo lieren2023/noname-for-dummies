@@ -801,7 +801,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target.draw();
 				},
 				destroy:function(card,targetPosition,player,event){
-					if(event.name!='lose'||event.name!='cardsDiscard'||targetPosition!='discardPile') return false;
+					if((event.name!='lose'&&event.name!='cardsDiscard')||targetPosition!='discardPile') return false;
 					var evt=event.getParent().relatedEvent;
 					if(evt&&evt.name=='useCard') return false;
 					return true;

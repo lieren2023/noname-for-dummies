@@ -728,7 +728,10 @@ export class Player extends HTMLDivElement {
 			virtualCard.init(['', '', card, info && info.cardnature]);
 		}
 		else if (get.itemtype(card) == 'card') executeDelayCardEffect.card = card;
-		else _status.event.next.remove(executeDelayCardEffect);
+		else {
+			_status.event.next.remove(executeDelayCardEffect);
+			executeDelayCardEffect.resolve();
+		}
 		executeDelayCardEffect.judge = judge;
 		executeDelayCardEffect.judge2 = judge2;
 		executeDelayCardEffect.setContent('executeDelayCardEffect');
@@ -759,7 +762,10 @@ export class Player extends HTMLDivElement {
 		const isArray = Array.isArray(cards);
 		if (cards && !isArray) gift.cards = [cards];
 		else if (isArray && cards.length) gift.cards = cards;
-		else _status.event.next.remove(gift);
+		else {
+			_status.event.next.remove(gift);
+			gift.resolve();
+		}
 		gift.deniedGifts = [];
 		gift.setContent('gift');
 		gift._args = Array.from(arguments);
@@ -825,7 +831,10 @@ export class Player extends HTMLDivElement {
 		const isArray = Array.isArray(cards);
 		if (cards && !isArray) recast.cards = [cards];
 		else if (isArray && cards.length) recast.cards = cards;
-		else _status.event.next.remove(recast);
+		else {
+			_status.event.next.remove(recast);
+			recast.resolve();
+		}
 		if (typeof recastingLose != 'function') {
 			if (recastingLose === null) console.trace(`recast的recastingLose参数不应传入null,可以用void 0或undefined占位`);
 			recastingLose = (player, cards) => player.loseToDiscardpile(cards).log = false;
@@ -1073,6 +1082,7 @@ export class Player extends HTMLDivElement {
 		if (!next.source) next.source = _status.event.player;
 		if (!next.slots.length) {
 			_status.event.next.remove(next);
+			next.resolve();
 		}
 		next.setContent('disableEquip');
 		return next;
@@ -1110,6 +1120,7 @@ export class Player extends HTMLDivElement {
 		if (!next.source) next.source = _status.event.player;
 		if (!next.slots.length) {
 			_status.event.next.remove(next);
+			next.resolve();
 		}
 		next.setContent('enableEquip');
 		return next;
@@ -1147,6 +1158,7 @@ export class Player extends HTMLDivElement {
 		if (!next.source) next.source = _status.event.player;
 		if (!next.slots.length) {
 			_status.event.next.remove(next);
+			next.resolve();
 		}
 		next.setContent('expandEquip');
 		return next;
@@ -2043,8 +2055,11 @@ export class Player extends HTMLDivElement {
 		return true;
 	}
 	$disableJudge() {
-		game.addVideo('$disableJudge', this);
 		this.storage._disableJudge = true;
+		for (let i = 0; i < this.node.judges.childNodes.length; i++) {
+			if (this.node.judges.childNodes[i].classList.contains('feichu')) return;
+		}
+		game.addVideo('$disableJudge', this);
 		var card = game.createCard('disable_judge', '', '');
 		card.fix();
 		card.classList.add('feichu');
@@ -4255,7 +4270,8 @@ export class Player extends HTMLDivElement {
 		var next = game.createEvent('chooseButton');
 		for (var i = 0; i < arguments.length; i++) {
 			if (typeof arguments[i] == 'boolean') {
-				next.forced = arguments[i];
+				if (!next.forced) next.forced = arguments[i];
+				else next.complexSelect = arguments[i];
 			}
 			else if (get.itemtype(arguments[i]) == 'dialog') {
 				next.dialog = arguments[i];
@@ -4281,6 +4297,7 @@ export class Player extends HTMLDivElement {
 		if (next.filterButton == undefined) next.filterButton = lib.filter.filterButton;
 		if (next.selectButton == undefined) next.selectButton = [1, 1];
 		if (next.ai == undefined) next.ai = function () { return 1; };
+		if (next.complexSelect !== false) next.complexSelect = true;
 		next.setContent('chooseButton');
 		next._args = Array.from(arguments);
 		next.forceDie = true;
@@ -4766,7 +4783,10 @@ export class Player extends HTMLDivElement {
 		}
 		if (get.itemtype(cards) == 'card') next.cards = [cards];
 		else if (get.itemtype(cards) == 'cards') next.cards = cards.slice(0);
-		else _status.event.next.remove(next);
+		else {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
 		next.setContent('showCards');
 		next._args = Array.from(arguments);
 		return next;
@@ -5009,7 +5029,10 @@ export class Player extends HTMLDivElement {
 				this.ai.tempIgnore.add(next.targets[i]);
 			}
 		}
-		if (typeof this.logAi == 'function' && !next.noai && !get.info(next.card).noai) {
+		if (typeof this.logAi == 'function' && !next.noai && !get.info(next.card).noai && !this.hasSkillTag(this, true, {
+			card: next.card,
+			targets: next.targets,
+		}, true)) {
 			var postAi = get.info(next.card).postAi;
 			if (postAi && postAi(next.targets)) {
 				next.postAi = true;
@@ -5123,7 +5146,10 @@ export class Player extends HTMLDivElement {
 			}
 		}
 		if (next.num == undefined) next.num = 1;
-		if (next.num <= 0) _status.event.next.remove(next);
+		if (next.num <= 0) {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
 		next.setContent('draw');
 		if (lib.config.mode == 'stone' && _status.mode == 'deck' &&
 			next.drawDeck == undefined && !next.player.isMin() && next.num > 1) {
@@ -5207,7 +5233,10 @@ export class Player extends HTMLDivElement {
 				next.notBySelf = true;
 			}
 		}
-		if (next.cards == undefined) _status.event.next.remove(next);
+		if (next.cards == undefined) {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
 		next.setContent('discard');
 		return next;
 	}
@@ -5241,7 +5270,10 @@ export class Player extends HTMLDivElement {
 				next.blank = true;
 			}
 		}
-		if (next.cards == undefined) _status.event.next.remove(next);
+		if (next.cards == undefined) {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
 		next.setContent('loseToDiscardpile');
 		return next;
 	}
@@ -5621,6 +5653,7 @@ export class Player extends HTMLDivElement {
 		}
 		if (!next.cards || !next.cards.length) {
 			_status.event.next.remove(next);
+			next.resolve();
 		}
 		else {
 			if (next.position == undefined) next.position = ui.discardPile;
@@ -5738,7 +5771,10 @@ export class Player extends HTMLDivElement {
 		if (next.cards == undefined && !nocard) next.cards = event.cards;
 		if (next.source == undefined && !nosource) next.source = event.customSource || event.player;
 		if (next.num == undefined) next.num = (event.baseDamage || 1) + (event.extraDamage || 0);
-		if (next.num <= 0) _status.event.next.remove(next);
+		if (next.num <= 0) {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
 		next.setContent('recover');
 		return next;
 	}
@@ -7434,6 +7470,22 @@ export class Player extends HTMLDivElement {
 		_status.event.clearStepCache();
 		return this;
 	}
+	$removeAdditionalSkills(skill, target){
+		const additionalSkills = this.additionalSkills[skill];
+		if (Array.isArray(additionalSkills)) {
+			if (typeof target === 'string') {
+				if (additionalSkills.includes(target)) {
+					additionalSkills.remove(target);
+					if (!additionalSkills.length) {
+						delete this.additionalSkills[skill];
+					}
+				}
+			}
+			else {
+				delete this.additionalSkills[skill];
+			}
+		}
+	}
 	getRemovableAdditionalSkills(skill, target){
 		const player = this, removableSkills = [];
 		if (this.additionalSkills[skill]) {
@@ -7462,22 +7514,22 @@ export class Player extends HTMLDivElement {
 		const player = this, skills = this.getRemovableAdditionalSkills(skill, target);
 		if(skills.length){
 			player.removeSkill(skills);
-			if (player.additionalSkills[skill]&&!player.additionalSkills[skill].length) delete player.additionalSkills[skill];
 		}
+		player.$removeAdditionalSkills(skill, target);
 		_status.event.clearStepCache();
 		return this;
 	}
 	removeAdditionalSkills(skill, target) {
 		const player = this, skills = this.getRemovableAdditionalSkills(skill, target);
-		if(skills.length){
-			return player.changeSkills([], skills).set('$handle', function(player, addSkills, removeSkills){
+		return player.changeSkills([], skills).set('$handle', function(player, addSkills, removeSkills){
+			if(removeSkills.length>0){
 				game.log(player, '失去了技能', ...removeSkills.map(i => {
 					return '#g【' + get.translation(i) + '】';
 				}));
-				player.removeSkill(skills);
-				if (player.additionalSkills[skill]&&!player.additionalSkills[skill].length) delete player.additionalSkills[skill];
-			});
-		}
+				player.removeSkill(removeSkills);
+			}
+			player.$removeAdditionalSkills(skill, target);
+		});
 	}
 	awakenSkill(skill, nounmark) {
 		if (!nounmark) this.unmarkSkill(skill);

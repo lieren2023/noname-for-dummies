@@ -803,7 +803,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.gwjingtian--;
 					player.updateMark('gwjingtian',true);
 					player.logSkill('gwjingtian');
-					if(_status.imchoosing){
+					if (_status.imchoosing) {
+						delete _status.event._buttonChoice;
 						delete _status.event._cardChoice;
 						delete _status.event._targetChoice;
 						game.check();

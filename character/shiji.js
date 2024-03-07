@@ -5780,7 +5780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(!player.countMark('spwuku')||!player.countCards('hse')||player.hasSkill('spmiewu2')) return false;
 					for(var i of lib.inpile){
 						var type=get.type2(i);
-						if((type=='basic'||type=='trick')&&event.filterCard({name:i},player,event)) return true;
+						if((type=='basic'||type=='trick')&&event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) return true;
 					}
 					return false;
 				},
@@ -5790,18 +5790,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						for(var i=0;i<lib.inpile.length;i++){
 							var name=lib.inpile[i];
 							if(name=='sha'){
-								if(event.filterCard({name:name},player,event)) list.push(['基本','','sha']);
-								for(var j of lib.inpile_nature){
-									if(event.filterCard({name:name,nature:j},player,event)) list.push(['基本','','sha',j]);
+								if(event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['基本','','sha']);
+								for(var nature of lib.inpile_nature){
+									if(event.filterCard(get.autoViewAs({name,nature},'unsure'),player,event)) list.push(['基本','','sha',j]);
 								}
 							}
-							else if(get.type2(name)=='trick'&&event.filterCard({name:name},player,event)) list.push(['锦囊','',name]);
-							else if(get.type(name)=='basic'&&event.filterCard({name:name},player,event)) list.push(['基本','',name]);
+							else if(get.type2(name)=='trick'&&event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['锦囊','',name]);
+							else if(get.type(name)=='basic'&&event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['基本','',name]);
 						}
 						return ui.create.dialog('灭吴',[list,'vcard']);
-					},
-					filter:function(button,player){
-						return _status.event.getParent().filterCard({name:button.link[2]},player,_status.event.getParent());
 					},
 					check:function(button){
 						if(_status.event.getParent().type!='phase') return 1;
@@ -6527,11 +6524,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			liuzhang:['liuzhang','tw_liuzhang'],
 			chenzhen:['sp_chenzhen','tw_chenzhen'],
 			feiyi:['ol_feiyi','feiyi','tw_feiyi'],
-			wangling:['wangling','tw_wangling'],
+			wangling:['dc_wangling','wangling','tw_wangling'],
 			qiaogong:['qiaogong','tw_qiaogong'],
 			sp_chendong:['sp_chendong','tw_chendong','chendong'],
 			sp_jiangqing:['sp_jiangqing','tw_jiangqing','jiangqing'],
-            kongrong:['dc_kongrong','sp_kongrong','jsrg_kongrong','kongrong'],
+			kongrong:['dc_kongrong','sp_kongrong','jsrg_kongrong','kongrong'],
 			dc_mifuren:['dc_mifuren','sp_mifuren'],
 		},
 		translate:{
@@ -6661,7 +6658,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			spchijie_info:'每回合限一次。当你成为其他角色使用牌的唯一目标时，你可判定。若结果大于6，则你取消此牌的所有目标。',
 			reduoji:'夺冀',
 			reduoji_info:'出牌阶段限一次，你可将一张牌置于其他角色的武将牌上，称为“冀”。当有装备牌因使用而进入一名角色的装备区后，若该角色有“冀”且其为使用者，则你获得此装备牌，其移去一个“冀”并摸一张牌。一名其他角色的回合结束后，若其有“冀”，则你获得其的所有“冀”。',
-			wangling:'王淩',
+			wangling:'手杀王淩',
+			wangling_prefix:'手杀',
 			mouli:'谋立',
 			mouli_info:'出牌阶段限一次，你可以将一张手牌交给一名其他角色，其获得如下效果直到你的下回合开始：其可以将黑色牌当做【杀】，红色牌当做【闪】使用。其第一次触发“使用【杀】/【闪】结算完成后”的时机时，你摸三张牌。',
 			zifu:'自缚',
@@ -6769,7 +6767,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dbchongjian_info:'吴势力技。你可以将一张装备牌当做一种【杀】（无距离限制且无视防具）或【酒】使用。当你以此法使用【杀】造成伤害后，你获得目标角色装备区内的X张牌（X为伤害值）。',
 			dbchoujue:'仇决',
 			dbchoujue_info:'锁定技。当你杀死其他角色后，你加1点体力上限并摸两张牌，然后本回合发动【却敌】的次数上限+1。',
-			sp_chendong:'陈武董袭',
+			sp_chendong:'手杀陈武董袭',
+			sp_chendong_prefix:'手杀',
 			spyilie:'毅烈',
 			spyilie_info:'出牌阶段开始时，你可选择：①本阶段内使用【杀】的次数上限+1。②本回合内使用【杀】被【闪】抵消时，摸一张牌。③背水：失去1点体力，然后依次执行上述所有选项。',
 			spfenming:'奋命',
@@ -6826,7 +6825,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			spjianyi_info:'锁定技。其他角色的回合结束时，若弃牌堆中有于本回合内因弃置而进入弃牌堆的防具牌，则你获得其中一张。',
 			spshangyi:'尚义',
 			spshangyi_info:'出牌阶段限一次。你可以弃置一张牌并选择一名其他角色。其观看你的手牌，然后你观看其手牌并获得其中的一张。',
-			sp_lvfan:'吕范',
+			sp_lvfan:'手杀吕范',
+			sp_lvfan_prefix:'手杀',
 			spdiaodu:'调度',
 			spdiaodu_info:'准备阶段，你可令一名角色摸一张牌，然后移动其装备区内的一张牌。',
 			spdiancai:'典财',

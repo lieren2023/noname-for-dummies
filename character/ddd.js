@@ -2031,7 +2031,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(trigger.targets&&trigger.targets.length){
 								let result=yield player.chooseControl(['额外结算','摸一张牌']).set('prompt','实荐：请选择一项').set('prompt2',`令${get.translation(trigger.card)}额外结算一次，或摸一张牌`).set('ai',()=>{
 									return get.event('choice');
-								}).set('choice',['basic','trick'].includes(get.type(trigger.card))&&trigger.targets.map(i=>get.effect(i,trigger.card,target,player)).reduce((p,c)=>p+c,0)>=5?0:1);
+								}).set('choice',function(){
+									if(trigger.card.name==='tiesuo'||!['basic','trick'].includes(get.type(trigger.card))) return 1;
+									if(trigger.targets.reduce((p,c)=>{
+										return p+get.effect(c,trigger.card,target,_status.event.player);
+									},0)>=get.effect(player,{name:'draw'},player,_status.event.player)) return 0;
+									return 1;
+								}());
 								if(result.index==0){
 									trigger.getParent().effectCount++;
 									game.log(player,'令',trigger.card,'额外结算一次');
@@ -2385,8 +2391,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							else wuxie=true;
 						}
 					}
-					if(shan&&event.filterCard({name:'shan'},player,event)) return true;
-					if(wuxie&&event.filterCard({name:'wuxie'},player,event)) return true;
+					if(shan&&event.filterCard(get.autoViewAs({name:'shan'},'unsure'),player,event)) return true;
+					if(wuxie&&event.filterCard(get.autoViewAs({name:'wuxie'},'unsure'),player,event)) return true;
 					return false;
 				},
 				hiddenCard (player,name){
@@ -4815,17 +4821,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							cardEnabled(card,player){
 								if(!player.storage['dddlianer_ceiling']) return;
 								var num=get.number(card);
-								if(typeof num!='number'||player.storage['dddlianer_ceiling']<=num) return false;
+								if(num!='unsure'&&(typeof num!='number'||player.storage['dddlianer_ceiling']<=num)) return false;
 							},
 							cardRespondable(card,player){
 								if(!player.storage['dddlianer_ceiling']) return;
 								var num=get.number(card);
-								if(typeof num!='number'||player.storage['dddlianer_ceiling']<=num) return false;
+								if(num!='unsure'&&(typeof num!='number'||player.storage['dddlianer_ceiling']<=num)) return false;
 							},
 							cardSavable(card,player){
 								if(!player.storage['dddlianer_ceiling']) return;
 								var num=get.number(card);
-								if(typeof num!='number'||player.storage['dddlianer_ceiling']<=num) return false;
+								if(num!='unsure'&&(typeof num!='number'||player.storage['dddlianer_ceiling']<=num)) return false;
 							},
 						}
 					}
@@ -5459,7 +5465,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ddd_luoxian:'罗宪',
 			dddshilie:'示烈',
 			visible_dddshilie:'明',
-			dddshilie_info:'每回合限一次。当你需要使用一张【杀】或【闪】时，你可以明置任意点数之和不小于X的手牌，视为你使用之。若本次明置的牌点数等于X，你摸等同于本次明置的牌数的牌（X为你于当前回合角色的体力值之和）。',
+			dddshilie_info:'每回合限一次。当你需要使用一张【杀】或【闪】时，你可以明置任意点数之和不小于X的手牌，视为你使用之。若本次明置的牌点数等于X，你摸等同于本次明置的牌数的牌（X为你与当前回合角色的体力值之和）。',
 			ddd_lie:'李娥',
 			dddyeshen:'冶身',
 			dddyeshen_info:'一名角色的结束阶段，你可以亮出牌堆底三张牌，令其将其中一张黑色牌当做最大目标数为牌名字数的【铁索连环】使用或重铸，其余牌置于牌堆顶，然后此技能亮出牌数-1；若减至零张或其中没有黑色牌，你复原此技能并对自己造成1点火焰伤害。',

@@ -1,7 +1,27 @@
 'use strict';
 decadeModule.import(function(lib, game, ui, get, ai, _status){
+	// 临时修复扩展的武将包在武将界面不显示的bug
+	// 活动武将
+	if (lib.config.extensions && lib.config.extensions.contains('活动武将') && lib.config['extension_活动武将_enable']) {
+		lib.config.all.characters.push('FaDongCharacter');
+		lib.config.all.characters.push('NianShouCharacter');
+		lib.config.all.characters.push('hezongkangqincharacter');
+		lib.config.all.characters.push('decadeQiHuan');
+		lib.config.all.characters.push('decadeZhuoGui');
+		lib.config.all.characters.push('decadeKuiBa');
+		lib.config.all.characters.push('HD_chaoshikong');
+		lib.config.all.characters.push('MiNikill');
+		lib.config.all.characters.push('WeChatkill');
+		lib.config.all.characters.push('MX_feihongyinxue');
+		lib.config.all.characters.push('huodongcharacter');
+	}
+	
 	// 修改game.js的函数menu:function(connectMenu){
 	// 将所有出现的 game.documentZoom 或 1.3 字符串替换为 1
+	
+	// 注：暂时先用旧代码，未适配新本体代码
+	// game.menuZoom = 1;
+	
 	ui.create.menu=function(connectMenu){
 		var menuTimeout = null;
 		if (!connectMenu && !game.syncMenu) {

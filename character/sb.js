@@ -10,7 +10,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sb_guanyu:['male','shu',4,['sbwusheng','sbyijue']],
 			sb_huangyueying:['female','shu',3,['sbjizhi','sbqicai']],
 			sb_sp_zhugeliang:['male','shu',3,['sbhuoji','sbkanpo']],
-			sb_zhugeliang:['male','shu',3,['sbguanxing','sbkongcheng'],['unseen']],
+			sb_zhugeliang:['male','shu',3,['sbguanxing','sbkongcheng']],
 			sb_zhanghe:['male','wei',4,['sbqiaobian']],
 			sb_yujin:['male','wei',4,['sbxiayuan','sbjieyue']],
 			sb_huaxiong:['male','qun','3/4/1',['new_reyaowu','sbyangwei']],
@@ -54,6 +54,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				sb_tong:['liucheng','sp_yangwan','sb_xiahoushi','sb_zhangfei','sb_zhaoyun','sb_sunce','sb_zhurong','sb_xiaoqiao'],
 				sb_yu:['sb_yujin','sb_lvmeng','sb_huangzhong','sb_huanggai','sb_zhouyu','sb_caoren','sb_ganning','sb_yl_luzhi','sb_huangyueying'],
 				sb_neng:['sb_huaxiong','sb_sunshangxiang','sb_jiangwei','sb_yuanshao','sb_menghuo','sb_guanyu'],
+				sb_waitforsort:['sb_xunyu'],
 			}
 		},
 		skill:{
@@ -827,7 +828,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return name=='sha'&&player.countCards('hs');
 						},
 						filter:function(event,player){
-							return event.filterCard({name:'sha'},player,event)||lib.inpile_nature.some(nature=>event.filterCard({name:'sha',nature:nature},player,event));
+							return event.filterCard(get.autoViewAs({name:'sha'},'unsure'),player,event)||lib.inpile_nature.some(nature=>event.filterCard(get.autoViewAs({name:'sha',nature},'unsure'),player,event));
 						},
 						chooseButton:{
 							dialog:function(event,player){
@@ -1140,7 +1141,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							});
 							if(!target){
 								event.finish();
-                                return;
+								return;
 							}
 							event.target=target;
 							player.logSkill('sbqicai_gain',target);
@@ -1420,20 +1421,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				marktext:'破',
 				intro:{
-					markcount:function(storage,player){
-						if(player.isUnderControl(true)) return storage[1].length;
-						return '?';
+					markcount:function(storage){
+						return storage[1].length;
 					},
 					mark:function(dialog,content,player){
-						if(player.isUnderControl(true)){
-							const storage=player.getStorage('sbkanpo');
-							const sum=storage[0];
-							const names=storage[1];
-							dialog.addText('剩余可记录'+sum+'次牌名');
-							if(names.length){
-								dialog.addText('已记录牌名：');
-								dialog.addSmall([names,'vcard']);
-							}
+						const storage=player.getStorage('sbkanpo');
+						const sum=storage[0];
+						const names=storage[1];
+						dialog.addText('剩余可记录'+sum+'次牌名');
+						if(player.isUnderControl(true)&&names.length){
+							dialog.addText('当前记录牌名：');
+							dialog.addSmall([names,'vcard']);
 						}
 					},
 				},
@@ -3765,10 +3763,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(!marked&&name!='sha'&&name!='shan') continue;
 						if(get.type(name)!='basic') continue;
 						if(player.hasCard(lib.skill.sblongdan.getFilter(name,player),'hs')){
-							if(event.filterCard({name:name},player,event)) return true;
+							if(event.filterCard(get.autoViewAs({name},'unsure'),player,event)) return true;
 							if(marked&&name=='sha'){
 								for(var nature of lib.inpile_nature){
-									if(event.filterCard({name:name,nature:nature},player,event)) return true;
+									if(event.filterCard(get.autoViewAs({name,nature},'unsure'),player,event)) return true;
 								}
 							}
 						}
@@ -3783,10 +3781,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(!marked&&name!='sha'&&name!='shan') continue;
 							if(get.type(name)!='basic') continue;
 							if(player.hasCard(lib.skill.sblongdan.getFilter(name,player),'hs')){
-								if(event.filterCard({name:name},player,event)) list.push(['基本','',name]);
+								if(event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['基本','',name]);
 									if(marked&&name=='sha'){
 									for(var nature of lib.inpile_nature){
-										if(event.filterCard({name:name,nature:nature},player,event)) list.push(['基本','',name,nature])
+										if(event.filterCard(get.autoViewAs({name,nature},'unsure'),player,event)) list.push(['基本','',name,nature])
 									}
 								}
 							}
@@ -6726,6 +6724,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sb_tong:'谋攻篇·同',
 			sb_yu:'谋攻篇·虞',
 			sb_neng:'谋攻篇·能',
+			sb_waitforsort:'等待分包',
 		},
 	};
 });

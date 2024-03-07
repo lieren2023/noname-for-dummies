@@ -1299,6 +1299,7 @@
 	animation-delay: 0.5s;
 	-webkit-animation: fade-in 0.5s forwards;
 	-webkit-animation-delay: 0.5s;
+	pointer-events: none; /* 点击事件会穿透到下层元素上，修复阵亡后无法点资料卡的bug */
 }
 
 /*玩家获得的技能显示*/

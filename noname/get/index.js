@@ -1791,7 +1791,7 @@ export class Get extends Uninstantable {
 					return game.checkMod(card, owner, game.checkMod(card, card.suit, 'suit', owner), 'cardsuit', owner);
 				}
 			}
-			if (lib.suits.includes(card.suit)) return card.suit;
+			if (card.suit === 'unsure' || lib.suits.includes(card.suit)) return card.suit;
 			return 'none';
 		}
 	}
@@ -1810,7 +1810,7 @@ export class Get extends Uninstantable {
 			}
 			return color;
 		}
-		else if (Object.keys(lib.color).includes(card.color)) {
+		else if (card.color === 'unsure' || Object.keys(lib.color).includes(card.color)) {
 			return card.color;
 		}
 		else if (Array.isArray(card.cards) && !lib.suit.includes(card.suit)) {
@@ -1835,7 +1835,8 @@ export class Get extends Uninstantable {
 		var number = null;
 		if ('number' in card) {
 			number = card.number;
-			if (typeof number != 'number') number = null;
+			if (number === 'unsure') return number;
+			else if (typeof number != 'number') number = null;
 		}
 		else {
 			if (card.cards && card.cards.length == 1) number = get.number(card.cards[0], false);

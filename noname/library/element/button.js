@@ -30,6 +30,7 @@ export class Button extends HTMLDivElement {
 				const intro = button.querySelector('.intro');
 				if (intro) intro.remove();
 			}
+			if (!button.buttonid) button.buttonid = get.id();
 			// @ts-ignore
 			button._args = [item, type, position, noClick, button];
 			return button;

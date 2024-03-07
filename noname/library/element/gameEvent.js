@@ -409,7 +409,18 @@ export class GameEvent {
 				catch {
 					throw new Error(`Content ${item} may not exist.\nlib.element.content[${item}] = ${lib.element.content[item]}`);
 				}
-				this.content = lib.element.content[item];
+
+				if (typeof lib.element.content[item] === "undefined")
+					throw new Error(`Cannot find lib.element.content[${item}]`)
+				// Generator的状态重置
+				else if (lib.element.content[item]._gen) {
+					this.content = lib.element.content[item].bind({
+						gen: null,
+						last: undefined
+					})
+				} else {
+					this.content = lib.element.content[item];
+				}
 				break;
 		}
 		return this;
@@ -453,6 +464,7 @@ export class GameEvent {
 		return this;
 	}
 	resume() {
+		delete this._buttonChoice;
 		delete this._cardChoice;
 		delete this._targetChoice;
 		delete this._skillChoice;
@@ -527,6 +539,7 @@ export class GameEvent {
 			complexSelect: this.complexSelect,
 			complexCard: this.complexCard,
 			complexTarget: this.complexTarget,
+			_buttonChoice: this._buttonChoice,
 			_cardChoice: this._cardChoice,
 			_targetChoice: this._targetChoice,
 			_skillChoice: this._skillChoice,
@@ -630,6 +643,7 @@ export class GameEvent {
 			}
 			delete this.fakeforce;
 		}
+		delete this._buttonChoice;
 		delete this._cardChoice;
 		delete this._targetChoice;
 		delete this._skillChoice;
@@ -652,6 +666,7 @@ export class GameEvent {
 			this.complexTarget = this._backup.complexTarget;
 			this.ai1 = this._backup.ai1;
 			this.ai2 = this._backup.ai2;
+			this._buttonChoice = this._backup._buttonChoice;
 			this._cardChoice = this._backup._cardChoice;
 			this._targetChoice = this._backup._targetChoice;
 			this._skillChoice = this._backup._skillChoice;

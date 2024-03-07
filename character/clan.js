@@ -487,8 +487,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var player=_status.event.player;
 						var num=_status.event.num;
 						var num2=player.getDamagedHp();
-						if(num>num2) return 7-get.value(card);
-						if(num==num2) return lib.skill.zhiheng.check(card);
+						if(num<num2) return 8-get.value(card);
+						if(num==num2||num2>=(2+num-num2)) return lib.skill.zhiheng.check(card);
 						return 0;
 					}).set('num',num).logSkill='clanxieshu';
 					'step 1'

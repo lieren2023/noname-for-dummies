@@ -150,7 +150,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:'chooseToUse',
 				filter:function(event,player){
 					if(!player.hasCard(card=>get.suit(card)=='club','sh')) return false;
-					return (event.type=='phase'||event.filterCard({name:'tiesuo'},player,event));
+					return (event.type=='phase'||event.filterCard(get.autoViewAs({name:'tiesuo'},'unsure'),player,event));
 				},
 				position:'hs',
 				filterCard:function(card,player,event){
@@ -816,24 +816,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				enable:'phaseUse',
 				filter:function(event,player){
-					return player.storage.drlt_zhenrong&&player.storage.drlt_zhenrong.length>0;
+					return player.getExpansions('drlt_zhenrong').length>0;
 				},
 				filterTarget:function(card,player,target){
 					return target.countDiscardableCards(player,'ej')>0;
 				},
 				content:function(){
 					'step 0'
-					player.chooseCardButton(player.storage.drlt_zhenrong,1,'请选择需要弃置的“荣”',true).ai=function(button){
+					player.chooseCardButton(player.getExpansions('drlt_zhenrong'),1,'请选择需要弃置的“荣”',true).ai=function(button){
 						return 6-get.value(button.link);
 					};
 					'step 1'
 					if(result.bool){
 						var cards=result.links;
-						for(var i=0;i<cards.length;i++){
-							player.storage.drlt_zhenrong.remove(cards[i]);
-						}
-						player.syncStorage('drlt_zhenrong');
-						player.$throw(cards);
+						player.loseToDiscardpile(cards);
 						player.discardPlayerCard(target,'ej',1,true);
 					}
 				},
@@ -2259,16 +2255,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			"nzry_chenglve1":{
 				mod:{
 					cardUsable:function(card,player){
-						var cards=player.storage.nzry_chenglve1;
-						for(var i=0;i<cards.length;i++){
-							if(cards[i]==get.suit(card)) return Infinity;
-						}
+						const suit = get.suit(card);
+						if (suit == 'unsure' || player.getStorage('nzry_chenglve1').includes(suit)) return Infinity;
 					},
 					targetInRange:function(card,player){
-						var cards=player.storage.nzry_chenglve1;
-						for(var i=0;i<cards.length;i++){
-							if(cards[i]==get.suit(card)) return true;
-						}
+						const suit = get.suit(card);
+						if (suit == 'unsure' || player.getStorage('nzry_chenglve1').includes(suit)) return true;
 					}
 				},
 				onremove:true,
@@ -7293,6 +7285,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			// 蛊惑（guhuo）技能错误，请勿引用
+			/*
 			guhuo:{
 				enable:'phaseUse',
 				usable:1,
@@ -7361,6 +7355,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					threaten:1.6,
 				}
 			},
+			*/
 			huangtian:{
 				unique:true,
 				audio:'huangtian2',
@@ -7429,10 +7424,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(!player.countCards('hs')) return false;
 					for(var i of lib.inpile){
 						var type=get.type(i);
-						if((type=='basic'||type=='trick')&&event.filterCard({name:i},player,event)) return true;
+						if((type=='basic'||type=='trick')&&event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) return true;
 						if(i=='sha'){
 							for(var j of lib.inpile_nature){
-								if(event.filterCard({name:i,nature:j},player,event)) return true;
+								if(event.filterCard(get.autoViewAs({name:i,nature:j},'unsure'),player,event)) return true;
 							}
 						}
 					}
@@ -7442,11 +7437,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					dialog:function(event,player){
 						var list=[];
 						for(var i of lib.inpile){
-							if(event.type!='phase') if(!event.filterCard({name:i},player,event)) continue;
+							if(event.type!='phase') if(!event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) continue;
 							var type=get.type(i);
 							if(type=='basic'||type=='trick') list.push([type,'',i]);
 							if(i=='sha'){
-								if(event.type!='phase') if(!event.filterCard({name:i,nature:j},player,event)) continue;
+								if(event.type!='phase') if(!event.filterCard(get.autoViewAs({name:i,nature:j},'unsure'),player,event)) continue;
 								for(var j of lib.inpile_nature) list.push(['基本','','sha',j]);
 							}
 						}
@@ -7644,7 +7639,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 3'
 					game.delayx();
 					game.broadcastAll(function(onEnd){
-                        _status.event.onEnd01=onEnd;
+						_status.event.onEnd01=onEnd;
 						if(_status.guhuoNode) _status.guhuoNode.listenTransition(onEnd,300);
 					},event.onEnd01);
 					'step 4'

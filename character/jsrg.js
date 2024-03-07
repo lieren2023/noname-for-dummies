@@ -235,7 +235,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						enable:'chooseToUse',
 						filter:function(event,player){
 							for(const name of ['wuxie','huogong']){
-								if(event.filterCard({name},player,event)) return true;
+								if(event.filterCard(get.autoViewAs({name},'unsure'),player,event)) return true;
 							}
 							return false;
 						},
@@ -246,7 +246,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						viewAs:function(cards,player){
 							const event=get.event(),filter=event._backup.filterCard;
 							for(const name of ['wuxie','huogong']){
-								if(filter({name},player,event)) return {name};
+								if(filter(get.autoViewAs({name},'unsure'),player,event)) return {name};
 							}
 							return null;
 						},
@@ -508,13 +508,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						onremove:true,
 						mod:{
 							cardEnabled:function(card,player){
-								if(player.getStorage('jsrgfumou_forbid').includes(get.color(card))) return false;
+								const color = get.color(card);
+								if (color != 'unsure' && player.getStorage('jsrgfumou_forbid').includes(color)) return false;
 							},
 							cardRespondable:function(card,player){
-								if(player.getStorage('jsrgfumou_forbid').includes(get.color(card))) return false;
+								const color = get.color(card);
+								if (color != 'unsure' && player.getStorage('jsrgfumou_forbid').includes(color)) return false;
 							},
 							cardSavable:function(card,player){
-								if(player.getStorage('jsrgfumou_forbid').includes(get.color(card))) return false;
+								const color = get.color(card);
+								if (color != 'unsure' && player.getStorage('jsrgfumou_forbid').includes(color)) return false;
 							},
 						},
 						mark:true,
@@ -810,14 +813,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							})) return false;
 							return get.inpileVCardList(info=>{
 								if(info[0]!='basic') return false;
-								return event.filterCard({name:info[2],nature:info[3]},player,event);
+								return event.filterCard(get.autoViewAs({name:info[2],nature:info[3]},'unsure'),player,event);
 							}).length;
 						},
 						chooseButton:{
 							dialog(event,player){
 								const vcards=get.inpileVCardList(info=>{
 									if(info[0]!='basic') return false;
-									return event.filterCard({name:info[2],nature:info[3]},player,event);
+									return event.filterCard(get.autoViewAs({name:info[2],nature:info[3]},'unsure'),player,event);
 								});
 								return ui.create.dialog('镇胆',[vcards,'vcard']);
 							},
@@ -1244,6 +1247,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 						},
 						charlotte:true,
+						onremove:true,
 						mod:{
 							maxHandcard(player,num){
 								return num-player.countMark('jsrgzhaotu_handcard');
@@ -1255,8 +1259,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					order:5,
 					result:{
 						target(player,target){
-							if(player.hasSkill('jsrgjingju')||player.hasZhuSkill('jsrgweizhui')) return get.attitude(player,target);
-							return -1;
+							let dis=0.5-0.75*target.needsToDiscard(2,null,true);
+							if(dis>0) return dis;
+							if(player.hasSkill('jsrgjingju')&&player.hasZhuSkill('jsrgweizhui')&&get.attitude(player,target)>0) return game.countPlayer(current=>{
+								if(current===player||current===target||current.group!=='wei') return false;
+								return player.hasZhuSkill('jsrgweizhui',current)&&get.attitude(player,current)>0;
+							});
+							return dis;
 						},
 					},
 				},
@@ -1271,20 +1280,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					})) return false;
 					return get.inpileVCardList(info=>{
 						if(info[0]!='basic') return false;
-						return event.filterCard({name:info[2],nature:info[3]},player,event);
+						return event.filterCard(get.autoViewAs({name:info[2],nature:info[3]},'unsure'),player,event);
 					}).length;
 				},
 				chooseButton:{
 					dialog:function(event,player){
 						const vcards=get.inpileVCardList(info=>{
 							if(info[0]!='basic') return false;
-							return event.filterCard({name:info[2],nature:info[3]},player,event);
+							return event.filterCard(get.autoViewAs({name:info[2],nature:info[3]},'unsure'),player,event);
 						});
 						return ui.create.dialog('惊惧',[vcards,'vcard'],'hidden');
 					},
 					check:function(button){
+						let player=_status.event.player;
 						if(get.event().getParent().type!='phase') return 1;
-						return get.player().getUseValue({name:button.link[2],nature:button.link[3]});
+						return get.player().getUseValue({name:button.link[2],nature:button.link[3]})+game.countPlayer(current=>{
+							if(current===player||current.group!=='wei') return false;
+							return player.hasZhuSkill('jsrgweizhui',current)&&get.attitude(player,current)>0;
+						});
 					},
 					backup:function(links,player){
 						return {
@@ -1373,7 +1386,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return player.canUse(get.autoViewAs({name:'guohe'},[card]),get.event('target'));
 					}).set('target',player).set('ai',card=>{
 						if(get.effect(get.event('target'),get.autoViewAs({name:'guohe'},[card]),player)<=0) return 0;
-						return 6-get.value(card);
+						return 7-get.value(card);
 					});
 					if(bool){
 						trigger.player.logSkill('jsrgweizhui',player);
@@ -3819,16 +3832,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return game.hasPlayer(i=>i!=player);
 				},
 				content:function*(event,map){
-					var player=map.player,trigger=map.trigger;
-					var targets=game.filterPlayer(i=>i!=player);
+					var player=map.player,trigger=map.trigger, targets=game.filterPlayer(i=>i!=player);
+					var shas=player.mayHaveSha(target,'use',null,'count')-player.getCardUsable('sha',true);
 					for(var target of targets){
 						var att=get.attitude(target,player);
 						var result=yield target.chooseCard('he',`负山：是否交给${get.translation(player)}一张牌？`,`若如此做，其此阶段使用【杀】的次数上限+1`).set('att',att).set('ai',card=>{
 							if(!get.event('goon')) return -get.value(card);
 							var isSha=get.name(card,get.event('target'))=='sha';
 							if(get.event('att')<0) return (isSha?0:5)-get.value(card);
-							return (isSha?10:5.5)-get.value(card);
-						}).set('goon',att>0&&player.countCards('sha')>player.getCardUsable('sha',true)||att<0&&!player.hasSkill('jsrgfushan_sha')).set('target',player);
+							return (isSha?10:0)-get.value(card);
+						}).set('goon',att>0&&shas>=0||att<0&&target.hp>player.getCardUsable('sha',true)&&shas<-1/Math.max(1,player.hp)).set('target',player);
 						if(result.bool){
 							target.give(result.cards,player);
 							target.line(player);
@@ -4749,11 +4762,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var name of lib.inpile){
 						if(get.type2(name)!='basic') continue;
 						var card={name:name};
-						if(event.filterCard(card,player,event)) return true;
+						if(event.filterCard(get.autoViewAs(card,'unsure'),player,event)) return true;
 						if(name=='sha'){
 							for(var nature of lib.inpile_nature){
 								card.nature=nature;
-								if(event.filterCard(card,player,event)) return true;
+								if(event.filterCard(get.autoViewAs(card,'unsure'),player,event)) return true;
 							}
 						}
 					}
@@ -4765,19 +4778,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var list=[];
 						for(var name of lib.inpile){
 							if(name=='sha'){
-								if(event.filterCard({name:name},player,event)) list.push(['基本','','sha']);
+								if(event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['基本','','sha']);
 								for(var nature of lib.inpile_nature){
-									if(event.filterCard({name:name,nature:nature},player,event)) list.push(['基本','','sha',nature]);
+									if(event.filterCard(get.autoViewAs({name,nature},'unsure'),player,event)) list.push(['基本','','sha',nature]);
 								}
 							}
-							else if(get.type(name)=='basic'&&event.filterCard({name:name},player,event)) list.push(['基本','',name]);
+							else if(get.type(name)=='basic'&&event.filterCard(get.autoViewAs({name},'unsure'),player,event)) list.push(['基本','',name]);
 						}
 						var dialog=ui.create.dialog('念恩',[list,'vcard']);
 						dialog.direct=true;
 						return dialog;
 					},
 					filter:function(button,player){
-						return _status.event.getParent().filterCard({name:button.link[2],nature:button.link[3]},player,_status.event.getParent());
+						return _status.event.getParent().filterCard(get.autoViewAs({name:button.link[2],nature:button.link[3]},'unsure'),player,_status.event.getParent());
 					},
 					check:function(button){
 						if(_status.event.getParent().type!='phase') return 1;
@@ -5025,7 +5038,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var name of lib.inpile){
 						if(get.type(name)!='basic') continue;
 						if(player.getStorage('jsrgjixiang_used').includes(name)) continue;
-						var card={name:name};
+						var card={name:name,isCard:true};
 						if(event.filterCard(card,event.player,event)) return true;
 						if(name=='sha'){
 							for(var nature of lib.inpile_nature){

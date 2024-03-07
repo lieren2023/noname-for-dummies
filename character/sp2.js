@@ -4,6 +4,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'sp2',
 		connect:true,
 		character:{
+			liqueguosi:['male','qun',4,['xiongsuan']],
+			star_zhangchunhua:['female','wei',3,['starliangyan','starminghui']],
 			star_yuanshao:['male','qun',4,['starxiaoyan','starzongshi','starjiaowang','staraoshi'],['zhu']],
 			star_dongzhuo:['male','qun',5,['starweilin','starzhangrong','starhaoshou'],['zhu']],
 			star_yuanshu:['male','qun',4,['starcanxi','starpizhi','starzhonggu'],['zhu']],
@@ -37,7 +39,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xinping:['male','qun',3,['fuyuan','zhongjie','yongdi']],
 			zhangning:['female','qun',3,['tianze','difa']],
 			tongyuan:['male','qun',4,['chaofeng','chuanshu']],
-			sp_mifangfushiren:['male','shu',4,['dcmffengshi']],
+			sp_mifangfushiren:['male','shu',4,['fengshi']],
 			re_nanhualaoxian:['male','qun',4,['gongxiu','jinghe']],
 			dufuren:['female','wei',3,['yise','shunshi']],
 			caoanmin:['male','wei',4,['xianwei']],
@@ -96,7 +98,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterSort:{
 			sp2:{
-				sp_whlw:["xurong","lijue","zhangji","fanchou","guosi","duanwei","liangxing","zhangheng",'tangji','niufu','dongxie'],
+				sp_whlw:["xurong","lijue","zhangji","fanchou","guosi","duanwei","liangxing","zhangheng",'tangji','niufu','dongxie','liqueguosi'],
 				sp_zlzy:["zhangqiying","lvkai","zhanggong","weiwenzhugezhi","beimihu"],
 				sp_longzhou:["xf_tangzi","xf_huangquan","xf_sufei","sp_liuqi"],
 				sp_zizouqi:["mangyachang","xugong","zhangchangpu"],
@@ -111,12 +113,186 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				sp_xuzhou:['re_taoqian','caosong','zhangmiao','qiuliju'],
 				sp_zhongyuan:['re_hucheer','re_zoushi','caoanmin','re_dongcheng'],
 				sp_xiaohu:['haomeng','yanfuren','yanrou','dc_zhuling'],
-				sp_star:['star_caoren','star_yuanshu','star_dongzhuo','star_yuanshao'],
+				sp_star:['star_caoren','star_yuanshu','star_dongzhuo','star_yuanshao','star_zhangchunhua'],
 				mini_qixian:['mp_liuling'],
 				sp_decade:['caobuxing','re_maliang','dc_jikang'],
 			}
 		},
 		skill:{
+			//李傕郭汜
+			xiongsuan:{
+				audio:2,
+				enable:'phaseUse',
+				filterTarget:true,
+				filterCard:lib.filter.cardDiscardable,
+				position:'h',
+				usable:1,
+				async content(event,trigger,player){
+					const target=event.target;
+					await target.damage();
+					await player.draw(3);
+					if(target!=player) await player.loseHp();
+				},
+				ai:{
+					order:9,
+					result:{
+						target(player,target){
+							if(player.getHp()+player.countCards('hs',card=>player.canSaveCard(card,player))<=1) return 0;
+							const num=get.sgn(get.attitude(player,target));
+							if(num*get.damageEffect(target,player,player)>0) return num*get.damageEffect(target,player,player);
+							if(target==player) return 0.00001;
+							return 0;
+						},
+					},
+				},
+			},
+			//张春华
+			starliangyan:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filterTarget:lib.filter.notMe,
+				chooseButton:{
+					dialog(event,player){
+						const name=get.translation(event.result.targets[0]);
+						const list=[
+							'你摸一张牌，其弃置一张牌','你弃置一张牌，其摸一张牌',
+							'你摸两张牌，其弃置两张牌','你弃置两张牌，其摸两张牌'
+						].map((item,i)=>[i,item]);
+						const dialog=ui.create.dialog(
+							`梁燕：请选择你与${name}要执行的选项`,
+							[list.slice(0,2),'tdnodes'],
+							[list.slice(2,4),'tdnodes'],
+							'hidden'
+						);
+						return dialog;
+					},
+					filter(button,player){
+						const link=button.link;
+						if(link%2===0) return true;
+						return player.countDiscardableCards(player,'he')>=(link+1)/2;
+					},
+					check(button){
+						const player=get.player(),target=get.event().getParent().result.targets[0];
+						const link=button.link;
+						if(get.attitude(player,target)<=0&&link===2) return 100;
+						const ph=player.countCards('h'),th=target.countCards('h');
+						if(link%2===0){
+							const num=(link/2)+1;
+							if(ph+num===th-num) return 10;
+						}
+						else{
+							const num=(link+1)/2;
+							if(ph-num===th+num) return 10;
+						}
+						return 5;
+					},
+					backup(links){
+						return {
+							audio:'starliangyan',
+							target:get.event().result.targets[0],
+							link:links[0],
+							filterTarget(card,player,target){
+								return target===lib.skill.starliangyan_backup.target;
+							},
+							selectTarget:-1,
+							async content(content,trigger,player){
+								const target=lib.skill.starliangyan_backup.target;
+								const link=lib.skill.starliangyan_backup.link;
+								const num=link<=1?1:2;
+								const fn=['draw','chooseToDiscard'];
+								if(link%2===1) fn.reverse();
+								await player[fn[0]](num,true,'he');
+								await target[fn[1]](num,true,'he');
+								if(player.countCards('h')===target.countCards('h')){
+									const skipper=[player,target][link%2];
+									skipper.skip('phaseDiscard');
+									game.log(skipper,'跳过了下一个','#y弃牌阶段');
+								}
+							}
+						};
+					},
+					prompt(links){
+						return '点击“确定”以执行效果';
+					},
+				},
+				subSkill:{
+					backup:{},
+				},
+				ai:{
+					order(item,player){
+						if(!game.hasPlayer(current=>current!==player&&get.attitude(player,current)>0)&&game.hasPlayer(current=>get.attitude(player,current)<=0)) return 10;
+						if(game.hasPlayer(current=>{
+							const del=player.countCards('h')-current.countCards('h'),toFind=[2,4].find(num=>Math.abs(del)===num);
+							if(toFind===4&&del<0&&get.attitude(player,current)<=0){
+								return true;
+							}
+							return false;
+						})) return 10;
+						return 1;
+					},
+					result:{
+						target(player,target){
+							const del=player.countCards('h')-target.countCards('h'),toFind=[2,4].find(num=>Math.abs(del)===num);
+							if(toFind){
+								return -del*(get.attitude(player,target)*Math.min(3,target.countCards('h')))*toFind/10;
+							}
+							return -1;
+						},
+					},
+				},
+			},
+			starminghui:{
+				audio:2,
+				trigger:{global:'phaseEnd'},
+				filter(event,player){
+					return player.isMinHandcard()||player.isMaxHandcard();
+				},
+				direct:true,
+				async content(event,trigger,player){
+					let logged=false;
+					if(player.isMinHandcard()){
+						const card=new lib.element.VCard({
+							name:'sha',
+						});
+						const result=await player.chooseUseTarget(`###${get.prompt('starminghui')}###视为使用一张无距离限制的【杀】`,card,false,'nodistance').set('logSkill','starminghui').forResult();
+						if(result.bool) logged=true;
+					}
+					const num=player.countCards('h');
+					if(player.isMaxHandcard()&&num>0){
+						const maxNum=game.findPlayer(current=>{
+							return !game.hasPlayer(current2=>{
+								if(current2===player) return false;
+								return current2.countCards('h')>current.countCards('h');
+							});
+						}).countCards('h');
+						const leastDiscardNum=num-maxNum+1;
+						const prompt=logged?`是否将手牌弃置至不为最多？`:get.prompt('starminghui');
+						const next=player.chooseToDiscard(prompt,`弃置至少${get.cnNumber(leastDiscardNum)}张手牌，然后你令一名角色回复1点体力`)
+							.set('selectCard',[leastDiscardNum,Infinity])
+							.set('goon',game.hasPlayer(current=>get.recoverEffect(current,get.player(),get.player())))
+							.set('ai',card=>{
+								if(!get.event('goon')) return 0;
+								if(get.tag(card,'recover')) return 0;
+								if(ui.selected.cards.length===get.event('selectCard')[0]-1) return 6.5-get.value(card);
+								return 4-get.value(card);
+							});
+						if(!logged) next.set('logSkill','starminghui');
+						const result=await next.forResult();
+						if(!result.bool) return;
+						if(!player.isUnderControl(true)&&!player.isOnline()) await game.asyncDelayx();
+						const [bool,targets]=await player.chooseTarget('令一名角色回复1点体力')
+							.set('ai',target=>get.recoverEffect(target,get.player(),get.player()))
+							.forResult('bool','targets');
+						if(bool){
+							const target=targets[0];
+							player.line(target,'green');
+							await target.recover();
+						}
+					}
+				},
+				
+			},
 			//星袁绍
 			starxiaoyan:{
 				audio:2,
@@ -698,16 +874,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				enable:'chooseToUse',
 				filter:function(event,player){
-					if(!event.filterCard({name:'sha'},player,event)&&!event.filterCard({name:'wuxie'},player,event)) return false;
-					return player.countCards('hs',card=>{
-						return !player.getStorage('starlifeng_count').includes(get.color(card,player))||_status.connectMode;
-					});
+					if(!event.filterCard(get.autoViewAs({name:'sha'},'unsure'),player,event)&&!event.filterCard(get.autoViewAs({name:'wuxie'},'unsure'),player,event)) return false;
+					return player.hasCard(card=>{
+						return !player.getStorage('starlifeng_count').includes(get.color(card,player));
+					},'hs');
 				},
 				chooseButton:{
 					dialog:function(event,player){
 						var list=[];
-						if(event.filterCard({name:'sha'},player,event)) list.push(['基本','','sha']);
-						if(event.filterCard({name:'wuxie'},player,event)) list.push(['锦囊','','wuxie']);
+						if(event.filterCard(get.autoViewAs({name:'sha'},'unsure'),player,event)) list.push(['基本','','sha']);
+						if(event.filterCard(get.autoViewAs({name:'wuxie'},'unsure'),player,event)) list.push(['锦囊','','wuxie']);
 						return ui.create.dialog('砺锋',[list,'vcard']);
 					},
 					check:function(button){
@@ -1390,10 +1566,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				mod:{
 					targetInRange:function(card,player){
-						if(get.color(card)=='none') return true;
+						const color = get.color(card);
+						if (color === 'none' || color === 'unsure') return true;
 					},
 					cardUsable:function(card){
-						if(get.color(card)=='none') return Infinity;
+						const color = get.color(card);
+						if (color === 'none' || color === 'unsure') return Infinity;
 					},
 				}
 			},
@@ -3267,15 +3445,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								else{
 									switch(type){
 										case 'basic':
-											if(sha>0&&get.name(card)=='sha'){
+											if(sha>0&&get.name(i)=='sha'){
 												sha--;
 												var add=3;
-												if(!player.hasValueTarget(card)&&player.hasValueTarget(card,false)) add+=player.getUseValue(card,false);
+												if(!player.hasValueTarget(i)&&player.hasValueTarget(i,false)) add+=player.getUseValue(i,false);
 												eff+=add;
 											}
 											break
 										case 'trick':
-											if(player.hasValueTarget(card)) eff+=6;
+											if(player.hasValueTarget(i)) eff+=6;
 											break;
 										case 'equip':
 											if(player.hasValueTarget({name:'guohe_copy2'})) eff+=player.getUseValue({name:'guohe_copy2'});
@@ -3292,15 +3470,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									if(type==control) continue;
 									switch(type){
 										case 'basic':
-											if(sha>0&&get.name(card)=='sha'){
+											if(sha>0&&get.name(i)=='sha'){
 												sha--;
 												var add=3;
-												if(!player.hasValueTarget(card)&&player.hasValueTarget(card,false)) add+=player.getUseValue(card,false);
+												if(!player.hasValueTarget(i)&&player.hasValueTarget(i,false)) add+=player.getUseValue(i,false);
 												eff+=add;
 											}
 											break
 										case 'trick':
-											if(player.hasValueTarget(card)) eff+=6;
+											if(player.hasValueTarget(i)) eff+=6;
 											break;
 										case 'equip':
 											if(player.hasValueTarget({name:'guohe_copy2'})) eff+=player.getUseValue({name:'guohe_copy2'});
@@ -6224,10 +6402,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					targetInRange:function(card){
-						if(get.color(card)=='black') return true;
+						const color = get.color(card);
+						if (color === 'black' || color === 'unsure') return true;
 					},
 					cardUsable:function(card){
-						if(get.color(card)=='black') return Infinity;
+						const color = get.color(card);
+						if (color === 'black' || color === 'unsure') return Infinity;
 					},
 				},
 			},
@@ -10577,6 +10757,72 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			//糜芳傅士仁
+			fengshi:{
+				audio:'mffengshi',
+				audioname:['sp_mifangfushiren'],
+				trigger:{player:'useCardToPlayered'},
+				filter(event,player){
+					if(!event.isFirstTarget) return false;
+					return event.targets.some(target=>{
+						return player.countCards('h')>target.countCards('h')&&target.countCards('he')>0&&player.hasCard(card=>{
+							return lib.filter.cardDiscardable(card,player,'fengshi');
+						},'he');
+					});
+				},
+				direct:true,
+				async content(event,trigger,player){
+					const {result:{bool,targets}}=await player.chooseTarget(get.prompt('fengshi'),'弃置你与一名目标角色的各一张牌，然后令'+get.translation(event.card)+'对其造成的伤害+1',(card,player,target)=>{
+						const targets=get.event().getTrigger().targets;
+						if(!targets.includes(target)) return false;
+						return player.countCards('h')>target.countCards('h')&&target.countCards('he')>0&&player.hasCard(card=>{
+							return lib.filter.cardDiscardable(card,player,'fengshi');
+						},'he');
+					}).set('ai',target=>{
+						const player=get.event('player');
+						const card=get.event().getTrigger().card;
+						if(!get.info('dcmffengshi').check({card:card,target:target})) return 0;
+						return get.effect(target,{name:'guohe_copy2'},player,player);
+					});
+					if(bool){
+						const target=targets[0];
+						player.logSkill('fengshi',target);
+						await player.chooseToDiscard('he',true);
+						await player.discardPlayerCard(target,'he',true);
+						if(get.tag(trigger.card,'damage')){
+							var id=target.playerid;
+							var map=trigger.getParent().customArgs;
+							if(!map[id]) map[id]={};
+							if(typeof map[id].extraDamage!='number') map[id].extraDamage=0;
+							map[id].extraDamage++;
+						}
+					}
+				},
+				group:'fengshi_target',
+				subSkill:{
+					target:{
+						inherit:'dcmffengshi',
+						trigger:{target:'useCardToTargeted'},
+						filter(event,player){
+							if(event.player==event.target) return false;
+							return event.player.countCards('h')>player.countCards('h')&&event.player.countCards('he')>0&&player.hasCard(card=>{
+								return lib.filter.cardDiscardable(card,player,'fengshi');
+							},'he');
+						},
+						async content(event,trigger,player){
+							const target=trigger.player;
+							await player.chooseToDiscard('he',true);
+							await player.discardPlayerCard(target,'he',true);
+							if(get.tag(trigger.card,'damage')){
+								var id=player.playerid;
+								var map=trigger.getParent().customArgs;
+								if(!map[id]) map[id]={};
+								if(typeof map[id].extraDamage!='number') map[id].extraDamage=0;
+								map[id].extraDamage++;
+							}
+						},
+					},
+				},
+			},
 			dcmffengshi:{
 				audio:'mffengshi',
 				audioname:['sp_mifangfushiren'],
@@ -10602,7 +10848,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(viewer==player){
 						if(get.attitude(viewer,target)>=0) return false;
 						if(player.countCards('he',(card)=>get.value(card,player)<5)) return true;
-						var card=_status.event.getTrigger().card;
+						var card=get.event().getTrigger().card;
 						if((get.tag(card,'damage')||target.countCards('he',(card)=>get.value(card,target)>6))&&player.countCards('he',(card)=>get.value(card,player)<7)) return true;
 						return false;
 					}
@@ -10793,7 +11039,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dingyuan:['ol_dingyuan','dingyuan'],
 			quyi:['quyi','re_quyi'],
 			hansui:['hansui','re_hansui','xin_hansui','jsrg_hansui'],
-			jin_simashi:['jin_simashi','simashi'],
+			jin_simashi:['dc_simashi','jin_simashi','simashi'],
 			jin_yanghuiyu:['jin_yanghuiyu','yanghuiyu'],
 			taoqian:['re_taoqian','taoqian'],
 			sp_liubei:['jsrg_liubei','sp_liubei'],
@@ -11201,6 +11447,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mffengshi_info:'当你使用牌指定唯一目标后，或成为其他角色使用牌的唯一目标后，若此牌使用者的手牌数大于此牌目标的手牌数，则此牌的使用者可令你弃置自己和对方的各一张牌，并令此牌的伤害值+1。',
 			dcmffengshi:'锋势',
 			dcmffengshi_info:'当你使用牌指定唯一目标后，或成为其他角色使用牌的唯一目标后，若此牌使用者的手牌数大于此牌目标的手牌数，则你可弃置自己和对方的各一张牌，并令此牌的伤害值+1。',
+			fengshi:'锋势',
+			fengshi_info:'当你使用牌指定第一个目标后，你可弃置你与其中一名手牌数小于你的目标角色的各一张牌，并令此牌对其造成的伤害+1；当你成为其他角色使用牌的目标后，若你的手牌数小于其，则你可以弃置你与其的各一张牌，并令此牌对你造成的伤害+1。',
 			tongyuan:'童渊',
 			chaofeng:'朝凤',
 			chaofeng_info:'出牌阶段限一次。当你造成伤害时，你可以弃置一张牌，然后摸一张牌。若此伤害的渠道为牌且你弃置的牌：与此牌颜色相同，则你改为摸两张牌；与此牌类型相同，则此伤害+1。',
@@ -11383,6 +11631,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			starjiaowang_info:'锁定技，非首轮游戏开始时，若上一轮没有角色死亡（因〖硝焰〗死亡的角色除外），则你失去1点体力并发动〖硝焰〗。',
 			staraoshi:'傲势',
 			staraoshi_info:'主公技，其他群势力角色的出牌阶段限一次，其可以交给你一张手牌，然后你可以发动一次〖纵势〗。',
+			star_zhangchunhua:'星张春华',
+			star_zhangchunhua_prefix:'星',
+			starliangyan:'梁燕',
+			starliangyan_info:'出牌阶段限一次。你可以选择一名其他角色，你摸/弃置至多两张牌，令其弃置/摸等量的牌。然后若你与其手牌数相同，以此法摸牌的角色跳过其下一个弃牌阶段。',
+			starminghui:'明慧',
+			starminghui_info:'一名角色的回合结束时，若你的手牌数：最少，你可以视为使用一张无距离限制的【杀】；最多，你可以将手牌弃置至你手牌数不为最多，然后令一名角色回复1点体力。',
+			liqueguosi:'李傕郭汜',
+			xiongsuan:'凶算',
+			xiongsuan_info:'出牌阶段限一次，你可以弃置一张手牌并对一名角色造成1点伤害，然后你摸三张牌。若该角色不为你，你失去1点体力。',
 
 			sp_whlw:"文和乱武",
 			sp_zlzy:"逐鹿中原",
