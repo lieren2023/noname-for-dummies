@@ -17684,9 +17684,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return player.additionalSkills.junkyuheng&&player.additionalSkills.junkyuheng.length>0;
 						},
 						async content(event,trigger,player){
-							const skills = player.additionalSkills.junkyuheng;
+							const skillslength = player.additionalSkills.junkyuheng.length;
 							await player.removeAdditionalSkills('junkyuheng');
-							await player.draw(skills.length);
+							await player.draw(skillslength);
 						},
 					},
 				},

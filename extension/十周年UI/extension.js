@@ -273,1124 +273,6 @@ content:function(config, pack){
 		};
 	}
 	
-	// 发送交互表情时间修改
-	// 修改game.js的函数nodeintro:(node,simple,evt)=>{
-	get.nodeintro=function(node,simple,evt){
-		var uiintro = ui.create.dialog('hidden', 'notouchscroll');
-		if (node.classList.contains('player') && !node.name) {
-			return uiintro;
-		}
-		var i, translation, intro, str;
-		if (node._nointro) return;
-		if (typeof node._customintro == 'function') {
-			if (node._customintro(uiintro, evt) === false) return;
-			if (evt) lib.placePoppedDialog(uiintro, evt);
-		}
-		else if (Array.isArray(node._customintro)) {
-			var caption = node._customintro[0];
-			var content = node._customintro[1];
-			if (typeof caption == 'function') {
-				caption = caption(node);
-			}
-			if (typeof content == 'function') {
-				content = content(node);
-			}
-			uiintro.add(caption);
-			uiintro.add('<div class="text center" style="padding-bottom:5px">' + content + '</div>');
-		}
-		else if (node.classList.contains('player') || node.linkplayer) {
-			if (node.linkplayer) {
-				node = node.link;
-			}
-			let capt = get.translation(node.name);
-			const characterInfo = get.character(node.name), sex = node.sex || characterInfo[0];
-			if (sex && sex != 'unknown' && lib.config.show_sex) capt += `&nbsp;&nbsp;${sex == 'none' ? '无' : get.translation(sex)}`;
-			const group = node.group;
-			if (group && group != 'unknown' && lib.config.show_group) capt += `&nbsp;&nbsp;${get.translation(group)}`;
-			uiintro.add(capt);
-
-			if (lib.characterTitle[node.name]) {
-				uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
-			}
-
-			if (get.characterInitFilter(node.name)) {
-				const initFilters = get.characterInitFilter(node.name).filter(tag => {
-					if (!lib.characterInitFilter[node.name]) return true;
-					return lib.characterInitFilter[node.name](tag) !== false;
-				});
-				if(initFilters.length){
-					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
-					uiintro.addText(str);
-				}
-			}
-
-			if (!node.noclick) {
-				const allShown = (node.isUnderControl() || (!game.observe && game.me && game.me.hasSkillTag('viewHandcard', null, node, true)));
-				const shownHs = node.getShownCards();
-				if (shownHs.length) {
-					uiintro.add('<div class="text center">明置的手牌</div>');
-					uiintro.addSmall(shownHs);
-					if (allShown) {
-						var hs = node.getCards('h');
-						hs.removeArray(shownHs);
-						if (hs.length) {
-							uiintro.add('<div class="text center">其他手牌</div>');
-							uiintro.addSmall(hs);
-						}
-					}
-				}
-				else if (allShown) {
-					var hs = node.getCards('h');
-					if (hs.length) {
-						uiintro.add('<div class="text center">手牌</div>');
-						uiintro.addSmall(hs);
-					}
-				}
-			}
-
-			var skills = node.getSkills(null, false, false).slice(0);
-			var skills2 = game.filterSkills(skills, node);
-			if (node == game.me && node.hiddenSkills.length) {
-				skills.addArray(node.hiddenSkills);
-			}
-			for (var i in node.disabledSkills) {
-				if (node.disabledSkills[i].length == 1 &&
-					node.disabledSkills[i][0] == i + '_awake' &&
-					!node.hiddenSkills.includes(i)) {
-					skills.add(i);
-				}
-			}
-			for (i = 0; i < skills.length; i++) {
-				if (lib.skill[skills[i]] && (lib.skill[skills[i]].nopop || lib.skill[skills[i]].equipSkill)) continue;
-				if (lib.translate[skills[i] + '_info']) {
-					if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
-					else {
-						translation = get.translation(skills[i]);
-						if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
-					}
-
-					if (node.forbiddenSkills[skills[i]]) {
-						var forbidstr = '<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>';
-						if (node.forbiddenSkills[skills[i]].length) {
-							forbidstr += '（与' + get.translation(node.forbiddenSkills[skills[i]]) + '冲突）<br>';
-						}
-						else {
-							forbidstr += '（双将禁用）<br>';
-						}
-						forbidstr += get.skillInfoTranslation(skills[i], node) + '</div></div>';
-						uiintro.add(forbidstr);
-					}
-					else if (!skills2.includes(skills[i])) {
-						if (lib.skill[skills[i]].preHidden && get.mode() == 'guozhan') {
-							uiintro.add('<div><div class="skill" style="opacity:0.5">' + translation + '</div><div><span style="opacity:0.5">' + get.skillInfoTranslation(skills[i], node) + '</span><br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">预亮技能</div></div></div>');
-							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
-							if (_status.prehidden_skills.includes(skills[i])) {
-								underlinenode.classList.remove('on');
-							}
-							underlinenode.link = skills[i];
-							underlinenode.listen(ui.click.hiddenskill);
-						}
-						else uiintro.add('<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-					}
-					else if (lib.skill[skills[i]].temp || !node.skills.includes(skills[i]) || lib.skill[skills[i]].thundertext) {
-						if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
-							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
-							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
-							if (lib.skill[skills[i]].frequent) {
-								if (lib.config.autoskilllist.includes(skills[i])) {
-									underlinenode.classList.remove('on');
-								}
-							}
-							if (lib.skill[skills[i]].subfrequent) {
-								for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
-									if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
-										underlinenode.classList.remove('on');
-									}
-								}
-							}
-							if (lib.config.autoskilllist.includes(skills[i])) {
-								underlinenode.classList.remove('on');
-							}
-							underlinenode.link = skills[i];
-							underlinenode.listen(ui.click.autoskill2);
-						}
-						else {
-							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-						}
-					}
-					else if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
-						var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
-						if (lib.skill[skills[i]].frequent) {
-							if (lib.config.autoskilllist.includes(skills[i])) {
-								underlinenode.classList.remove('on');
-							}
-						}
-						if (lib.skill[skills[i]].subfrequent) {
-							for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
-								if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
-									underlinenode.classList.remove('on');
-								}
-							}
-						}
-						if (lib.config.autoskilllist.includes(skills[i])) {
-							underlinenode.classList.remove('on');
-						}
-						underlinenode.link = skills[i];
-						underlinenode.listen(ui.click.autoskill2);
-					}
-					else if (lib.skill[skills[i]].clickable && node.isIn() && node.isUnderControl(true)) {
-						var intronode = uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
-						if (!_status.gameStarted || (lib.skill[skills[i]].clickableFilter && !lib.skill[skills[i]].clickableFilter(node))) {
-							intronode.classList.add('disabled');
-							intronode.style.opacity = 0.5;
-						}
-						else {
-							intronode.link = node;
-							intronode.func = lib.skill[skills[i]].clickable;
-							intronode.classList.add('pointerdiv');
-							intronode.listen(ui.click.skillbutton);
-						}
-					}
-					else {
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-					}
-					if (lib.translate[skills[i] + '_append']) {
-						uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
-					}
-				}
-			}
-			// if(get.is.phoneLayout()){
-			// 	var storage=node.storage;
-			// 	for(i in storage){
-			// 		if(get.info(i)&&get.info(i).intro){
-			// 			intro=get.info(i).intro;
-			// 			if(node.getSkills().concat(lib.skill.global).includes(i)==false&&!intro.show) continue;
-			// 			var name=intro.name?intro.name:get.translation(i);
-			// 			if(typeof name=='function'){
-			// 				name=name(storage[i],node);
-			// 			}
-			// 			translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
-			// 			var stint=get.storageintro(intro.content,storage[i],node,null,i);
-			// 			if(stint){
-			// 				translation+=stint+'</div></div>';
-			// 				uiintro.add(translation);
-			// 			}
-			// 		}
-			// 	}
-			// }
-
-			if (lib.config.right_range && _status.gameStarted) {
-				uiintro.add(ui.create.div('.placeholder'));
-				var table, tr, td;
-				table = document.createElement('table');
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-				td = document.createElement('td');
-				td.innerHTML = '距离';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '手牌';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '行动';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '伤害';
-				tr.appendChild(td);
-
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-				td = document.createElement('td');
-				if (node == game.me || !game.me || !game.me.isIn()) {
-					td.innerHTML = '-';
-				}
-				else {
-					var dist1 = get.numStr(Math.max(1, game.me.distanceTo(node)));
-					var dist2 = get.numStr(Math.max(1, node.distanceTo(game.me)));
-					if (dist1 == dist2) {
-						td.innerHTML = dist1;
-					}
-					else {
-						td.innerHTML = dist1 + '/' + dist2;
-					}
-				}
-				tr.appendChild(td);
-				td = document.createElement('td');
-				let handcardLimit = node.getHandcardLimit();
-				td.innerHTML = `${node.countCards('h')}/${handcardLimit >= 114514 ? '∞' : handcardLimit}`;
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = node.phaseNumber;
-				tr.appendChild(td);
-				td = document.createElement('td');
-
-				(function () {
-					num = 0;
-					for (var j = 0; j < node.stat.length; j++) {
-						if (typeof node.stat[j].damage == 'number') num += node.stat[j].damage;
-					}
-					td.innerHTML = num;
-				}());
-				tr.appendChild(td);
-				table.style.width = 'calc(100% - 20px)';
-				table.style.marginLeft = '10px';
-
-				uiintro.content.appendChild(table);
-				if (!lib.config.show_favourite) {
-					table.style.paddingBottom = '5px';
-				}
-			}
-			if (!simple || get.is.phoneLayout()) {
-				var es = node.getCards('e');
-				for (var i = 0; i < es.length; i++) {
-					var cardinfo = lib.card[es[i].name];
-					if (cardinfo && cardinfo.cardPrompt) uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + cardinfo.cardPrompt(es[i]) + '</div></div>');
-					else uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + lib.translate[es[i].name + '_info'] + '</div></div>');
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
-
-					if (lib.translate[es[i].name + '_append']) {
-						uiintro.add('<div class="text">' + lib.translate[es[i].name + '_append'] + '</div>');
-					}
-				}
-				var js = node.getCards('j');
-				for (var i = 0; i < js.length; i++) {
-					if (js[i].viewAs && js[i].viewAs != js[i].name) {
-						let html = js[i].outerHTML;
-						let cardInfo = lib.card[js[i].viewAs], showCardIntro=true;
-						if (cardInfo.blankCard) {
-							var cardOwner = get.owner(js[i]);
-							if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
-						}
-						if (!showCardIntro) {
-							html=ui.create.button(js[i],'blank').outerHTML;
-						}
-						uiintro.add('<div><div class="skill">' + html + '</div><div>' + lib.translate[js[i].viewAs] + '：' + lib.translate[js[i].viewAs + '_info'] + '</div></div>');
-					}
-					else {
-						uiintro.add('<div><div class="skill">' + js[i].outerHTML + '</div><div>' + lib.translate[js[i].name + '_info'] + '</div></div>');
-					}
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
-				}
-				if (get.is.phoneLayout()) {
-					var markCoutainer = ui.create.div('.mark-container.marks');
-					for (var i in node.marks) {
-						var nodemark = node.marks[i].cloneNode(true);
-						nodemark.classList.add('pointerdiv');
-						nodemark.link = node.marks[i];
-						nodemark.style.transform = '';
-						markCoutainer.appendChild(nodemark);
-						nodemark.listen(function () {
-							uiintro.noresume = true;
-							var rect = this.link.getBoundingClientRect();
-							ui.click.intro.call(this.link, {
-								clientX: rect.left + rect.width,
-								clientY: rect.top + rect.height / 2,
-							});
-							if (lib.config.touchscreen) {
-								uiintro._close();
-							}
-						});
-					}
-					if (markCoutainer.childElementCount) {
-						uiintro.addText('标记');
-						uiintro.add(markCoutainer);
-					}
-				}
-			}
-			if (!game.observe && _status.gameStarted && game.me && node != game.me) {
-				ui.throwEmotion = [];
-				uiintro.addText('发送交互表情');
-				var click = function () {
-					if (_status.dragged) return;
-					if (_status.justdragged) return;
-					if (_status.throwEmotionWait) return;
-					var emotion = this.link;
-					if (game.online) {
-						game.send('throwEmotion', node, emotion);
-					}
-					else game.me.throwEmotion(node, emotion);
-					uiintro._close();
-					_status.throwEmotionWait = true;
-					setTimeout(function () {
-						_status.throwEmotionWait = false;
-						if (ui.throwEmotion) {
-							for (var i of ui.throwEmotion) i.classList.remove('exclude');
-						}
-					}, (emotion == 'flower' || emotion == 'egg') ? 5 : 10);
-				};
-				var td;
-				var table = document.createElement('div');
-				table.classList.add('add-setting');
-				table.style.margin = '0';
-				table.style.width = '100%';
-				table.style.position = 'relative';
-				var listi = ['flower', 'egg'];
-				for (var i = 0; i < listi.length; i++) {
-					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
-					ui.throwEmotion.add(td);
-					if (_status.throwEmotionWait) td.classList.add('exclude');
-					td.link = listi[i];
-					table.appendChild(td);
-					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
-					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
-				}
-				uiintro.content.appendChild(table);
-				table = document.createElement('div');
-				table.classList.add('add-setting');
-				table.style.margin = '0';
-				table.style.width = '100%';
-				table.style.position = 'relative';
-				var listi = ['wine', 'shoe'];
-				if (game.me.storage.zhuSkill_shanli) listi = ['yuxisx', 'jiasuo'];
-				for (var i = 0; i < listi.length; i++) {
-					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
-					ui.throwEmotion.add(td);
-					if (_status.throwEmotionWait) td.classList.add('exclude');
-					td.link = listi[i];
-					table.appendChild(td);
-					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
-					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
-				}
-				uiintro.content.appendChild(table);
-			}
-			var modepack = lib.characterPack['mode_' + get.mode()];
-			if (lib.config.show_favourite && lib.character[node.name] && game.players.includes(node) &&
-				(!modepack || !modepack[node.name]) && (!simple || get.is.phoneLayout())) {
-				var addFavourite = ui.create.div('.text.center.pointerdiv');
-				addFavourite.link = node.name;
-				if (lib.config.favouriteCharacter.includes(node.name)) {
-					addFavourite.innerHTML = '移除收藏';
-				}
-				else {
-					addFavourite.innerHTML = '添加收藏';
-				}
-				addFavourite.listen(ui.click.favouriteCharacter);
-				uiintro.add(addFavourite);
-			}
-			if (!simple || get.is.phoneLayout()) {
-				if ((lib.config.change_skin || lib.skin) && !node.isUnseen()) {
-					var num = 1;
-					var introadded = false;
-					var createButtons = function (num, avatar2) {
-						if (!introadded) {
-							introadded = true;
-							uiintro.add('<div class="text center">更改皮肤</div>');
-						}
-						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
-						lib.setMousewheel(buttons);
-						var nameskin = (avatar2 ? node.name2 : node.name1);
-						var nameskin2 = nameskin;
-						var gzbool = false;
-						if (nameskin.startsWith('gz_shibing')) {
-							nameskin = nameskin.slice(3, 11);
-						}
-						else if (nameskin.startsWith('gz_')) {
-							nameskin = nameskin.slice(3);
-							gzbool = true;
-						}
-						for (var i = 0; i <= num; i++) {
-							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
-								if (this._link) {
-									if (avatar2) {
-										lib.config.skin[nameskin] = this._link;
-										node.node.avatar2.style.backgroundImage = this.style.backgroundImage;
-									}
-									else {
-										lib.config.skin[nameskin] = this._link;
-										node.node.avatar.style.backgroundImage = this.style.backgroundImage;
-									}
-								}
-								else {
-									delete lib.config.skin[nameskin];
-									if (avatar2) {
-										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar2.setBackground(nameskin2, 'character');
-										else node.node.avatar2.setBackground(nameskin, 'character');
-									}
-									else {
-										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar.setBackground(nameskin2, 'character');
-										else node.node.avatar.setBackground(nameskin, 'character');
-									}
-								}
-								game.saveConfig('skin', lib.config.skin);
-							});
-							button._link = i;
-							if (i) {
-								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
-							}
-							else {
-								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
-								else button.setBackground(nameskin, 'character', 'noskin');
-							}
-						}
-						uiintro.add(buttons);
-					};
-					var loadImage = function (avatar2) {
-						var img = new Image();
-						img.onload = function () {
-							num++;
-							loadImage(avatar2);
-						};
-						img.onerror = function () {
-							num--;
-							if (num) {
-								createButtons(num, avatar2);
-							}
-							if (!avatar2) {
-								if (!node.classList.contains('unseen2') && node.name2) {
-									num = 1;
-									loadImage(true);
-								}
-							}
-						};
-						var nameskin = (avatar2 ? node.name2 : node.name1);
-						var nameskin2 = nameskin;
-						var gzbool = false;
-						if (nameskin.startsWith('gz_shibing')) {
-							nameskin = nameskin.slice(3, 11);
-						}
-						else if (nameskin.startsWith('gz_')) {
-							nameskin = nameskin.slice(3);
-							gzbool = true;
-						}
-						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
-					};
-					if (lib.config.change_skin) {
-						if (!node.isUnseen(0)) {
-							loadImage();
-						}
-						else if (node.name2) {
-							loadImage(true);
-						}
-					}
-					else {
-						setTimeout(function () {
-							var nameskin1 = node.name1;
-							var nameskin2 = node.name2;
-							if (nameskin1 && nameskin1.startsWith('gz_')) {
-								nameskin1 = nameskin1.slice(3);
-							}
-							if (nameskin2 && nameskin2.startsWith('gz_')) {
-								nameskin2 = nameskin2.slice(3);
-							}
-							if (!node.isUnseen(0) && lib.skin[nameskin1]) {
-								createButtons(lib.skin[nameskin1]);
-							}
-							if (!node.isUnseen(1) && lib.skin[nameskin2]) {
-								createButtons(lib.skin[nameskin2], true);
-							}
-						});
-					}
-				}
-			}
-
-			uiintro.add(ui.create.div('.placeholder.slim'));
-		}
-		else if (node.classList.contains('mark') && node.info &&
-			node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.classList.contains('player')) {
-			var info = node.info;
-			var player = node.parentNode.parentNode;
-			if (info.name) {
-				if (typeof info.name == 'function') {
-					var named = info.name(player.storage[node.skill], player);
-					if (named) {
-						uiintro.add(named);
-					}
-				}
-				else {
-					uiintro.add(info.name);
-				}
-			}
-			else if (info.name !== false) {
-				uiintro.add(get.translation(node.skill));
-			}
-			if (typeof info.id == 'string' && info.id.startsWith('subplayer') &&
-				player.isUnderControl(true) && player.storage[info.id] && !_status.video) {
-				var storage = player.storage[info.id];
-				uiintro.addText('当前体力：' + storage.hp + '/' + storage.maxHp);
-				if (storage.hs.length) {
-					uiintro.addText('手牌区');
-					uiintro.addSmall(storage.hs);
-				}
-				if (storage.es.length) {
-					uiintro.addText('装备区');
-					uiintro.addSmall(storage.es);
-				}
-			}
-			if (typeof info.mark == 'function') {
-				var stint = info.mark(uiintro, player.storage[node.skill], player);
-				if (stint) {
-					var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
-					if (!stint.startsWith('<div class="skill"')) {
-						uiintro._place_text = placetext;
-					}
-					// if(stint.length<=100){
-					// 	uiintro.add('<div class="text center">'+stint+'</div>');
-					// }
-					// else{
-					// 	uiintro.add('<div class="text">'+stint+'</div>');
-					// }
-				}
-			}
-			else {
-				var stint = get.storageintro(info.content, player.storage[node.skill], player, uiintro, node.skill);
-				if (stint) {
-					if (stint[0] == '@') {
-						uiintro.add('<div class="caption">' + stint.slice(1) + '</div>');
-					}
-					else {
-						var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
-						if (!stint.startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					// else if(stint.length<=100){
-					// 	uiintro.add('<div class="text center">'+stint+'</div>');
-					// }
-					// else{
-					// 	uiintro.add('<div class="text">'+stint+'</div>');
-					// }
-				}
-			}
-			uiintro.add(ui.create.div('.placeholder.slim'));
-		}
-		else if (node.classList.contains('card')) {
-			//卡牌长按介绍
-			if (ui.arena.classList.contains('observe') && node.parentNode.classList.contains('handcards')) {
-				return;
-			}
-			var name = node.name;
-			if (node.parentNode.cardMod) {
-				var moded = false;
-				for (var i in node.parentNode.cardMod) {
-					var item = node.parentNode.cardMod[i](node);
-					if (Array.isArray(item)) {
-						moded = true;
-						uiintro.add(item[0]);
-						uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + item[1] + '</div>');
-					}
-				}
-				if (moded) return uiintro;
-			}
-			if (node.link && node.link.name && lib.card[node.link.name]) {
-				name = node.link.name;
-			}
-			if (get.position(node) == 'j' && node.viewAs && node.viewAs != name) {
-				uiintro.add(get.translation(node.viewAs));
-				var cardInfo = lib.card[node.viewAs], showCardIntro=true;
-				if (cardInfo.blankCard) {
-					var cardOwner = get.owner(node);
-					if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
-				}
-				if (showCardIntro) uiintro.add('<div class="text center">（' + get.translation(get.translation(node)) + '）</div>');
-				// uiintro.add(get.translation(node.viewAs)+'<br><div class="text center" style="padding-top:5px;">（'+get.translation(node)+'）</div>');
-				uiintro.nosub = true;
-				name = node.viewAs;
-			}
-			else {
-				uiintro.add(get.translation(node));
-			}
-			if (node._banning) {
-				var clickBanned = function () {
-					var banned = lib.config[this.bannedname] || [];
-					if (banned.includes(name)) {
-						banned.remove(name);
-					}
-					else {
-						banned.push(name);
-					}
-					game.saveConfig(this.bannedname, banned);
-					this.classList.toggle('on');
-					if (node.updateBanned) {
-						node.updateBanned();
-					}
-				};
-				var modeorder = lib.config.modeorder || [];
-				for (var i in lib.mode) {
-					modeorder.add(i);
-				}
-				var list = [];
-				uiintro.contentContainer.listen(function (e) {
-					ui.click.touchpop();
-					e.stopPropagation();
-				});
-				for (var i = 0; i < modeorder.length; i++) {
-					if (node._banning == 'online') {
-						if (!lib.mode[modeorder[i]].connect) continue;
-					}
-					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
-						continue;
-					}
-					if (lib.config.all.mode.includes(modeorder[i])) {
-						list.push(modeorder[i]);
-					}
-				}
-				if (lib.card[name] && lib.card[name].type == 'trick') list.push('zhinang_tricks');
-				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
-				var banall = false;
-				for (var i = 0; i < list.length; i++) {
-					var cfg = ui.create.div('.config', list[i] == 'zhinang_tricks' ? '设为智囊' : (lib.translate[list[i]] + '模式'), page);
-					cfg.classList.add('toggle');
-					if (list[i] == 'zhinang_tricks') {
-						cfg.bannedname = ((node._banning == 'offline') ? '' : 'connect_') + 'zhinang_tricks';
-					}
-					else if (node._banning == 'offline') {
-						cfg.bannedname = list[i] + '_bannedcards';
-					}
-					else {
-						cfg.bannedname = 'connect_' + list[i] + '_bannedcards';
-					}
-					cfg.listen(clickBanned);
-					ui.create.div(ui.create.div(cfg));
-					var banned = lib.config[cfg.bannedname] || [];
-					if (banned.includes(name) == (list[i] == 'zhinang_tricks')) {
-						cfg.classList.add('on');
-						banall = true;
-					}
-				}
-				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
-					if (this.innerHTML == '全部禁用') {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部启用';
-					}
-					else {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部禁用';
-					}
-				}).style.marginTop = '-10px';
-				ui.create.div('.placeholder.slim', uiintro.content);
-			}
-			else {
-				if (lib.translate[name + '_info']) {
-					if (!uiintro.nosub) {
-						if (lib.card[name] && lib.card[name].derivation) {
-							if (typeof lib.card[name].derivation == 'string') {
-								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivation) + '</div>');
-							}
-							else if (lib.card[name].derivationpack) {
-								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivationpack + '_card_config') + '包</div>');
-							}
-						}
-						let typeinfo = '';
-						if (lib.card[name] && lib.card[name].unique) {
-							typeinfo += ('特殊' + get.translation(lib.card[name].type) + '牌');
-						}
-						else if (lib.card[name] && lib.card[name].type && lib.translate[lib.card[name].type]) {
-							typeinfo += (get.translation(lib.card[name].type) + '牌');
-						}
-						if (get.subtype(name, false)) {
-							typeinfo += ('-' + get.translation(get.subtype(name, false)));
-						}
-						if (typeinfo) {
-							uiintro.add('<div class="text center">' + typeinfo + '</div>');
-						}
-						if (lib.card[name].unique && lib.card[name].type == 'equip') {
-							if (lib.cardPile.guozhan && lib.cardPack.guozhan.includes(name)) {
-								uiintro.add('<div class="text center">专属装备</div>').style.marginTop = '-5px';
-							}
-							else {
-								uiintro.add('<div class="text center">特殊装备</div>').style.marginTop = '-5px';
-							}
-						}
-						if (lib.card[name] && lib.card[name].addinfomenu) {
-							uiintro.add('<div class="text center">' + lib.card[name].addinfomenu + '</div>');
-						}
-						if (get.subtype(name, false) == 'equip1') {
-							var added = false;
-							if (lib.card[node.name] && lib.card[node.name].distance) {
-								var dist = lib.card[node.name].distance;
-								if (dist.attackFrom) {
-									added = true;
-									uiintro.add('<div class="text center">攻击范围：' + (-dist.attackFrom + 1) + '</div>');
-								}
-							}
-							if (!added) {
-								uiintro.add('<div class="text center">攻击范围：1</div>');
-							}
-						}
-					}
-					if (lib.card[name].cardPrompt) {
-						var str = lib.card[name].cardPrompt(node.link || node), placetext = uiintro.add('<div class="text" style="display:inline">' + str + '</div>');
-						if (!str.startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					else if (lib.translate[name + '_info']) {
-						var placetext = uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_info'] + '</div>');
-						if (!lib.translate[name + '_info'].startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					if (get.is.yingbianConditional(node.link || node)) {
-						const yingbianEffects = get.yingbianEffects(node.link || node);
-						if (!yingbianEffects.length) {
-							const defaultYingbianEffect = get.defaultYingbianEffect(node.link || node);
-							if (lib.yingbian.prompt.has(defaultYingbianEffect)) yingbianEffects.push(defaultYingbianEffect);
-						}
-						if (yingbianEffects.length && showCardIntro) uiintro.add(`<div class="text" style="font-family: yuanli">应变：${yingbianEffects.map(value => lib.yingbian.prompt.get(value)).join('；')}</div>`);
-					}
-					if (lib.translate[name + '_append']) {
-						uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_append'] + '</div>');
-					}
-				}
-				uiintro.add(ui.create.div('.placeholder.slim'));
-			}
-		}
-		else if (node.classList.contains('character')) {
-			const character = node.link, characterInfo = get.character(node.link);
-			let capt = get.translation(character);
-			if (characterInfo) {
-				const infoSex = characterInfo[0];
-				if (infoSex && lib.config.show_sex) capt += `&nbsp;&nbsp;${infoSex == 'none' ? '无' : lib.translate[infoSex]}`;
-				const infoGroup = characterInfo[1];
-				if (infoGroup && lib.config.show_group) {
-					const group = get.is.double(character, true);
-					if (group) capt += `&nbsp;&nbsp;${group.map(value => get.translation(value)).join('/')}`;
-					else capt += `&nbsp;&nbsp;${lib.translate[infoGroup]}`;
-				}
-			}
-			uiintro.add(capt);
-
-			if (lib.characterTitle[node.link]) {
-				uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
-			}
-
-			if (get.characterInitFilter(node.link)) {
-				const initFilters = get.characterInitFilter(node.link).filter(tag => {
-					if (!lib.characterInitFilter[node.link]) return true;
-					return lib.characterInitFilter[node.link](tag) !== false;
-				});
-				if(initFilters.length){
-					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
-					uiintro.addText(str);
-				}
-			}
-
-			if (node._banning) {
-				var clickBanned = function () {
-					var banned = lib.config[this.bannedname] || [];
-					if (banned.includes(character)) {
-						banned.remove(character);
-					}
-					else {
-						banned.push(character);
-					}
-					game.saveConfig(this.bannedname, banned);
-					this.classList.toggle('on');
-					if (node.updateBanned) {
-						node.updateBanned();
-					}
-				};
-				var modeorder = lib.config.modeorder || [];
-				for (var i in lib.mode) {
-					modeorder.add(i);
-				}
-				var list = [];
-				uiintro.contentContainer.listen(function (e) {
-					ui.click.touchpop();
-					e.stopPropagation();
-				});
-				for (var i = 0; i < modeorder.length; i++) {
-					if (node._banning == 'online') {
-						if (!lib.mode[modeorder[i]].connect) continue;
-						if (!lib.config['connect_' + modeorder[i] + '_banned']) {
-							lib.config['connect_' + modeorder[i] + '_banned'] = [];
-						}
-					}
-					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
-						continue;
-					}
-					if (lib.config.all.mode.includes(modeorder[i])) {
-						list.push(modeorder[i]);
-					}
-				}
-				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
-				var banall = false;
-				for (var i = 0; i < list.length; i++) {
-					var cfg = ui.create.div('.config', lib.translate[list[i]] + '模式', page);
-					cfg.classList.add('toggle');
-					if (node._banning == 'offline') {
-						cfg.bannedname = list[i] + '_banned';
-					}
-					else {
-						cfg.bannedname = 'connect_' + list[i] + '_banned';
-					}
-					cfg.listen(clickBanned);
-					ui.create.div(ui.create.div(cfg));
-					var banned = lib.config[cfg.bannedname] || [];
-					if (!banned.includes(character)) {
-						cfg.classList.add('on');
-						banall = true;
-					}
-				}
-				if (node._banning == 'offline') {
-					var cfg = ui.create.div('.config', '随机选将可用', page);
-					cfg.classList.add('toggle');
-					cfg.listen(function () {
-						this.classList.toggle('on');
-						if (this.classList.contains('on')) {
-							lib.config.forbidai_user.remove(character);
-						}
-						else {
-							lib.config.forbidai_user.add(character);
-						}
-						game.saveConfig('forbidai_user', lib.config.forbidai_user);
-					});
-					ui.create.div(ui.create.div(cfg));
-					if (!lib.config.forbidai_user.includes(character)) {
-						cfg.classList.add('on');
-					}
-				}
-				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
-					if (this.innerHTML == '全部禁用') {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部启用';
-					}
-					else {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部禁用';
-					}
-				}).style.marginTop = '-10px';
-				ui.create.div('.placeholder.slim', uiintro.content);
-			}
-			else {
-				var infoitem = get.character(character);
-				var skills = infoitem[3];
-				for (i = 0; i < skills.length; i++) {
-					if (lib.translate[skills[i] + '_info']) {
-						if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
-						else {
-							translation = get.translation(skills[i]);
-							if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
-						}
-
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i]) + '</div></div>');
-
-						if (lib.translate[skills[i] + '_append']) {
-							uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
-						}
-					}
-				}
-				var modepack = lib.characterPack['mode_' + get.mode()];
-				if (lib.config.show_favourite &&
-					lib.character[node.link] && (!modepack || !modepack[node.link]) && (!simple || get.is.phoneLayout())) {
-					var addFavourite = ui.create.div('.text.center.pointerdiv');
-					addFavourite.link = node.link;
-					addFavourite.style.marginBottom = '15px';
-					if (lib.config.favouriteCharacter.includes(node.link)) {
-						addFavourite.innerHTML = '移除收藏';
-					}
-					else {
-						addFavourite.innerHTML = '添加收藏';
-					}
-					addFavourite.listen(ui.click.favouriteCharacter);
-					uiintro.add(addFavourite);
-				}
-				else {
-					uiintro.add(ui.create.div('.placeholder.slim'));
-				}
-				var addskin = false;
-				if (node.parentNode.classList.contains('menu-buttons')) {
-					addskin = !lib.config.show_charactercard;
-				}
-				else {
-					addskin = lib.config.change_skin || lib.skin;
-				}
-				if (addskin && (!simple || get.is.phoneLayout())) {
-					var num = 1;
-					var introadded = false;
-					var nameskin = node.link;
-					var nameskin2 = nameskin;
-					var gzbool = false;
-					if (nameskin.startsWith('gz_shibing')) {
-						nameskin = nameskin.slice(3, 11);
-					}
-					else if (nameskin.startsWith('gz_')) {
-						nameskin = nameskin.slice(3);
-						gzbool = true;
-					}
-					var createButtons = function (num) {
-						if (!num) return;
-						if (!introadded) {
-							introadded = true;
-							uiintro.add('<div class="text center">更改皮肤</div>');
-						}
-						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
-						lib.setMousewheel(buttons);
-						for (var i = 0; i <= num; i++) {
-							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
-								if (this._link) {
-									lib.config.skin[nameskin] = this._link;
-									node.style.backgroundImage = this.style.backgroundImage;
-									game.saveConfig('skin', lib.config.skin);
-								}
-								else {
-									delete lib.config.skin[nameskin];
-									if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.setBackground(nameskin2, 'character');
-									else node.setBackground(nameskin, 'character');
-									game.saveConfig('skin', lib.config.skin);
-								}
-							});
-							button._link = i;
-							if (i) {
-								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
-							}
-							else {
-								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
-								else button.setBackground(nameskin, 'character', 'noskin');
-							}
-						}
-						uiintro.add(buttons);
-					};
-					var loadImage = function () {
-						var img = new Image();
-						img.onload = function () {
-							num++;
-							loadImage();
-						};
-						img.onerror = function () {
-							num--;
-							createButtons(num);
-						};
-						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
-					};
-					if (lib.config.change_skin) {
-						loadImage();
-					}
-					else {
-						setTimeout(function () {
-							createButtons(lib.skin[nameskin]);
-						});
-					}
-				}
-			}
-		}
-		else if (node.classList.contains('equips') && ui.arena.classList.contains('selecting')) {
-			(function () {
-				uiintro.add('选择装备');
-				uiintro.addSmall(Array.from(node.childNodes).filter(node => !node.classList.contains('emptyequip') && !node.classList.contains('feichu')), true);
-				uiintro.clickintro = true;
-				ui.control.hide();
-				uiintro._onclose = function () {
-					ui.control.show();
-				};
-				var confirmbutton;
-				for (var i = 0; i < uiintro.buttons.length; i++) {
-					var button = uiintro.buttons[i];
-					button.classList.add('pointerdiv');
-					if (button.link.classList.contains('selected')) {
-						button.classList.add('selected');
-					}
-					button.listen(function (e) {
-						ui.click.card.call(this.link, 'popequip');
-						ui.click.window.call(ui.window, e);
-						if (this.link.classList.contains('selected')) {
-							this.classList.add('selected');
-						}
-						else {
-							this.classList.remove('selected');
-						}
-						if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
-							confirmbutton.classList.remove('disabled');
-						}
-						else {
-							confirmbutton.classList.add('disabled');
-						}
-					});
-				}
-				var buttoncontainer = uiintro.add(ui.create.div());
-				buttoncontainer.style.display = 'block';
-				confirmbutton = ui.create.div('.menubutton.large.pointerdiv', '确定', function () {
-					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
-						uiintro._clickintro();
-						ui.click.ok(ui.confirm.firstChild);
-					}
-				}, buttoncontainer);
-				confirmbutton.style.position = 'relative';
-				setTimeout(function () {
-					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
-						confirmbutton.classList.remove('disabled');
-					}
-					else {
-						confirmbutton.classList.add('disabled');
-					}
-				}, 300);
-			}());
-		}
-		else if (node.classList.contains('identity') && node.dataset.career) {
-			var career = node.dataset.career;
-			uiintro.add(get.translation(career));
-			uiintro.add('<div class="text center" style="padding-bottom:5px">' + lib.translate['_' + career + '_skill_info'] + '</div>');
-		}
-		else if (node.classList.contains('skillbar')) {
-			if (node == ui.friendBar) {
-				uiintro.add('友方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.friendRage + '/100</div>');
-			}
-			else if (node == ui.enemyBar) {
-				uiintro.add('敌方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.enemyRage + '/100</div>');
-			}
-		}
-		else if (node.parentNode == ui.historybar) {
-			if (node.dead) {
-				if (!node.source || node.source == node.player) {
-					uiintro.add('<div class="text center">' + get.translation(node.player) + '阵亡</div>');
-					uiintro.addSmall([node.player]);
-				}
-				else {
-					uiintro.add('<div class="text center">' + get.translation(node.player) + '被' + get.translation(node.source) + '杀害</div>');
-					uiintro.addSmall([node.source]);
-				}
-			}
-			if (node.skill) {
-				uiintro.add('<div class="text center">' + get.translation(node.skill, 'skill') + '</div>');
-				uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + get.translation(node.skill, 'info') + '</div>');
-			}
-			if (node.targets && get.itemtype(node.targets) == 'players') {
-				uiintro.add('<div class="text center">目标</div>');
-				uiintro.addSmall(node.targets);
-			}
-			if (node.players && node.players.length > 1) {
-				uiintro.add('<div class="text center">使用者</div>');
-				uiintro.addSmall(node.players);
-			}
-			if (node.cards && node.cards.length) {
-				uiintro.add('<div class="text center">卡牌</div>');
-				uiintro.addSmall(node.cards);
-			}
-			for (var i = 0; i < node.added.length; i++) {
-				uiintro.add(node.added[i]);
-			}
-			if (node.added.length) {
-				uiintro.add(ui.create.div('.placeholder.slim'));
-			}
-			if (uiintro.content.firstChild) {
-				uiintro.content.firstChild.style.paddingTop = '3px';
-			}
-		}
-		if (lib.config.touchscreen) {
-			lib.setScroll(uiintro.contentContainer);
-		}
-		return uiintro;
-	};
-	
 	// 调色及前缀修改
 	// 更改势力字体颜色-神
 	// lib.groupnature.shen='metal';
@@ -2284,8 +1166,8 @@ content:function(config, pack){
 				player.$fullscreenpop('鏖战模式',color); 
 				game.broadcastAll(function(){
 				_status._aozhan=true;
-				ui.aozhan=ui.create.div('.touchinfo.left',ui.window);
-				ui.aozhan.innerHTML='';
+				// ui.aozhan=ui.create.div('.touchinfo.left',ui.window);
+				// ui.aozhan.innerHTML='鏖战模式';
 				if(ui.time3) ui.time3.style.display='none';
 				ui.aozhanInfo=ui.create.system('鏖战模式',null,true);
 				lib.setPopped(ui.aozhanInfo,function(){
@@ -3208,7 +2090,7 @@ content:function(config, pack){
 			});
 		};
 		
-		// 修改对决-官渡模式事件显示、Revert官渡之战调整界袁绍主公为OL谋袁绍（OL谋袁绍背景与官渡之战不符，同名武将替换待后续更新）
+		// 修改对决-官渡模式当前事件显示、Revert官渡之战调整界袁绍主公为OL谋袁绍（OL谋袁绍背景与官渡之战不符，同名武将替换待后续更新）
 		// 修改versus.js的函数chooseCharacterGuandu:function(){
 		game.chooseCharacterGuandu=function(){
 			var next=game.createEvent('chooseCharacter');
@@ -3301,6 +2183,1046 @@ content:function(config, pack){
 		
 	}
 	
+	if(lib.config.mode=='brawl'){
+		// 修改乱斗-两军对垒模式当前剧情显示
+		// 修改brawl.js的函数liangjunduilei:{
+		lib.brawl.liangjunduilei.content={
+			submode:'two',
+			chooseCharacterBefore:function(){
+				var list=[
+					{
+						name:'草船借箭',
+						place:[true,false,false,true],
+						character:['re_sp_zhugeliang','yujin_yujin','re_zhangliao','re_lusu'],
+						lib:{
+							character:{
+								re_sp_zhugeliang:['male','shu',3,['tiaoxin','bazhen','feiying'],[]],
+								yujin_yujin:['male','wei',4,['jiangchi','danshou'],[]],
+								re_zhangliao:['male','wei',4,['benxi','tuifeng','qingxi'],[]],
+								re_lusu:['male','wu',3,['kaikang','shenxian'],[]],
+							},
+							translate:{
+								re_sp_zhugeliang:'诸葛卧龙',
+								yujin_yujin:'于文则',
+								re_zhangliao:'张文远',
+								re_lusu:'鲁子敬',
+							},
+						},
+					},
+					{
+						name:'定军山之战',
+						place:[true,false,false,true],
+						character:['re_huangzhong','re_xiahouyuan','zhanghe','xin_fazheng'],
+						lib:{
+							character:{
+								re_huangzhong:['male','shu',4,['yingjian','weikui','gzyinghun'],[]],
+								re_xiahouyuan:['male','wei',4,['benxi','yaowu','dujin','juesi'],[]],
+								zhanghe:['male','wei',4,['kaikang','xingshang','zhiheng'],[]],
+								xin_fazheng:['male','shu',4,['xinfu_zhanji','nzry_chenglve','yiji'],[]],
+							},
+							translate:{
+								re_huangzhong:'定军黄忠',
+								re_xiahouyuan:'定军妙才',
+								zhanghe:'定军张郃',
+								xin_fazheng:'定军法正',
+							},
+						},
+					},
+					{
+						name:'官渡追击战',
+						place:[false,true,true,false],
+						character:['re_caocao','xin_yuanshao','guotufengji','re_guojia'],
+						lib:{
+							character:{
+								re_caocao:['male','wei',4,['fankui','zhuiji','duanbing'],[]],
+								xin_yuanshao:['male','qun','3/6',['reluanji','kuanggu','benghuai','weizhong'],[]],
+								guotufengji:['male','qun',2,['sijian','jigong','shifei','jianying'],[]],
+								re_guojia:['male','wei',3,['yiji','sanyao','gongxin'],[]],
+							},
+							translate:{
+								re_caocao:'官渡曹操',
+								xin_yuanshao:'官渡袁绍',
+								guotufengji:'袁军智囊',
+								re_guojia:'官渡郭嘉',
+							},
+						},
+					},
+					{
+						name:'奇袭乌巢',
+						place:[true,false,false,true],
+						character:['chunyuqiong','sp_xuyou','re_xuhuang','gaolan'],
+						lib:{
+							character:{
+								chunyuqiong:['male','qun',8,['ranshang','duliang','jiuchi'],[]],
+								sp_xuyou:['male','qun',3,['qice','lianying','nzry_jianxiang'],[]],
+								re_xuhuang:['male','wei',4,['shenduan','xiaoguo','nzry_juzhan'],[]],
+								gaolan:['male','qun',4,['yuanhu','shensu','benyu','suishi'],[]],
+							},
+							translate:{
+								chunyuqiong:'乌巢淳于琼',
+								sp_xuyou:'乌巢许攸',
+								re_xuhuang:'乌巢徐晃',
+								gaolan:'乌巢高览',
+							},
+						},
+					},
+					{
+						name:'舌战群儒',
+						place:[false,true,false,true],
+						character:['re_zhangzhang','re_sp_zhugeliang','guyong','re_lusu'],
+						lib:{
+							character:{
+								re_sp_zhugeliang:['male','shu',3,['tianbian','jyzongshi','xinfu_guolun'],[]],
+								re_zhangzhang:['male','wu',3,['zhuandui','tiaoxin','guzheng'],[]],
+								guyong:['male','wu',3,['qiaoshui','qicai','bingyi'],[]],
+								re_lusu:['male','wu',3,['qingzhongx','shuimeng'],[]],
+							},
+							translate:{
+								re_sp_zhugeliang:'诸葛卧龙',
+								re_zhangzhang:'张子布',
+								guyong:'顾元叹',
+								re_lusu:'鲁子敬',
+							},
+						},
+					},
+					{
+						name:'武圣战双雄',
+						place:[true,false,false,true],
+						character:['yj_jushou','re_caocao','jsp_guanyu','re_yanwen'],
+						lib:{
+							character:{
+								yj_jushou:['male','qun',3,['mingce','jianyan','shibei'],[]],
+								re_caocao:['male','wei',4,['miji','beige','feiying'],[]],
+								jsp_guanyu:['male','wei',4,['nuzhan','jianchu','new_rewusheng'],[]],
+								re_yanwen:['male','qun',4,['shuangxiong','zhanyi','zhichi'],[]],
+							},
+							translate:{
+								yj_jushou:'白马沮授',
+								re_caocao:'白马曹操',
+								jsp_guanyu:'武圣关羽',
+								re_yanwen:'颜文双雄',
+							},
+						},
+					},
+					{
+						name:'合肥之战',
+						place:[true,false,false,true],
+						character:['re_lingtong','re_lidian','re_zhangliao','re_ganning'],
+						lib:{
+							character:{
+								re_lingtong:['male','wu',4,['xuanfeng','zishou','tiaoxin'],[]],
+								re_lidian:['male','wei',3,['weijing','wangxi','zhuandui'],[]],
+								re_zhangliao:['male','wei',3,['retuxi','mashu','reyingzi','xinpojun'],[]],
+								re_ganning:['male','wu',5,['lizhan','jiang','zhenwei'],[]],
+							},
+							translate:{
+								re_lingtong:'合肥凌统',
+								re_lidian:'合肥李典',
+								re_zhangliao:'合肥张辽',
+								re_ganning:'合肥甘宁',
+							},
+						},
+					},
+					{
+						name:'荆州之战',
+						place:[true,false,false,true],
+						character:['re_guanyu','caoren','re_lvmeng','guanping'],
+						lib:{
+							character:{
+								re_guanyu:['male','shu',5,['wusheng','zishou','zhongyong'],[]],
+								caoren:['male','wei',1,['xinjiewei','qiuyuan','gzbuqu','xinjushou'],[]],
+								re_lvmeng:['male','wu',4,['gongxin','duodao','dujin','huituo'],[]],
+								guanping:['male','shu',5,['longyin','suishi'],[]],
+							},
+							translate:{
+								re_guanyu:'荆州关羽',
+								caoren:'樊城曹仁',
+								re_lvmeng:'江东吕蒙',
+								guanping:'荆州关平',
+							},
+						},
+					},
+					{
+						name:'雒城之战',
+						place:[true,false,false,true],
+						character:['liubei','re_wuyi','zhangren','pangtong'],
+						lib:{
+							character:{
+								liubei:['male','shu',4,['rezhijian','jijiu','reyingzi'],[]],
+								re_wuyi:['male','qun',4,['weijing','rerende'],[]],
+								zhangren:['male','qun',4,['shefu','gnsheque'],[]],
+								pangtong:['male','shu',3,['dujin'],[]],
+							},
+							translate:{
+								liubei:'雒城刘备',
+								re_wuyi:'雒城吴懿',
+								zhangren:'雒城张任',
+								pangtong:'雒城庞统',
+								rezhijian:'厚恩',
+								zhijian:'厚恩',
+								jijiu:'驰援',
+								reyingzi:'征令',
+								rerende:'遣军',
+							},
+						},
+					},
+				];
+				if(_status.keyVerified) list=[
+						{
+						name:'My Song',
+						place:[false,true,true,false],
+						character:['caozhen','key_hisako','key_iwasawa','sp_key_kanade'],
+						lib:{
+							character:{
+								caozhen:['male','wei',4,['xinsidi','tuxi']],
+								key_hisako:['female','key','2/3',['hisako_yinbao','shenzhi','shiorimiyuki_banyin','hisako_zhuanyun'],[]],
+								key_iwasawa:['female','key','-999/3',['iwasawa_yinhang','iwasawa_mysong','hisako_zhuanyun']],
+								sp_key_kanade:['female','key',3,['xinwuyan','xinbenxi']],
+							},
+							translate:{
+								caozhen:'突袭教师',
+								key_hisako:'绝望恶魔',
+								key_iwasawa:'引吭孤鸦',
+								sp_key_kanade:'学生会长',
+							},
+						},
+					},
+					{
+						name:'Day Game',
+						place:[false,true,true,false],
+						character:['key_yuzuru','sp_key_kanade','key_ayato','key_hinata'],
+						lib:{
+							character:{
+								key_yuzuru:['male','key',4,['hinata_qiulve','kurou']],
+								sp_key_kanade:['female','key',3,['hinata_qiulve','benxi'],[]],
+								key_ayato:['male','key',3,['hinata_qiulve','retieji']],
+								key_hinata:['female','key',4,['hinata_qiulve','hinata_ehou']],
+							},
+							translate:{
+								key_yuzuru:'新秀球王',
+								sp_key_kanade:'学生会长',
+								key_ayato:'副会长',
+								key_hinata:'球队领袖',
+							},
+						},
+					},
+				]
+				game.liangjunduilei=list;
+				game.chooseCharacterTwo=function(){
+					var next=game.createEvent('chooseCharacter');
+					next.setContent(function(){
+						'step 0'
+						for(var i in lib.skill){
+							if(lib.skill[i].audio&&!lib.skill[i].equipSkill) lib.skill[i].audio=false;
+							if(lib.skill[i].changeSeat){
+								lib.skill[i]={};
+								if(lib.translate[i+'_info']){
+									lib.translate[i+'_info']='此模式下不可用';
+								}
+							}
+						}
+						ui.arena.classList.add('choose-character');
+						var list=game.liangjunduilei;
+						var id=lib.status.videoId++;
+						var choiceList=ui.create.dialog('请选择要游玩的剧情','forcebutton');
+						choiceList.videoId=id;
+						choiceList.add([list.map((item,i)=>{
+							return [i,`<div class="popup text center" style="width:calc(100% - 10px);display:inline-block">${item.name}</div>`];
+						}),'textbutton'])
+						game.me.chooseButton(true).set('dialog',id).set('onfree',true);
+						'step 1'
+						var pack=game.liangjunduilei[result.links[0]];
+						game.versusVideoName=pack.name;
+						ui.duileiInfo=ui.create.system('当前剧情',null,true);
+						lib.setPopped(ui.duileiInfo,function(){
+							var uiintro=ui.create.dialog('hidden');
+							uiintro.add(pack.name);
+							var list=['暂无剧情介绍'];
+							var intro='<ul style="text-align:left;margin-top:0;width:450px">'+'<li>'+list+'</ul>';
+							uiintro.add('<div class="text center">'+intro+'</div>');
+							var ul=uiintro.querySelector('ul');
+							if(ul){
+								ul.style.width='180px';
+							}
+							uiintro.add(ui.create.div('.placeholder'));
+							return uiintro;
+						},250);
+						for(var i in pack.lib){
+							for(var j in pack.lib[i]){
+								lib[i][j]=pack.lib[i][j];
+							}
+						}
+						var player=game.players.randomGet();
+						_status.firstAct=player;
+						for(var i=0;i<4;i++){
+							player.init(pack.character[i]);
+							player.side=pack.place[i];
+							player=player.next;
+						}
+
+						for(var i=0;i<game.players.length;i++){
+							if(game.players[i].side==game.me.side){
+								game.players[i].node.identity.firstChild.innerHTML='友';
+							}
+							else{
+								game.players[i].node.identity.firstChild.innerHTML='敌';
+							}
+							game.players[i].node.identity.dataset.color=game.players[i].side+'zhu';
+						}
+						game.addVideo('arrangeLib',null,pack.lib);
+						setTimeout(function(){
+							ui.arena.classList.remove('choose-character');
+						},500);
+						if(get.config('two_phaseswap')){
+							game.addGlobalSkill('autoswap');
+							if(lib.config.show_handcardbutton){
+								ui.versushs=ui.create.system('手牌',null,true);
+								lib.setPopped(ui.versushs,game.versusHoverHandcards,220);
+							}
+						}
+					});
+				};
+			}
+		};
+		
+		// 修改乱斗-幻化之战模式任务显示、灵力标记修改、选将后删除Nickname
+		lib.brawl.huanhuazhizhan.content={
+			submode:'normal',
+			chooseCharacterBefore:function(){
+			game.identityVideoName='幻化之战';
+			var skills=[];
+			var banned=[
+				'xinfu_guhuo','reguhuo','jixi','duanchang','huashen','xinsheng','rehuashen','rexinsheng',
+				'jinqu','nzry_binglve','nzry_huaiju','nzry_yili','nzry_zhenglun','nzry_mingren','nzry_zhenliang','drlt_qingce',
+				'new_wuhun','qixing','kuangfeng','dawu','baonu','wumou','ol_wuqian','ol_shenfen','renjie','jilue','nzry_junlve','nzry_dinghuo','drlt_duorui',
+				'chuanxin','cunsi',
+				'jueqing','huilei','paiyi','fuhun','zhuiyi','olddanshou','yanzhu','juexiang','jiexun','bizhuan','tongbo',
+				'xinfu_zhanji','xinfu_jijun','xinfu_fangtong',
+				'xinfu_qianchong','pdgyinshi','shuliang',
+				'zongkui','guju','bmcanshi','dingpan','xinfu_lingren','new_luoyan','junwei','gxlianhua',
+				'qizhou','fenyue','dianhu','linglong','fenxin','mouduan',
+				'cuorui','xinmanjuan','xinfu_jianjie','jianjie_faq','new_meibu','xinfu_xingzhao','jici',
+				'xianfu','fenyong','xuehen','yingbin','midao','yishe','yinbing','juedi',
+				'bushi','xinfu_dianhua','xinfu_falu','xinfu_zhenyi','lskuizhu','pingjian','xjshijian','fentian','zhiri','xindan',
+				'xinzhengnan','xinfu_xiaode',
+				'komari_xueshang','qiaosi_map',
+			];
+			var characters=[];
+			for(var name in lib.character){
+				if(!lib.character[name]) continue;
+				if(lib.filter.characterDisabled(name)) continue;
+				if(name.indexOf('old_')==0) continue;
+				var skillsx=lib.character[name][3].slice(0);
+				lib.character[name][2]=4;
+				lib.character[name][3]=[];
+				if(lib.character[name][4]) lib.character[name][4].remove('hiddenSkill');
+				characters.push(name);
+				var list=skillsx.slice(0);
+				for(var j=0;j<skillsx.length;j++){
+					var info=get.info(skillsx[j]);
+					if(!info){
+						skillsx.splice(j,1);
+						list.splice(j--,1);
+						continue;
+					}
+					if(typeof info.derivation=='string') list.push(info.derivation);
+					else if(Array.isArray(info.derivation)) list.addArray(info.derivation);
+				}
+				for(var j=0;j<list.length;j++){
+					if(skills.includes(list[j])||banned.includes(list[j])) continue;
+					var info=get.info(list[j]);
+					if(!info||info.zhuSkill||info.juexingji||info.charlotte||info.limited||info.hiddenSkill||info.dutySkill||info.groupSkill||(info.ai&&info.ai.combo)) continue;
+					skills.push(list[j]);
+				}
+			}
+			_status.characterlist=characters;
+			var pack={
+				skills:skills,
+				pack:{
+					card:{
+						hhzz_toulianghuanzhu:{
+							enable:true,
+							cardimage:"toulianghuanzhu",
+							recastable:true,
+							type:'trick',
+							filterTarget:function(card,player,target){
+								return target.skillH.length>0;
+							},
+							content:function(){
+								target.removeSkillH(target.skillH.randomGet());
+								var skills=lib.huanhuazhizhan.skills;
+								skills.randomSort();
+								for(var i=0;i<skills.length;i++){
+									if(!target.skillH.includes(skills[i])){
+										target.addSkillH(skills[i]);
+										break;
+									}
+								}
+							},
+							ai:{
+								order:10,
+								result:{
+									target:function(){
+										return 0.5-Math.random();
+									},
+								},
+							},
+						},
+						hhzz_fudichouxin:{
+							enable:true,
+							cardimage:"fudichouxin",
+							type:'trick',
+							filterTarget:function(card,player,target){
+								return target.skillH.length>0;
+							},
+							content:function(){
+								target.removeSkillH(target.skillH.randomGet());
+							},
+							ai:{
+								order:10,
+								result:{target:-1},
+							},
+						},
+					},
+					character:{
+						hhzz_shiona:['female','key',1,['hhzz_huilei']],
+						hhzz_kanade:['female','key',2,['hhzz_youlian']],
+						hhzz_takaramono1:['male','qun',5,['hhzz_jubao','hhzz_huizhen']],
+						hhzz_takaramono2:['male','qun',3,['hhzz_jubao','hhzz_zhencang']],
+					},
+					skill:{
+						_lingli_damage:{
+							trigger:{source:'damage'},
+							forced:true,
+							popup:false,
+							filter:function(event,player){
+								return event.player==player._toKill;
+							},
+							content:function(){
+								game.log(player,'对击杀目标造成了伤害');
+								player.changeLingli(trigger.num);
+							},
+						},
+						_lingli:{
+							mark:true,
+							marktext:'灵力',
+							popup:'聚灵',
+							intro:{
+								name:'灵力',
+								content:'当前灵力点数：# / 5',
+							},
+							trigger:{
+								player:'phaseBeginStart',
+							},
+							prompt:'是否消耗2点灵力获得一个技能？',
+							filter:function(event,player){
+								return player.storage._lingli>1;
+							},
+							check:function(event,player){
+								return player.skillH.length<3;
+							},
+							content:function(){
+								'step 0'
+								player.changeLingli(-2);
+								'step 1'
+								event.skills=lib.huanhuazhizhan.skills;
+								var skills=event.skills;
+								skills.randomSort();
+								var list=[];
+								for(var i=0;i<skills[i].length;i++){
+									if(!player.skillH.includes(skills[i])) list.push(skills[i]);
+									if(list.length==3) break;
+								}
+								if(!list.length){event.finish();return;}
+								if(player.storage._lingli>0) list.push('刷新');
+								event.list=list;
+								var dialog=game.getSkillDialog(event.list,'选择获得一个技能');
+								player.chooseControl(event.list).set('ai',function(){
+									return 0;
+								}).dialog=dialog;
+								'step 2'
+								if(result.control=='刷新'){
+									player.changeLingli(-1);
+									event.goto(1);
+									return;
+								}
+								event.skill=result.control;
+								if(player.skillH.length==3){
+									event.lose=true;
+										player.chooseControl(player.skillH).prompt='选择失去1个已有技能';
+								}
+								'step 3'
+								if(event.lose) player.removeSkillH(result.control);
+								player.addSkillH(event.skill);
+							},
+						},
+						_lingli_round:{
+							trigger:{global:'roundStart'},
+							forced:true,
+							popup:false,
+							filter:function(event,player){
+								return _status._aozhan!=true&&game.roundNumber>1;
+							},
+							content:function(){
+								player.changeLingli(1);
+							},
+						},
+						_lingli_draw:{
+							enable:'phaseUse',
+							filter:function(event,player){
+								return player.storage._lingli>0;
+							},
+							content:function(){
+								player.changeLingli(-1);
+								player.draw();
+							},
+							delay:0,
+							ai:{
+								order:10,
+								result:{
+									player:function(player){
+										return (player.storage._lingli-2*(3-player.skillH.length))>0?1:0;
+									},
+								},
+							},
+						},
+						_lingli_save:{
+							trigger:{target:'useCardToTargeted'},
+							forced:true,
+							popup:false,
+							filter:function(event,player){
+								return event.card.name=='tao'&&player==event.player._toSave;
+							},
+							content:function(){
+								game.log(trigger.player,'帮助了保护目标');
+								trigger.player.changeLingli(1);
+							},
+						},
+						_hhzz_qiankunbagua:{
+							trigger:{player:'phaseAfter'},
+							forced:true,
+							forceDie:true,
+							popup:false,
+							filter:function(event,player){
+								return _status._aozhan&&!player.getStat('damage')&&player.isAlive()||event._lastDead!=undefined;
+							},
+							content:function(){
+								'step 0'
+								if(_status._aozhan&&!player.getStat('damage')){
+									player.loseHp();
+									player.changeLingli(1);
+									game.log(player,'本回合内未造成伤害，触发死战模式惩罚');
+								}
+								if(trigger._lastDead==undefined) event.goto(2);
+								'step 1'
+								var type=get.rand(1,8);
+								event.type=type;
+								trigger._lastDead.playerfocus(1200);
+								player.$fullscreenpop('乾坤八卦·'+['离','坎','乾','震','兑','艮','巽','坤'][type-1],get.groupnature(trigger._lastDead.group,'raw'));
+								game.delay(1.5);
+								'step 2'
+								var type=event.type;
+								switch(type){
+									case 1:{
+										game.countPlayer(function(current){
+											current.loseHp();
+										});
+										break;
+									}
+									case 2:{
+										game.countPlayer(function(current){
+											current.draw(2,'nodelay');
+										});
+										break;
+									}
+									case 3:{
+										trigger._lastDead.revive(3);
+										trigger._lastDead.draw(3);
+										break;
+									}
+									case 4:{
+										game.countPlayer(function(current){
+											var he=current.getCards('he');
+											if(he.length) current.discard(he.randomGet()).delay=false;
+										});
+										break;
+									}
+									case 5:{
+										game.countPlayer(function(current){
+											current.changeLingli(1);
+										});
+										break;
+									}
+									case 6:{
+										var cards=[];
+										game.countPlayer(function(current){
+											var card=get.cardPile(function(card){
+												return !cards.includes(card)&&get.type(card)=='equip';
+											});
+											if(card){
+												cards.push(card);
+												current.$gain(card,'gain2')
+												current.gain(card);
+											}
+										});
+										break;
+									}
+									case 7:{
+										game.countPlayer(function(current){
+											if(current.skillH.length<3){
+												var skills=lib.huanhuazhizhan.skills;
+												skills.randomSort();
+												for(var i=0;i<skills.length;i++){
+													if(!current.skillH.includes(skills[i])){
+														current.addSkillH(skills[i]);
+														break;
+													}
+												}
+											}
+										});
+										break;
+									}
+									case 8:{
+										trigger._lastDead.revive(null,false);
+										trigger._lastDead.uninit();
+										trigger._lastDead.init(['hhzz_shiona','hhzz_kanade','hhzz_takaramono1','hhzz_takaramono2'].randomGet());
+										trigger._lastDead.skillH=lib.character[trigger._lastDead.name][3].slice(0);
+										trigger._lastDead.addSkill('hhzz_noCard');
+										break;
+									}
+								}
+								'step 3'
+								if(game.playerx().length<=4&&!_status._aozhan){
+									game.countPlayer2(function(current){
+										delete current._toKill;
+										delete current._toSave;
+									});
+									var str='死战模式'+'<br>'+'存活到最后';
+									ui.huanhuazhizhan.innerHTML='<span style="font-family:shousha; font-size: 15px; color: #FFFFDE; -webkit-text-stroke:0px #000000; text-shadow:1px 1px 1px #000000">'+str+'</span>';
+									_status._aozhan=true;
+									game.playBackgroundMusic();
+									trigger._lastDead.$fullscreenpop('死战模式',get.groupnature(trigger._lastDead.group,'raw')||'fire');
+								}
+								else game.randomMission();
+							},
+						},
+						hhzz_noCard:{
+							mod:{
+								cardEnabled:function(){return false},
+								cardSavable:function(){return false},
+								cardRespondable:function(){return false},
+							},
+						},
+						hhzz_huilei:{
+							trigger:{player:'die'},
+							forced:true,
+							forceDie:true,
+							skillAnimation:true,
+							logTarget:'source',
+							filter:function(event,player){
+								return event.source!=undefined;
+							},
+							content:function(){
+								var source=trigger.source;
+								var cards=source.getCards('he');
+								if(cards.length) source.discard(cards);
+							},
+							ai:{
+								effect:{
+									target:function(card,player,target){
+										if(get.tag(card,'damage')) return [-5,0];
+									}
+								}
+							}
+						},
+						hhzz_youlian:{
+							trigger:{player:'die'},
+							forced:true,
+							forceDie:true,
+							skillAnimation:true,
+							logTarget:'source',
+							filter:function(event,player){
+								return event.source!=undefined;
+							},
+							content:function(){
+								var source=trigger.source;
+								var cards=source.getCards('he');
+								if(cards.length) source.discard(cards);
+								var skills=source.skillH;
+								if(skills.length) source.removeSkillH(skills.randomGet());
+							},
+							ai:{
+								effect:{
+									target:function(card,player,target){
+										if(get.tag(card,'damage')) return [-5,0];
+									}
+								}
+							}
+						},
+						hhzz_zhencang:{
+							trigger:{player:'die'},
+							forced:true,
+							filter:function(event,player){
+								return event.source!=undefined;
+							},
+							forceDie:true,
+							logTarget:'source',
+							content:function(){
+								var source=trigger.source;
+								source.draw();
+								if(source.skillH.length==3) source.removeSkillH(source.skillH.randomGet());
+								var skills=lib.huanhuazhizhan.skills;
+								skills.randomSort();
+								for(var i=0;i<skills.length;i++){
+									if(!source.skillH.includes(skills[i])){
+										source.addSkillH(skills[i]);
+										break;
+									}
+								}
+							},
+						},
+						hhzz_huizhen:{
+							trigger:{player:'die'},
+							forced:true,
+							forceDie:true,
+							logTarget:'source',
+							filter:function(event,player){
+								return event.source!=undefined;
+							},
+							content:function(){
+								var source=trigger.source;
+								source.draw(3);
+								if(source.skillH.length==3) source.removeSkillH(source.skillH.randomGet());
+								var skills=lib.huanhuazhizhan.skills;
+								skills.randomSort();
+								for(var i=0;i<skills.length;i++){
+									if(!source.skillH.includes(skills[i])){
+										source.addSkillH(skills[i]);
+										break;
+									}
+								}
+							},
+						},
+						hhzz_jubao:{
+							trigger:{player:'damage'},
+							forced:true,
+							logTarget:'source',
+							filter:function(event,player){
+								return event.source!=undefined&&player.countCards('he')>0;
+							},
+							content:function(){
+								var cards=player.getCards('he');
+								cards.randomSort();
+								cards=cards.slice(0,trigger.num);
+								trigger.source.gain('give',cards,player);
+							},
+							ai:{
+								effect:{
+									target:function(card,player,target){
+										if(get.tag(card,'damage')) return [15,0];
+									}
+								}
+							}
+						},
+					},
+					translate:{
+						_lingli:'聚灵',
+						_lingli_bg:'灵力',
+						_lingli_draw:'聚灵',
+						hhzz_huilei:'挥泪',
+						hhzz_youlian:'犹怜',
+						hhzz_zhencang:'珍藏',
+						hhzz_huizhen:'汇珍',
+						hhzz_jubao:'聚宝',
+						hhzz_huilei_info:'锁定技，杀死你的角色弃置所有的牌。',
+						hhzz_youlian_info:'锁定技，杀死你的角色弃置所有牌并随机失去一个技能。',
+						hhzz_zhencang_info:'锁定技，杀死你的角色摸一张牌并随机获得一个技能(已满则先随机移除一个)。',
+						hhzz_huizhen_info:'锁定技，杀死你的角色摸三张牌并随机获得一个技能(已满则先随机移除一个)。',
+						hhzz_jubao_info:'锁定技，当你受到伤害的点数确定时，伤害来源随机获得你区域内的X张牌（X为伤害点数）。',
+						hhzz_shiona:'汐奈',
+						hhzz_kanade:'立华奏',
+						hhzz_takaramono1:'坚实宝箱',
+						hhzz_takaramono2:'普通宝箱',
+						hhzz_toulianghuanzhu:'偷梁换柱',
+						hhzz_fudichouxin:'釜底抽薪',
+						hhzz_toulianghuanzhu_info:'出牌阶段，对一名角色使用，随机更换其一个技能。可重铸。',
+						hhzz_fudichouxin_info:'出牌阶段，对一名角色使用，随机弃置其一个技能。',
+						nei:' ',
+						nei2:' ',
+						刷新_info:'消耗1点灵力值，刷新上述技能。',
+					},
+				},
+				get:{
+					rawAttitude:function(from,to){
+						if(from==to||to==from._toSave) return 10;
+						if(to==from._toKill) return -30;
+						return -10;
+					}
+				},
+				eltc:{
+					gameDraw:function(){
+						var end=player;
+						var numx;
+						var num=function(player){
+							return player._hSeat>5?5:4;
+						};
+						do{
+							if(typeof num=='function'){
+								numx=num(player);
+							}
+							if(player._hSeat>6) player.changeLingli(1);
+							player.directgain(get.cards(numx));
+							player=player.next;
+						}
+						while(player!=end);
+					},
+				},
+				eltp:{
+					addSkillH:function(skill){
+						this.skillH.add(skill);
+						this.addSkillLog.apply(this,arguments);
+					},
+					removeSkillH:function(skill){
+						this.skillH.remove(skill);
+						game.log(this,'失去了技能','#g【'+get.translation(skill)+'】');
+						this.removeSkill(skill);
+					},
+					dieAfter:function(){
+						var evt=_status.event.getParent('phase');
+						if(evt) evt._lastDead=this;
+						if(game.playerx().length==1) game.over(game.me.isAlive());
+					},
+					$dieAfter:function(){},
+					hasUnknown:function(){return false},
+					isUnknown:function(){return false},
+					getEnemies:function(){
+						var list=game.playerx();
+						list.remove(this);
+						return list;
+					},
+					dieAfter2:function(source){
+						if(source&&this.name.indexOf('hhzz_')!=0){
+							if(source._toKill==this) game.log(source,'击杀目标成功');
+							source.draw(this==source._toKill?2:1);
+							source.changeLingli(this==source._toKill?3:2);
+						}
+						if(!_status._aozhan){
+							var that=this;
+							game.countPlayer(function(current){
+								if(current._toSave==that){
+									game.log(current,'保护失败');
+									var cards=current.getCards('he');
+									if(cards.length) current.discard(cards.randomGets(4));
+								}
+							});
+						}
+					},
+					logAi:function(){},
+					changeLingli:function(num){
+						if(typeof num!='number') num=1;
+						if(typeof this.storage._lingli!='number') this.storage._lingli=0;
+						if(num>0){
+							num=Math.min(num,5-this.storage._lingli);
+							if(num<1) return;
+							game.log(this,'获得了','#y'+get.cnNumber(num)+'点','灵力');
+						}
+						else{
+							if(-num>this.storage._lingli) num=-this.storage._lingli;
+							if(num==0) return;
+							game.log(this,'失去了','#y'+get.cnNumber(-num)+'点','灵力');
+						}
+						this.storage._lingli+=num;
+						this.markSkill('_lingli');
+					},
+				},
+				game:{
+					playerx:function(){
+						return game.filterPlayer(function(current){
+							if(current.name.indexOf('hhzz_')==0) return;
+							return true;
+						});
+					},
+					randomMission:function(){
+						if(_status._aozhan) return;
+						if(!ui.huanhuazhizhan){
+							ui.huanhuazhizhan=ui.create.div('','',ui.arena);;
+							ui.huanhuazhizhan.style.top='calc(-1% - 0.5px)';
+							ui.huanhuazhizhan.style.left='40px';
+							if(ui.time3) ui.time3.style.display='none';
+						}
+						var players=game.playerx();
+						for(var i=0;i<players.length;i++){
+							var player=players[i];
+							var list=players.slice(0).randomSort();
+							list.remove(player);
+							player._toKill=list[0];
+							player._toSave=list[1];
+						}
+						var str='<font color="#ff0000">'+'击杀'+'</font>'+get.translation(game.me._toKill)+'，'+'<font color="#00ff00">'+'保护'+'</font>'+get.translation(game.me._toSave)+'<br>'+'存活到最后';
+						ui.huanhuazhizhan.innerHTML='<span style="font-family:shousha; font-size: 15px; color: #FFFFDE; -webkit-text-stroke:0px #000000; text-shadow:1px 1px 1px #000000">'+str+'</span>';
+						// 修复换人后任务没刷新的bug
+						var interval = setInterval(() => {
+							if(game.me){
+								if (_status._aozhan) return clearInterval(interval);
+								var str='<font color="#ff0000">'+'击杀'+'</font>'+get.translation(game.me._toKill)+'，'+'<font color="#00ff00">'+'保护'+'</font>'+get.translation(game.me._toSave)+'<br>'+'存活到最后';
+								ui.huanhuazhizhan.innerHTML='<span style="font-family:shousha; font-size: 15px; color: #FFFFDE; -webkit-text-stroke:0px #000000; text-shadow:1px 1px 1px #000000">'+str+'</span>';
+							}
+						}, 1000);
+					},
+					getSkillDialog:function(skills,prompt){
+						var dialog=ui.create.dialog('hidden','forcebutton');
+						if(prompt) dialog.addText(prompt);
+						for(var i=0;i<skills.length;i++){
+							dialog.add('<div class="popup pointerdiv" style="width:80%;display:inline-block"><div class="skill">【'+get.translation(skills[i])+'】</div><div>'+lib.translate[skills[i]+'_info']+'</div></div>');
+						}
+						dialog.addText(' <br> ');
+						return dialog;
+					},
+					chooseCharacter:function(){
+						var next=game.createEvent('chooseCharacter');
+						next.showConfig=true;
+						next.setContent(function(){
+							'step 0'
+							if(game.ui_identityShow!=undefined) ui.arena.removeChild(game.ui_identityShow);
+							game.zhu=game.players.randomGet();
+							var i=1;
+							var current=game.zhu;
+							while(true){
+								current.skillH=[];
+								current._hSeat=i;
+								current.identity='nei';
+								current.setNickname(get.cnNumber(i,true)+'号位');
+								for(var ii in lib.huanhuazhizhan.eltp) current[ii]=lib.huanhuazhizhan.eltp[ii];
+								current=current.next;
+								i++;
+								if(current==game.zhu) break;
+							}
+							ui.arena.classList.add('choose-character');
+							game.me.chooseButton(['请选择角色形象',[_status.characterlist.randomRemove(5),'character']],true).onfree=true;
+							'step 1'
+							game.me.init(result.links[0]);
+							var list=['xiandeng','shulv','xisheng'];
+							game.me.chooseControl(list).dialog=game.getSkillDialog(list,'选择要获得的初始技能');
+							'step 2'
+							var list=['_lingli','_lingli_round','_lingli_draw','_lingli_save','_hhzz_qiankunbagua','_lingli_damage'];
+							for(var i=0;i<list.length;i++){
+								game.addGlobalSkill(list[i]);
+							}
+							game.me.addSkillH(result.control);
+							game.countPlayer(function(current){
+								if(!current.name){
+									current.init(_status.characterlist.randomRemove(1)[0]);
+									current.addSkillH(['xiandeng','shulv','xisheng'].randomGet());
+								}
+								current.storage._lingli=0;
+								current.markSkill('_lingli');
+							});
+							game.showIdentity(true);
+							'step 3'
+							game.randomMission();
+							var list=[
+								game.createCard('hhzz_fudichouxin'),
+								game.createCard('hhzz_toulianghuanzhu'),
+								game.createCard('hhzz_toulianghuanzhu'),
+								game.createCard('hhzz_toulianghuanzhu'),
+							];
+							for(var i=0;i<list.length;i++){
+								ui.cardPile.insertBefore(list[i],ui.cardPile.childNodes[get.rand(ui.cardPile.childElementCount)]);
+							}
+							game.updateRoundNumber();
+							for (var i = 0; i < game.players.length; i++) {
+								game.players[i].setNickname("");
+							}
+							'step 4'
+							setTimeout(function(){
+								ui.arena.classList.remove('choose-character');
+							},500);
+							_status.videoInited=true;
+							game.addVideo('arrangeLib',null,{
+								skill:{
+									_lingli_damage:{},
+									_lingli:{
+									mark:true,
+									marktext:'灵力',
+									popup:'聚灵',
+									intro:{
+										name:'灵力',
+										content:'当前灵力点数：# / 5',
+									},
+									},
+									_lingli_round:{},
+									_lingli_draw:{},
+									_lingli_save:{},
+									hhzz_noCard:{},
+									hhzz_huilei:{
+										skillAnimation:true,
+									},
+									hhzz_youlian:{
+										skillAnimation:true,
+									},
+									hhzz_zhencang:{},
+									hhzz_huizhen:{},
+									hhzz_jubao:{},
+								},
+								card:{
+									hhzz_toulianghuanzhu:{
+										cardimage:"toulianghuanzhu",
+									},
+									hhzz_fudichouxin:{
+										cardimage:"fudichouxin",
+									},
+								},
+								character:{
+									hhzz_shiona:['female','key',1,['hhzz_huilei']],
+									hhzz_kanade:['female','key',2,['hhzz_youlian']],
+									hhzz_takaramono1:['male','qun',5,['hhzz_jubao','hhzz_huizhen']],
+									hhzz_takaramono2:['male','qun',3,['hhzz_jubao','hhzz_zhencang']],
+								},
+								translate:{
+									_lingli:'聚灵',
+									_lingli_bg:'灵',
+									_lingli_draw:'聚灵',
+									hhzz_huilei:'挥泪',
+									hhzz_youlian:'犹怜',
+									hhzz_zhencang:'珍藏',
+									hhzz_huizhen:'汇珍',
+									hhzz_jubao:'聚宝',
+									hhzz_huilei_info:'锁定技，杀死你的角色弃置所有的牌。',
+									hhzz_youlian_info:'锁定技，杀死你的角色弃置所有牌并随机失去一个技能。',
+									hhzz_zhencang_info:'锁定技，杀死你的角色摸一张牌并随机获得一个技能(已满则先随机移除一个)。',
+									hhzz_huizhen_info:'锁定技，杀死你的角色摸三张牌并随机获得一个技能(已满则先随机移除一个)。',
+									hhzz_jubao_info:'锁定技，当你受到伤害的点数确定时，伤害来源随机获得你区域内的X张牌（X为伤害点数）。',
+									nei:' ',
+									nei2:' ',
+									hhzz_shiona:'汐奈',
+									hhzz_kanade:'立华奏',
+									hhzz_takaramono1:'坚实宝箱',
+									hhzz_takaramono2:'普通宝箱',
+									hhzz_toulianghuanzhu:'偷梁换柱',
+									hhzz_fudichouxin:'釜底抽薪',
+									hhzz_toulianghuanzhu_info:'出牌阶段，对一名角色使用，随机更换其一个技能。可重铸。',
+									hhzz_fudichouxin_info:'出牌阶段，对一名角色使用，随机弃置其一个技能。',
+								},
+							});
+						});
+					},
+				},
+			};
+			var func=function(pack){
+				for(var i in pack.pack){
+					for(var j in pack.pack[i]) lib[i][j]=pack.pack[i][j];
+				}
+				for(var i in pack.eltc) lib.element.content[i]=pack.eltc[i];
+				for(var i in pack.eltp) lib.element.player[i]=pack.eltp[i];
+				for(var i in pack.game) game[i]=pack.game[i];
+				for(var i in pack.get) get[i]=pack.get[i];
+				lib.huanhuazhizhan=pack;
+			}
+			func(pack);
+			},
+		};
+	}
+		
 	// 挑战模式神将按钮删除乱入武将
 	// 修改boss.js的函数boss_taowu:{
 	if(lib.config.mode=='boss'){

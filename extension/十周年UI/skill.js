@@ -1934,15 +1934,17 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			enable:['chooseToUse','chooseToRespond'],
 			prompt:'将一张♠牌当做【无懈可击】，♣牌当做【闪】，♥牌当做【桃】，♦牌当做火【杀】使用或打出',
 			viewAs:function(cards,player){
-				var name=false;
-				var nature=null;
-				switch(get.suit(cards[0],player)){
-					case 'club':name='shan';break;
-					case 'diamond':name='sha';nature='fire';break;
-					case 'spade':name='wuxie';break;
-					case 'heart':name='tao';break;
+				if(cards.length){
+					var name=false;
+					var nature=null;
+					switch(get.suit(cards[0],player)){
+						case 'club':name='shan';break;
+						case 'diamond':name='sha';nature='fire';break;
+						case 'spade':name='wuxie';break;
+						case 'heart':name='tao';break;
+					}
+					if(name) return {name:name,nature:nature};
 				}
-				if(name) return {name:name,nature:nature};
 				return null;
 			},
 			check:function(card){

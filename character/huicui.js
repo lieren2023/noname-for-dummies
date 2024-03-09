@@ -6086,8 +6086,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger.baseDamage++;
 						player.addSkill('dccuijin_damage');
 						player.markAuto('dccuijin_damage',[trigger.card]);
-						if(!player.storage.dccuijin_map) player.storage.dccuijin_map={};
-						player.storage.dccuijin_map[trigger.card.cardid]=trigger.targets.slice();
+						if(!player.storage.dccuijin_map) player.storage.dccuijin_map={cards:[],targets:[]};
+						player.storage.dccuijin_map.cards.push(trigger.card);
+						player.storage.dccuijin_map.targets.push(trigger.targets.slice());
 					}
 				},
 				subSkill:{
@@ -6108,7 +6109,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						},
 						content:function(){
 							'step 0'
-							var card=trigger.card;
+							var card=trigger.card,idx=player.storage.dccuijin_map.cards.indexOf(card);
 							if(event.triggername=='useCardAfter'){
 								var cards=player.getStorage('dccuijin_damage');
 								cards=cards.remove(card);
@@ -6116,10 +6117,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									player.removeSkill('dccuijin_damage');
 									delete player.storage.dccuijin_map;
 								}
-								else delete player.storage.dccuijin_map[card.cardid];
+								else if(idx!==-1){
+									player.storage.dccuijin_map.cards.splice(idx,1);
+									player.storage.dccuijin_map.targets.splice(idx,1);
+								}
 								event.finish();
 							}
-							else{
+							else if(idx!==-1){
 								var target,source;
 								if(trigger.name.indexOf('damage')==0){
 									target=trigger.player;
@@ -6129,11 +6133,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									target=trigger.target;
 									source=trigger.player;
 								}
-								if(player.storage.dccuijin_map[card.cardid].includes(target)&&!target.hasHistory('damage',evt=>{
+								if(player.storage.dccuijin_map.targets[idx].includes(target)&&!target.hasHistory('damage',evt=>{
 									return evt.card==card;
 								})){
 									player.logSkill('dccuijin_damage',source);
-									player.storage.dccuijin_map[card.cardid].remove(target);
+									player.storage.dccuijin_map.targets[idx].remove(target);
 									player.draw(2);
 									if(source&&source.isIn()){
 										player.line(trigger.player,'green');

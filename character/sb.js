@@ -936,8 +936,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			sbyijue:{
 				audio:2,
-				trigger:{source:'damageBegin2'},
+				trigger:{global:'damageBegin4'},
 				filter:function(event,player){
+					if(!event.source||event.source!=player||event.player==player) return false;
 					return event.num>=event.player.hp&&!player.getStorage('sbyijue').includes(event.player);
 				},
 				forced:true,
@@ -1296,7 +1297,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbkanpo:{
 				init:function(player){
 					if(!player.storage.sbkanpo){
-						player.storage.sbkanpo=[get.mode()=='doudizhu'?2:4,[],[]];
+						player.storage.sbkanpo=[(get.mode()=='doudizhu'||(get.mode()=='versus'&&_status.mode=='two'))?2:4,[],[]];
 						player.markSkill('sbkanpo');
 					}
 				},
@@ -6684,6 +6685,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbkanpo:'看破',
 			sbkanpo_info:'①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录4个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。',
 			sbkanpo_info_doudizhu:'①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录2个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。',
+			sbkanpo_info_versus_two:'①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录2个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。',
 			sbguanxing:'观星',
 			sbguanxing_info:'①准备阶段，你将所有“星”置入弃牌堆，将牌堆顶的X张牌置于你的武将牌上，称为“星”（X为7-此前发动〖观星①〗次数的三倍，且X至少为0）。然后你可以将任意张“星”置于牌堆顶。②结束阶段，若你未于本回合的准备阶段将“星”置于过牌堆顶，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。',
 			sbkongcheng:'空城',
@@ -6703,7 +6705,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbwusheng_info:'你可以将一张手牌当作任意【杀】使用或打出。出牌阶段开始时，你可以选择一名非主公的其他角色，本阶段对其使用【杀】无距离和次数限制，使用【杀】指定其为目标后摸一张牌，对其使用三张【杀】后不能对其使用【杀】。',
 			sbwusheng_info_identity:'你可以将一张手牌当作任意【杀】使用或打出。出牌阶段开始时，你可以选择一名非主公的其他角色，本阶段对其使用【杀】无距离和次数限制，使用【杀】指定其为目标后摸两张牌，对其使用三张【杀】后不能对其使用【杀】。',
 			sbyijue:'义绝',
-			sbyijue_info:'锁定技，每名角色每局游戏限一次，当你对一名角色造成大于等于其体力值的伤害时，你防止此伤害，且本回合你使用牌指定其为目标时，此牌对其无效。',
+			sbyijue_info:'锁定技，每名角色每局游戏限一次，一名其他角色受到你对其造成的大于等于其体力值的伤害时，你防止此伤害，且本回合你使用牌指定其为目标时，此牌对其无效。',
 			sb_caopi:'谋曹丕',
 			sb_caopi_prefix:'谋',
 			sbxingshang:'行殇',

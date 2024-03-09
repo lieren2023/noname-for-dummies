@@ -3,14 +3,27 @@
  */
 var ts;
 importScripts('./game/typescript.js');
+/**
+ * @type { import('./game/compiler-sfc.browser.js') }
+ */
+var sfc;
+importScripts('./game/compiler-sfc.browser.js');
 // @ts-ignore
 if (typeof ts != 'undefined') {
 	console.log(`ts loaded`);
 } else {
 	console.log(`ts undefined`);
 }
+// @ts-ignore
+if (typeof sfc != 'undefined') {
+	console.log(`sfc loaded`, sfc);
+	sfc.registerTS(() => ts);
+} else {
+	console.log(`sfc undefined`);
+}
 
-console.log('serviceWorker version 2.2');
+
+console.log('serviceWorker version 2.3');
 
 self.addEventListener("install", (event) => {
 	// The promise that skipWaiting() returns can be safely ignored.
@@ -28,11 +41,27 @@ self.addEventListener('message', event => {
 	console.log(event.data);
 });
 
+/**
+ * 将vue编译的结果放在这里，调用的时候直接返回就好了
+ */
+const vueFileMap = new Map();
+
 self.addEventListener('fetch', event => {
 	// @ts-ignore
 	const request = event.request;
 	if (typeof request.url != 'string') return console.log(request);
-	if (!['.ts', '.json'].some(ext => request.url.endsWith(ext))) return;
+	if (vueFileMap.has(request.url)) {
+		const rep = new Response(new Blob([vueFileMap.get(request.url)], { type: "text/javascript" }), {
+			status: 200,
+			statusText: "OK",
+			headers: new Headers({
+				"Content-Type": "text/javascript"
+			}),
+		});
+		event.respondWith(rep);
+		return;
+	}
+	if (!['.ts', '.json', '.vue'].some(ext => request.url.endsWith(ext))) return;
 	if (request.url.endsWith('.d.ts')) return;
 	if (request.url.endsWith('.json')) {
 		// @ts-ignore
@@ -55,7 +84,7 @@ self.addEventListener('fetch', event => {
 				let js;
 				if (request.url.endsWith('.json')) {
 					js = `export default ${text}`;
-				} else {
+				} else if (request.url.endsWith('.ts')) {
 					js = ts.transpile(text, {
 						module: ts.ModuleKind.ES2015,
 						target: ts.ScriptTarget.ES2019,
@@ -63,6 +92,71 @@ self.addEventListener('fetch', event => {
 						resolveJsonModule: true,
 						esModuleInterop: true,
 					}, request.url);
+				} else if (request.url.endsWith('.vue')) {
+					const id = Date.now().toString();
+					const scopeId = `data-v-${id}`;
+					const { descriptor } = sfc.parse(text);
+					const hasScoped = descriptor.styles.some((s) => s.scoped);
+					// 编译 script，因为可能有 script setup，还要进行 css 变量注入
+					const script = sfc.compileScript(descriptor, {
+						id: scopeId,
+						inlineTemplate: true,
+						templateOptions: {
+							scoped: hasScoped,
+							compilerOptions: {
+								scopeId: hasScoped ? scopeId : undefined,
+							}
+						},
+					});
+					// 用于存放代码，最后 join('\n') 合并成一份完整代码
+					const codeList = [];
+					// 重写 default
+					vueFileMap.set(
+						request.url + '?type=script',
+						sfc.rewriteDefault(script.content, "__sfc_main__")
+							.replace(`const __sfc_main__`, `export const __sfc_main__`)
+							.replaceAll(`from "vue"`, `from "/game/vue.esm-browser.js"`)
+							.replaceAll(`from 'vue'`, `from '/game/vue.esm-browser.js'`)
+					);
+					codeList.push(`import { __sfc_main__ } from '${request.url}?type=script'`);
+					codeList.push(`__sfc_main__.__scopeId='${scopeId}'`);
+
+					// 编译模板，转换成 render 函数
+					const template = sfc.compileTemplate({
+						source: descriptor.template.content,
+						filename: request.url, // 用于错误提示
+						id: scopeId,
+						scoped: hasScoped,
+						inlineTemplate: true,
+						compilerOptions: {
+							scopeId: hasScoped ? scopeId : undefined,
+						}
+					});
+
+					codeList.push(`import { render } from '${request.url}?type=template'`);
+
+					vueFileMap.set(request.url + '?type=template', template.code
+						.replace(`function render(_ctx, _cache) {`, str => str + 'console.log(_ctx);')
+						.replaceAll(`from "vue"`, `from "/game/vue.esm-browser.js"`)
+						.replaceAll(`from 'vue'`, `from '/game/vue.esm-browser.js'`)
+					);
+					
+					codeList.push(`__sfc_main__.render = render;`);
+					codeList.push(`export default __sfc_main__;`);
+
+					// 一个 Vue 文件，可能有多个 style 标签
+					for (const styleBlock of descriptor.styles) {
+						const styleCode = sfc.compileStyle({
+							source: styleBlock.content,
+							id,
+							filename: request.url,
+							scoped: styleBlock.scoped,
+						});
+						const styleDOM = `var el = document.createElement('style');\nel.innerHTML =  \`${styleCode.code}\`;document.body.append(el);`;
+						codeList.push(styleDOM);
+					}
+					const code = codeList.join('\n');
+					js = code;
 				}
 				const rep = new Response(new Blob([js], { type: "text/javascript" }), {
 					status: 200,

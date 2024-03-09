@@ -80,6 +80,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			event.current=null;
 			var list=[];
+			if(lib.storage.current==undefined) lib.storage.current='boss_hundun';
 			for(var i in lib.character){
 				var info=lib.character[i];
 				if(info[4].includes('boss')){

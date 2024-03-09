@@ -6835,17 +6835,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				prompt:'将♦牌当做杀，♥牌当做桃，♣牌当做闪，♠牌当做无懈可击使用或打出',
 				//动态的viewAs
 				viewAs(cards,player){
-					var name=false;
-					var nature=null;
-					//根据选择的卡牌的花色 判断要转化出的卡牌是闪还是火杀还是无懈还是桃
-					switch(get.suit(cards[0],player)){
-						case 'club':name='shan';break;
-						case 'diamond':name='sha';nature='fire';break;
-						case 'spade':name='wuxie';break;
-						case 'heart':name='tao';break;
+					if(cards.length){
+						var name=false,nature=null;
+						//根据选择的卡牌的花色 判断要转化出的卡牌是闪还是火杀还是无懈还是桃
+						switch(get.suit(cards[0],player)){
+							case 'club':name='shan';break;
+							case 'diamond':name='sha';nature='fire';break;
+							case 'spade':name='wuxie';break;
+							case 'heart':name='tao';break;
+						}
+						//返回判断结果
+						if(name) return {name:name,nature:nature};
 					}
-					//返回判断结果
-					if(name) return {name:name,nature:nature};
 					return null;
 				},
 				//AI选牌思路
@@ -6996,15 +6997,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:['chooseToUse','chooseToRespond'],
 				prompt:'将♦手牌当做火【杀】，♥手牌当做【桃】，♣手牌当做【闪】，♠手牌当做【无懈可击】使用或打出',
 				viewAs(cards,player){
-					var name=false;
-					var nature=null;
-					switch(get.suit(cards[0],player)){
-						case 'club':name='shan';break;
-						case 'diamond':name='sha';nature='fire';break;
-						case 'spade':name='wuxie';break;
-						case 'heart':name='tao';break;
+					if(cards.length){
+						var name=false,nature=null;
+						switch(get.suit(cards[0],player)){
+							case 'club':name='shan';break;
+							case 'diamond':name='sha';nature='fire';break;
+							case 'spade':name='wuxie';break;
+							case 'heart':name='tao';break;
+						}
+						if(name) return {name:name,nature:nature};
 					}
-					if(name) return {name:name,nature:nature};
 					return null;
 				},
 				check(card){

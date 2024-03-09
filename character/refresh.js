@@ -8698,14 +8698,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				position:'hs',
 				prompt:'将杀当做闪，或将闪当做杀，或将桃当做酒，或将酒当做桃使用或打出',
 				viewAs:function(cards,player){
-					var name=false;
-					switch(get.name(cards[0],player)){
-						case 'sha':name='shan';break;
-						case 'shan':name='sha';break;
-						case 'tao':name='jiu';break;
-						case 'jiu':name='tao';break;
+					if(cards.length){
+						var name=false;
+						switch(get.name(cards[0],player)){
+							case 'sha':name='shan';break;
+							case 'shan':name='sha';break;
+							case 'tao':name='jiu';break;
+							case 'jiu':name='tao';break;
+						}
+						if(name) return {name:name};
 					}
-					if(name) return {name:name};
 					return null;
 				},
 				check:function(card){
