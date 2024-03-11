@@ -5,12 +5,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'sb',
 		connect:true,
 		character:{
+			sb_gaoshun:['male','qun',4,['sbxianzhen','sbjinjiu']],
+			sb_xiahoudun:['male','wei',4,['sbganglie','sbqingjian']],
 			sb_xunyu:['male','wei',3,['sbquhu','sbjieming']],
 			sb_caopi:['male','wei',3,['sbxingshang','sbfangzhu','sbsongwei'],['zhu']],
 			sb_guanyu:['male','shu',4,['sbwusheng','sbyijue']],
 			sb_huangyueying:['female','shu',3,['sbjizhi','sbqicai']],
 			sb_sp_zhugeliang:['male','shu',3,['sbhuoji','sbkanpo']],
-			sb_zhugeliang:['male','shu',3,['sbguanxing','sbkongcheng']],
 			sb_zhanghe:['male','wei',4,['sbqiaobian']],
 			sb_yujin:['male','wei',4,['sbxiayuan','sbjieyue']],
 			sb_huaxiong:['male','qun','3/4/1',['new_reyaowu','sbyangwei']],
@@ -49,15 +50,344 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterSort:{
 			sb:{
-				sb_zhi:['sb_sunquan','sb_zhouyu','sb_zhangjiao','sb_caocao','sb_zhenji','sb_liubei','sb_daqiao','sb_liubiao','sb_sp_zhugeliang','sb_zhugeliang'],
+				sb_zhi:['sb_sunquan','sb_zhouyu','sb_zhangjiao','sb_caocao','sb_zhenji','sb_liubei','sb_daqiao','sb_liubiao','sb_sp_zhugeliang'],
 				sb_shi:['sb_xuhuang','sb_machao','sb_fazheng','sb_chengong','sb_diaochan','sb_pangtong','sb_zhanghe','sb_caopi'],
 				sb_tong:['liucheng','sp_yangwan','sb_xiahoushi','sb_zhangfei','sb_zhaoyun','sb_sunce','sb_zhurong','sb_xiaoqiao'],
 				sb_yu:['sb_yujin','sb_lvmeng','sb_huangzhong','sb_huanggai','sb_zhouyu','sb_caoren','sb_ganning','sb_yl_luzhi','sb_huangyueying'],
 				sb_neng:['sb_huaxiong','sb_sunshangxiang','sb_jiangwei','sb_yuanshao','sb_menghuo','sb_guanyu'],
-				sb_waitforsort:['sb_xunyu'],
+				sb_waitforsort:['sb_xunyu','sb_xiahoudun','sb_gaoshun'],
 			}
 		},
+		characterSubstitute:{
+			sb_sp_zhugeliang:[
+			],
+		},
 		skill:{
+			//高顺
+			sbxianzhen:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filterTarget(card,player,target){
+					return target!==player;
+				},
+				async content(event,trigger,player){
+					const target = event.targets[0];
+					player.addTempSkill('sbxianzhen_attack', 'phaseUseAfter');
+					player.markAuto('sbxianzhen_attack',target);
+				},
+				ai:{
+					expose: 0.2,
+					order(item,player){
+						return get.order({ name: 'sha' }) + 1;
+					},
+					result:{
+						target(player,target){
+							if (!player.countCards('hs', card => {
+								return get.name(card) === 'sha' && player.canUse(card, target, false);
+							})) return -0.1;
+							if (target.countCards('h') === 1 && player.canCompare(target)) return -2;
+							return -1.5;
+						},
+					}
+				},
+				subSkill:{
+					attack:{
+						audio:'sbxianzhen',
+						trigger:{player:'useCardToPlayered'},
+						filter(event,player){
+							if (event.card.name !== 'sha') return false;
+							return player.getStorage('sbxianzhen_attack').includes(event.target) && event.target.isIn() && player.canCompare(event.target);
+						},
+						charlotte:true,
+						onremove:true,
+						logTarget:'target',
+						check(event,player){
+							return get.attitude(player, event.target) < 0;
+						},
+						prompt(event,player){
+							return `陷阵：是否与${get.translation(event.target)}拼点？`
+						},
+						prompt2(event,player){
+							const target = event.target, card = event.card;
+							return `若你赢，${get.translation(card)}无视防具且不计入次数，且若你本回合未以此法造成过伤害，你对其造成1点伤害；<br>若其拼点牌为【杀】，则你获得之；<br>若其拼点牌为其最后的手牌，则${get.translation(card)}对其造成伤害时，此伤害+1。`
+						},
+						group:'sbxianzhen_record',
+						async content(event,trigger,player){
+							const target = trigger.target, card = trigger.card;
+							const next = player.chooseToCompare(target);
+							let result = await next.forResult();
+							if (result.bool) {
+								target.addTempSkill('qinggang2');
+								target.storage.qinggang2.add(card);
+								if (trigger.addCount !== false) {
+									trigger.addCount = false;
+									const stat = player.getStat('card');
+									if (stat[card.name] && stat[card.name] > 0) stat[card.name]--;
+								}
+								game.log(card, '无视防具且不计入次数限制');
+								if (!player.storage.sbxianzhen_damaged) {
+									player.storage.sbxianzhen_damaged = true;
+									player.when('phaseAfter').then(() => {
+										delete player.storage.sbxianzhen_damaged;
+									})
+									await target.damage();
+									await game.asyncDelayx();
+								}
+							}
+							const toGain = [];
+							for (const lose_list of next.lose_list) {
+								let [comparer, cards] = lose_list;
+								if (!Array.isArray(cards)) cards = [cards];
+								if (comparer === player) continue;
+								for (const card of cards) {
+									if (get.name(card, comparer) == 'sha' && get.position(card, true) == 'd') {
+										toGain.push(card);
+									}
+								}
+							}
+							if (toGain.length) await player.gain(toGain, 'gain2');
+							if (player.getStorage('sbxianzhen_recorded').includes(target)) {
+								const id = target.playerid;
+								const map = trigger.getParent().customArgs;
+								if (!map[id]) map[id] = {};
+								if (typeof map[id].extraDamage != 'number') {
+									map[id].extraDamage = 0;
+								}
+								map[id].extraDamage++;
+								game.log(card, '对', target, '造成的伤害+1');
+							}
+						},
+						intro:{
+							content:'本阶段对$使用牌无距离限制，且使用杀指定其为目标后可以与其拼点',
+						},
+						mod:{
+							targetInRange(card,player,target){
+								if(player.getStorage('sbxianzhen_attack').includes(target)) return true;
+							},
+						}
+					},
+					record:{
+						trigger:{
+							global:'loseAsyncEnd',
+						},
+						charlotte:true,
+						silent:true,
+						filter(event,player){
+							if(event.getParent(2).name !== 'sbxianzhen_attack') return false;
+							return game.hasPlayer(current => {
+								if (current.countCards('h')) return false;
+								const evt = event.getl(current);
+								return evt && evt.hs && evt.hs.length;
+							});
+						},
+						async content(event,trigger,player){
+							const targets = [];
+							game.countPlayer(current => {
+								if (current.countCards('h')) return false;
+								const evt = trigger.getl(current);
+								if(evt && evt.hs && evt.hs.length) targets.add(current);
+							});
+							if (!player.storage.sbxianzhen_recorded) {
+								player.when('sbxianzhen_attackAfter').then(() => {
+									delete player.storage.sbxianzhen_recorded;
+								})
+							}
+							player.markAuto('sbxianzhen_recorded', targets);
+						},
+					},
+				}
+			},
+			sbjinjiu:{
+				audio:2,
+				inherit:'rejinjiu',
+				group:['sbjinjiu_decrease','sbjinjiu_compare'],
+				global:'sbjinjiu_global',
+				subSkill:{
+					decrease:{
+						audio:'sbjinjiu',
+						forced:true,
+						trigger:{player:'damageBegin4'},
+						filter(event,player){
+							return event.getParent(2).jiu;
+						},
+						async content(event,trigger){
+							trigger.num = 1;
+						},
+						ai:{
+							filterDamage:true,
+							skillTagFilter(player,tag,arg){
+								return arg&&arg.jiu;
+							},
+						},
+					},
+					global:{
+						mod:{
+							cardEnabled(card,player){
+								if(card.name=='jiu'&&_status.currentPhase&&_status.currentPhase!=player&&_status.currentPhase.hasSkill('sbjinjiu')) return false;
+							},
+							cardSavable(card,player){
+								if(card.name=='jiu'&&_status.currentPhase&&_status.currentPhase!=player&&_status.currentPhase.hasSkill('sbjinjiu')) return false;
+							},
+						},
+					},
+					compare:{
+						trigger:{
+							global:'compare',
+						},
+						filter(event,player){
+							const participant = [event.player];
+							if(event.targets) participant.addArray(event.targets);
+							else participant.add(event.target);
+							if (!participant.includes(player)) return false;
+							if (event.player !== player && event.card1 && event.card1.name === 'jiu') return true;
+							if (event.target !== player && event.card2 && event.card2.name === 'jiu') return true;
+							return false;
+						},
+						forced:true,
+						direct:true,
+						async content(event,trigger,player){
+							for (const [role, ind] of [['player',1], ['target',2]]){
+								const current = trigger[role], card = trigger[`card${ind}`];
+								if (current !== player && card && card.name === 'jiu') {
+									await player.logSkill('sbjinjiu_compare', current);
+									game.log(current, '拼点牌点数视为','#yA');
+									trigger[`num${ind}`] = 1;
+								}
+							}
+						}
+					},
+				},
+			},
+			//夏侯惇
+			sbganglie:{
+				audio:2,
+				enable:'phaseUse',
+				filter(event,player){
+					if (!event.sbganglie_enabledTargets) return false;
+					return game.hasPlayer(current=>{
+						return lib.skill.sbganglie.filterTarget(null,player,current);
+					});
+				},
+				onChooseToUse(event){
+					if (game.online || event.type !== 'phase') return;
+					const player = event.player;
+					const chosen = player.getAllHistory('useSkill', evt => evt.skill === 'sbganglie').map(evt => {
+						return evt.targets;
+					}).flat();
+					const targets = player.getAllHistory('damage', evt => evt.source && evt.source.isIn()).map(evt => evt.source).unique();
+					targets.removeArray(chosen);
+					event.set('sbganglie_enabledTargets',targets);
+				},
+				filterTarget(card,player,target){
+					return get.event('sbganglie_enabledTargets').includes(target);
+				},
+				async content(event,trigger,player){
+					event.targets[0].damage(2);
+				},
+				ai:{
+					order:6,
+					result:{
+						target:-2,
+					}
+				},
+			},
+			sbqingjian:{
+				audio:2,
+				trigger:{
+					global:['loseAfter','cardsDiscardAfter','loseAsyncAfter','equipAfter'],
+				},
+				forced:true,
+				locked:false,
+				filter(event,player){
+					if (player.getExpansions('sbqingjian').length >= Math.max(1, player.getHp() - 1)) return false;
+					if (event.name !== 'cardsDiscard') {
+						if (event.position !== ui.discardPile) return false;
+						if (!game.hasPlayer(current => {
+							const evt = event.getl(current);
+							return evt.cards && evt.cards.length > 0;
+						})) return false;
+					}
+					else{
+						const evt = event.getParent();
+						if (evt.relatedEvent && evt.relatedEvent.name === 'useCard') return false;
+					}
+					return true;
+				},
+				group:'sbqingjian_give',
+				async content(event,trigger,player){
+					let cards = trigger.cards.slice();
+					const maxNum = Math.max(1, player.getHp() - 1);
+					const myLen = player.getExpansions('sbqingjian').length, cardsLen = trigger.cards.length;
+					const overflow = myLen + cardsLen - maxNum;
+					if (overflow > 0) cards.randomRemove(overflow);
+					const next = player.addToExpansion(cards, 'gain2');
+					next.gaintag.add('sbqingjian');
+					await next;
+				},
+				marktext:'俭',
+				intro:{
+					content:'expansion',
+					markcount:'expansion',
+				},
+				subSkill:{
+					give:{
+						audio:'sbqingjian',
+						trigger:{player:'phaseUseEnd'},
+						filter(event,player){
+							return player.getExpansions('sbqingjian').length > 0;
+						},
+						forced:true,
+						locked:false,
+						async content(event,trigger,player){
+							if (_status.connectMode) game.broadcastAll(() => { _status.noclearcountdown = true });
+							const given_map = {};
+							const expansions = player.getExpansions('sbqingjian');
+							let result;
+							while (true) {
+								if (expansions.length > 1) {
+									result = await player.chooseCardButton('清俭：请选择要分配的牌', true, expansions, [1, expansions.length]).set('ai', button => {
+										if (ui.selected.buttons.length) return 0;
+										return get.value(button.link, get.player());
+									}).forResult();
+								}
+								else if (expansions.length === 1) result = { bool: true, links: expansions.slice(0) };
+								else return;
+								if (!result.bool) return;
+								const toGive = result.links;
+								result = await player.chooseTarget(`选择一名角色获得${get.translation(toGive)}`, expansions.length === 1).set('ai', target => {
+									const att = get.attitude(get.player(), target);
+									if (get.event('toEnemy')) return Math.max(0.01, 100 - att);
+									else if (att > 0) return Math.max(0.1, att / (1 + target.countCards('h') + (get.event().getParent().given_map[target.playerid] || 0)));
+									else return Math.max(0.01, (100 + att) / 100);
+								}).set('toEnemy', get.value(toGive[0], player, 'raw') < 0).forResult();
+								if (result.bool) {
+									expansions.removeArray(toGive);
+									if (result.targets.length) {
+										const id = result.targets[0].playerid;
+										if (!given_map[id]) given_map[id] = [];
+										given_map[id].addArray(toGive);
+									}
+									if (!expansions.length) break;
+								}
+							}
+							if (_status.connectMode) game.broadcastAll(() => { delete _status.noclearcountdown; game.stopCountChoose() });
+							const gain_list = [];
+							for (const i in given_map) {
+								const source = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
+								player.line(source, 'green');
+								gain_list.push([source, given_map[i]]);
+								game.log(source, '获得了', given_map[i]);
+							}
+							await game.loseAsync({
+								gain_list,
+								giver: player,
+								animate: 'gain2',
+							}).setContent('gaincardMultiple');
+						}
+					},
+				},
+			},
 			//荀彧
 			sbquhu:{
 				audio:2,
@@ -1249,15 +1579,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						async content(event,trigger,player){
 							player.awakenSkill('sbhuoji');
 							game.log(player,'成功完成使命');
-							if (get.character(player.name1)[3].includes('sbhuoji')) {
-								player.reinitCharacter(player.name1, 'sb_zhugeliang', false);
-							}
-							else if (player.name2&&get.character(player.name2)[3].includes('sbhuoji')) {
-								player.reinitCharacter(player.name2, 'sb_zhugeliang', false);
-							}
-							else{
-								player.changeSkills(['sbguanxing','sbkongcheng'],['sbhuoji','sbkanpo']);
-							}
+							player.changeSkin('sbhuoji','sb_zhugeliang');
+							player.changeSkills(['sbguanxing','sbkongcheng'],['sbhuoji','sbkanpo']);
 						},
 					},
 					fail:{
@@ -6676,10 +6999,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbtianxiang:'天香',
 			sbtianxiang_info_identity:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸等量的牌。',
 			sbtianxiang_info:'①出牌阶段限三次，你可以交给一名没有“天香”标记的其他角色一张红色牌，然后令其获得此牌花色的“天香”标记。②当你受到伤害时，你可以移去一名角色的“天香”标记，若此“天香”标记为：红桃，你防止此伤害，其受到伤害来源对其造成的1点伤害（若没有伤害来源则改为无来源伤害）；方片，其交给你两张牌。③准备阶段，你移去场上所有的“天香”标记，然后摸X张牌（X为移去的“天香”标记数+2）。',
-			sb_sp_zhugeliang:'谋卧龙',
+			sb_sp_zhugeliang:'谋诸葛亮',
 			sb_sp_zhugeliang_prefix:'谋',
-			sb_zhugeliang:'谋诸葛亮',
-			sb_zhugeliang_prefix:'谋',
 			sbhuoji:'火计',
 			sbhuoji_info:'使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。',
 			sbkanpo:'看破',
@@ -6720,6 +7041,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbquhu_info:'出牌阶段限一次。你可以选择两名有牌的其他角色，你与这些角色同时将任意张牌扣置于武将牌上。若你以此法扣置的牌唯一最少，则扣置牌最多的其他角色获得你扣置的牌，且这些角色获得各自扣置的牌；否则这两名角色中扣置牌较多的角色对较少的角色造成1点伤害，获得你扣置的牌，然后这些角色将各自扣置的牌置入弃牌堆（若这两名角色扣置的牌数相同，视为与你逆时针最近座次的角色扣置牌较多）。',
 			sbjieming:'节命',
 			sbjieming_info:'当你受到伤害后，你可以令一名角色摸三张牌，然后其可以弃置任意张牌。若其弃置的牌数不大于X，你失去1点体力（X为你已损失的体力值，至少为1）。',
+			sb_xiahoudun:'谋夏侯惇',
+			sb_xiahoudun_prefix:'谋',
+			sbganglie:'刚烈',
+			sbganglie_info:'出牌阶段，你可以选择一名本局游戏对你造成过伤害且未以此法选择过的角色，你对其造成2点伤害。',
+			sbqingjian:'清俭',
+			sbqingjian_info:'①当有一张牌不因使用而进入弃牌堆后，若你的“清俭”数小于X，你将此牌置于你的武将牌上，称为“清俭”（X为你的体力值-1，且至少为1）。②出牌阶段结束时，你将所有“清俭”分配给任意角色。',
+			sb_gaoshun:'谋高顺',
+			sb_gaoshun_prefix:'谋',
+			sbxianzhen:'陷阵',
+			sbxianzhen_info:'出牌阶段限一次。你可以选择一名其他角色，你于本阶段获得如下效果：⒈你对其使用牌无距离限制；⒉当你使用【杀】指定其为目标后，你可以与其拼点：若你赢，此【杀】无视防具且不计入次数，且若你本回合未以此法造成过伤害，你对其造成1点伤害；若其拼点牌为【杀】，则你获得之；若其拼点牌为其最后的手牌，则此【杀】对其造成伤害时，此伤害+1。',
+			sbjinjiu:'禁酒',
+			sbjinjiu_info:'锁定技。①你的【酒】均视为【杀】。②当你受到酒【杀】的伤害时，你令此伤害减至1。③其他角色不能于你的回合内使用【酒】。④当一名其他角色的拼点牌亮出后，若你为发起者或参与者且此牌为【酒】，则此牌的点数视为A。',
 
 			sb_zhi:'谋攻篇·知',
 			sb_shi:'谋攻篇·识',

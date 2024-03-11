@@ -6,7 +6,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		characterSort:{
 			mobile:{
-				mobile_default:['xin_huojun','muludawang','mb_chengui','mb_huban','mb_xianglang','yanxiang','xin_wuban','laimin','baoxin','jiangji','liwei','xin_guozhao',"miheng","taoqian","lingcao","sunru","lifeng","zhuling","liuye","zhaotongzhaoguang","majun","simazhao","wangyuanji","pangdegong","shenpei","hujinding","zhangyì","jiakui","yangbiao","chendeng","dongcheng","yangyi","dengzhi","zhengxuan","sp_sufei","furong","dingyuan","simashi","yanghuiyu","hucheer","gongsunkang","nanhualaoxian","zhouqun","qiaozhou","fuqian","simafu","mayuanyi","yanpu","sunhanhua","sp_maojie","peixiu","sp_jianggan","ruanhui","xin_mamidi","sp_caosong","yangfu","wangjun","sp_pengyang","qianzhao",'shichangshi'],
+				mobile_default:['xin_huojun','muludawang','mb_chengui','mb_huban','mb_xianglang','yanxiang','xin_wuban','laimin','baoxin','jiangji','liwei','xin_guozhao',"miheng","taoqian","lingcao","sunru","lifeng","zhuling","liuye","zhaotongzhaoguang","majun","simazhao","wangyuanji","pangdegong","shenpei","hujinding","zhangyì","jiakui","yangbiao","chendeng","dongcheng","yangyi","dengzhi","zhengxuan","sp_sufei","furong","dingyuan","simashi","yanghuiyu","hucheer","gongsunkang","nanhualaoxian","zhouqun","qiaozhou","fuqian","simafu","mayuanyi","yanpu","sunhanhua","sp_maojie","peixiu","sp_jianggan","ruanhui","xin_mamidi","sp_caosong","yangfu","wangjun","sp_pengyang","qianzhao",'shichangshi','yangfeng'],
 				mobile_yijiang:["yj_zhanghe","yj_zhangliao","yj_xuhuang","yj_ganning",'yj_huangzhong','yj_weiyan','yj_zhoubuyi'],
 				mobile_standard:["xin_xiahoudun","xin_zhangfei"],
 				mobile_shenhua_feng:['re_xiaoqiao',"xin_zhoutai"],
@@ -26,6 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		character:{
+			yangfeng:['male','shu',4,['mbxuetu','mbweiming']],
 			xin_huojun:['male','shu',4,['sidai','jieyu'],['character:tw_huojun','die_audio:tw_huojun']],
 			muludawang:['male','qun','3/3/1',['shoufa','zhoulin','yuxiang']],
 			mb_chengui:['male','qun',3,['guimou','zhouxian']],
@@ -178,6 +179,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			scs_gaowang:['male','qun','',['scsmiaoyu'],['unseen','sex:male_castrated']],
 		},
 		characterIntro:{
+			yangfeng:'杨奉（？－197年/198年），东汉末年将领。杨奉早年参加白波军起义，曾经帮助李傕对抗郭汜，后来背叛李傕。兴平二年，加号兴义将军，护送汉献帝刘协东归雒阳，颇有功勋，加号车骑将军，屯兵于梁县。建安元年，随着汉献帝迁都许县，失去权力，先后依附于袁术、吕布，劫掠徐州和扬州地区。建安二年（一说三年），带兵进犯刘备领地，被刘备诱杀。',
 			muludawang:'古典小说《三国演义》中的虚构人物，八纳洞主，孟获盟友。擅驱兽法，能行风雨，控制猛兽并指挥它们作战。在法术帮助下最初对蜀军取得一些胜利，但在诸葛亮的喷火木兽将他的动物吓跑后战败，最后死于乱军之中。',
 			laimin:'来敏（165年—261年），字敬达，义阳新野人，东汉太中大夫来歙之后，司空来艳之子，三国时期蜀汉官员。东汉末年，逢董卓之乱，来敏跟随姐夫黄琬到荆州避难，黄琬是刘璋祖母的侄子，来敏又与姐姐来氏入蜀，被刘璋引为宾客。来敏喜欢读书，尤其喜欢《左氏春秋》。刘备平定益州后，以来敏为典学校尉，后立太子，来敏为家令。刘禅继位后，任命来敏为虎贲中郎将，诸葛亮驻汉中，请来敏为军祭酒、辅军将军。却因其口出狂言而被罢官，诸葛亮死后，来敏历任大长秋、光禄大夫、执慎将军等职，期间多次因说错话而被免官，蜀汉景耀年间，来敏去世，时年九十七岁。',
 			shichangshi:'十常侍，指中国东汉（公元25年—220年）灵帝时期（168年-189年）操纵政权的十二个宦官：张让、赵忠、夏恽、郭胜、孙璋、毕岚、栗嵩、段珪、高望、张恭、韩悝、宋典（在小说《三国演义》里，十常侍指的是指张让、赵忠、封谞、段珪、曹节、侯览、蹇硕、程旷、夏恽、郭胜十人），他们都任职中常侍。玩弄小皇帝于股掌之中，以至灵帝称“张常侍是我父，赵常侍是我母”。十常侍自己横征暴敛，卖官鬻爵，他们的父兄子弟遍布天下，横行乡里，祸害百姓，无官敢管。人民不堪剥削、压迫，纷纷起来反抗。当时一些比较清醒的官吏，已看出宦官集团的黑暗腐败，导致大规模农民起义的形势。郎中张钧在给皇帝的奏章中明确指出，黄巾起义是外戚宦官专权逼出来的，他说：“张角所以能兴兵作乱，万人所以乐附之者，其源皆由十常侍多放父兄、子弟、婚宗、宾客典据州郡，辜确财利，侵略百姓，百姓之怨无所告诉，故谋议不轨，聚为‘盗贼’。”后被曹操、袁绍所歼。',
@@ -394,6 +396,210 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			//杨奉
+			mbxuetu:{
+				audio:2,
+				enable:'phaseUse',
+				usable:2,
+				filter(event,player){
+					if (player.countMark('mbxuetu_status') !== 1 && player.getStat('skill').mbxuetu) return false;
+					if (!player.storage.mbxuetu) return player.countCards('he');
+					return true;
+				},
+				zhuanhuanji2(skill, player){
+					return player.countMark('mbxuetu_status') !== 1;
+				},
+				filterCard(card,player){
+					if (player.countMark('mbxuetu_status') > 1) return false;
+					if (player.countMark('mbxuetu_status') === 1) {
+						if (player.getStorage('mbxuetu_used').includes(false)) return false;
+						return true;
+					}
+					return !player.storage.mbxuetu;
+				},
+				selectCard(){
+					const player = get.player();
+					if (player.countMark('mbxuetu_status') > 1) return -1;
+					if (player.countMark('mbxuetu_status') === 1) {
+						if (player.getStorage('mbxuetu_used').includes(false)) return -1;
+						if (player.getStorage('mbxuetu_used').includes(true)) return 1;
+						return [0,1];
+					}
+					return !player.storage.mbxuetu ? 1 : -1;
+				},
+				check(card){
+					return 6-get.value(card);
+				},
+				prompt(){
+					const player = get.player(), storage = player.storage.mbxuetu, status = player.countMark('mbxuetu_status');
+					if (status === 0) {
+						if (storage) return '转换技。出牌阶段限一次，你可以失去1点体力，然后令一名角色摸两张牌。';
+						return '转换技。出牌阶段限一次，你可以弃置一张牌，然后令一名角色回复1点体力。';
+					}
+					else if (status === 1) {
+						return '出牌阶段各限一次。⒈你可以弃置一张牌，然后令一名角色回复1点体力；⒉你可以失去1点体力，然后令一名角色摸两张牌。';
+					}
+					else {
+						if (storage) return '转换技。出牌阶段限一次，你可以摸一张牌，然后对一名角色造成1点伤害。';
+						return '转换技。出牌阶段限一次，你可以回复1点体力，然后令一名角色弃置两张牌。';
+					}
+				},
+				position:'he',
+				filterTarget:true,
+				onremove:['mbxuetu','mbxuetu_status'],
+				derivation:['mbxuetu_achieve','mbxuetu_fail'],
+				async content(event,trigger,player){
+					const target = event.targets[0], storage = Boolean(player.storage.mbxuetu);
+					const status = player.countMark('mbxuetu_status');
+					player.changeZhuanhuanji('mbxuetu');
+					if (status < 2) {
+						if (!player.storage.mbxuetu_used) {
+							player.when(['phaseUseAfter', 'mbweiming_achieveAfter']).then(() => {
+								delete player.storage.mbxuetu_used;
+							});
+						}
+						player.markAuto('mbxuetu_used', storage);
+						if (status === 0 && !storage || status === 1 && event.cards.length) {
+							await target.recover();
+						}
+						else {
+							await player.loseHp();
+							await target.draw(2);
+						}
+					}
+					else {
+						if (!storage) {
+							await player.recover();
+							await target.chooseToDiscard(2,true,'he');
+						}
+						else {
+							await player.draw();
+							await target.damage();
+						}
+					}
+				},
+				mark:true,
+				marktext:'☯',
+				intro:{
+					content:(storage,player)=>{
+						if (!player.countMark('mbxuetu_status')) {
+							if (storage) return '转换技。出牌阶段限一次，你可以失去1点体力，然后令一名角色摸两张牌。';
+							return '转换技。出牌阶段限一次，你可以弃置一张牌，然后令一名角色回复1点体力。';
+						}
+						else {
+							if (storage) return '转换技。出牌阶段限一次，你可以摸一张牌，然后对一名角色造成1点伤害。';
+							return '转换技。出牌阶段限一次，你可以回复1点体力，然后令一名角色弃置两张牌。';
+						}
+					}
+				},
+				ai:{
+					order(item,player){
+						const status = player.countMark('mbxuetu_status');
+						if (status > 1) return Math.max(get.order({ name: 'guohe' }), get.order({ name: 'chuqibuyi' }));
+						if (status === 1 || player.storage.mbxuetu) return 9;
+						return 2;
+					},
+					result:{
+						target(player,target){
+							const status = player.countMark('mbxuetu_status');
+							if (status > 1) {
+								if (player.storage.mbxuetu) return -get.damageEffect(target, player, player) / 10;
+								return -2;
+							}
+							if (status === 0 && player.storage.mbxuetu || status === 1 && !ui.selected.cards.length) return 2;
+							const eff = get.recoverEffect(target, player, player);
+							return eff > 0 ? 2 : (eff < 0 ? -get.sgnAttitude(player, target) : 0);
+						},
+						player(player,target){
+							const status = player.countMark('mbxuetu_status');
+							if (status > 1) {
+								if (player.storage.mbxuetu) return 1;
+								return get.recoverEffect(player, player) / 6;
+							}
+							if (status === 1 || !player.storage.mbxuetu) return -0.5;
+							const eff = get.effect(player, {name: 'losehp'}, player, player);
+							if (eff >= 0) return Math.min(1, eff / 2);
+							const hp = player.getHp() + player.countCards('hes', card => {
+								return player.canSaveCard(card, player);
+							});
+							return -1.5 * Math.max(0, 3 - hp);
+						},
+					},
+				},
+			},
+			mbweiming:{
+				audio:2,
+				trigger:{
+					player:'phaseUseBegin',
+				},
+				filter(event,player){
+					return game.hasPlayer(current => {
+						return !player.getStorage('mbweiming').includes(current);
+					});
+				},
+				dutySkill:true,
+				forced:true,
+				direct:true,
+				group:['mbweiming_achieve', 'mbweiming_fail'],
+				async content(event, trigger, player){
+					const targets = await player.chooseTarget('威命：记录一名未记录过的角色','当你杀死没有被记录过的角色后，则〖威命〗使命成功；如果在你杀死这些角色中的一名之前，有被记录过的角色死亡，则你〖威命〗使命失败。',true)
+						.set('filterTarget', (card, player, target) => {
+							return !player.getStorage('mbweiming').includes(target);
+						})
+						.set('ai', target => {
+							if (target === player) return 1;
+							return 1 + Math.sqrt(Math.abs(get.attitude(player, target))) * Math.abs(get.threaten(target)) / Math.sqrt(target.getHp() + 1) / Math.sqrt(target.countCards('hes') + 1);
+						})
+						.forResultTargets();
+					if (targets && targets.length > 0) {
+						const target = targets[0];
+						player.logSkill('mbweiming', target);
+						player.markAuto('mbweiming', target);
+					}
+				},
+				intro:{
+					content: '已记录$',
+				},
+				subSkill: {
+					achieve: {
+						audio:'mbweiming',
+						trigger:{
+							source:'dieAfter',
+						},
+						filter(event,player){
+							return !player.getStorage('mbweiming').includes(event.player);
+						},
+						dutySkill:true,
+						forced:true,
+						skillAnimation:true,
+						animationColor:'fire',
+						async content(event, trigger, player){
+							game.log(player,'成功完成使命');
+							player.awakenSkill('mbweiming');
+							player.storage.mbxuetu_status = 1;
+							player.unmarkSkill('mbxuetu');
+							await game.asyncDelayx();
+						}
+					},
+					fail: {
+						audio:'mbweiming',
+						trigger:{
+							global:'dieAfter',
+						},
+						filter(event,player){
+							return player.getStorage('mbweiming').includes(event.player);
+						},
+						dutySkill:true,
+						forced:true,
+						async content(event, trigger, player){
+							game.log(player,'使命失败');
+							player.awakenSkill('mbweiming');
+							player.storage.mbxuetu_status = 2;
+							await game.asyncDelayx();
+						}
+					},
+				},
+			},
 			//霍骏
 			sidai:{
 				audio:'twsidai',
@@ -15644,6 +15850,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				][['豹','鹰','熊','兔'].indexOf(zhoufa)];
 				return str+'。';
 			},
+			mbxuetu(player){
+				const xuetu=player.storage.mbxuetu, status = player.countMark('mbxuetu_status');
+				if (status === 0) {
+					if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阴：你可以弃置一张牌，然后令一名角色回复1点体力；</span>阳：你可以失去1点体力，然后令一名角色摸两张牌。';
+					return '转换技。出牌阶段限一次，阴：你可以弃置一张牌，然后令一名角色回复1点体力；<span class="bluetext">阳：你可以失去1点体力，然后令一名角色摸两张牌。</span>';
+				}
+				else if (status === 1) {
+					return lib.translate.mbxuetu_achieve_info;
+				}
+				else {
+					if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阴：你可以回复1点体力，然后令一名角色弃置两张牌；</span>阳：你可以摸一张牌，然后对一名角色造成1点伤害。';
+					return '转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名角色弃置两张牌；<span class="bluetext">阳：你可以摸一张牌，然后对一名角色造成1点伤害。</span>';
+				}
+			},
 		},
 		perfectPair:{
 			simazhao:['simayi','jin_simayi','jin_wangyuanji'],
@@ -16526,6 +16746,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sidai_info:'限定技，出牌阶段，你可以将手牌区内的所有基本牌当做【杀】使用。若此牌对应的实体牌中：包含【闪】，则目标角色成为此牌的目标后，需弃置一张基本牌，否则不可响应此牌；包含【桃】，则当目标角色受到此牌的伤害后，其减1点体力上限。',
 			jieyu:'竭御',
 			jieyu_info:'结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。',
+			yangfeng:'杨奉',
+			mbxuetu:'血途',
+			mbxuetu_info:'转换技。出牌阶段限一次，阴：你可以弃置一张牌，然后令一名角色回复1点体力；阳：你可以失去1点体力，然后令一名角色摸两张牌。',
+			mbxuetu_achieve:'血途·成功',
+			mbxuetu_achieve_info:'出牌阶段各限一次。⒈你可以弃置一张牌，然后令一名角色回复1点体力；⒉你可以失去1点体力，然后令一名角色摸两张牌。',
+			mbxuetu_fail:'血途·失败',
+			mbxuetu_fail_info:'转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名角色弃置两张牌；阳：你可以摸一张牌，然后对一名角色造成1点伤害。',
+			mbweiming:'威命',
+			mbweiming_info:'使命技，锁定技。①出牌阶段开始时，你记录一名未以此法记录过的角色。②成功：当你杀死一名未被〖威命①〗记录过的角色后，修改〖血途〗为成功版本。③失败：当一名被〖威命①〗记录过的角色死亡后，你修改〖血途〗为失败版本。',
 
 			mobile_standard:'手杀异构·标准包',
 			mobile_shenhua_feng:'手杀异构·其疾如风',

@@ -76,6 +76,7 @@ var pinyin_dict_polyphone = {
 	"血诏": "xuè ",
 	"血偿": "xuè ",
 	"血拼": "xuè ",
+	"血途": "xuè ",
 	"行殇": "xíng ",
 	"节行": "jié xíng",
 	"天行": " xíng",

@@ -211,7 +211,7 @@ new Promise(resolve => {
 						navigator.serviceWorker.addEventListener('message', e => {
 							console.log(e);
 						});
-						registration_1.update();
+						registration_1.update().catch(console.error);
 					} catch (e_1) {
 						console.log('serviceWorker加载失败: ', e_1);
 					}

@@ -155,11 +155,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						next.set('useShan',(()=>{
 							if(target.hasSkillTag('noShan',null,event)) return false;
 							if(target.hasSkillTag('useShan',null,event)) return true;
-							if(event.baseDamage+event.extraDamage<=0 || target.isLinked()&&game.hasNature(event.card)&&get.attitude(target,player._trueMe||player)>0) return false;
+							if(target.isLinked()&&game.hasNature(event.card)&&get.attitude(target,player._trueMe||player)>0) return false;
+							if(event.baseDamage+event.extraDamage<=0&&!game.hasNature(event.card,'ice')) return false;
+							if(target.hasSkillTag('freeShan',false,event,true)) return true;
 							if(event.shanRequired>1&&target.mayHaveShan(target,'use',null,'count')<event.shanRequired-(event.shanIgnored||0)) return false;
 							if(event.baseDamage+event.extraDamage>=target.hp+
 								((player.hasSkillTag('jueqing',false,target)||target.hasSkill('gangzhi'))?target.hujia:0)) return true;
-							if(!game.hasNature(event.card, 'ice')&&get.damageEffect(target,player,target,get.nature(event.card))>=0) return false;
+							if(!game.hasNature(event.card,'ice')&&get.damageEffect(target,player,target,get.nature(event.card))>=0) return false;
 							return true;
 						})());
 						//next.autochoose=lib.filter.autoRespondShan;
@@ -394,7 +396,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						useful:(card,i)=>{
 							let player = _status.event.player, basic = [7, 5.1, 2], num = basic[Math.min(2, i)];
 							if(player.hp>2&&player.hasSkillTag('maixie')) num *= 0.57;
-							if(player.getEquip('bagua') || player.getEquip('rewrite_bagua') || player.getEquip('renwang') || player.getEquip('rewrite_renwang')) num *= 0.8;
+							if(player.hasSkillTag('freeShan',false,null,true) || player.getEquip('rewrite_renwang')) num *= 0.8;
 							return num;
 						},
 						value:[7,5.1,2],
@@ -2676,6 +2678,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					respondShan:true,
+					freeShan:true,
+					skillTagFilter(player,tag,arg){
+						if(tag!=='respondShan'&&tag!=='freeShan') return;
+						if(player.hasSkillTag('unequip2')) return false;
+						if(!arg||!arg.player) return true;
+						if(arg.player.hasSkillTag('unequip',false,{
+							target:player
+						})||arg.player.hasSkillTag('unequip_ai',false,{
+							target:player
+						})) return false;
+						return true;
+					},
 					effect:{
 						target:function(card,player,target,effect){
 							if(target.hasSkillTag('unequip2')) return;

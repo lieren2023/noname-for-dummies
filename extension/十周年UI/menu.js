@@ -1031,12 +1031,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							list.sort(function (a, b) {
 								a = a[0]; b = b[0];
 								var aa = a, bb = b;
-								if (aa.includes('_')) {
-									aa = aa.slice(aa.indexOf('_') + 1);
+								var firstUnderscoreIndexAA = aa.indexOf('_');
+								var firstUnderscoreIndexBB = bb.indexOf('_');
+								var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+								var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+								
+								if (secondUnderscoreIndexAA != -1) {
+									aa = aa.slice(secondUnderscoreIndexAA + 1);
+								} else if (firstUnderscoreIndexAA != -1) {
+									aa = aa.slice(firstUnderscoreIndexAA + 1);
 								}
-								if (bb.includes('_')) {
-									bb = bb.slice(bb.indexOf('_') + 1);
+								
+								if (secondUnderscoreIndexBB != -1) {
+									bb = bb.slice(secondUnderscoreIndexBB + 1);
+								} else if (firstUnderscoreIndexBB != -1) {
+									bb = bb.slice(firstUnderscoreIndexBB + 1);
 								}
+								
 								if (aa != bb) {
 									return aa > bb ? 1 : -1;
 								}
@@ -3935,12 +3946,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}
@@ -4441,12 +4463,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}
@@ -5024,12 +5057,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}

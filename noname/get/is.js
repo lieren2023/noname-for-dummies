@@ -443,4 +443,18 @@ export class Is extends Uninstantable {
 		if (info.locked) return true;
 		return false;
 	}
+	/**
+	 * @param { string } skill
+	 * @param { Player } player
+	 * @returns
+	 */
+	static zhuanhuanji(skill, player) {
+		const info = lib.skill[skill], { zhuanhuanji } = info;
+		if ('zhuanhuanji2' in info) {
+			const { zhuanhuanji2 } = info;
+			if (typeof zhuanhuanji2 === 'function') return Boolean(zhuanhuanji2(skill, player));
+			return Boolean(zhuanhuanji2);
+		}
+		return Boolean(zhuanhuanji);
+	}
 }

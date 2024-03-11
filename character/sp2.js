@@ -6599,16 +6599,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				filter:function(event,player){
 					if(!game.hasPlayer(function(current){
-						return current.hasSkill('panshi');
+						return current.hasSkill('cixiao_yizi');
 					})) return true;
 					return player.countCards('he')>=1&&game.hasPlayer(function(current){
-						return current!=player&&!current.hasSkill('panshi');
+						return current!=player&&!current.hasSkill('cixiao_yizi');
 					});
 				},
 				content:function(){
 					'step 0'
 					if(game.hasPlayer(function(current){
-						return current.hasSkill('panshi');
+						return current.hasSkill('cixiao_yizi');
 					})) event.goto(2);
 					else player.chooseTarget(lib.filter.notMe,get.prompt('cixiao'),'令一名其他角色获得「义子」标记').set('ai',function(target){
 						var player=_status.event.player;
@@ -6619,19 +6619,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var target=result.targets[0];
 						player.logSkill('cixiao',target);
-						target.addSkills('panshi');
+						target.addSkills('cixiao_yizi');
 					}
 					event.finish();
 					'step 2'
 					var list=game.filterPlayer(function(current){
-						return current.hasSkill('panshi');
+						return current.hasSkill('cixiao_yizi');
 					});
 					player.chooseCardTarget({
 						prompt:get.prompt('cixiao'),
 						prompt2:('弃置一张牌并将'+get.translation(list)+'的「义子」标记转移给其他角色'),
 						position:'he',
 						filterTarget:function(card,player,target){
-							return player!=target&&!target.hasSkill('panshi');
+							return player!=target&&!target.hasSkill('cixiao_yizi');
 						},
 						filterCard:lib.filter.cardDiscardable,
 						ai1:function(card){
@@ -6654,12 +6654,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.logSkill('cixiao');
 						player.discard(result.cards).delay=false;
 						player.line2(game.filterPlayer(function(current){
-							if(current.hasSkill('panshi')){
-								current.removeSkills('panshi');
+							if(current.hasSkill('cixiao_yizi')){
+								current.removeSkills('cixiao_yizi');
 								return true;
 							}
 						}).concat(result.targets),'green');
-						target.addSkills('panshi');
+						target.addSkills('cixiao_yizi');
 					}
 					else event.finish();
 					'step 4'
@@ -6667,11 +6667,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				derivation:'panshi',
 				ai:{threaten:8},
+				subSkill: {
+					yizi: {
+						mark: true,
+						charlotte: true,
+						marktext: '子',
+						intro: {
+							name: '义子',
+							content: '具有〖叛弑〗'
+						},
+						group: 'panshi'
+					}
+				}
 			},
 			panshi:{
-				mark:true,
-				marktext:'子',
-				intro:{content:'我是儿子'},
 				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
@@ -8887,7 +8896,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.expandSkills(list2);
 							for(var k=0;k<list2.length;k++){
 								var info=lib.skill[list2[k]];
-								if(!info||!info.trigger||!info.trigger.player||info.silent||info.limited||info.juexingji||info.zhuanhuanji||info.hiddenSkill||info.dutySkill||(info.zhuSkill&&!player.isZhu2())) continue;
+								if(get.is.zhuanhuanji(list2[k],player)) continue;
+								if(!info||!info.trigger||!info.trigger.player||info.silent||info.limited||info.juexingji||info.hiddenSkill||info.dutySkill||(info.zhuSkill&&!player.isZhu2())) continue;
 								if(info.trigger.player==name2||Array.isArray(info.trigger.player)&&info.trigger.player.includes(name2)){
 									if(info.ai&&(info.ai.combo||info.ai.notemp||info.ai.neg)) continue;
 									if(info.init) continue;
@@ -8967,7 +8977,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.expandSkills(list2);
 							for(var k=0;k<list2.length;k++){
 								var info=lib.skill[list2[k]];
-								if(!info||!info.enable||info.charlotte||info.limited||info.juexingji||info.zhuanhuanji||info.hiddenSkill||info.dutySkill||(info.zhuSkill&&!player.isZhu2())) continue;
+								if(get.is.zhuanhuanji(list2[k],player)) continue;
+								if(!info||!info.enable||info.charlotte||info.limited||info.juexingji||info.hiddenSkill||info.dutySkill||(info.zhuSkill&&!player.isZhu2())) continue;
 								if((info.enable=='phaseUse'||(Array.isArray(info.enable)&&info.enable.includes('phaseUse')))||(info.enable=='chooseToUse'||(Array.isArray(info.enable)&&info.enable.includes('chooseToUse')))){
 									if(info.ai&&(info.ai.combo||info.ai.notemp||info.ai.neg)) continue;
 									if(info.init||info.onChooseToUse) continue;
@@ -11042,7 +11053,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jin_simashi:['dc_simashi','jin_simashi','simashi'],
 			jin_yanghuiyu:['jin_yanghuiyu','yanghuiyu'],
 			taoqian:['re_taoqian','taoqian'],
-			sp_liubei:['jsrg_liubei','sp_liubei'],
+			jsp_liubei:['jsrg_liubei','jsp_liubei'],
 			dongcheng:['re_dongcheng','dongcheng'],
 			hucheer:['re_hucheer','hucheer','tw_hucheer'],
 			nanhualaoxian:['re_nanhualaoxian','nanhualaoxian','jsrg_nanhualaoxian'],

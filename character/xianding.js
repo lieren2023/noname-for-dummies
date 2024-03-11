@@ -117,10 +117,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				sp2_mouding:['dc_sb_lusu','dc_sb_zhouyu','dc_sb_simayi'],
 			}
 		},
+		characterSubstitute:{
+			dc_sb_simayi:[
+			],
+		},
 		skill:{
 			//谋司马懿
 			dcsbquanmou:{
 				audio:2,
+				audioname:['dc_sb_simayi_shadow'],
 				zhuanhuanji:true,
 				marktext:'☯',
 				enable:'phaseUse',
@@ -141,6 +146,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				async content(event,trigger,player){
 					const target = event.targets[0];
 					player.changeZhuanhuanji('dcsbquanmou');
+					player.changeSkin('dcsbquanmou','dc_sb_simayi'+(player.storage.dcsbquanmou?'_shadow':''));
 					player.markAuto('dcsbquanmou_selected', [target]);
 					const cards = await target.chooseCard('he', true, `选择交给${get.translation(player)}一张牌`).forResultCards();
 					if (cards && cards.length) {
@@ -175,8 +181,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				subSkill:{
 					true:{
-						audio:'dcsbquanmou',
 						charlotte:true,
+						audio:'dcsbquanmou',
+						audioname:['dc_sb_simayi_shadow'],
 						trigger:{source:'damageSource'},
 						forced:true,
 						popup:false,
@@ -233,8 +240,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						},
 					},
 					false:{
-						audio:'dcsbquanmou',
 						charlotte:true,
+						audio:'dcsbquanmou',
+						audioname:['dc_sb_simayi_shadow'],
 						trigger:{source:'damageBegin2'},
 						forced:true,
 						filter(event,player){
@@ -282,6 +290,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			dcsbpingliao:{
 				audio:2,
+				audioname:['dc_sb_simayi_shadow'],
 				trigger:{player:'useCard0'},
 				forced:true,
 				filter(event,player){
@@ -3360,8 +3369,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(['equip','delay'].includes(get.type(card))&&player.hasValueTarget(card)&&choices.includes('场上')) return '场上';
 							var val=get.value(card);
 							var next=_status.currentPhase;
-							if(trigger.name=='damage') next=next.getNext();
-							if(get.attitude(player,next)>0&&val>=6||get.attitude(player,next)<0&&val<=4.5) return '牌堆顶';
+							if(next){
+								if(trigger.name=='damage') next=next.getNext();
+								if(get.attitude(player,next)>0&&val>=6||get.attitude(player,next)<0&&val<=4.5) return '牌堆顶';
+							}
 							return '牌堆底';
 						}());
 					}
@@ -7936,8 +7947,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				getZhuanhuanji:function(player,bool){
 					var skills=player.getSkills(null,false,false).filter(function(i){
-						var info=get.info(i);
-						return info&&!info.charlotte&&info.zhuanhuanji;
+						const list=get.skillCategoriesOf(i);
+						return !list.includes('Charlotte')&&list.includes('转换技');
 					});
 					if(!bool) return skills;
 					if(!skills.length) return 'none';
@@ -10288,9 +10299,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseTarget(get.prompt2('juetao'),lib.filter.notMe).set('ai',function(target){
 						let att=-get.attitude(_status.event.player,target);
 						if(att<=0) return att;
-						if(target.hasSkillTag('nodamage')) return 0.01*att;
-						if(target.getEquip('tengjia')||target.getEquip('renwang')) return 0.2*att;
-						if(target.getEquip('bagua')) return 0.3*att;
+						if(target.hasSkillTag('nodamage')||target.getEquip('qimenbagua')) return 0.01*att;
+						if(target.getEquip('tengjia')||target.getEquip('renwang')) return 0.3*att;
+						if(target.getEquip('rewrite_tengjia')||target.getEquip('rewrite_renwang')) return 0.2*att;
+						if(target.hasSkillTag('freeShan',false,{
+							player:_status.event.player
+						},true)) return 0.3*att;
 						if(target.getEquip(2)) return att/2;
 						return 1.2*att;
 					});
@@ -14713,7 +14727,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dclingfang:'凌芳',
 			dclingfang_info:'锁定技。准备阶段，或当其他角色使用黑色牌结算结束后，若你是此牌的目标，或你使用黑色牌结算结束后，若你不是此牌目标，你获得1枚“绞”。',
 			dcfengying:'风影',
-			dcfengying_info:'①一名角色的回合开始时，你记录弃牌堆中所有黑色基本牌或黑色普通锦囊牌的牌名。②每回合每种牌名各限一次。你可以将一张点数不大于“绞”数的手牌当做任意一张〖风影①〗记录中的牌使用。',
+			dcfengying_info:'①一名角色的回合开始时，你记录弃牌堆中所有黑色基本牌或黑色普通锦囊牌的牌名。②每回合每种牌名各限一次。你可以将一张点数不大于“绞”数的手牌当做任意一张〖风影①〗记录中的牌使用（无距离和次数限制）。',
 			dcshouze:'受责',
 			dcshouze_info:'锁定技。结束阶段，若你有“绞”，你弃1枚“绞”，随机获得弃牌堆中的一张黑色牌，失去1点体力。',
 			chengbing:'程秉',

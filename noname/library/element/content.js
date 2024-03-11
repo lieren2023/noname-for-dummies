@@ -8092,8 +8092,11 @@ export const Content = {
 			_status.dying.remove(player);
 
 			if (lib.config.background_speak) {
-				if (lib.character[player.name] && lib.character[player.name][4].some(tag => /^die:.+$/.test(tag))) {
-					var tag = lib.character[player.name][4].find(tag => /^die:.+$/.test(tag));
+				const name = (player.skin.name || player.name);
+				const goon = (!lib.character[name]);
+				if (goon) lib.character[name] = ['', '', 0, [], ((lib.characterSubstitute[player.name] || []).find(i => i[0] == name) || [name, []])[1]];
+				if (lib.character[name][4].some(tag => /^die:.+$/.test(tag))) {
+					var tag = lib.character[name][4].find(tag => /^die:.+$/.test(tag));
 					var reg = new RegExp("^ext:(.+)?/");
 					var match = tag.match(/^die:(.+)$/);
 					if (match) {
@@ -8102,16 +8105,17 @@ export const Content = {
 						game.playAudio(path);
 					}
 				}
-				else if (lib.character[player.name] && lib.character[player.name][4].some(tag => tag.startsWith('die_audio'))) {
-					var tag = lib.character[player.name][4].find(tag => tag.startsWith('die_audio'));
+				else if (lib.character[name][4].some(tag => tag.startsWith('die_audio'))) {
+					var tag = lib.character[name][4].find(tag => tag.startsWith('die_audio'));
 					var list = tag.split(':').slice(1);
-					game.playAudio('die', list.length ? list[0] : player.name);
+					game.playAudio('die', list.length ? list[0] : name);
 				}
 				else {
-					game.playAudio('die', player.name, function () {
-						game.playAudio('die', player.name.slice(player.name.indexOf('_') + 1));
+					game.playAudio('die', name, function () {
+						game.playAudio('die', name.slice(name.indexOf('_') + 1));
 					});
 				}
+				if (goon) delete lib.character[name];
 			}
 		}, player);
 

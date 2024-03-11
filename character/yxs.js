@@ -1066,7 +1066,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				check:function(event,player){
 					if(get.attitude(player,event.target)>=0) return false;
-					if(event.target.getEquip('bagua')) return false;
+					if(event.target.hasSkillTag('freeShan',false,{
+						player:player,
+						card:event.card
+					},true)) return false;
 					if(event.target.hasSkillTag('respondShan')&&event.target.countCards('h')>=3) return false;
 					return true;
 				},
@@ -2186,7 +2189,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(trigger.target.hasSkill('shanguang2')) return 0;
 
 						var equip=trigger.target.getEquip(2);
-						if(equip&&equip.name=='bagua') return 1;
+						if(equip&&(equip.name=='bagua'||equip.name=='rewrite_bagua')) return 1;
 						return trigger.target.countCards('h')<2?0:1;
 					};
 					"step 1"

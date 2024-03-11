@@ -162,7 +162,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else{
 						if(game.checkMod(card,player,'unchanged','cardEnabled2',player)===false) return false;
 						const cardx=get.autoViewAs({name:'tiesuo'},[card]);
-						return event._backup.filterCard(cardx,player,target);
+						return event._backup.filterCard(cardx,player,event);
 					}
 				},
 				filterTarget:function(fuck,player,target){
@@ -1389,7 +1389,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					order:13,
 					result:{
 						target:(player,target)=>{
-							if(target.getEquip('bagua')||target.getEquip('rewrite_bagua')) return 0;
 							let hs=player.countCards('h',card=>{
 								if(!get.tag(card,'damage')||get.effect(target,card,player,player)<=0) return 0;
 								if(get.name(card,player)==='sha'){
@@ -5435,6 +5434,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					respondShan:true,
+					freeShan:true,
+					skillTagFilter(player,tag,arg){
+						if(tag!=='respondShan'&&tag!=='freeShan') return;
+						if(!player.hasEmptySlot(2)||player.hasSkillTag('unequip2')) return false;
+						if(!arg||!arg.player) return true;
+						if(arg.player.hasSkillTag('unequip',false,{
+							target:player
+						})||arg.player.hasSkillTag('unequip_ai',false,{
+							target:player
+						})) return false;
+						return true;
+					},
 					effect:{
 						target:function(card,player,target){
 							if(player==target&&get.subtype(card)=='equip2'){
@@ -7716,7 +7727,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		characterReplace:{
-			caoren:['caoren','old_caoren','sb_caoren','new_caoren'],
+			caoren:['caoren','old_caoren','sb_caoren','new_caoren','star_caoren'],
 			sp_caoren:['sp_caoren','jsp_caoren'],
 			xiahouyuan:['re_xiahouyuan','ol_xiahouyuan','xiahouyuan'],
 			huangzhong:['re_huangzhong','ol_huangzhong','sb_huangzhong','huangzhong','jsrg_huangzhong'],
@@ -7731,7 +7742,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			pangtong:['pangtong','ol_pangtong','re_pangtong','sb_pangtong'],
 			re_jsp_pangtong:['re_jsp_pangtong','jsrg_pangtong','sp_pangtong'],
 			taishici:['taishici','re_taishici','ol_sb_taishici'],
-			re_yuanshao:['re_yuanshao','ol_yuanshao','xin_yuanshao','ol_sb_yuanshao','sb_yuanshao'],
+			re_yuanshao:['re_yuanshao','ol_yuanshao','xin_yuanshao','ol_sb_yuanshao','star_yuanshao','sb_yuanshao'],
 			pangde:['re_pangde','ol_pangde','pangde'],
 			yanwen:['yanwen','ol_yanwen','re_yanwen'],
 			caopi:['caopi','re_caopi','ps_caopi','sb_caopi'],
@@ -7740,7 +7751,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zhurong:['zhurong','ol_zhurong','re_zhurong','sb_zhurong'],
 			sunjian:['sunjian','ol_sunjian','re_sunjian','tw_ol_sunjian'],
 			jiaxu:['jiaxu','re_jiaxu','ns_jiaxu','ps_jiaxu'],
-			dongzhuo:['dongzhuo','ol_dongzhuo','re_dongzhuo','sp_dongzhuo','yj_dongzhuo'],
+			dongzhuo:['dongzhuo','ol_dongzhuo','re_dongzhuo','star_dongzhuo','sp_dongzhuo','yj_dongzhuo'],
 			dengai:['dengai','ol_dengai','re_dengai'],
 			sp_ol_zhanghe:['sp_ol_zhanghe','yj_zhanghe','sp_zhanghe','jsrg_zhanghe'],
 			jiangwei:['jiangwei','ol_jiangwei','re_jiangwei','ol_sb_jiangwei','sb_jiangwei','jsrg_jiangwei'],

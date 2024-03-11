@@ -2775,7 +2775,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					order:7,
 					result:{
 						target(player,target){
-							if(player.getEquip('tengjia')||player.getEquip('bagua')) return -1;
+							if(player.getEquip('tengjia')||player.hasSkillTag('freeShan',false,{
+								player:target,
+								card:new lib.element.VCard({name:'sha'})
+							})) return -1;
 							if(get.effect(player,{name:'sha'},target,player)>=0) return -1;
 							if(!player.hasShan()){
 								if(ui.selected.targets.length) return 0;

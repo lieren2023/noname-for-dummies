@@ -11535,22 +11535,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
 					return game.hasPlayer(function(current){
 						return current.getSkills(null,false,false).filter(function(i){
-							var info=get.info(i);
-							return info&&info.zhuanhuanji;
+							return get.is.zhuanhuanji(i,current);
 						}).length>0;
 					});
 				},
 				filterTarget:function(card,player,target){
 					return target.getSkills(null,false,false).filter(function(i){
-						var info=get.info(i);
-						return info&&info.zhuanhuanji;
+						return get.is.zhuanhuanji(i,target);
 					}).length>0;
 				},
 				content:function(){
 					'step 0'
 					var list=target.getSkills(null,false,false).filter(function(i){
-						var info=get.info(i);
-						return info&&info.zhuanhuanji;
+						return get.is.zhuanhuanji(i,target);
 					});
 					if(list.length==1){
 						event._result={control:list[0]};
@@ -11584,8 +11581,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						filter:function(event,player){
 							return game.hasPlayer(function(current){
 								return current.getSkills(null,false,false).filter(function(i){
-									var info=get.info(i);
-									return info&&info.zhuanhuanji;
+									return get.is.zhuanhuanji(i,current);
 								}).length>0;
 							});
 						},

@@ -384,6 +384,71 @@ content:function(config, pack){
 		return '<span style="font-weight:bold">'+prefix+'</span>'
 	};
 	
+	// 修改game.js的函数static slimNameHorizontal(str) {
+	// 武将名过长时减小字体大小（后续可加入体力大小联合判断）
+	get.slimNameHorizontal=function(str) {
+		const slimName = lib.translate[`${str}_ab`] || lib.translate[str];
+		if (!slimName) return '';
+		const prefix = lib.translate[`${str}_prefix`];
+		
+		let totalLength = slimName.length; // 计算总长度
+		let style = ''; // 初始化样式
+		
+		if (prefix && slimName.startsWith(prefix)) {
+			const map=lib.namePrefix.get(prefix),config=lib.config.buttoncharacter_prefix;
+			let prefixlength = 0;
+			if(config!='off') {
+				if(map) {
+					if(map.getSpan) {
+						const mapprefix = map.getSpan(prefix,str).replace(/<[^>]+>/g, '');
+						let length = 0;
+						for (let i = 0; i < mapprefix.length; i++) {
+							if (mapprefix.charCodeAt(i) >= 0 && mapprefix.charCodeAt(i) <= 255) {
+								length += 0.5; // 英文字母或其他半角字符算半个长度
+							} else {
+								length += 1; // 汉字或其他全角字符算一个长度
+							}
+						}
+						prefixlength=Math.ceil(length);
+					}
+					else if(map.showName) prefixlength=map.showName.length;
+					else prefixlength=prefix.length;
+				} else prefixlength=prefix.length;
+			}
+			
+			totalLength = prefixlength + slimName.slice(prefix.length).length;
+			// 根据总长度设置对应样式
+			if (totalLength == 6) {
+				style = 'font-size: 12.7px;';
+				// 返回带有样式的slimName
+				//兼容版特化处理
+				if (lib.compatibleEdition) return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}　</span></span>`;
+				return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}</span></span>`;
+			} else if (totalLength >= 7) {
+				style = 'font-size: 12.5px;';
+				// 返回带有样式的slimName
+				//兼容版特化处理
+				if (lib.compatibleEdition) return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}　</span></span>`;
+				return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}</span></span>`;
+			} else {
+				//兼容版特化处理
+				if (lib.compatibleEdition) return `${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}　</span>`;
+				return `${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}</span>`;
+			}
+		}
+		
+		// 根据总长度设置对应样式
+		if (totalLength == 6) {
+			style = 'font-size: 12.7px;';
+			// 返回带有样式的slimName
+			return `<span style="${style}">${slimName}</span>`;
+		} else if (totalLength >= 7) {
+			style = 'font-size: 12.5px;';
+			// 返回带有样式的slimName
+			return `<span style="${style}">${slimName}</span>`;
+		} else return slimName;
+	};
+	
 	// 国战魔改
 	if(config.guozhanmogai){
 		// 在国战模式，若开启“使用国战武将”开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整
@@ -914,6 +979,10 @@ content:function(config, pack){
 				this.name=character;
 				this.name1=character;
 				this.tempname = [];
+				this.skin = {
+					name: character,
+					name2: character2,
+				};
 				this.sex=info[0];
 				this.group=info[1];
 				this.hp=hp1;
@@ -1043,13 +1112,16 @@ content:function(config, pack){
 				}
 				if(this.name2==from){
 					this.name2=to;
+					this.skin.name2 = to;
 				}
 				else if(this.name==from||this.name1==from){
 					if(this.name1==from){
 						this.name1=to;
+						this.skin.name = to;
 					}
 					if(!this.isUnseen(1)){
 						this.name=to;
+						if (this.skin.name != to) this.skin.name = to;
 						this.sex=info2[0];
 					}
 				}
@@ -2090,7 +2162,7 @@ content:function(config, pack){
 			});
 		};
 		
-		// 修改对决-官渡模式当前事件显示、Revert官渡之战调整界袁绍主公为OL谋袁绍（OL谋袁绍背景与官渡之战不符，同名武将替换待后续更新）
+		// 修改对决-官渡模式当前事件显示
 		// 修改versus.js的函数chooseCharacterGuandu:function(){
 		game.chooseCharacterGuandu=function(){
 			var next=game.createEvent('chooseCharacter');
@@ -2098,19 +2170,79 @@ content:function(config, pack){
 				'step 0'
 				lib.init.onfree();
 				ui.arena.classList.add('choose-character');
-				game.falseZhu.init('re_caocao');
-				game.trueZhu.init('ol_yuanshao');
-				game.trueZhu.hp++;
-				game.trueZhu.maxHp++;
-				game.falseZhu.hp++;
-				game.falseZhu.maxHp++;
-				game.trueZhu.update();
-				game.falseZhu.update();
+				const side=game.me.side.toString();
+				event.friendSide=side;event.enemySide=(side=='true'?'false':'true');
+				event.zhuList=[['caocao'],['re_yuanshao']];
+				event.falseList=['xiahouyuan','litong','zangba','manchong','xunyu','guojia','zhangliao','xuhuang','caohong','jsp_guanyu','hanhaoshihuan','caoren','yujin','liuye','chengyu','xunyou','zhangxiu','sp_jiaxu'].filter(function(name){
+					if(lib.characterReplace[name]){
+						let goon = false;
+						for(let i of lib.characterReplace[name]){
+							if(lib.character[i]){
+								lib.character[i][1] = 'wei';
+								goon = true;
+							}
+						}
+						return goon;
+					}
+					else if(lib.character[name]){
+						lib.character[name][1] = 'wei';
+						return true;
+					}
+					return false;
+				});
+				event.trueList=['xinping','hanmeng','gaogan','yuantanyuanshang','lvkuanglvxiang','xinpi','xunchen','sp_ol_zhanghe','chenlin','jsp_liubei','yj_jushou','guotufengji','gaolan','xuyou','tianfeng','chunyuqiong','shenpei'].filter(function(name){
+					if(lib.characterReplace[name]){
+						let goon = false;
+						for(let i of lib.characterReplace[name]){
+							if(lib.character[i]){
+								lib.character[i][1] = 'qun';
+								goon = true;
+							}
+						}
+						return goon;
+					}
+					else if(lib.character[name]){
+						lib.character[name][1] = 'qun';
+						return true;
+					}
+					return false;
+				});
+				'step 1'
+				game[event.enemySide+'Zhu'].chooseButton(['请选择你的武将牌',[event.zhuList[event.enemySide=='true'?1:0],'characterx']],true);
+				'step 2'
+				game[event.enemySide+'Zhu'].init(result.links[0]);
+				game[event.enemySide+'Zhu'].maxHp++;
+				game[event.enemySide+'Zhu'].hp++;
+				game[event.enemySide+'Zhu'].update();
+				'step 3'
+				game.countPlayer(current=>{
+					if(current.side.toString()==event.enemySide&&current.identity=='zhong'){
+						let choice=event[event.enemySide+'List'].randomRemove(2)[0];
+						if(lib.characterReplace[choice]) choice=lib.characterReplace[choice].randomGet();
+						current.init(choice);
+					}
+				});
+				'step 4'
 				var evt_list=[['huoshaowuchao','chunyuqiong'],['liangcaokuifa','sp_xuyou'],['zhanyanliangzhuwenchou','jsp_guanyu'],['shishengshibai','re_guojia'],['xutuhuanjin','yj_jushou'],['liangjunxiangchi','yj_jushou'],['jianshoudaiyuan','tianfeng'],['yiruoshengqiang','re_caocao'],['shichongerjiao','sp_xuyou']].randomGet();
 				var evt=evt_list[0],character=evt_list[1];
 				game.addGlobalSkill(evt);
+				// const showGuanduEvent=function(evt){
+					// if(ui['GuanduEvent_'+evt]) return;
+					// ui['GuanduEvent_'+evt]=ui.create.system(get.translation(evt),null,true);
+					// lib.setPopped(ui['GuanduEvent_'+evt],function(){
+						// var uiintro=ui.create.dialog('hidden');
+						// uiintro.add(get.translation(evt));
+						// uiintro.add('<div class="text center">'+get.translation(evt+'_info')+'</div>');
+						// var ul=uiintro.querySelector('ul');
+						// if(ul) ul.style.width='180px';
+						// uiintro.add(ui.create.div('.placeholder'));
+						// return uiintro;
+					// },250);
+				// };
+				// showGuanduEvent(evt);
 				game.broadcastAll(function(evt){
 					if(lib.config.background_speak) game.playAudio('skill',evt);
+					
 					ui.guanduInfo=ui.create.system('当前事件',null,true);
 					lib.setPopped(ui.guanduInfo,function(){
 						var uiintro=ui.create.dialog('hidden');
@@ -2125,29 +2257,46 @@ content:function(config, pack){
 						uiintro.add(ui.create.div('.placeholder'));
 						return uiintro;
 					},250);
+					
+					// if(evt=='shishengshibai'){
+						// ui.guanduInfo=get.is.phoneLayout()?ui.create.div('.touchinfo.left',ui.window):ui.create.div(ui.gameinfo);
+						// ui.guanduInfo.innerHTML='十胜十败（0）';
+					// }
 				},evt);
 				game.me.chooseControl('ok').set('dialog',['###本局特殊事件：'+get.translation(evt)+'###'+get.translation(evt+'_info'),[[character],'character']]);
-				'step 1'
-				event.falseList=['ol_xiahouyuan','litong','zangba','manchong','xunyu','re_guojia','re_zhangliao','xuhuang','caohong','jsp_guanyu','hanhaoshihuan','caoren','yujin','liuye','chengyu','xunyou','zhangxiu','sp_jiaxu'].filter(function(name){
-					if(!Array.isArray(lib.character[name])) return false;
-					lib.character[name][1]='wei';
-					return true;
-				});
-				event.trueList=['xinping','hanmeng','gaogan','yuantanyuanshang','lvkuanglvxiang','xinpi','xunchen','sp_zhanghe','chenlin','re_liubei','yj_jushou','guotufengji','gaolan','sp_xuyou','tianfeng','chunyuqiong','sp_shenpei'].filter(function(name){
-					if(!Array.isArray(lib.character[name])) return false;
-					lib.character[name][1]='qun';
-					return true;
-				});
-				'step 2'
+				'step 5'
+				game[event.friendSide+'Zhu'].chooseButton(['请选择你的武将牌',[event.zhuList[event.friendSide=='true'?1:0],'characterx']],true);
+				'step 6'
+				if(game[event.friendSide+'Zhu']==game.me){
+					game[event.friendSide+'Zhu'].init(result.links[0]);
+					game[event.friendSide+'Zhu'].maxHp++;
+					game[event.friendSide+'Zhu'].hp++;
+					game[event.friendSide+'Zhu'].update();
+				}
+				else event.zhuChoice=result.links[0];
+				'step 7'
 				if(game.me.identity!='zhu'){
 					event.choose_me=true;
-					game.me.chooseButton(['请选择你的武将牌',[event[game.me.side+'List'].randomRemove(2),'character']],true);
+					game.me.chooseButton(['请选择你的武将牌',[event[event.friendSide+'List'].randomRemove(2),'characterx']],true);
 				}
-				'step 3'
+				'step 8'
 				if(event.choose_me) game.me.init(result.links[0]);
 				game.countPlayer(function(current){
-					if(current!=game.me&&current.identity=='zhong') current.init(event[current.side+'List'].randomRemove(2)[0]);
+					if(current!=game.me&&current.side.toString()==event.friendSide){
+						if(current.identity=='zhong'){
+							let choice=event[event.friendSide+'List'].randomRemove(2)[0];
+							if(lib.characterReplace[choice]) choice = lib.characterReplace[choice].randomGet();
+							current.init(choice);
+						}
+						else{
+							current.init(event.zhuChoice);
+							current.maxHp++;
+							current.hp++;
+							current.update();
+						}
+					}
 				});
+				'step 9'
 				setTimeout(function(){
 					ui.arena.classList.remove('choose-character');
 				},500);
@@ -3456,9 +3605,10 @@ content:function(config, pack){
 		lib.character.junk_sunquan[4].remove('wei');
 		lib.character.junk_sunquan[4].push('wu');
 	}
-	// unseen谋诸葛亮（谋卧龙是双形态谋诸葛亮的初始形态）
-	if(lib.character.sb_zhugeliang){
-		lib.character.sb_zhugeliang[4].push('unseen');
+	// 修复关闭武将包后不生效的bug
+	if(lib.characterPack.old){
+		lib.characterPack.old.junk_sunquan[4].remove('wei');
+		lib.characterPack.old.junk_sunquan[4].push('wu');
 	}
 	// 修改孙悟空等神话传说武将势力为神
 	if(lib.character.sunwukong){
@@ -3476,14 +3626,8 @@ content:function(config, pack){
 	// 修复关闭武将包后不生效的bug
 	if(lib.characterPack.collab){
 		lib.characterPack.collab.sunwukong[1] = 'shen';
-	}
-	if(lib.characterPack.collab){
 		lib.characterPack.collab.longwang[1] = 'shen';
-	}
-	if(lib.characterPack.collab){
 		lib.characterPack.collab.taoshen[1] = 'shen';
-	}
-	if(lib.characterPack.collab){
 		lib.characterPack.collab.nezha[1] = 'shen';
 	}
 	
@@ -3947,6 +4091,7 @@ content:function(config, pack){
 		
 		// 修改game.js的播放函数，trySkillAudio:function(skill,player,directaudio,nobroadcast/*,index*/){
 		// 旧版trySkillAudio函数已知bug：audioname2不适配国战武将
+		// 适配新版本体（双形态原画配音）
 		game.trySkillAudio=function(skill,player,directaudio){
 			game.broadcast(game.trySkillAudio,skill,player,directaudio);
 			var info=get.info(skill);
@@ -3957,8 +4102,11 @@ content:function(config, pack){
 			var audioname=skill;
 			var audioinfo=info.audio;
 			var fixednum;
-			if(info.audioname2&&info.audioname2[player.name]){
-				audioname=info.audioname2[player.name];
+			const name = (player.skin.name || player.name);
+			const name1 = (player.skin.name1 || player.name1);
+			const name2 = (player.skin.name2 || player.name2);
+			if(info.audioname2&&info.audioname2[name]){
+				audioname=info.audioname2[name];
 				audioinfo=lib.skill[audioname].audio;
 			}
 			var history=[];
@@ -3979,9 +4127,9 @@ content:function(config, pack){
 				break;
 			}
 			if(Array.isArray(info.audioname)&&player){
-				if(info.audioname.contains(player.name)) audioname+='_'+player.name;
-				else if(info.audioname.contains(player.name1)) audioname+='_'+player.name1;
-				else if(info.audioname.contains(player.name2)) audioname+='_'+player.name2;
+				if(info.audioname.contains(name)) audioname+='_'+name;
+				else if(info.audioname.contains(name1)) audioname+='_'+name1;
+				else if(info.audioname.contains(name2)) audioname+='_'+name2;
 			}
 			if(typeof audioinfo=='string'){
 				if(audioinfo.indexOf('ext:')!=0) return;
@@ -4002,6 +4150,7 @@ content:function(config, pack){
 			else if(audioinfo) game.playAudio('skill',audioname);
 			else if(info.audio!==false) game.playSkillAudio(audioname);
 		};
+		
 	}
 	
 	// 标记修改（可能与其他同样魔改本体武将技能的扩展存在兼容问题）
@@ -4392,9 +4541,8 @@ content:function(config, pack){
 			lib.skill.ranshang.marktext = "燃";
 		}
 		// 丁原义子标记修改
-		if(lib.skill.panshi != undefined){
-			lib.skill.panshi.marktext = "义子";
-			lib.skill.panshi.intro.content = "我是义子";
+		if(lib.skill.cixiao != undefined){
+			lib.skill.cixiao.subSkill.yizi.marktext = "义子";
 		}
 		// 谋华雄扬威标记修改
 		if(lib.skill.sbyangwei != undefined){
@@ -5232,8 +5380,6 @@ content:function(config, pack){
 		lib.card.熊 = {fullskin:true};
 		lib.card.猿 = {fullskin:true};
 		lib.card.鹤 = {fullskin:true};
-		// 谋卧龙→谋诸葛亮
-		lib.translate.sb_sp_zhugeliang = "谋诸葛亮";
 		// 修复界孙笨的彩蛋
 		lib.translate.re_sunben = "界孙策";
 		// 修改合大小虎为原名
@@ -5260,16 +5406,6 @@ content:function(config, pack){
 		lib.translate.duanjian = "折戟";
 		lib.translate.serafuku = "女装";
 		
-		// 武将名过长时减小字体大小（待优化）
-		lib.translate.yuantanyuanxiyuanshang_ab = '<span style="font-size: 12.7px">袁谭袁尚袁熙</span>';
-		lib.translate.ganfurenmifuren_ab = '<span style="font-size: 12.7px">甘夫人糜夫人</span>';
-		// 武将前缀-不显示前缀
-		if (lib.config.buttoncharacter_prefix == 'off'){
-			lib.translate.jsrg_sunlubansunluyu_ab = '<span style="font-size: 12.7px">孙鲁班孙鲁育</span>';
-		}else{
-			lib.translate.jsrg_sunlubansunluyu_ab = '<span style="font-size: 12.5px;font-weight: bold">合</span><span style="font-size: 12.5px">孙鲁班孙鲁育</span>';
-			lib.translate.jsrg_weiwenzhugezhi_ab = '<span style="font-size: 12.7px;font-weight: bold">合</span><span style="font-size: 12.7px">卫温诸葛直</span>';
-		}
 	});
 	
 	// 非战棋/塔防/炉石模式，弹出使用<新版>布局提示
@@ -9807,6 +9943,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				this.name = undefined;
 				this.name1 = undefined;
 				this.tempname = undefined;
+				this.skin = undefined;
 				this.sex = undefined;
 				this.group = undefined;
 				this.hp = undefined;
@@ -12992,8 +13129,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 	console.timeEnd('十周年UI');
 },
 precontent:function(){
-	console.time('十周年UI');
-	
 	if (window.require) {
 		const { versions } = process;
 		const electronVersion = parseFloat(versions.electron);
@@ -13015,8 +13150,8 @@ precontent:function(){
 	    var script = document.createElement('script');
         script.src = decadeUIPath + 'eruda.js'; 
         document.body.appendChild(script); 
-        script.onload = function(){ eruda.init(); };
-	}
+        script.onload = function(){ eruda.init(); console.time('十周年UI');};
+	} else console.time('十周年UI');
 	
 	if (!(extension && extension.enable && extension.enable.init)) return;
 	

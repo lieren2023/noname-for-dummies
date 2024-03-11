@@ -1068,6 +1068,9 @@ window.noname_character_rank={
 		'shen_xuzhu',
 		'dc_jiangji',
 		'dc_wangling',
+		'yangfeng',
+		'sb_xiahoudun',
+		'sb_gaoshun',
 	],
 	b:[
 		'junk_guanyu',

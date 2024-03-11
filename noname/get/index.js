@@ -281,7 +281,7 @@ export class Get extends Uninstantable {
 		if (info.zhuSkill) list.add('主公技');
 		if (info.limited) list.add('限定技');
 		if (info.juexingji) list.add('觉醒技');
-		if (info.zhuanhuanji) list.add('转换技');
+		if (get.is.zhuanhuanji(skill, player)) list.add('转换技');
 		if (info.hiddenSkill) list.add('隐匿技');
 		if (info.clanSkill) list.add('宗族技');
 		if (info.groupSkill) list.add('势力技');

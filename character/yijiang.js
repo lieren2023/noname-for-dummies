@@ -3692,11 +3692,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				ai:{
 					directHit_ai:true,
 					skillTagFilter:function(player,tag,arg){
-						if(player._zhuandui_temp) return false;
+						if(player._zhuandui_temp||tag!=='directHit_ai') return false;
 						player._zhuandui_temp=true;
 						var bool=function(){
 							if(arg.card.name!='sha'||get.attitude(player,arg.target)>=0||!arg.target.countCards('h')) return false;
-							if(arg.target.countCards('h')==1&&(!arg.target.getEquip('bagua')||player.hasSkillTag('unequip',false,{
+							if(arg.target.countCards('h')==1&&(!arg.target.hasSkillTag('freeShan',false,{
+								player:player,
+								card:arg.card
+							},true)||player.hasSkillTag('unequip',false,{
 								name:arg.card?arg.card.name:null,
 								target:arg.target,
 								card:arg.card
@@ -7254,7 +7257,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var trigger=_status.event.getTrigger();
 						if(att>0&&eff>=0) return 1;
 						if(att>=0&&eff>0) return 1;
-						if(att>0&&(trigger.player.hp>=3||trigger.player.getEquip('bagua')||trigger.player.countCards('h','shan'))){
+						if(att>0&&(trigger.player.hp>=3||trigger.player.hasSkillTag('freeShan',false,{
+							player:_status.event.player,
+							card:new lib.element.VCard({name:'sha',isCard:true})
+						})||trigger.player.countCards('h','shan'))){
 							if(name=='lebu'&&nh>trigger.player.hp) return 1;
 							if(name=='bingliang'&&nh<trigger.player.hp) return 1;
 						}
@@ -7290,7 +7296,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var trigger=_status.event.getTrigger();
 						if(att>0&&eff>=0) return 1;
 						if(att>=0&&eff>0) return 1;
-						if(att>0&&(trigger.player.hp>=3||trigger.player.getEquip('bagua')||trigger.player.countCards('h','shan'))){
+						if(att>0&&(trigger.player.hp>=3||trigger.player.hasSkillTag('freeShan',false,{
+							player:_status.event.player,
+							card:new lib.element.VCard({name:'sha',isCard:true})
+						})||trigger.player.countCards('h','shan'))){
 							if(name=='lebu'&&nh>trigger.player.hp) return 1;
 							if(name=='bingliang'&&nh<trigger.player.hp) return 1;
 						}
@@ -9895,8 +9904,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				ai:{
 					directHit_ai:true,
 					skillTagFilter:function(player,tag,arg){
-						if(!arg.target.hasSkill('qianxi2')) return false;
-						if(arg.card.name=='sha') return arg.target.storage.qianxi2=='red'&&(!arg.target.getEquip('bagua')||player.hasSkillTag('unequip',false,{
+						if(tag!=='directHit_ai'||!arg.target.hasSkill('qianxi2')) return false;
+						if(arg.card.name=='sha') return arg.target.storage.qianxi2=='red'&&(!arg.target.hasSkillTag('freeShan',false,{
+							player:player,
+							card:arg.card
+						},true)||player.hasSkillTag('unequip',false,{
 							name:arg.card?arg.card.name:null,
 							target:arg.target,
 							card:arg.card
@@ -13912,7 +13924,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xusheng:['xusheng','xin_xusheng','re_xusheng','old_xusheng'],
 			wuguotai:['wuguotai','xin_wuguotai','re_wuguotai'],
 			lingtong:['lingtong','xin_lingtong','ol_lingtong','re_lingtong','old_lingtong'],
-			gaoshun:['gaoshun','xin_gaoshun','ol_gaoshun','re_gaoshun','old_gaoshun'],
+			gaoshun:['gaoshun','xin_gaoshun','ol_gaoshun','re_gaoshun','sb_gaoshun','old_gaoshun'],
 			zhonghui:['zhonghui','xin_zhonghui','re_zhonghui','old_zhonghui','pe_zhonghui'],
 			wangyi:['wangyi','re_wangyi','old_wangyi'],
 			caozhang:['caozhang','ol_caozhang','re_caozhang','xin_caozhang'],
@@ -13961,7 +13973,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sundeng:['sundeng','re_sundeng','ns_sundeng'],
 			caiyong:['caiyong','re_caiyong'],
 			chengong:['chengong','re_chengong','sb_chengong'],
-			xunyou:['xunyou','re_xunyou'],
+			xunyou:['xunyou','re_xunyou','clan_xunyou'],
 			xuezong:['xuezong','tw_xuezong'],
 			huanghao:['huanghao','dc_huanghao','old_huanghao'],
 			caorui:['caorui','re_caorui','old_caorui'],
@@ -13970,6 +13982,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zhangsong:['zhangsong','re_zhangsong'],
 			zhongyao:['zhongyao','re_zhongyao'],
 			liwan:['ol_liwan','liwan'],
+			wuxian:['wuxian','clan_wuxian'],
 		},
 		translate:{
 			old_huaxiong:'将华雄',

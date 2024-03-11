@@ -15738,8 +15738,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(get.attitude(player,event.player)>=0) return false;
 					var e2=player.getEquip(2);
 					if(e2){
-						if(e2.name=='tengjia') return true;
-						if(e2.name=='bagua') return true;
+						if(e2.name=='tengjia'||e2.name=='rewrite_tengjia') return true;
+						if(e2.name=='bagua'||e2.name=='rewrite_bagua') return true;
 					}
 					return event.player.countCards('h')>event.player.hp;
 				},
@@ -20019,6 +20019,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					respondShan:true,
+					freeShan:true,
+					skillTagFilter(player,tag,arg){
+						if(tag!=='respondShan'&&tag!=='freeShan') return;
+						if(!player.hasEmptySlot(2)||player.hasSkillTag('unequip2')) return false;
+						if(!arg||!arg.player) return true;
+						if(arg.player.hasSkillTag('unequip',false,{
+							target:player
+						})||arg.player.hasSkillTag('unequip_ai',false,{
+							target:player
+						})) return false;
+						return true;
+					},
 					effect:{
 						target:function(card,player,target){
 							if(player==target&&get.subtype(card)=='equip2'){
@@ -20477,8 +20489,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(get.attitude(player,event.player)>=0) return false;
 					var e2=player.getEquip(2);
 					if(e2){
-						if(e2.name=='tengjia') return true;
-						if(e2.name=='bagua') return	true;
+						if(e2.name=='tengjia'||e2.name=='rewrite_tengjia') return true;
+						if(e2.name=='bagua'||e2.name=='rewrite_bagua') return true;
 					}
 					return player.countCards('h','shan')>0;
 				},
@@ -26361,7 +26373,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterReplace:{
 			guanyinping:['guanyinping','old_guanyinping'],
 			shixie:['shixie','dc_shixie','old_shixie'],
-			caoshuang:['caoshuang','ns_caoshuang'],
+			caoshuang:['caoshuang','dc_caoshuang','ns_caoshuang'],
 			caoang:['caoang','yj_caoang','tw_caoang'],
 			caohong:['caohong','tw_re_caohong','tw_caohong','yj_caohong'],
 			xiahouba:['xiahouba','dc_xiahouba','tw_xiahouba'],
@@ -26373,7 +26385,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sunluyu:['sunluyu','re_sunluyu','mb_sunluyu'],
 			jin_simazhao:['jin_simazhao','simazhao','sp_simazhao'],
 			jin_wangyuanji:['jin_wangyuanji','wangyuanji','sp_wangyuanji'],
-			wangyun:['wangyun','dc_wangyun','re_wangyun','jsrg_wangyun','old_wangyun','pe_wangyun'],
+			wangyun:['clan_wangyun','wangyun','dc_wangyun','re_wangyun','jsrg_wangyun','old_wangyun','pe_wangyun'],
 			zhangliang:['xin_zhangliang','re_zhangliang','zhangliang'],
 			lingju:['lingju','old_lingju'],
 			guansuo:['guansuo','dc_guansuo'],

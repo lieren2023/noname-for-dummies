@@ -2295,7 +2295,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				content:function(){
 					"step 0"
-					var dis=trigger.target.countCards('h','shan')||trigger.target.getEquip('bagua')||trigger.target.countCards('h')>2;
+					var dis=trigger.target.countCards('h','shan')||trigger.target.hasSkillTag('freeShan',false,{
+						player:player,
+						card:trigger.card
+					},true)||trigger.target.countCards('h')>2;
 					var att=get.attitude(player,trigger.target);
 					var next=player.chooseToDiscard(get.prompt('xiandan'));
 					next.ai=function(card){

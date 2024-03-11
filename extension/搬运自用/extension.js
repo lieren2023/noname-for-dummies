@@ -6769,14 +6769,22 @@ content:function(config,pack){
 			} else {
 				// 武将包开启的武将
 				for(var i in lib.character){
+					if(lib.character[i][4].contains('unseen')) continue;
 					avatar_list.push(i);
 				}
 			}
 			avatar_list.sort(lib.sort.capt);
-			for(var i=0;i<avatar_list.length;i++){
-				var ia=avatar_list[i];
-				// lib.extensionMenu.extension_搬运自用.byzy_tongrenmoshi.item[lib.translate[ia]]=lib.translate[ia];
-				lib.extensionMenu.extension_搬运自用.byzy_tongrenmoshi.item[get.rawName([ia])]=get.rawName([ia]);
+			// 选项显示
+			if (lib.config.byzy_tongrenmoshixuanxiang=="1") {
+				for(var i=0;i<avatar_list.length;i++){
+					var ia=avatar_list[i];
+					lib.extensionMenu.extension_搬运自用.byzy_tongrenmoshi.item[lib.translate[ia]]=lib.translate[ia]+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+ia+']'+'</span>';
+				}
+			} else {
+				for(var i=0;i<avatar_list.length;i++){
+					var ia=avatar_list[i];
+					lib.extensionMenu.extension_搬运自用.byzy_tongrenmoshi.item[get.rawName([ia])]=get.rawName([ia]);
+				}
 			}
 		}, 10);
 		// 同人模式函数
@@ -6799,6 +6807,7 @@ content:function(config,pack){
 				} else {
 					// 武将包开启的武将
 					for(var i in lib.character){
+						if(lib.character[i][4].contains('unseen')) continue;
 						if(lib.translate[i].indexOf('诸葛亮') != -1||(lib.translate[i].indexOf('卧龙') != -1&&lib.translate[i].indexOf('卧龙凤雏') == -1)){
 							list.push(i);
 						}
@@ -6819,6 +6828,7 @@ content:function(config,pack){
 				} else {
 					// 武将包开启的武将
 					for(var i in lib.character){
+						if(lib.character[i][4].contains('unseen')) continue;
 						if(lib.translate[i].indexOf(item) != -1){
 							list.push(i);
 						}
@@ -11788,6 +11798,7 @@ config:{
 					this.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
 				];
 				this.innerHTML="<li>同人模式（点击后展开）▷";
 				lib.config.byzy_youximoshitjms.forEach(function(element) {element.hide()});
@@ -11845,6 +11856,20 @@ config:{
 		onclick:function(item){
 			game.saveConfig('extension_搬运自用_byzy_tongrenmoshifenpei',item);
 			game.saveConfig('byzy_tongrenmoshifenpei',item);
+		},
+	},
+	
+	"byzy_tongrenmoshixuanxiang":{
+		"name":"选项显示",
+		"intro":"设置同人模式(即时生效)选项的显示：一人单选项方便选择；一人多选项可查看武将名id。",
+		"init":lib.config.byzy_tongrenmoshixuanxiang === undefined ? "0" : lib.config.byzy_tongrenmoshixuanxiang,
+		"item": {
+			"0":"一人单选项",
+			"1":"一人多选项[武将名id]",
+		},
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_tongrenmoshixuanxiang',item);
+			game.saveConfig('byzy_tongrenmoshixuanxiang',item);
 		},
 	},
 	
@@ -11984,10 +12009,11 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 2-17人addPlayer会自动安排布局
 // 禁将功能-禁用AI禁用的武将、禁用或启用无原画武将（剪影原画武将）
 // AI禁将/禁将：收藏武将，最近武将
+// 资料卡修改：可双击原画/皮肤后放大看
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
 // 利用控制台命令代码绘制效果图（计划加入测试功能）
-// 其他优秀功能搬运（并魔改）：假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能；天牢令-衍生技能详细显示；测试功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
+// 其他优秀功能搬运（并魔改）：假装无敌-图片懒加载（能解决自由选将时候闪退的问题？）；假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能；天牢令-衍生技能详细显示；测试功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -12025,3 +12051,5 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
 // card.nature修改？，包括④教程及说明.txt
+// 双形态原画武将：自由选将筛选、武将及卡牌统计功能、禁将与AI禁将？
+// 待适配：点击后试听阵亡配音// 改本体game.js函数die:function(){中if(lib.config.background_speak){

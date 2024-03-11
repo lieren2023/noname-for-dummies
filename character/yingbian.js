@@ -3776,6 +3776,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jiachong:['dc_jiachong','jin_jiachong','jiachong'],
 			yangyan:['yangyan','old_yangyan'],
 			yangzhi:['yangzhi','old_yangzhi'],
+			zhongyan:['zhongyan','clan_zhongyan'],
 		},
 		translate:{
 			jin_zhangchunhua:'晋张春华',

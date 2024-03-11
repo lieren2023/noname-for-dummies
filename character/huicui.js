@@ -136,6 +136,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}).length<4-player.getStorage('dcjianzhuan').length;
 				},
 				forced:true,
+				derivation:'dcjianzhuan_faq',
 				async content(event,trigger,player){
 					const evtx=event.getParent('phaseUse'),num=player.getHistory('useSkill',evt=>{
 						return evt.skill=='dcjianzhuan'&&evt.event.getParent('phaseUse')==evtx;
@@ -163,6 +164,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					discard_target:{
 						intro:'拆牌',
 						introx:(num)=>'令一名角色弃置'+num+'张牌',
+						weight:1,
 						ai_effect(player,num){
 							return game.hasPlayer(target=>{
 								return get.effect(target,{name:'guohe_copy2'},player,player)>0;
@@ -182,6 +184,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					draw_self:{
 						intro:'摸牌',
 						introx:(num)=>'摸'+num+'张牌',
+						weight:1,
 						ai_effect(player,num){
 							return 3;
 						},
@@ -192,10 +195,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					recast_self:{
 						intro:'重铸',
 						introx:(num)=>'重铸'+num+'张牌',
+						weight:1,
 						ai_effect(player,num){
 							return 1;
 						},
 						async content(player,num=1){
+							if(!player.hasCard(lib.filter.cardRecastable,'he')) return;
 							const {result:{bool,cards}}=await player.chooseCard('重铸'+num+'张牌','he',num,lib.filter.cardRecastable,true).set('ai',lib.skill.zhiheng.check);
 							if(bool) await player.recast(cards);
 						},
@@ -203,6 +208,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					discard_self:{
 						intro:'弃牌',
 						introx:(num)=>'弃置'+num+'张牌',
+						weight:'90%',
 						ai_effect(player,num){
 							let cards=player.getCards('hs');
 							cards.sort((a,b)=>get.value(b)-get.value(a));
@@ -226,13 +232,36 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						forced:true,
 						async content(event,trigger,player){
 							const info=get.info('dcjianzhuan').choices;
-							let choices=[],map={};
+							let map={};
+							let unfixedWeightTotal=0,remainedWeight=100;
+							let entries=[];
 							for(const i in info){
-								map[info[i].intro]=i;
+								const infox=info[i];
+								map[infox.intro]=i;
 								if(player.getStorage('dcjianzhuan').includes(i)) continue;
-								choices.push(info[i].intro);
+								let weight=(infox.weight||1).toString();
+								if(weight.endsWith('%')){
+									weight=Math.min(remainedWeight,parseInt(weight.slice(0,-1)));
+									entries.push([infox.intro,weight]);
+									remainedWeight-=weight;
+								}
+								else{
+									weight=parseInt(weight);
+									unfixedWeightTotal+=weight;
+									entries.push([infox.intro,-weight]);
+								}
 							}
-							const removeChoice=choices.randomGet();
+							entries=entries.map(entry=>{
+								let weight=entry[1];
+								if(weight<0) weight=-remainedWeight/unfixedWeightTotal*weight;
+								return [entry[0],weight];
+							});
+							let rand=Math.random()*100;
+							let removeChoice=entries.find(entry=>{
+								rand-=entry[1];
+								return rand<0;
+							})[0];
+							if(get.isLuckyStar(player)&&Object.keys(entries).includes('弃牌')) removeChoice='弃牌';
 							player.markAuto('dcjianzhuan',[map[removeChoice]]);
 							player.popup(removeChoice);
 							game.log(player,'移去了','#g'+removeChoice,'项');
@@ -276,9 +305,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(!player.getStorage('dcjianzhuan').includes(i)) choices.push(i);
 					}
 					if(choices.length){
-						const choice=choices.randomGet();
-						for(let i=1;i<=3;i++){
-							await info[choice].content(player,1);
+						for(const choice of choices){
+							for(let i=1;i<=3;i++){
+								await info[choice].content(player,1);
+							}
 						}
 					}
 					await player.gainMaxHp(2);
@@ -1172,22 +1202,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dczixi:{
 				init(){
 					game.addGlobalSkill('dczixi_judge');
-					game.broadcastAll((list)=>{
-						list.forEach(name=>{
-							const namex='dczixi_'+name;
-							if(!lib.card[namex]){
-								lib.card[namex]={
-									type:'special_delay',
-									fullskin:true,
-									noEffect:true,
-									wuxieable:false,
-								};
-								lib.card[namex].cardimage=name;
-								lib.translate[namex]=lib.translate[name]+'·姊希';
-								lib.translate[namex+'_info']='由【姊希】技能创造的无效果【'+lib.translate[name]+'】';
-							}
-						});
-					},lib.skill.dczixi.zixiList);
+					game.broadcastAll(()=>lib.skill.dczixi.video());
+				},
+				video(){
+					const list=lib.skill.dczixi.zixiList;
+					for(const name of list){
+						const namex='dczixi_'+name;
+						if(!lib.card[namex]){
+							lib.card[namex]={
+								type:'special_delay',
+								fullskin:true,
+								noEffect:true,
+								wuxieable:false,
+							};
+							lib.card[namex].cardimage=name;
+							lib.translate[namex]=lib.translate[name]+'·姊希';
+							lib.translate[namex+'_info']='由【姊希】技能创造的无效果【'+lib.translate[name]+'】';
+						}
+					}
 				},
 				audio:2,
 				trigger:{player:['phaseUseBegin','phaseUseEnd']},
@@ -1201,6 +1233,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				zixiList:['lebu','bingliang','shandian'],
 				direct:true,
 				async content(event,trigger,player){
+					game.addVideo('skill',player,['dczixi',[]]);
 					const names=lib.skill.dczixi.zixiList.filter(name=>{
 						return player.countCards('h',card=>{
 							return card.hasGaintag('dcqiqin_tag')&&game.hasPlayer(target=>target.canAddJudge(get.autoViewAs({name:'dczixi_'+name},[card])));
@@ -2318,7 +2351,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					result:{
 						target:function(player,target){
 							if(player.getStorage('dclvecheng_xiongluan').includes(target)) return 0;
-							if(target.getEquip('bagua')||target.getEquip('rewrite_bagua')) return -0.6;
+							if(target.hasSkillTag('freeShan',false,{
+								player:player
+							},true)) return -0.6;
 							var hs=player.countCards('h',card=>{
 								if(!player.canUse(card,target)) return false;
 								return get.name(card)=='sha'&&get.effect(target,card,player,player)>0;
@@ -13002,6 +13037,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dc_caoshuang_prefix:'新杀',
 			dcjianzhuan:'渐专',
 			dcjianzhuan_info:'锁定技。①当你于出牌阶段使用牌时，你选择此阶段未执行过的一项执行：⒈令一名角色弃置X张牌；⒉摸X张牌；⒊重铸X张牌；⒋弃置X张牌（X为此技能于本阶段的发动次数）。②出牌阶段结束时，若你本阶段执行过〖渐专①〗的所有选项，则你随机移除〖渐专①〗的一项。',
+			dcjianzhuan_faq:'渐专概率',
+			dcjianzhuan_faq_info:'<br>当系统随机选择要删除的选项时，“弃置X张牌”的选项概率固定为90%；剩余选项平分剩余的的10%概率。<br>如第一次删除时，删除弃牌选项概率为90%，其余三个选项被删除的概率均为3.33%，若删除了非弃牌选项，第二次删除时，删除弃牌选项的概率依旧是90%，其余两个选项被删除的概率均为5%。',
 			dcfanshi:'返势',
 			dcfanshi_info:'觉醒技，结束阶段，若〖渐专①〗剩余选项数小于2，则你执行三次X视为1的剩余选项，然后增加2点体力上限并回复2点体力，失去技能〖渐专〗并获得技能〖覆斗〗。',
 			dcfudou:'覆斗',

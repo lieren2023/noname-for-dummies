@@ -24,6 +24,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterReplace:{
 		},
+		characterSubstitute:{
+			ol_sb_yuanshao:[
+			],
+		},
 		card:{
 			sizhaojian:{
 				derivation:'ol_sb_yuanshao',
@@ -47,7 +51,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			//OL谋袁绍
 			//真·四世三公——袁神，启动
 			olsbhetao:{
-				audio:2,
+				audio:3,
+				audioname:['ol_sb_yuanshao_shadow'],
 				trigger:{global:'useCardToPlayered'},
 				filter(event,player){
 					return event.player!=player&&event.isFirstTarget&&event.targets.length>1&&player.countCards('he',card=>{
@@ -80,6 +85,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(bool){
 						const target=targets[0];
 						player.logSkill('olsbhetao',target);
+						player.changeSkin('olsbhetao','ol_sb_yuanshao');
 						player.discard(cards);
 						trigger.getParent().effectCount++;
 						trigger.getParent().excluded.addArray(game.filterPlayer(i=>trigger.targets.includes(i)&&target!=i));
@@ -110,7 +116,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			olsbshenli:{
-				audio:2,
+				audio:3,
+				audioname:['ol_sb_yuanshao_shadow'],
 				trigger:{player:'useCardToPlayered'},
 				filter(event,player){
 					if(!player.isPhaseUsing()||player.hasSkill('olsbshenli_used')) return false;
@@ -145,6 +152,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return num2+(sum>player.countCards('h')?Math.min(5,sum):0)+(sum>player.getHp()?num2:0)>=num1;
 				},
 				async content(event,trigger,player){
+					player.changeSkin('olsbshenli','ol_sb_yuanshao_shadow');
 					player.addTempSkill('olsbshenli_used','phaseUseAfter');
 					trigger.getParent().targets.addArray(game.filterPlayer(target=>{
 						return !trigger.targets.includes(target)&&player.canUse(trigger.card,target,false);
@@ -168,7 +176,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subSkill:{used:{charlotte:true}},
 			},
 			olsbyufeng:{
-				audio:1,
+				audio:2,
+				audioname2:{
+					ol_sb_yuanshao_shadow:'olsbyufeng_ol_sb_yuanshao_shadow',
+				},
 				trigger:{
 					global:'phaseBefore',
 					player:'enterGame',
@@ -192,6 +203,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.equip(card);
 				},
 				subSkill:{
+					ol_sb_yuanshao_shadow:{
+						audio:1,
+					},
 					sizhaojian:{
 						equipSkill:true,
 						mod:{
@@ -249,7 +263,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			olsbshishou:{
 				unique:true,
-				audio:2,
+				audio:3,
+				audioname:['ol_sb_yuanshao_shadow'],
 				trigger:{global:['loseAfter','equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','addToExpansionAfter']},
 				filter(event,player){
 					if(player.getEquip(1)) return false;
