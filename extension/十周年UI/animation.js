@@ -281,9 +281,9 @@ var duilib;
 				}
 				
 				if (renderY == undefined) {
-					renderY = (this.referBounds.y + this.referBounds.height / 2) * dpr;;
+					renderY = (this.referBounds.y + this.referBounds.height / 2) * dpr;
 				} else {
-					renderY += this.referBounds.y * dpr;;
+					renderY += this.referBounds.y * dpr;
 				}
 			}
 			
@@ -656,7 +656,7 @@ var duilib;
 					});
 					return 'loading';
 				}
-				return console.error('prepSpine: [' + filename + '] 骨骼没有加载');;
+				return console.error('prepSpine: [' + filename + '] 骨骼没有加载');
 			}
 			
 			var skeleton;
@@ -825,7 +825,7 @@ var duilib;
 		};
 		
 		AnimationPlayer.prototype.getSpineActions = function (filename) {
-			if (!this.hasSpine(filename)) return console.error('getSpineActions: [' + filename + '] 骨骼没有加载');;
+			if (!this.hasSpine(filename)) return console.error('getSpineActions: [' + filename + '] 骨骼没有加载');
 			
 			var skeleton;
 			var skeletons = this.spine.skeletons;
@@ -843,7 +843,7 @@ var duilib;
 		};
 		
 		AnimationPlayer.prototype.getSpineBounds = function (filename) {
-			if (!this.hasSpine(filename)) return console.error('getSpineBounds: [' + filename + '] 骨骼没有加载');;
+			if (!this.hasSpine(filename)) return console.error('getSpineBounds: [' + filename + '] 骨骼没有加载');
 			
 			if (!this.resized) {
 				var dpr = 1;

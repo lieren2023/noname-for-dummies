@@ -477,7 +477,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				async content(event,trigger,player){
 					const result=await player.chooseTarget(get.prompt('dczhenrao'),'对一名可选角色造成1点伤害',(card,player,target)=>{
-						return get.event('targets').includes(target);
+						return get.event('targets').includes(target)&&!player.getStorage('dczhenrao').includes(target);
 					})
 						.set('targets',trigger.targets.concat(trigger.player).filter(target=>target.countCards('h')>player.countCards('h')))
 						.set('ai',target=>{
@@ -2032,13 +2032,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:'useCardAfter'},
 				filter:function(event,player){
-					if(get.type(event.card)!='basic') return false;
-					if(player.getHistory('gain',evt=>{
-						return evt.getParent().name==='dccaisi';
-					}).reduce((num,evt)=>{
-						return num+evt.cards.length;
-					},0)>player.maxHp) return false;
-					return _status.currentPhase;
+					return get.type(event.card)=='basic'&&_status.currentPhase;
 				},
 				prompt2:function(event,player){
 					const num=player.countMark('dccaisi_more')+1;
@@ -2054,13 +2048,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(card) cards.add(card);
 						else break;
 					}
-					if(cards.length) player.gain(cards,'gain2');
+					if(cards.length) yield player.gain(cards,'gain2');
 					else{
 						player.chat('没有非基本牌…');
 						game.log(`但是${position=='discardPile'?'弃':''}牌堆里没有非基本牌！`);
 					}
-					player.addTempSkill('dccaisi_more');
-					player.addMark('dccaisi_more',1,false);
+					const sum=player.getHistory('useSkill',evt=>evt.skill=='dccaisi').length;
+					if(sum<player.maxHp){
+						player.addTempSkill('dccaisi_more');
+						player.addMark('dccaisi_more',1,false);
+					}
+					else player.tempBanSkill('dccaisi');
 				},
 				subSkill:{more:{charlotte:true,onremove:true}},
 			},
@@ -2073,10 +2071,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function*(event,map){
 					const player=map.player;
-					if(player.maxHp<game.countPlayer()){
+					if(player.maxHp<game.countPlayer2()){
 						yield player.gainMaxHp();
 					}
-					player.recover();
+					yield player.recover();
 				}
 			},
 			//魏贾充
@@ -5339,10 +5337,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(event,player){
 					var num=player.getDamagedHp()-1;
 					if(num<=0) return false;
-					var list=game.filterPlayer().map(target=>{
-						return get.attitude(player,target)*Math.pow(Math.max(0,target.maxHp-target.countCards('h')-1),2);
-					}).sort((a,b)=>b-a);
-					return list.slice(0,num).reduce((p,c)=>p+c,0)>0;
+					return game.hasPlayer(target=>{
+						return get.attitude(player,target)>0&&target.maxHp-target.countCards('h')>1;
+					});
 				},
 				content:function(){
 					'step 0'
@@ -5350,7 +5347,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var num=player.getDamagedHp();
 					if(!player.isIn()||!num) event.finish();
-					else player.chooseTarget('御关：令'+get.cnNumber(num)+'名角色将手牌摸至体力上限',Math.min(game.countPlayer(),num),true).set('ai',target=>{
+					else player.chooseTarget('御关：令'+get.cnNumber(num)+'名角色将手牌摸至体力上限',Math.min(game.countPlayer(),[1,num]),true).set('ai',target=>{
 						return get.attitude(_status.event.player,target)*Math.max(0.1,target.maxHp-target.countCards('h'));
 					});
 					'step 2'
@@ -9903,7 +9900,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(th>0){
 						event.num=Math.ceil(th/2);
 						var list=[
-							'本回合不能使用或打出手牌，然后'+str+'摸两张牌',
+							'本回合不能使用手牌，然后'+str+'摸两张牌',
 							'展示所有手牌，并将其中一种花色的所有牌交给'+str,
 							'弃置'+get.cnNumber(event.num)+'张手牌',
 						];
@@ -9946,11 +9943,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subSkill:{
 					block:{
 						mark:true,
-						intro:{content:'不能使用或打出手牌'},
+						intro:{content:'不能使用手牌'},
 						charlotte:true,
 						mod:{
-							cardEnabled2:function(card){
-								if(get.position(card)=='h') return false;
+							cardEnabled:function(card,player){
+								let hs=player.getCards('h'),cards=[card];
+								if(Array.isArray(card.cards)) cards.addArray(card.cards);
+								for(let i of cards){
+									if(hs.includes(i)) return false;
+								}
+							},
+							cardSavable:function(card,player){
+								let hs=player.getCards('h'),cards=[card];
+								if(Array.isArray(card.cards)) cards.addArray(card.cards);
+								for(let i of cards){
+									if(hs.includes(i)) return false;
+								}
 							},
 						},
 					},
@@ -12412,7 +12420,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			furongfuqian:'傅肜（？－222年），义阳（今湖北枣阳）人，三国时蜀汉将领。刘备攻伐吴国时，傅肜为别督。后刘备被陆逊击败，傅肜率部断后，奋战至死。死前怒斥道：“吴狗！何有汉将军降者！”<br>傅佥[qiān] ( ? ~263年），义阳（治今湖北省枣阳市)人，蜀汉将领傅彤之子，三国时期蜀汉名将。金长于谋略，并颇有胆勇，姜维甚爱之。傅佥官至关中都督。魏国攻伐蜀汉时，傅佥和蒋舒防守阳安关，兵败战死。',
 			qinlang:'秦朗（生卒年不详），字元明，小字阿蘇（一作阿鳔），新兴（治今山西忻州）云中人。三国时期曹魏将领，官至骁骑将军、给事中，曾率兵讨伐鲜卑轲比能和步度根的叛军。',
 			xianglang:'向朗（约167年—247年），字巨达。襄阳郡宜城县（今湖北宜城）人，三国时期蜀汉官员、藏书家、学者。向朗早年师从于司马徽，并被荆州牧刘表任命为临沮县长。后随刘备入蜀，历任巴西、牂牁、房陵太守，并拜步兵校尉，领丞相长史，随丞相诸葛亮北伐。因包庇马谡被免职，后为光禄勋，转左将军、特进，封显明亭侯。曾代理丞相册封张皇后及太子刘璿。晚年专心研究典籍，诱导青年学习，家中藏书丰富，受到举国尊重。延熙十年（247年），向朗去世。《全三国文》收录有一篇《遗言戒子》',
-			yuantanyuanxiyuanshang:'袁谭袁尚介绍请移步「袁谭袁尚」，此处为袁熙的介绍。<br>袁熙（？－207年），字显奕（《后汉书》、《东光世系》作显雍），汝南郡汝阳县（今河南商水）人，是东汉末年占据河北的军阀袁绍次子，袁绍打败公孙瓒后，令袁熙为幽州刺史。袁绍官渡兵败后不久病死，其兄长袁谭、弟弟袁尚各自独立，互相攻伐，曹操趁机进攻袁谭、袁尚，并逐渐占河北。袁熙接纳兵败的袁尚后，因为属下叛变而逃往乌桓，被曹操击败后，逃往辽东太守公孙康帐下，却被公孙康杀死，二人首级被献给曹操。',
+			yuantanyuanxiyuanshang:'袁谭、袁尚的武将介绍请移步「袁谭袁尚」，此处为袁熙的介绍。<br>袁熙（？－207年），字显奕（《后汉书》、《东光世系》作显雍），汝南郡汝阳县（今河南商水）人，是东汉末年占据河北的军阀袁绍次子，袁绍打败公孙瓒后，令袁熙为幽州刺史。袁绍官渡兵败后不久病死，其兄长袁谭、弟弟袁尚各自独立，互相攻伐，曹操趁机进攻袁谭、袁尚，并逐渐占河北。袁熙接纳兵败的袁尚后，因为属下叛变而逃往乌桓，被曹操击败后，逃往辽东太守公孙康帐下，却被公孙康杀死，二人首级被献给曹操。',
 			zhanghu:'张虎，生卒年不详，雁门马邑(今山西朔城区大夫庄)人。张辽之子，三国时期曹魏武将。官至偏将军，封晋阳侯，有一子张统。',
 			mengjie:'孟节，南中蛮王孟获之兄。是小说《三国演义》中杜撰的人物，史上并无记载。诸葛亮南征孟获之时，帐下军士因误饮哑泉之水失语。当地山神告知诸葛亮，言万安溪畔有一高士隐居彼处，号“万安隐者”。其草庵后有一泉，名安乐泉，可解哑泉之毒。庵前生有一草，名薤叶芸香，可防瘴气之染。诸葛亮于是带人连夜前往其隐居之处，求得泉水草叶解毒防瘴，拜求隐士姓名，方知其名为孟节，由此而叹：“方信盗跖、下惠之事，今亦有之。”诸葛亮欲申奏刘禅，立其为王，孟节辞之。又以金帛赠之，孟节坚辞不受。诸葛亮嗟叹不已，拜别而回。',
 			peiyuanshao:'裴元绍，《三国演义》人物，原黄巾军之武将。黄巾起义失败之后，与周仓一同率领残部在山中落草当山贼。公元200年，在关羽欲返刘备旗下，在突破曹操的五道关卡后路过其落草之地，与周仓一同向关羽要求能以期成为关羽家臣。但此时仅周仓同行，其他弟兄则于山中等待。不久后，因其欲夺偶然路过的赵云之马，反遭讨伐战败身死。',
@@ -12715,7 +12723,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xingchong:'幸宠',
 			xingchong_info:'一轮游戏开始时，你可声明两个自然数X和Y，且(X+Y)≤min(5, 你的体力上限)。你摸X张牌并展示Y张手牌。若如此做，当你于本轮内失去一张以此法展示的牌后，你摸两张牌。',
 			liunian:'流年',
-			liunian_info:'锁定技。回合结束时，若本回合内进行了本次游戏的第一次洗牌，则你加1点体力上限；若本回合内进行了本次游戏的第二次洗牌，则你于本回合结束时回复1点体力，且本局游戏内的手牌上限+10。',
+			liunian_info:'锁定技。一名角色的回合结束时，若本回合内进行了本次游戏的第一次洗牌，则你加1点体力上限；若本回合内进行了本次游戏的第二次洗牌，则你于本回合结束时回复1点体力，且本局游戏内的手牌上限+10。',
 			caimaozhangyun:'蔡瑁张允',
 			lianzhou:'连舟',
 			lianzhou_info:'锁定技。准备阶段，你横置你的武将牌。然后你可横置任意名体力值等于你的角色。',
@@ -12803,7 +12811,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dcjianshu_info:'出牌阶段限一次。你可以将一张黑色手牌交给一名其他角色，并选择另一名其他角色，你令前者与后者拼点。赢的角色随机弃置一张牌，没赢的角色失去1点体力。若有角色因此死亡，你令你〖间书〗于此阶段发动的次数上限+1。',
 			dcyongdi:'拥嫡',
 			dcyongdi_info:'限定技。出牌阶段，你可以选择一名男性角色，若其：体力上限最少，其加1点体力上限；体力值最少，其回复1点体力；手牌数最少，其摸X张牌（X为其体力上限且至多为5）。',
-			liupi:'刘辟',
+			liupi:'新杀刘辟',
+			liupi_prefix:'新杀',
 			dcjuying:'踞营',
 			dcjuying_info:'出牌阶段结束时，若你于此阶段内使用【杀】的次数未达到上限，你可以选择任意项：1.下回合使用【杀】的次数上限+1；2.本回合手牌上限+2；3.摸三张牌。若你选择的项数超过了你的体力值，你弃置一张牌。',
 			dc_huanghao:'新杀黄皓',
@@ -12826,7 +12835,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dcxuewei:'血卫',
 			dcxuewei_info:'结束阶段，你可以选择一名体力值不大于你的角色，然后你获得如下效果直到你的下回合开始时：当其受到伤害时，防止此伤害，然后你失去1点体力，你与其各摸一张牌（若该角色为你，则改为你摸一张牌）。',
 			dcyuguan:'御关',
-			dcyuguan_info:'一名角色的回合结束时，若你已损失的体力值为全场最多，你可以减1点体力上限，然后令X名角色将手牌摸至体力上限（X为你已损失的体力值）。',
+			dcyuguan_info:'一名角色的回合结束时，若你已损失的体力值为全场最多，你可以减1点体力上限，然后令至多X名角色将手牌摸至体力上限（X为你已损失的体力值）。',
 			qinlang:'秦朗',
 			dchaochong:'昊宠',
 			dchaochong_info:'当你使用牌后，你可以将手牌摸至或弃置至你的手牌上限数（至多摸五张）。然后若你以此法：得到牌，你的手牌上限-1；失去牌，你的手牌上限+1。',
@@ -12954,9 +12963,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dcshizong_info:'当你需要使用一张基本牌时，你可以交给一名其他角色X张牌，然后其可以将一张牌置于牌堆底，视为你使用之。若其不为当前回合角色，此技能失效直到回合结束（X为你本回合发动〖恃纵〗的次数）。',
 			pangshanmin:'庞山民',
 			dccaisi:'才思',
-			dccaisi_info:'当你于回合内/回合外使用基本牌结算结束后，若你本回合以此法得到的牌数小于你的体力上限，你可以从牌堆/弃牌堆随机获得一张非基本牌，然后本回合发动此技能获得的牌数+1。',
+			dccaisi_info:'当你于回合内/回合外使用基本牌结算结束后，你可以从牌堆/弃牌堆随机获得一张非基本牌，然后若你本回合发动此技能的次数：小于你的体力上限，本回合你发动此技能获得的牌数+1；大于等于你的体力上限，本回合此技能失效。',
 			dczhuoli:'擢吏',
-			dczhuoli_info:'锁定技。一名角色的回合结束时，若你本回合使用或获得的牌数大于体力值，你加1点体力上限（不能超过存活角色数），回复1点体力。',
+			dczhuoli_info:'锁定技。一名角色的回合结束时，若你本回合使用或获得的牌数大于体力值，你加1点体力上限（不能超过游戏人数），回复1点体力。',
 			yue_caiyong:'乐蔡邕',
 			yue_caiyong_prefix:'乐',
 			dcjiaowei:'焦尾',

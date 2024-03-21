@@ -23,6 +23,8 @@ import { Channel } from "./channel/index.js";
 import { Experimental } from "./experimental/index.js";
 import * as Element from "./element/index.js";
 import { updateURLs } from "./update-urls.js";
+import { defaultHooks } from "./hooks/index.js"
+import { freezeButExtensible } from "../util/index.js"
 
 
 export class Library extends Uninstantable {
@@ -152,240 +154,7 @@ export class Library extends Uninstantable {
 	 * 这样当某个地方调用game.callHook(钩子名,[...函数参数])时，就会按顺序将对应数组中的每个函数运行一遍（传参为callHook的第二个参数）。
 	 * 你可以将hook机制类比为event.trigger()，但是这里只能放同步代码
 	 */
-	static hooks = {
-		// 本体势力的颜色
-		addGroup: [(id, _short, _name, config) => {
-			if ("color" in config && config.color != null) {
-				let color1, color2, color3, color4;
-				if (typeof config.color == "string" && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(config.color)) {
-					let c1 = parseInt(`0x${config.color.slice(1, 3)}`);
-					let c2 = parseInt(`0x${config.color.slice(3, 5)}`);
-					let c3 = parseInt(`0x${config.color.slice(5, 7)}`);
-					color1 = color2 = color3 = color4 = [c1, c2, c3, 1];
-				}
-				else if (Array.isArray(config.color) && config.color.length == 4) {
-					if (config.color.every(item => Array.isArray(item))) {
-						color1 = config.color[0];
-						color2 = config.color[1];
-						color3 = config.color[2];
-						color4 = config.color[3];
-					}
-					else color1 = color2 = color3 = color4 = config.color;
-				}
-				if (color1 && color2 && color3 && color4) {
-					const cs = lib.linq.cselector;
-					const g1 = cs.group(
-						cs.of(
-							cs.class("player ", "identity"),
-							cs.isAttr("data-color", `"${id}"`)
-						),
-						cs.of(
-							"div",
-							cs.isAttr("data-nature", `"${id}"`)
-						),
-						cs.of(
-							"span",
-							cs.isAttr("data-nature", `"${id}"`)
-						)
-					);
-					const g2 = cs.group(
-						cs.of(
-							"div",
-							cs.isAttr("data-nature", `"${id}m"`)
-						),
-						cs.of(
-							"span",
-							cs.isAttr("data-nature", `"${id}m"`)
-						)
-					);
-					const g3 = cs.group(
-						cs.of(
-							"div",
-							cs.isAttr("data-nature", `"${id}mm"`)
-						),
-						cs.of(
-							"span",
-							cs.isAttr("data-nature", `"${id}mm"`)
-						)
-					);
-					let result = {};
-					result[g1] = {
-						textShadow: cs.group(
-							"black 0 0 1px",
-							`rgba(${color1.join()}) 0 0 2px`,
-							`rgba(${color2.join()}) 0 0 5px`,
-							`rgba(${color3.join()}) 0 0 10px`,
-							`rgba(${color4.join()}) 0 0 10px`
-						)
-					};
-					result[g2] = {
-						textShadow: cs.group(
-							"black 0 0 1px",
-							`rgba(${color1.join()}) 0 0 2px`,
-							`rgba(${color2.join()}) 0 0 5px`,
-							`rgba(${color3.join()}) 0 0 5px`,
-							`rgba(${color4.join()}) 0 0 5px`,
-							"black 0 0 1px"
-						)
-					};
-					result[g3] = {
-						textShadow: cs.group(
-							"black 0 0 1px",
-							`rgba(${color1.join()}) 0 0 2px`,
-							`rgba(${color2.join()}) 0 0 2px`,
-							`rgba(${color3.join()}) 0 0 2px`,
-							`rgba(${color4.join()}) 0 0 2px`,
-							"black 0 0 1px"
-						)
-					};
-					game.dynamicStyle.addObject(result);
-					lib.groupnature[id] = id;
-				}
-			}
-			if (typeof config.image == 'string') Object.defineProperty(lib.card, `group_${id}`, {
-				configurable: true,
-				enumerable: false,
-				writable: true,
-				value: {
-					fullskin: true,
-					image: config.image
-				}
-			});
-		}],
-		//增加新属性杀
-		addNature: [(nature, _translation, config) => {
-			if (typeof config != 'object') config = {};
-			let linked = config.linked, order = config.order, background = config.background, lineColor = config.lineColor;
-			if (typeof linked != 'boolean') linked = true;
-			if (typeof order != 'number') order = 0;
-			if (typeof background != 'string') background = '';
-			if (!Array.isArray(lineColor) || lineColor.length != 3) lineColor = [];
-			else if (background.startsWith('ext:')) {
-				background = background.replace(/^ext:/, 'extension/');
-			}
-			if (linked) lib.linked.add(nature);
-			if (lineColor.length) lib.lineColor.set(nature, lineColor);
-			lib.nature.set(nature, order);
-			if (background.length > 0) lib.natureBg.set(nature, background);
-			if (config.audio) {
-				for (let key in config.audio) {
-					if (!lib.natureAudio[key]) {
-						lib.natureAudio[key] = config.audio[key];
-					} else {
-						for (let key2 in config.audio[key]) {
-							lib.natureAudio[key][key2] = config.audio[key][key2];
-						}
-					}
-				}
-			}
-
-			let color1, color2;
-			if (typeof config.color == "string" && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(config.color)) {
-				let c1 = parseInt(`0x${item[1].slice(1, 3)}`);
-				let c2 = parseInt(`0x${item[1].slice(3, 5)}`);
-				let c3 = parseInt(`0x${item[1].slice(5, 7)}`);
-				color1 = color2 = [c1, c2, c3, 1];
-			}
-			else if (Array.isArray(config.color) && config.color.length >= 2 && config.color.length <= 4) {
-				if (config.color.every(item => Array.isArray(item))) {
-					color1 = config.color[0];
-					color2 = config.color[1];
-				}
-				else {
-					let color = config.color.slice();
-					if (color.length == 3) color.push(1);
-					color1 = color2 = color;
-				}
-			}
-			if (color1 && color2) {
-				const cs = lib.linq.cselector;
-				const g1 = cs.group(
-					cs.of(
-						cs.class("card", "fullskin", `${nature}`),
-						'>',
-						cs.class("name")
-					)
-				);
-				let result = {};
-				result[g1] = {
-					color: `rgba(${color1.join()})`,
-					border: cs.merge(
-						'1px',
-						'solid',
-						`rgba(${color2.join()})`
-					),
-				};
-				game.dynamicStyle.addObject(result);
-
-				const g2 = cs.group(
-					cs.of(
-						cs.class("tempname", `${nature}`),
-						':not([data-nature])>',
-						cs.class("span")
-					)
-				);
-				let result2 = {};
-				result2[g2] = {
-					color: `rgba(${color1.join()})`,
-				};
-				game.dynamicStyle.addObject(result2);
-			}
-		}],
-		//game.check
-		checkBegin: [],
-		checkEnd: [
-			function autoConfirm(event, { ok, auto, auto_confirm }) {
-				if (!event.isMine()) return;
-				const skillinfo = get.info(event.skill) || {};
-				if (ok && auto && (auto_confirm || skillinfo.direct) && !_status.touchnocheck
-					&& !_status.mousedown && (!_status.mousedragging || !_status.mouseleft)) {
-					if (ui.confirm) ui.confirm.close();
-					if (event.skillDialog === true) event.skillDialog = false;
-					ui.click.ok();
-					_status.mousedragging = null;
-					if (skillinfo.preservecancel) ui.create.confirm('c');
-				}
-			}
-		],
-		checkButton: [],
-		checkCard: [
-			function updateTempname(card, event) {
-				if (lib.config.cardtempname === 'off') return;
-				if (get.name(card) === card.name && get.is.sameNature(get.nature(card), card.nature, true)) return;
-				const node = ui.create.cardTempName(card);
-				if (lib.config.cardtempname !== 'default') node.classList.remove('vertical');
-			},
-		],
-		checkTarget: [
-			function updateInstance(target, event) {
-				if (!target.instance) return;
-				['selected', 'selectable'].forEach(className => {
-					if (target.classList.contains(className)) {
-						target.instance.classList.add(className);
-					} else {
-						target.instance.classList.remove(className);
-					}
-				});
-			},
-		],
-		uncheckBegin: [],
-		uncheckEnd: [],
-		uncheckButton: [],
-		uncheckCard: [
-			function removeTempname(card, event) {
-				if (!card._tempName) return;
-				card._tempName.delete();
-				delete card._tempName;
-			},
-		],
-		uncheckTarget: [
-			function removeInstance(target, event) {
-				if (!target.instance) return;
-				target.instance.classList.remove('selected');
-				target.instance.classList.remove('selectable');
-			},
-		],
-	};
+	static hooks = freezeButExtensible({ ...defaultHooks });
 
 	/**
 	 * **无名杀频道推送机制**
@@ -7176,9 +6945,11 @@ export class Library extends Uninstantable {
 						normal: '新1v1',
 						dianjiang: '点将单挑',
 						changban: '血战长坂坡',
+						wuxianhuoli: '无限火力',
 					},
 					restart: true,
 					frequent: true,
+					intro: '血战长坂坡和无限火力模式详见帮助',
 				},
 				connect_enable_jin: {
 					name: '启用晋势力武将',
@@ -7186,12 +6957,24 @@ export class Library extends Uninstantable {
 					restart: true,
 					frequent: true,
 				},
+				connect_change_card: {
+					name: '启用手气卡',
+					init: false,
+					frequent: true,
+					restart: true,
+				},
 				update: function (config, map) {
 					if (config.connect_single_mode != 'normal') {
 						map.connect_enable_jin.hide();
 					}
 					else {
 						map.connect_enable_jin.show();
+					}
+					if (config.connect_single_mode != 'wuxianhuoli') {
+						map.connect_change_card.hide();
+					}
+					else {
+						map.connect_change_card.show();
 					}
 				},
 			},
@@ -7203,9 +6986,11 @@ export class Library extends Uninstantable {
 						normal: '新1v1',
 						dianjiang: '点将单挑',
 						changban: '血战长坂坡',
+						wuxianhuoli: '无限火力',
 					},
 					restart: true,
 					frequent: true,
+					intro: '血战长坂坡和无限火力模式详见帮助',
 				},
 				enable_jin: {
 					name: '启用晋势力武将',
@@ -7213,12 +6998,28 @@ export class Library extends Uninstantable {
 					restart: true,
 					frequent: true,
 				},
+				change_card: {
+					name: '开启手气卡',
+					init: 'disabled',
+					item: {
+						disabled: '禁用',
+						once: '一次',
+						twice: '两次',
+						unlimited: '无限',
+					}
+				},
 				update: function (config, map) {
 					if (config.single_mode != 'normal') {
 						map.enable_jin.hide();
 					}
 					else {
 						map.enable_jin.show();
+					}
+					if (config.single_mode != 'wuxianhuoli') {
+						map.change_card.hide();
+					}
+					else {
+						map.change_card.show();
 					}
 				},
 			}
@@ -7726,6 +7527,7 @@ export class Library extends Uninstantable {
 			'<li>搏击：若一名角色拥有带有“搏击”的技能，则当该搏击技能触发时，若本次技能的目标角色在你攻击范围内，且你在其攻击范围内，则你执行技能主体效果时，同时额外执行“搏击”后的额外效果。' +
 			'<li>游击：若一名角色拥有带有“游击”的技能，则当该游击技能执行至“游击”处时，若本次技能的目标角色在你的攻击范围内，且你不在其攻击范围内，则你可以执行“游击”后的额外效果。' +
 			'<li>激昂：一名角色发动“昂扬技”标签技能后，此技能失效，直至从此刻至满足此技能“激昂”条件后。' +
+			'<li>历战：一名角色的回合结束时，若本回合发动过拥有历战效果的技能，则对此技能效果的进行等同于发动次数的永久可叠加式升级或修改。' +
 			''
 	};
 	/**
@@ -9842,7 +9644,7 @@ export class Library extends Uninstantable {
 		 * @param {string} skill
 		 * @returns {boolean}
 		 */
-		filterTrigger: function (event, player, triggername, skill) {
+		filterTrigger: function (event, player, triggername, skill, indexedData) {
 			if (player._hookTrigger && player._hookTrigger.some(i => {
 				const info = lib.skill[i].hookTrigger;
 				return info && info.block && info.block(event, player, triggername, skill);
@@ -9865,7 +9667,7 @@ export class Library extends Uninstantable {
 				if (Array.isArray(info.trigger[role])) return info.trigger[role].includes(triggername);
 				return info.trigger[role] == triggername;
 			})) return false;
-			if (info.filter && !info.filter(event, player, triggername)) return false;
+			if (info.filter && !info.filter(event, player, triggername, indexedData)) return false;
 			if (event._notrigger.includes(player) && !lib.skill.global.includes(skill)) return false;
 			if (typeof info.usable == 'number' && player.hasSkill('counttrigger') &&
 				player.storage.counttrigger && player.storage.counttrigger[skill] >= info.usable) return false;
@@ -10408,7 +10210,7 @@ export class Library extends Uninstantable {
 			return (Math.random() - 0.5);
 		},
 		seat: function (a, b) {
-			var player = lib.tempSortSeat || _status.event.player;
+			var player = lib.tempSortSeat || _status.event.player || game.me || game.players[0];
 			var delta = get.distance(player, a, 'absolute') - get.distance(player, b, 'absolute');
 			if (delta) return delta;
 			delta = parseInt(a.dataset.position) - parseInt(b.dataset.position);
@@ -10557,18 +10359,21 @@ export class Library extends Uninstantable {
 				}), player, _status.event) && player.storage.stratagem_fury >= cost.get(availableName));
 			},
 			viewAs: (cards, player) => {
-				const cardName = get.name(cards[0], player);
-				return cardName ? new lib.element.VCard({
-					name: cardName,
-					nature: get.nature(cards[0], player),
-					suit: get.suit(cards[0], player),
-					number: get.number(cards[0], player),
-					isCard: true,
-					cards: [cards[0]],
-					storage: {
-						stratagem_buffed: 1
-					}
-				}) : new lib.element.VCard();
+				if(cards.length){
+					const cardName = get.name(cards[0], player);
+					return cardName ? new lib.element.VCard({
+						name: cardName,
+						nature: get.nature(cards[0], player),
+						suit: get.suit(cards[0], player),
+						number: get.number(cards[0], player),
+						isCard: true,
+						cards: [cards[0]],
+						storage: {
+							stratagem_buffed: 1
+						}
+					}) : new lib.element.VCard();
+				}
+				return null;
 			},
 			prompt: () => {
 				const span = document.createElement('span');

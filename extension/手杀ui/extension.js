@@ -1104,6 +1104,7 @@ if (document.getElementById("jindutiao")) {
           fan:'找出反贼队友<br>全力击败主公',
           nei:'找出反贼忠臣<br>最后击败主公',
 		  mingzhong:'保护主公<br>取得最后胜利',
+		  commoner:'保护好自己<br>共同取得胜利',
           rZhu:'击败冷方主帅<br>与所有野心家',
           rZhong:'保护暖方主帅<br>击败冷方主帅<br>与所有野心家',
           rYe:'联合冷方野心家<br>击败其他角色',

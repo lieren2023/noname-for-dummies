@@ -891,3 +891,9 @@ span[data-nature='qunmm'] {
 .menu.main>.menu-content>div>.left.pane>div {
 	font-size: 25px;
 }
+/* 修复菜单长武将名显示（例：合孙鲁班孙鲁育） */
+.button.newstyle>.name{
+	top: 8px;
+	max-height: 112px;
+	z-index: 1;
+}

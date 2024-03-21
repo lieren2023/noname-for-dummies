@@ -1095,30 +1095,42 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target.chooseToDiscard(2,'he',true).ai=get.disvalue;
 				},
 				ai:{
-					wuxie:function(){
+					wuxie: function () {
 						return 0;
 					},
-					basic:{
-						useful:3,
-						value:3,
-						order:5
+					basic: {
+						order: 9,
+						useful: 1.5,
+						value: 3
 					},
-					result:{
-						target:function(player,target){
-							var hs=target.getCards('h');
-							if(hs.length<=1){
-								if(target==player&&(hs.length==0||hs[0].name=='yiyi')){
-									return 0;
+					result: {
+						target(player, target) {
+							let i,
+								add = 0,
+								y = 1,
+								tars = 0;
+							if (!ui.selected.cards) y = 0;
+							if (ui.selected.targets) tars = 0.01 * ui.selected.targets.length;
+							else tars = 0;
+							if (target == player) i = player.countCards('h', function (card) {
+								if (y > 0 && ui.selected.cards.includes(card)) return false;
+								if (!y && get.name(card) === 'yiyi') {
+									y = -1;
+									return false;
 								}
-								return 0.3;
-							}
-							return Math.sqrt(target.countCards('he'));
-						},
+								return true;
+							});
+							else i = target.countCards('he');
+							if (target.hasSkillTag('noh')) add++;
+							return add + Math.sqrt(i / 3.6 + tars) / 2;
+						}
 					},
-					tag:{
-						loseCard:1,
-						discard:1,
-						norepeat:1
+					tag: {
+						draw: 2,
+						loseCard: 2,
+						discard: 2,
+						multitarget: true,
+						norepeat: 1
 					}
 				},
 			},

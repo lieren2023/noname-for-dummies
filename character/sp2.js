@@ -115,7 +115,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				sp_xiaohu:['haomeng','yanfuren','yanrou','dc_zhuling'],
 				sp_star:['star_caoren','star_yuanshu','star_dongzhuo','star_yuanshao','star_zhangchunhua'],
 				mini_qixian:['mp_liuling'],
-				sp_decade:['caobuxing','re_maliang','dc_jikang'],
+				sp2_waitforsort:['caobuxing','re_maliang','dc_jikang'],
 			}
 		},
 		skill:{
@@ -6599,16 +6599,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				filter:function(event,player){
 					if(!game.hasPlayer(function(current){
-						return current.hasSkill('cixiao_yizi');
+						return current.hasSkill('panshi');
 					})) return true;
 					return player.countCards('he')>=1&&game.hasPlayer(function(current){
-						return current!=player&&!current.hasSkill('cixiao_yizi');
+						return current!=player&&!current.hasSkill('panshi');
 					});
 				},
 				content:function(){
 					'step 0'
 					if(game.hasPlayer(function(current){
-						return current.hasSkill('cixiao_yizi');
+						return current.hasSkill('panshi');
 					})) event.goto(2);
 					else player.chooseTarget(lib.filter.notMe,get.prompt('cixiao'),'令一名其他角色获得「义子」标记').set('ai',function(target){
 						var player=_status.event.player;
@@ -6619,19 +6619,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.bool){
 						var target=result.targets[0];
 						player.logSkill('cixiao',target);
-						target.addSkills('cixiao_yizi');
+						target.addSkills('panshi');
 					}
 					event.finish();
 					'step 2'
 					var list=game.filterPlayer(function(current){
-						return current.hasSkill('cixiao_yizi');
+						return current.hasSkill('panshi');
 					});
 					player.chooseCardTarget({
 						prompt:get.prompt('cixiao'),
 						prompt2:('弃置一张牌并将'+get.translation(list)+'的「义子」标记转移给其他角色'),
 						position:'he',
 						filterTarget:function(card,player,target){
-							return player!=target&&!target.hasSkill('cixiao_yizi');
+							return player!=target&&!target.hasSkill('panshi');
 						},
 						filterCard:lib.filter.cardDiscardable,
 						ai1:function(card){
@@ -6654,12 +6654,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.logSkill('cixiao');
 						player.discard(result.cards).delay=false;
 						player.line2(game.filterPlayer(function(current){
-							if(current.hasSkill('cixiao_yizi')){
-								current.removeSkills('cixiao_yizi');
+							if(current.hasSkill('panshi')){
+								current.removeSkills('panshi');
 								return true;
 							}
 						}).concat(result.targets),'green');
-						target.addSkills('cixiao_yizi');
+						target.addSkills('panshi');
 					}
 					else event.finish();
 					'step 4'
@@ -6667,18 +6667,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				derivation:'panshi',
 				ai:{threaten:8},
-				subSkill: {
-					yizi: {
-						mark: true,
-						charlotte: true,
-						marktext: '子',
-						intro: {
-							name: '义子',
-							content: '具有〖叛弑〗'
-						},
-						group: 'panshi'
-					}
-				}
 			},
 			panshi:{
 				trigger:{player:'phaseZhunbeiBegin'},
@@ -6713,6 +6701,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.line(target);
 						player.give(result.cards,target);
 					}
+				},
+				mark:true,
+				marktext:'子',
+				intro:{
+					name:'义子',
+					content:'我是儿子',
 				},
 				group:'panshi_damage',
 			},
@@ -11484,7 +11478,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			quanjiu_info:'锁定技。①你手牌区中的【酒】的牌名视为【杀】。②你使用对应的实体牌为一张【酒】的非转化【杀】不计入次数限制。',
 			re_pangdegong:'庞德公',
 			heqia:'和洽',
-			heqia_info:'出牌阶段开始时，你可选择一项：①将任意张牌交给一名其他角色。②令一名有手牌的其他角色交给你任意张牌。然后以此法得到牌的角色可以视为使用一张基本牌，且当其声明使用此牌后，可以为此牌增加至至多X个目标（X为以此法移动的牌数）。',
+			heqia_info:'出牌阶段开始时，你可选择一项：①将任意张牌交给一名其他角色。②令一名有手牌的其他角色交给你任意张牌。然后以此法得到牌的角色可以将一张手牌当作任意基本牌使用，且当其声明使用此牌后，可以为此牌增加至至多X个目标（X为以此法移动的牌数）。',
 			yinyi:'隐逸',
 			yinyi_info:'锁定技。每回合限一次，当你受到非属性伤害时，若你的手牌数和体力值与伤害来源均不相同，则你防止此伤害。',
 			haomeng:'郝萌',
@@ -11492,7 +11486,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiongmang_info:'你可将任意张花色各不相同的手牌当做目标数上限为X的【杀】使用（X为此【杀】对应的实体牌数）。此【杀】使用结算结束后，若你未造成过渠道为此牌的伤害，则你减1点体力上限。',
 			yanfuren:'严夫人',
 			channi:'谗逆',
-			channi_info:'出牌阶段限一次。你可将任意张手牌交给一名其他角色，然后其可以将等量的手牌当做【决斗】使用。若其因此【决斗】造成了伤害，则其摸X张牌（X为此【决斗】对应的实体牌数）。若其因此【决斗】受到过伤害，则你弃置所有手牌。',
+			channi_info:'出牌阶段限一次。你可将任意张手牌交给一名其他角色，然后其可以将至多等量的手牌当做【决斗】使用。若其因此【决斗】造成了伤害，则其摸X张牌（X为此【决斗】对应的实体牌数）。若其因此【决斗】受到过伤害，则你弃置所有手牌。',
 			nifu:'匿伏',
 			nifu_info:'锁定技。一名角色的回合结束时，你将手牌摸至或弃置至三张。',
 			licaiwei:'李采薇',
@@ -11669,8 +11663,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sp_fenghuo:'烽火连天',
 			sp_danqi:'千里单骑',
 			sp_star:'将星系列',
-			sp_decade:'其他新服武将',
 			mini_qixian:'小程序·竹林七贤',
+			sp2_waitforsort:'等待分包',
 		},
 		pinyins:{
 			卑弥呼:['Himiko']

@@ -11709,16 +11709,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function (event){
 					return (event.num>0)
 				},
+				getIndex(event, player, triggername){
+					return event.num;
+				},
 				content:function (){
 					'step 0'
-					event.count=trigger.num;
-					'step 1'
 					player.draw(2);
-					event.count--;
 					if(_status.connectMode) game.broadcastAll(function(){_status.noclearcountdown=true});
 					event.given_map={};
 					event.num=2;
-					'step 2'
+					'step 1'
 					player.chooseCardTarget({
 						filterCard:function(card){
 							return get.itemtype(card)=='card'&&!card.hasGaintag('reyiji_tag');
@@ -11737,7 +11737,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return get.value(card,target)*get.attitude(player,target);
 						},
 					});
-					'step 3'
+					'step 2'
 					if(result.bool){
 						var res=result.cards,target=result.targets[0].playerid;
 						player.addGaintag(res,'reyiji_tag');
@@ -11750,9 +11750,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(_status.connectMode){
 							game.broadcastAll(function(){delete _status.noclearcountdown;game.stopCountChoose()});
 						}
-						event.goto(5);
+						event.finish();
 					}
-					'step 4'
+					'step 3'
 					if(_status.connectMode){
 						game.broadcastAll(function(){delete _status.noclearcountdown;game.stopCountChoose()});
 					}
@@ -11771,16 +11771,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						giver:player,
 						animate:'giveAuto',
 					}).setContent('gaincardMultiple');
-					'step 5'
-					if(event.count>0&&player.hasSkill('new_reyiji')){
-						player.chooseBool(get.prompt2('new_reyiji'));
-					}
-					else event.finish();
-					'step 6'
-					if(result.bool){
-						player.logSkill('new_reyiji');
-						event.goto(1);
-					}
 				},
 				ai:{
 					maixie:true,

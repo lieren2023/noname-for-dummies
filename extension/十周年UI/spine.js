@@ -4440,7 +4440,7 @@ var spine;
 			n = input.readInt(true);
 			for (var i = 0, nn = void 0; i < n; i++) {
 				var data = new spine.TransformConstraintData(input.readString());
-				data.order = input.readInt(true);;
+				data.order = input.readInt(true);
 				nn = input.readInt(true);
 				for (var ii = 0; ii < nn; ii++)
 					data.bones.push(skeletonData.bones[input.readInt(true)]);

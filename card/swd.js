@@ -1089,7 +1089,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					value:7,
 					useful:1,
 					tag:{
-						draw:2
+						gain:1
 					},
 					result:{
 						target:function(player,target){

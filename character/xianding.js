@@ -291,7 +291,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			dcsbpingliao:{
 				audio:2,
 				audioname:['dc_sb_simayi_shadow'],
-				trigger:{player:'useCard0'},
+				trigger:{player:'useCard'},
 				forced:true,
 				filter(event,player){
 					return event.card.name=='sha';
@@ -300,7 +300,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return game.filterPlayer(current=>player.inRange(current));
 				},
 				async content(event, trigger, player) {
-					trigger.hideTargets = true;
 					const unrespondedTargets = [];
 					const respondedTargets = [];
 					let nonnonTargetResponded = false;
@@ -322,8 +321,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									})) return get.order(card);
 									return -1;
 								}
-								//先用随机数凑合一下 等157优化
-								return event.getRand('dcsbpingliao') > 0.5 ? 0 : get.order(card);
+								//如果自己没有其他的闪桃就不响应
+								else {
+									const needsTao = (player.hp <= 1);
+									const shanAndTao = player.getCards('hs', card=>{
+										const name = get.name(card);
+										return name == 'shan' || (needsTao && name == 'shan');
+									});
+									shanAndTao.remove(card);
+									if(card.cards) shanAndTao.removeArray(card.cards);
+									if(!shanAndTao.length) return 0;
+								}
+								return event.getRand('dcsbpingliao') > (1 / Math.max(1,player.hp)) ? 0 : get.order(card);
 							}).set('respondedTargets', respondedTargets).forResult();
 							if (result.bool) {
 								respondedTargets.push(target);
@@ -351,7 +360,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 				},
+				group:'dcsbpingliao_hide',
 				subSkill:{
+					hide:{
+						trigger:{player:'useCard0'},
+						forced:true,
+						filter(event,player){
+							return event.card.name=='sha';
+						},
+						async content(event, trigger, player){
+							trigger.hideTargets = true;
+							game.log(player,'隐藏了',trigger.card,'的目标');
+						},
+					},
 					buff:{
 						onremove:true,
 						charlotte:true,
@@ -1375,7 +1396,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						charlotte:true,
 						trigger:{global:'damageSource'},
 						filter:function(event,player){
-							if(event.getParent().type!='card') return false;
+							if(!event.source||event.getParent().type!='card') return false;
 							if(event.source.isHealthy()||event.card.name!='sha') return false;
 							return event.getParent(4).name=='dcsbmengmou'&&event.getParent(4).player==player;
 						},
@@ -3108,7 +3129,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 					if(target.hasMark('dcchangqu_warshipx')){
 						var prompt2='是否交给'+get.translation(player)+get.cnNumber(num)+'张手牌？'+(nextPlayer?'若如此做，将“战舰”移动给'+get.translation(nextPlayer)+'，':'，')+'否则你下次受到的属性伤害值+'+num;
-						target.chooseCard(get.translation(player)+'对你发动了【长驱】',prompt2).set('ai',card=>{
+						target.chooseCard(get.translation(player)+'对你发动了【长驱】',prompt2,num).set('ai',card=>{
 							if(_status.event.att>0) return 15-get.value(card);
 							if(_status.event.take) return 0;
 							return 8.2-0.8*Math.min(5,_status.event.target.hp+_status.event.target.hujia)-get.value(card);
@@ -5394,7 +5415,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				frequent:true,
 				filter:function(event,player,name){
-					if(player==_status.currentPhase) return (name=='logSkill'&&event.skill=='dcliying'&&player.getExpansions('dcwangyuan').length<game.countPlayer());
+					if(player==_status.currentPhase) return (name=='logSkill'&&event.skill=='dcliying'&&player.getExpansions('dcwangyuan').length<game.countPlayer2());
 					if(name=='logSkill') return false;
 					if(player.getExpansions('dcwangyuan').length>=game.countPlayer()) return false;
 					if(event.name=='gain'&&event.player==player) return false;
@@ -7947,8 +7968,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				getZhuanhuanji:function(player,bool){
 					var skills=player.getSkills(null,false,false).filter(function(i){
-						const list=get.skillCategoriesOf(i);
-						return !list.includes('Charlotte')&&list.includes('转换技');
+						return get.is.zhuanhuanji(i,player);
 					});
 					if(!bool) return skills;
 					if(!skills.length) return 'none';
@@ -7960,7 +7980,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				getState:function(player,skill){
 					var info=get.info(skill),zhuanhuan=info.zhuanhuanji;
-					if(zhuanhuan=='number') return (player.countMark(skill)%2==1);
+					if(zhuanhuan&&zhuanhuan=='number') return (player.countMark(skill)%2==1);
 					return Boolean(player.storage[skill]);
 				},
 				trigger:{
@@ -14151,6 +14171,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subtype:'equip1',
 				distance:{attackFrom:-2},
 				skills:['pyzhuren_heart'],
+				onDestroy(card){
+					if(_status.pyzhuren&&_status.pyzhuren[card.name]){
+						delete _status.pyzhuren[card.name];
+					}
+				},
 				ai:{
 					basic:{
 						equipValue:4
@@ -14164,6 +14189,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subtype:'equip1',
 				distance:{attackFrom:-1},
 				skills:['pyzhuren_diamond'],
+				onDestroy(card){
+					if(_status.pyzhuren&&_status.pyzhuren[card.name]){
+						delete _status.pyzhuren[card.name];
+					}
+				},
 				ai:{
 					basic:{
 						equipValue:3
@@ -14177,6 +14207,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subtype:'equip1',
 				distance:{attackFrom:-1},
 				skills:['pyzhuren_club'],
+				onDestroy(card){
+					if(_status.pyzhuren&&_status.pyzhuren[card.name]){
+						delete _status.pyzhuren[card.name];
+					}
+				},
 				ai:{
 					basic:{
 						equipValue:5
@@ -14202,6 +14237,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip1',
 				skills:['pyzhuren_spade'],
+				onDestroy(card){
+					if(_status.pyzhuren&&_status.pyzhuren[card.name]){
+						delete _status.pyzhuren[card.name];
+					}
+				},
 				ai:{
 					basic:{
 						equipValue:3
@@ -14215,6 +14255,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subtype:'equip1',
 				distance:{attackFrom:-3},
 				skills:['pyzhuren_shandian'],
+				onDestroy(card){
+					if(_status.pyzhuren&&_status.pyzhuren[card.name]){
+						delete _status.pyzhuren[card.name];
+					}
+				},
 				ai:{
 					basic:{
 						equipValue:3
@@ -14263,7 +14308,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		characterIntro:{
-			cuimao:'请分别查看“崔琰”和“毛玠”的武将介绍。',
+			cuimao:'请分别查看「崔琰」和「毛玠」的武将介绍。',
 			bailingyun:'柏灵筠，女，是电视剧《大军师司马懿之军师联盟》、《虎啸龙吟》中的主要角色之一，由张钧甯饰演。20岁，是曹丕赏赐司马懿的美人，也是曹丕的眼线，被送入司马府中为妾室。柔弱美貌、心机极深。',
 			caoxian:'曹宪（生卒年不详），女，沛国谯县（今安徽省亳州市）人。东汉末年历史人物，汉献帝刘协嫔妃，魏武帝曹操女儿。建安十八年，嫁给汉献帝刘协，受封为贵人。黄初元年（220年），兄弟曹丕称帝后，汉献帝成为山阳公，不知所终。',
 			zhangjian:'张臶（136年－240年），字子明，钜鹿人。汉末三国时期隐士、音乐家，精通谶纬之学。张臶生活的年代从东汉一直到曹魏齐王时期，受到朝廷多次征召，一直回避，不愿做官。他活了一百零五岁，是三国时期有可靠记载的最长寿的人之一。',

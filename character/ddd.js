@@ -1630,185 +1630,147 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			dddzhengjun:{
-				trigger:{
-					global:['loseAfter','equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','addToExpansionAfter'],
-				},
+				trigger:{global:['damageEnd','loseHpEnd','recoverEnd','loseAfter','equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','addToExpansionAfter']},
 				filter(event,player){
 					if(!player.isPhaseUsing()) return false;
-					var boolh=!player.hasSkill('dddzhengjun_handcard',null,false,false),boole=(!player.hasSkill('dddzhengjun_equip')&&player.canMoveCard(null,true));
-					var hs=player.countCards('h'),es=player.countCards('e');
-					return game.hasPlayer(function(current){
-						// if(player==current) return false;
-						if(boolh&&current.countCards('h')==hs){
-							var num=event.getl(current).hs.length;
-							if(event.getg) num-=event.getg(current).length;
-							if(num!=0) return game.hasPlayer(current=>{
-								if(player==current) return false;
-								return current.countCards('h')==player.countCards('h');
-							});
+					if(event.name=='damage'||event.name=='loseHp'||event.name=='recover'){
+						if(player.hasSkill('dddzhengjun_hp')) return false;
+						return event.player.getHp()==player.getHp();
+					}
+					return game.hasPlayer(target=>{
+						if(event.getg&&event.getg(target)&&event.getg(target).length){
+							return !player.hasSkill('dddzhengjun_hs')&&target.countCards('h')==player.countCards('h');
 						}
-						if(boole&&current.countCards('e')==es){
-							var num=event.getl(current).es.length;
-							if(event.name=='equip'&&current==event.player) num--;
-							if(num!=0) return game.hasPlayer(current=>{
-								if(player==current) return false;
-								return current.countCards('e')==player.countCards('e');
-							});
+						const evt=event.getl(target);
+						if(evt){
+							if(evt.hs&&evt.hs.length){
+								return !player.hasSkill('dddzhengjun_hs')&&target.countCards('h')==player.countCards('h');
+							}
+							if(evt.es&&evt.es.length){
+								return !player.hasSkill('dddzhengjun_es')&&target.countCards('e')==player.countCards('e')&&player.canMoveCard(null,true,target);
+							}
 						}
 						return false;
 					});
 				},
-				direct:true,
-				*content(event,map){
-					var player=map.player,trigger=map.trigger;
-					var boolh=!player.hasSkill('dddzhengjun_handcard',null,false,false),hs=player.countCards('h');
-					if(boolh&&game.hasPlayer(function(current){
-						// if(player==current) return false;
-						if(boolh&&current.countCards('h')==hs){
-							var num=trigger.getl(current).hs.length;
-							if(trigger.getg) num-=trigger.getg(current).length;
-							if(num!=0) return game.hasPlayer(current=>{
-								if(player==current) return false;
-								return current.countCards('h')==player.countCards('h');
-							});
-						}
-						return false;
-					})){
-						var result=yield player.chooseTarget(get.prompt('dddzhengjun'),'令一名手牌数与你相等的其他角色摸或弃置一张牌',(card,player,target)=>{
-							return player.countCards('h')==target.countCards('h')&&player!=target;
-						}).set('ai',target=>{
-							var player=get.player();
-							return Math.max(get.effect(target,{name:'draw'},player,player),get.effect(target,{name:'guohe'},player,player)/2);
+				async cost(event,trigger,player){
+					if(trigger.name=='damage'||trigger.name=='loseHp'||trigger.name=='recover'){
+						let list=['失去体力','cancel2'];
+						if(trigger.player.isDamaged()) list.unshift('回复体力');
+						const {result:{control}}=await player.chooseControl(list)
+						.set('prompt',get.prompt('dddzhengjun',trigger.player))
+						.set('prompt2','令'+get.translation(event.player)+'执行其中一项')
+						.set('ai',()=>{
+							const player=get.event('player'),target=get.event().getTrigger().player;
+							if(get.event('controls').includes('回复体力')&&get.recoverEffect(target,player,player)>0) return '回复体力';
+							return get.effect(target,{name:'losehp'},player,player)>0?'失去体力':'cancel2';
 						});
-						if(result.bool){
-							var target=result.targets[0];
-							var choices=['摸牌'];
-							if(target.countCards('he')) choices.push('弃牌');
-							result=yield player.chooseControl(choices).set('prompt',`整军：请选择一项`).set('prompt2',`令${get.translation(target)}摸一张牌或弃置一张牌`).set('ai',()=>{
-								return get.event('choice');
-							}).set('choice',get.attitude(player,target)>0||!choices.includes('弃牌')?0:1);
-							player.logSkill('dddzhengjun',target);
-							player.addTempSkill('dddzhengjun_handcard','phaseUseAfter');
-							if(result.control=='摸牌') target.draw();
-							else target.chooseToDiscard('he',true);
-						}
+						event.result={
+							bool:control!='cancel2',
+							targets:[trigger.player],
+							cost_data:control,
+						};
 					}
-					var boole=(!player.hasSkill('dddzhengjun_equip')&&player.canMoveCard(null,true)),es=player.countCards('h');
-					if(boolh&&game.hasPlayer(function(current){
-						// if(player==current) return false;
-						if(boole&&current.countCards('e')==es){
-							var num=trigger.getl(current).es.length;
-							if(trigger.name=='equip'&&trigger.player==current) num--;
-							if(num!=0) return game.hasPlayer(current=>{
-								if(player==current) return false;
-								return current.countCards('e')==player.countCards('e');
-							});
-						}
-						return false;
-					})){
-						var result=yield player.chooseBool(get.prompt('dddzhengjun'),'移动一名装备区牌数与你相等的其他角色装备区里的一张牌').set('ai',function(){
-							var targets=game.filterPlayer(target=>player.countCards('e')==target.countCards('e')&&player!=target);
-							return get.player().canMoveCard(true,true,targets);
-						});
-						if(result.bool){
-							player.logSkill('dddzhengjun');
-							player.addTempSkill('dddzhengjun_equip','phaseUseAfter');
-							player.moveCard(true,true,game.filterPlayer(target=>player.countCards('e')==target.countCards('e')&&player!=target));
-						}
-					}
-				},
-				content_old(){
-					'step 0'
-					var boolh=!player.hasSkill('dddzhengjun_handcard',null,false,false),hs=player.countCards('h');
-					if(boolh&&game.hasPlayer(function(current){
-						if(player==current) return false;
-						if(boolh&&current.countCards('h')==hs){
-							var num=trigger.getl(current).hs.length;
-							if(trigger.getg) num-=trigger.getg(current).length;
-							if(num!=0) return true;
-						}
-						return false;
-					})){
-						player.chooseTarget('整军：是否令一名角色摸一张牌？').set('ai',function(target){
-							var player=_status.event.player;
-							return get.effect(target,{name:'draw'},player,player);
-						});
-					}
-					else event.goto(2);
-					'step 1'
-					if(result.bool){
-						var target=result.targets[0];
-						player.logSkill('dddzhengjun',target);
-						player.addTempSkill('dddzhengjun_handcard','phaseUseAfter');
-						target.draw();
-					}
-					'step 2'
-					var boole=(!player.hasSkill('dddzhengjun_equip')&&player.canMoveCard(null,true)),es=player.countCards('h');
-					if(boolh&&game.hasPlayer(function(current){
-						if(player==current) return false;
-						if(boole&&current.countCards('e')==es){
-							var num=trigger.getl(current).es.length;
-							if(trigger.name=='equip'&&trigger.player==current) num--;
-							if(num!=0) return true;
-						}
-						return false;
-					})){
-						player.chooseBool('整军：是否移动场上的一张装备牌？').set('ai',function(){
-							return _status.event.player.canMoveCard(true,true);
-						})
-					}
-					else event.finish();
-					'step 3'
-					if(result.bool){
-						player.logSkill('dddzhengjun');
-						player.addTempSkill('dddzhengjun_equip','phaseUseAfter');
-						player.moveCard(true).set('nojudge',true);
-					}
-				},
-				group:'dddzhengjun_hp',
-				subSkill:{
-					equip:{charlotte:true},
-					handcard:{charlotte:true},
-					hp:{
-						trigger:{global:['damageEnd','loseHpEnd','recoverEnd']},
-						direct:true,
-						filter(event,player){
-							if(player.hp!=event.player.hp) return false;
-							if(event.hujia&&event.hujia==event.num) return false;
-							if(!game.hasPlayer(current=>current.getHp()==player.getHp()&&current!=player)) return false;
-							var evt=event.getParent('phaseUse');
-							if(!evt||evt.player!=player) return false;
-							return !player.hasHistory('useSkill',function(evt){
-								if(evt.skill=='dddzhengjun_hp'){
-									if(evt.event.getParent('phaseUse')==event) return true;
-								}
-								return false;
-							});
-						},
-						content(){
-							'step 0'
-							player.chooseTarget(get.prompt('dddzhengjun'),'令一名体力值与你相等的其他角色回复或失去1点体力',function(card,player,target){
-								return target.getHp()==player.getHp()&&player!=target;
-							}).set('ai',target=>{
-								var player=get.player();
-								return Math.max(get.recoverEffect(target,player,player),get.effect(target,{name:'losehp'},player,player));
-							});
-							'step 1'
-							if(result.bool){
-								var target=result.targets[0];
-								event.target=target;
-								var choices=['失去体力'];
-								if(target.isDamaged()) choices.push('回复体力');
-								player.chooseControl(choices).set('prompt',`整军：请选择一项`).set('prompt2',`令${get.translation(target)}失去1点体力或回复1点体力`).set('ai',()=>{
-									return get.event('choice');
-								}).set('choice',get.recoverEffect(target,player,player)>0&&target.isDamaged()?1:0);
+					else{
+						let map={};
+						const hs_targets=game.filterPlayer(target=>{
+							if(trigger.getg&&trigger.getg(target)&&trigger.getg(target).length){
+								return !player.hasSkill('dddzhengjun_hs')&&target.countCards('h')==player.countCards('h');
 							}
-							else event.finish();
-							'step 2'
-							player.logSkill('dddzhengjun_hp',target);
-							target[result.control=='失去体力'?'loseHp':'draw']();
+							const evt=trigger.getl(target);
+							if(evt){
+								if(evt.es&&evt.es.length){
+									return !player.hasSkill('dddzhengjun_es')&&target.countCards('e')==player.countCards('e')&&player.canMoveCard(null,true,target);
+								}
+							}
+							return false;
+						});
+						const es_targets=game.filterPlayer(target=>{
+							const evt=trigger.getl(target);
+							if(evt){
+								if(evt.es&&evt.es.length){
+									return !player.hasSkill('dddzhengjun_es')&&target.countCards('e')==player.countCards('e')&&player.canMoveCard(null,true,target);
+								}
+							}
+							return false;
+						});
+						if(hs_targets.length){
+							let target;
+							if(hs_targets.length==1) target=hs_targets[0];
+							else{
+								target=await player.chooseTarget(get.prompt('dddzhengjun'),'令其中一名角色摸一张牌或弃置一张牌',(card,player,target)=>{
+									return get.event('targets').includes(target);
+								}).set('ai',target=>{
+									const player=get.event('player');
+									return Math.max(get.effect(target,{name:'guohe_copy2'},target,player),get.effect(target,{name:'draw'},player,player));
+								}).set('targets',hs_targets).forResultTargets()[0];
+							}
+							if(target){
+								let list=['摸牌'];
+								if(target.countCards('h')) list.push('弃牌');
+								const {result:{control}}=await player.chooseControl(list,'cancel2')
+								.set('prompt',get.prompt('dddzhengjun',target))
+								.set('prompt2','令'+get.translation(target)+'执行其中一项')
+								.set('ai',()=>{
+									const player=get.event('player'),target=get.event().getTrigger().player;
+									if(get.event('controls').includes('弃牌')&&get.effect(target,{name:'guohe_copy2'},player,player)>0) return '弃牌';
+									return get.effect(target,{name:'draw'},player,player)>0?'摸牌':'cancel2';
+								});
+								if(control!='cancel2'){
+									map.hs_target=[target,control];
+								}
+							}
 						}
-					},
+						if(es_targets.length){
+							let target;
+							if(hs_targets.length==1){
+								const {result:{bool}}=await player.chooseBool()
+								.set('prompt',get.prompt('dddzhengjun',hs_targets[0]))
+								.set('prompt2','移动'+get.translation(hs_targets[0])+'的一张装备牌')
+								.set('choice',()=>player.canMoveCard(true,true,hs_targets[0]));
+								if(bool) target=hs_targets[0];
+							}
+							else{
+								target=await player.chooseTarget(get.prompt('dddzhengjun'),'移动其中一名角色的一张装备牌',(card,player,target)=>{
+									return get.event('targets').includes(target);
+								}).set('ai',target=>{
+									const player=get.event('player');
+									return player.canMoveCard(true,true,target)?(1+Math.random()):0;
+								}).set('targets',es_targets).forResultTargets()[0];
+							}
+							if(target){
+								map.es_target=target;
+							}
+						}
+						event.result={
+							bool:(map.hs_target||map.es_target),
+							targets:[(map.hs_target||[])[0]].concat(map.es_target?[map.es_target]:[]),
+							cost_data:map,
+						};
+					}
+				},
+				async content(event,trigger,player){
+					const data=event.cost_data;
+					if(trigger.name=='damage'||trigger.name=='loseHp'||trigger.name=='recover'){
+						player.addTempSkill('dddzhengjun_hp','phaseUseAfter');
+						await trigger.player[data=='回复体力'?'recover':'loseHp']();
+					}
+					else{
+						if(data.hs_target){
+							player.addTempSkill('dddzhengjun_hs','phaseUseAfter');
+							if(data.hs_target[1]=='摸牌') await data.hs_target[0].draw();
+							else await data.hs_target[0].chooseToDiscard('he',true);
+						}
+						if(data.es_target){
+							player.addTempSkill('dddzhengjun_es','phaseUseAfter');
+							await player.moveCard(true,data.es_target);
+						}
+					}
+				},
+				subSkill:{
+					hs:{charlotte:true},
+					es:{charlotte:true},
+					hp:{charlotte:true},
 				},
 			},
 			dddxianxi:{

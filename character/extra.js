@@ -2118,6 +2118,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else if(lib.translate[name+'_info']){
 						str+=(''+lib.translate[name+'_info']+'|');
 					}
+					if(lib.translate[name+'_append']){
+						str+=(''+lib.translate[name+'_append']+'|');
+					}
 					if(get.is.yingbianConditional(node)){
 						const yingbianEffects=get.yingbianEffects(node);
 						if(!yingbianEffects.length){
@@ -5459,11 +5462,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					effect:{
 						target(card,player,target){
-							if(get.tag(card,'damage')&&target.hp>(player.hasSkillTag('damageBonus',true,{
+							if(!target._new_guixin_eff&&get.tag(card,'damage')&&target.hp>(player.hasSkillTag('damageBonus',true,{
 								card:card,
 								target:target
 							})?2:1)){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
+								target._new_guixin_eff=true;
 								let gain=game.countPlayer(function(current){
 									if(target==current) return 0;
 									if(get.attitude(target,current)>0){
@@ -5476,6 +5480,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								});
 								if(target.isTurnedOver()) gain+=2.3;
 								else gain-=2.3;
+								delete target._new_guixin_eff;
 								return [1,Math.max(0,gain)];
 							}
 						}
@@ -6286,11 +6291,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					effect:{
 						target(card,player,target){
-							if(get.tag(card,'damage')&&target.hp>(player.hasSkillTag('damageBonus',true,{
+							if(!target._guixin_eff&&get.tag(card,'damage')&&target.hp>(player.hasSkillTag('damageBonus',true,{
 								card:card,
 								target:target
 							})?2:1)){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
+								target._guixin_eff=true;
 								let gain=game.countPlayer(function(current){
 									if(target==current) return 0;
 									if(get.attitude(target,current)>0){
@@ -6303,6 +6309,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								});
 								if(target.isTurnedOver()) gain+=2.3;
 								else gain-=2.3;
+								delete target._guixin_eff;
 								return [1,Math.max(0,gain)];
 							}
 						}
@@ -8563,7 +8570,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zhengqing_info:'锁定技。一轮游戏开始时，你移去所有角色的“擎”标记，令上一轮于一回合内造成伤害值最多的角色各获得X枚“擎”，且你与这些角色各摸一张牌（X为这些角色该回合内造成的伤害值）。若该角色为你且本次获得的“擎”数为本局游戏最多的一次，你改为摸X张牌（至多摸五张）。',
 			zhuangpo:'壮魄',
 			zhuangpo_info:'你可以将牌名为【杀】或牌面信息中包含“【杀】”的牌当【决斗】使用，然后你获得如下效果：1.当此【决斗】指定目标后，若你有“擎”，你可以移去任意枚“擎”，令目标角色弃置等量的牌；2.当你造成渠道为此牌的伤害时，若此牌的所有目标角色中存在有“擎”的角色，此伤害+1。',
-			
 
 			extra_feng:'神话再临·风',
 			extra_huo:'神话再临·火',

@@ -20,7 +20,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			clan_wanghun:['male','jin',3,['clanfuxun','clanchenya','clanzhongliu'],['clan:太原王氏']],
 			clan_zhonghui:['male','wei','3/4',['clanyuzhi','clanxieshu','clanbaozu'],['clan:颍川钟氏']],
 			clan_zhongyu:['male','wei',3,['clanjiejian','clanhuanghan','clanbaozu'],['clan:颍川钟氏']],
-			clan_wanglun:['male','wei',3,['clanqiuxin','clanjianyuan','clanzhongliu'],['clan:太原王氏']],
+			clan_wanglun:['male','jin',3,['clanqiuxin','clanjianyuan','clanzhongliu'],['clan:太原王氏']],
 			clan_xunyou:['male','wei',3,['clanbaichu','clandaojie'],['clan:颍川荀氏']],
 			clan_wuqiao:['male','jin',4,['clanqiajue','clanmuyin'],['clan:陈留吴氏']],
 		},
@@ -447,17 +447,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					if(!player.countCards('h')) event.finish();
 					'step 3'
-					player.chooseCard('迂志：请展示一张手牌','摸此牌牌名字数的牌。下一轮开始时，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你失去1点体力。',true,function(card,player){
+					player.chooseToDiscard('迂志：请弃置一张手牌','摸此牌牌名字数的牌。下一轮开始时，若本轮你使用的牌数或上一轮你以此法摸的牌数小于此牌牌名字数，则你失去1点体力。',true,function(card,player){
 						var num=get.cardNameLength(card);
 						return typeof num=='number'&&num>0;
-					}).set('ai',function(card){
+					}).set('logSkill','clanyuzhi').set('ai',function(card){
 						if(_status.event.dying&&_status.event.num>0&&get.cardNameLength(card)>_status.event.num) return 1/get.cardNameLength(card);//怂
 						return get.cardNameLength(card);//勇
 					}).set('dying',player.hp+player.countCards('hs',{name:['tao','jiu']})<1).set('num',event.num1);
 					'step 4'
 					if(result.bool){
-						player.logSkill('clanyuzhi');
-						player.showCards(result.cards,get.translation(player)+'发动了【迂志】');
 						player.draw(get.cardNameLength(result.cards[0]));
 						player.storage.clanyuzhi=get.cardNameLength(result.cards[0]);
 						player.markSkill('clanyuzhi');
@@ -474,7 +472,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:'damageEnd',source:'damageSource'},
 				filter(event,player){
-					if(!event.card) return false;
+					if(!event.card||player.isLinked()) return false;
+					if(game.getGlobalHistory('everything',evt=>{
+						if(evt.name!='damage'||!evt.card) return false;
+						return evt.player==player||(evt.source&&evt.source==player);
+					}).indexOf(event)!=0) return false;
 					var num=get.cardNameLength(event.card);
 					return typeof num=='number'&&num>0&&player.countCards('he')>0;
 				},
@@ -483,7 +485,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					var num=get.cardNameLength(trigger.card),str='';
 					if(player.getDamagedHp()>0) str+=('并摸'+get.cnNumber(player.getDamagedHp())+'张牌');
-					player.chooseToDiscard(get.prompt('clanxieshu'),'弃置'+get.cnNumber(num)+'张牌'+str,'he',num).set('ai',function(card){
+					player.chooseToDiscard(get.prompt('clanxieshu'),'横置武将牌，弃置'+get.cnNumber(num)+'张牌'+str,'he',num).set('ai',function(card){
 						var player=_status.event.player;
 						var num=_status.event.num;
 						var num2=player.getDamagedHp();
@@ -492,7 +494,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return 0;
 					}).set('num',num).logSkill='clanxieshu';
 					'step 1'
-					if(result.bool&&player.getDamagedHp()>0) player.draw(player.getDamagedHp());
+					if(result.bool){
+						player.link(true);
+						if(player.getDamagedHp()>0) player.draw(player.getDamagedHp());
+					}
 				},
 				ai:{threaten:3},
 			},
@@ -2733,9 +2738,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			clanchenya_info:'当一名角色发动“出牌阶段限一次”的技能后，你可以令其重铸任意张牌名字数为X的牌（X为其手牌数）。',
 			clan_zhonghui:'族钟会',
 			clanyuzhi:'迂志',
-			clanyuzhi_info:'锁定技。新的一轮开始时，你依次执行以下项：①若你上一轮使用的牌数或你上上轮因〖迂志〗摸的牌数小于你上轮因〖迂志〗摸的牌数，你失去1点体力或失去〖保族〗。②你展示一张手牌，然后摸X张牌（X为此牌牌名字数）。',
+			clanyuzhi_info:'锁定技。新的一轮开始时，你依次执行以下项：①若你上一轮使用的牌数或你上上轮因〖迂志〗摸的牌数小于你上轮因〖迂志〗摸的牌数，你失去1点体力或失去〖保族〗。②你弃置一张手牌，然后摸X张牌（X为此牌牌名字数）。',
 			clanxieshu:'挟术',
-			clanxieshu_info:'当你使用牌造成伤害后，或受到来自牌造成的伤害后，你可以弃置Y张牌并摸你已损失体力值张牌（Y为此牌牌名字数）。',
+			clanxieshu_info:'当你每回合首次因牌造成或受到伤害后，你可以横置武将牌，然后弃置Y张牌并摸你已损失体力值张牌（Y为此牌牌名字数）。',
 			clan_zhongyu:'族钟毓',
 			clanjiejian:'捷谏',
 			clanjiejian_info:'当你于一回合使用第X张牌指定第一个目标后，若此牌不为装备牌，则你可以令一名目标角色摸X张牌。（X为此牌牌名字数）',

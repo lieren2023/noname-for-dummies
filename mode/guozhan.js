@@ -9305,7 +9305,7 @@ return event.junling=='junling5'?1:0;});
 					}
 					event.target.addTempSkill('qingcheng_ai');
 					if(get.type(cards[0])=='equip'&&!event.done){
-					player.chooseTarget('是否暗置一名武将牌均为暗置的角色的一张武将牌？',function(card,player,target){
+					player.chooseTarget('是否暗置一名武将牌均为明置的角色的一张武将牌？',function(card,player,target){
 						return target!=player&&!target.isUnseen(2);
 					}).set('ai',function(target){
 						return -get.attitude(_status.event.player,target);
@@ -12797,6 +12797,11 @@ return event.junling=='junling5'?1:0;});
 				inherit:'xiaoji',
 				audio:'xiaoji',
 				preHidden:true,
+				getIndex(event, player){
+					const evt=event.getl(player);
+					if (evt && evt.player === player && evt.es && evt.es.length) return 1;
+					return false;
+				},
 				content:function(){
 					player.draw(player==_status.currentPhase?1:3);
 				}
@@ -13131,7 +13136,7 @@ return event.junling=='junling5'?1:0;});
 						}
 						var info=get.info(trigger.skill);
 						var next=player.chooseBool('是否明置'+get.translation(event.name)+'以发动【'+get.translation(trigger.skill)+'】？');
-						next.set('yes',!info.check||info.check(trigger._trigger,player));
+						next.set('yes',!info.check||info.check(trigger._trigger,player,trigger.triggername,trigger.indexedData));
 						next.set('hsskill',trigger.skill);
 						next.set('ai',nai);
 					}
@@ -16478,8 +16483,8 @@ return event.junling=='junling5'?1:0;});
 		help:{
 			'国战模式':
 			'<div style="margin:10px">声明</div><ul style="margin-top:0"><li>以下所有规则均为根据公开爆料整理，经村规改动后制定的临时规则。不代表任何官方意见。请以后续发布的官方规则作为标准。</ul>'
-			+'<div style="margin:10px">双势力武将</div><ul style="margin-top:0"><li>双势力武将牌可以和野心家武将牌/包含势力单武将牌/含有重叠势力的其他双势力武将牌组合，若你的主将为双势力武将，则：若你的副将为单势力武将牌，你的势力视为此势力；若你的副将为双势力武将，你的势力视为两张武将牌上的重叠势力（若重叠势力不止一个则需在游戏开始时选择一个作为自己的势力）；野心家武将牌为主将，双势力武将牌为副将时，游戏开始时需选择一个副将所含势力作为副将的势力。<br><li>变更副将时，可以选择包含原势力的双势力武将牌。左慈发动【役鬼】时，可以使用双势力武将牌同时指定两个不同势力的角色为目标。<br><li>特殊地，“冈崎汐”作为多势力武将牌，结算流程和规则与其他双势力武将相同。</ul>'
-			+'<div style="margin:10px">野心家武将</div><ul style="margin-top:0"><li>野心家武将只能放在主将位置。副将可以为任意非野心家武将牌。<br><li>选择了野心家武将牌的角色（以下简称“野心家角色”）仅明置副将时，若副将为单势力武将牌，则势力暂时视为与该武将牌相同。若副将为双势力武将牌，则势力视为游戏开始时选择的副将代表的势力。<br><li>野心家角色明置主将时，其势力改为野心家。若其是首次明置该武将牌，则其获得一个“野心家”标记。<br><li>“野心家”标记可以当做“先驱”标记，“阴阳鱼”标记或是“珠联璧合”标记使用。当同时拥有两种标记时，优先弃置原装标记，下次发动时才弃置“野心家”标记。<br><li>野心家角色变更副将时，若其主将未明置过，则按照副将的势力进行变更。若主将已经明置过，则可以选择所有的非野心家武将牌。左慈发动【役鬼】时，可以使用野心家武将牌同时指定所有势力的角色为目标。'
+			+'<div style="margin:10px">双势力武将</div><ul style="margin-top:0"><li>双势力武将牌可以和野心家武将牌/包含势力单武将牌/含有重叠势力的其他双势力武将牌组合，若你的主将为双势力武将，则：若你的副将为单势力武将牌，你的势力视为此势力；若你的副将为双势力武将，你的势力视为两张武将牌上的重叠势力（若重叠势力不止一个则需在游戏开始时选择一个作为自己的势力）；野心家武将牌为主将，双势力武将牌为副将时，游戏开始时需选择一个副将所含势力作为副将的势力。<br><li>变更副将时，可以选择包含原势力的双势力武将牌。左慈发动〖役鬼〗时，可以使用双势力武将牌同时指定两个不同势力的角色为目标。<br><li>特殊地，“冈崎汐”作为多势力武将牌，结算流程和规则与其他双势力武将相同。</ul>'
+			+'<div style="margin:10px">野心家武将</div><ul style="margin-top:0"><li>野心家武将只能放在主将位置。副将可以为任意非野心家武将牌。<br><li>选择了野心家武将牌的角色（以下简称“野心家角色”）仅明置副将时，若副将为单势力武将牌，则势力暂时视为与该武将牌相同。若副将为双势力武将牌，则势力视为游戏开始时选择的副将代表的势力。<br><li>野心家角色明置主将时，其势力改为野心家。若其是首次明置该武将牌，则其获得一个“野心家”标记。<br><li>“野心家”标记可以当做“先驱”标记，“阴阳鱼”标记或是“珠联璧合”标记使用。当同时拥有两种标记时，优先弃置原装标记，下次发动时才弃置“野心家”标记。<br><li>野心家角色变更副将时，若其主将未明置过，则按照副将的势力进行变更。若主将已经明置过，则可以选择所有的非野心家武将牌。左慈发动〖役鬼〗时，可以使用野心家武将牌同时指定所有势力的角色为目标。'
 			+'<br><li>当场上触发了胜利条件时，若这些角色中存在未明置过主将的野心家角色，则这些野心家角色选择是否“暴露野心”。若无人选择“是”且场上存在非野心家角色存活，则所有非野心家角色胜利，野心家角色失败。若有人选择“是”，则这些角色明置主将，然后选择是否发起“拉拢人心”。<br><li>选择发起“拉拢人心”的野心家角色选择一个新的势力作为自己的势力，弃置“野心家”标记，令所有其他非野心家角色且非君主且非已“结盟”角色依次选择是否和该野心家角色“结盟”。选择“是”的角色将势力改为和该野心家势力相同。此次“拉拢人心”对所有其他角色询问结束后，所有选择“否”的角色将手牌摸至四张并回复1点体力。</ul>'
 			+'<div style="margin:10px">纵横捭阖</div><ul style="margin-top:0"><li>当一名角色对目标角色发动具有拥有“纵横”衍生技的技能时，其可以令对方获得“纵横”衍生技直到其下回合结束。</ul>',
 		},

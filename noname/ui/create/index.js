@@ -1411,13 +1411,14 @@ export class Create extends Uninstantable {
 			var packlist = [];
 			for (var i = 0; i < lib.config.all.characters.length; i++) {
 				if (!lib.config.characters.includes(lib.config.all.characters[i])) continue;
-				packlist.push(lib.config.all.characters[i]);
+				packlist.add(lib.config.all.characters[i]);
 			}
-			for (var i in lib.characterPack) {
-				if (lib.config.characters.includes(i) && !lib.config.all.characters.includes(i)) {
-					packlist.push(i);
-				}
-			}
+			Object.keys(lib.characterPack).filter(key=>{
+				if(key.indexOf('mode_extension')!=0)return false;
+				const extName = key.slice(15);
+				//if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+				return lib.config[`extension_${extName}_characters_enable`] === true;
+			}).forEach(key=>packlist.add(key));
 			for (var i = 0; i < packlist.length; i++) {
 				var span = document.createElement('div');
 				span.style.display = 'inline-block';

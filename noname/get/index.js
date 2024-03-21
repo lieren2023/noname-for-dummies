@@ -323,21 +323,23 @@ export class Get extends Uninstantable {
 	static infoHp(hp) {
 		if (typeof hp == 'number') return hp;
 		else if (typeof hp == 'string' && hp.includes('/')) {
-			return parseInt(hp.split('/')[0]);
+			const num = hp.split('/')[0];
+			if (num) return num == 'Infinity' ? Infinity : parseInt(num);
 		}
 		return 0;
 	}
 	static infoMaxHp(hp) {
 		if (typeof hp == 'number') return hp;
 		else if (typeof hp == 'string' && hp.includes('/')) {
-			return parseInt(hp.split('/')[1]);
+			const num = hp.split('/')[1];
+			if (num) return num == 'Infinity' ? Infinity : parseInt(num);
 		}
 		return 0;
 	}
 	static infoHujia(hp) {
 		if (typeof hp == 'string' && hp.includes('/')) {
-			var splited = hp.split('/');
-			if (splited.length > 2) return parseInt(splited[2]);
+			const num = hp.split('/')[2];
+			if (num) return num == 'Infinity' ? Infinity : parseInt(num);
 		}
 		return 0;
 	}
@@ -1019,6 +1021,7 @@ export class Get extends Uninstantable {
 				case 'normal': return '新１ｖ１';
 				case 'changban': return '血战长坂坡';
 				case 'dianjiang': return '点将单挑';
+				case 'wuxianhuoli': return '无限火力';
 			}
 		}
 		if (config.mode == 'identity') {
@@ -2271,7 +2274,7 @@ export class Get extends Uninstantable {
 				let char = chars[+part];
 				let unit = units[i];
 				if (char === '零') unit = '';
-				else if (char === '一' && i === 1) char = '';
+				else if (char === '一' && i === 1 && str.length === 2) char = '';
 				else if (char === '二' && i > 1 && !ordinal) char = '两';
 				result = char + unit + result;
 			}

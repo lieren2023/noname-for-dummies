@@ -369,7 +369,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					useful:4,
 					value:10,
 					tag:{
-						draw:2
+						draw:3,
+						discard:1
 					},
 					result:{
 						target:function(player,target){

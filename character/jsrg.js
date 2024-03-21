@@ -5861,23 +5861,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 										str=get.prompt(event.skill,trigger[info.logTarget],player);
 									}
 									else if(typeof info.logTarget=='function'){
-										var logTarget=info.logTarget(trigger,player);
+										var logTarget=info.logTarget(trigger,player,trigger.triggername,trigger.indexedData);
 										if(get.itemtype(logTarget).indexOf('player')==0) str=get.prompt(event.skill,logTarget,player);
 									}
 									else{
 										str=get.prompt(event.skill,null,player);
 									}
 								}
-								if(typeof str=='function'){str=str(trigger,player)}
+								if(typeof str=='function'){str=str(trigger,player,trigger.triggername,trigger.indexedData)}
 								var next=player.chooseBool('评鉴：'+str);
-								next.set('yes',!info.check||info.check(trigger,player));
+								next.set('yes',!info.check||info.check(trigger,player,trigger.triggername,trigger.indexedData));
 								next.set('hsskill',event.skill);
 								next.set('forceDie',true);
 								next.set('ai',function(){
 									return _status.event.yes;
 								});
 								if(typeof info.prompt2=='function'){
-									next.set('prompt2',info.prompt2(trigger,player));
+									next.set('prompt2',info.prompt2(trigger,player,trigger.triggername,trigger.indexedData));
 								}
 								else if(typeof info.prompt2=='string'){
 									next.set('prompt2',info.prompt2);

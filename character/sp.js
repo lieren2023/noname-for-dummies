@@ -18,7 +18,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				sp_zhongdan:["cuiyan","huangfusong"],
 				sp_guozhan2:["sp_dongzhuo","liqueguosi","zhangren"],
 				sp_others:["hanba","caiyang"],
-				sp_waitforsort:['ol_luyusheng','ol_pengyang','ol_tw_zhangji','ol_liwan','ol_liuyan','caoyu','liupan','ol_lukai'],
+				sp_waitforsort:['ol_luyusheng','ol_pengyang','ol_tw_zhangji','ol_liwan','ol_liuyan','caoyu','liupan','ol_lukai','ol_liupi'],
 			},
 		},
 		characterFilter:{
@@ -30,6 +30,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		character:{
+			ol_liupi:['male','qun',4,['olyicheng']],
 			ol_lukai:['male','wu',3,['olxuanzhu','oljiane']],
 			liupan:['male','qun',4,['olpijing']],
 			guotu:['male','qun',3,['olqushi','olweijie']],
@@ -45,7 +46,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lvboshe:['male','qun',4,['olfushi','oldongdao']],
 			ol_luyusheng:['female','wu',3,['olcangxin','olrunwei']],
 			caoxi:['male','wei',3,['olgangshu','oljianxuan']],
-			ol_pengyang:['male','shu',3,['olqifan','oltuishi','nzry_cunmu']],
+			ol_pengyang:['male','shu',3,['olxiaofan','oltuishi','nzry_cunmu']],
 			ol_qianzhao:['male','wei',4,['olweifu','olkuansai']],
 			niujin:['male','wei',4,['olcuorui','liewei']],
 			hejin:['male','qun',4,['mouzhu','olyanhuo']],
@@ -230,7 +231,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiahouxuan:'夏侯玄（209年～254年），字泰初（《三国志》等作太初），沛国谯县（今安徽省亳州市）人。三国时期曹魏大臣、思想家、文学家，征南大将军夏侯尚之子，大将军曹爽的表弟。夏侯玄少年有名望，仪表出众，时人称为“朗朗如日月之入怀”。魏文帝黄初六年（225年），袭封昌陵乡侯。魏明帝时，历任散骑黄门侍郎、羽林监。少帝曹芳继位后，拜散骑常侍、中护军，保卫皇宫。后任征西将军，任内与曹爽策划骆谷之役，大失人心。高平陵政变后，被夺去兵权，改任大鸿胪、太常卿。嘉平六年（254年），中书令李丰与外戚张缉密谋杀死大将军司马师，改以夏侯玄执政。事泄被杀，夷灭三族，夏侯玄死时年仅四十六岁。著有文集三卷，如今已佚。政治上，提出了“审官择人”、“除重官”、“改服制”等制度，被太傅司马懿评价“皆大善”。博学多识，才华出众，精通玄学，成为“四聪”之一，与何晏等人开创了魏晋玄学的先河，是早期的玄学领袖人物。',
 			dengzhong:'邓忠（不详－264年），三国时期曹魏名将邓艾之子。景元五年（264年），钟会谋反事败，士兵哗变，钟会被杀，邓艾部将想追还邓艾父子，但卫瓘却派田续追邓艾，于绵竹西相遇，将邓艾和邓忠等人杀死。直至泰始九年（273年）才恢复名节。',
 			wangyan:'王衍（256年～311年），字夷甫，琅邪郡临沂县（今山东省临沂市）人。西晋末年重臣，玄学清谈领袖，曹魏幽州刺史王雄之孙、平北将军王乂之子、司徒王戎堂弟。王衍出身琅琊王氏。外表清明俊秀，风姿安详文雅，笃好老庄学说，颇有时名。步入仕途后，历任黄门侍郎、中领军、尚书令、尚书仆射等职。光熙元年（307年），升任司空。次年，又任司徒。王衍位高权重，却不思为国，为保全自己，还让弟弟王澄、族弟王敦分任荆州、青州刺史，遭时人鄙夷。王弥进攻洛阳时，王衍率军抵抗。其后转任太尉兼尚书令，又兼领太傅军司。永嘉五年（311年），东海王司马越去世，王衍奉其灵柩返回东海，途中为羯人石勒所俘获。王衍在与石勒交谈时，仍推脱责任，并劝其称帝，石勒大怒，将其与西晋旧臣一同活埋，时年五十六岁。王衍工书法，尤擅行书，《宣和书谱》有其作品《尊夫人帖》。',
-			caoxiancaohua:'请分别查询参考「曹宪」和「曹华」的部武将介绍。',
+			caoxiancaohua:'请分别查看「曹宪」和「曹华」的武将介绍。',
 			zhaoyǎn:'赵俨（171~245年），字伯然，颍川阳翟（今河南禹州市）。东汉末年颍川“四大名士”之一，三国时期魏国名臣。熟读经史，精明强干。建安二年，投靠大将军曹操之后，起家朗陵县令，历任司空府掾、司空主薄、都督护军、扶风太守等职。魏文帝曹丕继位后，历任魏国侍中、驸马都尉、河东太守、典农中郎将、度支尚书，封宜土亭侯。魏明帝曹睿时期，历任大司农、骠骑将军、大司空等职。正始六年，去世，时年七十五，谥号为穆。',
 			ruiji:'芮姬，芮玄之女，太子孙登妃，黄武五年卒。',
 			weizi:'卫兹（?-190年），字子许，（《三国演义》中其名为卫弘，当为误记），陈留襄邑（今河南睢县）人。曾举孝廉，先后被车骑将军何苗、司徒杨赐等召辟。中平六年（189年）十二月，曹操在陈留己吾募兵，而卫兹以家财资助曹操，使曹操顺利募得五千士兵。此后，卫兹与曹操共同讨伐董卓。初平元年（190年），卫兹在跟随曹操讨伐董卓途中，于荥阳汴水遭遇董卓军徐荣，力战终日，失利身亡。',
@@ -247,7 +248,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			panshu:'潘淑（？－252年），会稽句章（今浙江省宁波市）人，是吴大帝孙权的皇后，吴少帝孙亮的母亲。和孙权是中国历代帝后中年龄差距较大的一对。潘淑少时与姐姐俱没入织室，容媚有宠，拜为夫人，生有一子孙亮。赤乌十三年（250年），孙权立孙亮为皇太子，翌年（251年）立潘淑为皇后。神凤元年（252年）暴崩，合葬蒋陵。世称潘淑为江东绝色，有神女之称。',
 			zongyu:'宗预（？－264年），字德艳 ，荆州南阳郡安众县（今河南省南阳市）人。三国时期蜀汉官员、将领。曾随张飞入蜀助平益州，又受辟为丞相诸葛亮手下主簿，升任参军、右中郎将。诸葛亮逝世后，宗预受命出使孙吴，得到孙权的赞赏。迁后将军，出督永安，又升任征西大将军，并受封关内侯。公元258年（景耀元年），因病回成都，受任镇军大将军。蜀汉灭亡后，宗预随后主刘禅徙往洛阳，在中途病逝。宗预为人坦率耿直，多次出使孙吴并深得孙权的敬重，为吴、汉两国同盟的巩固作出了一定的贡献。',
 			mengda:'孟达（?－228），字子度，本字子敬，因刘备的叔父名叫刘子敬，为避讳而改字。扶风郡郿人，三国时期人物。本为刘璋属下，后降刘备。关羽围樊城、襄阳时因不发兵救关羽而触怒刘备，于是投奔曹魏。此后，劝降刘封，未果。在魏官至散骑常侍、建武将军，封平阳亭侯。此后又欲反曹魏而归蜀汉，事败而死。',
-			wolongfengchu:'沙比武将，懒得复制粘贴，自己去看诸葛亮和庞统的介绍吧。',
+			wolongfengchu:'沙比武将，懒得复制粘贴，自己去看「诸葛亮」和「庞统」的介绍吧。',
 			caoshuang:'曹爽（？－249年2月9日），字昭伯，沛国谯县（今安徽亳州市）人。三国时期魏国权臣，大司马曹真长子。曹爽体态肥胖，凭借宗室身份，出入宫廷，交好太子曹叡。魏明帝即位，起家员外散骑侍郎，累迁城门校尉、散骑常侍，转武卫将军。太和五年（231年），袭封邵陵侯。景初三年（239年），魏明帝曹叡病危，拜大将军、假黄钺，与司马懿并为托孤大臣。少帝曹芳即位，加侍中，改封武安侯。势倾四海，声震天下。任用私人，专权乱政，侵吞公产。伐蜀失败，虚耗国力。起居逾制，软禁郭太后。正始十年，太傅司马懿发动高平陵政变，掌握魏国大权。曹爽失去大将军职务，以谋反之罪处死，夷灭三族。',
 			zhangling:'张道陵（34年2月22日—156年），字辅汉，原名陵，道教正一道实际创立者，汉朝东汉时期丰邑（今江苏徐州丰县）人。太上老君降临蜀地，“授以三天正法，命为天师”，张道陵整合当时的：黄老派、方仙道、文始派等先秦修道团体，创立道教称正一盟威之道。后世尊称为“老祖天师”、“正一真人”、“三天扶教大法师”、高明上帝、张天师。著作《老子想尔注》，弟子有3000多人，设立24治，奠基天师道。张道陵、葛玄、许逊、萨守坚合称四大天师。张道陵创建道教的背景：当时在巴蜀一带，原有巴人信奉原始巫教，大规模的淫祀而害民。而这些祀奉鬼妖（学名为：妖邪）的法教巫师聚众敛财，无恶不作。张天师携王长、赵升二位弟子和黄帝九鼎丹经，来到北邙山修行，平定了那些祸害百姓的巫妖之教。川渝一带流传的张天师以太上老君剑印符箓大破鬼兵的故事就是以此为原型的。',
 			caiyang:'蔡阳（？－201年），又作蔡扬，东汉丞相曹操部下武将，汝南太守。于建安六年（201）奉曹操之命攻击与刘备联合的汝南贼龚都等人，兵败被刘备所杀。明代小说《三国演义》改编为“云长擂鼓斩蔡阳”。',
@@ -287,7 +288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			bianfuren:'武宣皇后卞氏（159年12月30日－230年7月9日），琅邪开阳（今山东临沂）人，魏武帝曹操的正妻（继室），魏文帝曹丕、任城威王曹彰、陈思王曹植、萧怀王曹熊的母亲。原本是倡家，即汉代专门从事音乐歌舞的乐人家庭，后来与曹操成婚，建安初年，原配丁夫人被废，卞夫人成为曹操的正妻。曹丕继位后尊其为皇太后，曹叡继位后尊其为太皇太后。卞后在太和四年去世，与魏武帝曹操合葬高陵。',
 			shamoke:'沙摩柯（？－222年），东汉末三国时期五溪蛮首领。汉章武元年（221年）初，为报关羽被东吴杀害之仇，刘备亲自领兵攻孙权，以金锦爵赏诱沙摩柯助战。章武二年（222年），吴大都督陆逊以火攻破刘备，率诸军齐击，汉军四十多个营寨被攻破，沙摩柯在大乱中匹马奔逃，被乱军杀死。',
 			lvfan:'吕范（？－228年），字子衡。汝南郡细阳县（今安徽太和）人。汉末至三国时期吴国重臣。吕范年轻为汝南县吏，后避难寿春，结识孙策。此后随孙策、孙权征伐四方，对稳固孙氏在江东的统治做出了杰出的贡献，孙权将其比之于东汉开国元勋吴汉。吴国建立后，吕范累官至前将军、假节、扬州牧，封南昌侯。黄武七年（228年），吕范被拜为大司马，未得授官，便已病逝。孙权悲痛不已，遣使赠其大司马印绶。孙权还都建业后，以太牢礼祭祀吕范。',
-			liqueguosi:"请分别参考武将【李傕】和【郭汜】各自的介绍。",
+			liqueguosi:"请分别查看「李傕」和「郭汜」的武将介绍。",
 			maojie:"毛玠（？—216年），字孝先，陈留平丘（今河南封丘）人。东汉末年大臣。年少时为县吏，以清廉公正著称。因战乱而打算到荆州避乱，但中途知道刘表政令不严明，因而改往鲁阳。后来投靠曹操，提出“奉天子以令不臣，脩耕植，畜军资”的战略规划，得到曹操的欣赏。<br>毛玠与崔琰主持选举，所举用的都是清廉正直之士。而毛玠为人廉洁，激起天下廉洁之风，一改朝中奢华风气。曹操大为赞赏，曹丕也亲自去拜访他。<br>曹操获封魏公后，毛玠改任尚书仆射，再典选举。又密谏曹操应该立嫡长子曹丕为魏国太子。崔琰被杀后，毛玠十分不快。后来有人诬告毛玠，曹操大怒，将毛玠收于狱中。及后在桓阶、和洽营救下，只被免职，不久逝世于家中。曹操在他死后赐他棺材和钱帛。",
 
 			huangfusong:'字义真。安定郡朝那县（今宁夏彭阳）人。于黄巾起义时，以中郎将身份讨伐黄巾，用火攻大破张梁、张宝。后接替董卓进攻张梁，连胜七阵。掘张角墓，拜左车骑将军、冀州牧，因拒绝贿赂宦官而被免职。 董卓死，王允命其与吕布等共至郿坞抄籍董卓家产、人口，皇甫嵩将坞中所藏良家子女，尽行释放。',
@@ -296,7 +297,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jiling:'东汉末年袁术帐下将领，勇猛非常，曾奉命率军攻打小沛的刘备，在吕布辕门射戟的调停下撤兵。',
 			zoushi:'军阀张济之妻，张绣之婶。张绣降曹后，邹氏遂被曹操霸占。贾诩献计趁机诛杀曹操，险些得手。曹操在损失爱将典韦、侄子曹安民和长子曹昂后方才逃出生天。',
 			ganfuren:'刘备起兵后，于沛城娶甘氏为妾。后来，甘夫人随刘备到荆州，生了阿斗(也就是后主刘禅)。223年四月，刘备病死于白帝城，追谥甘夫人为“昭烈皇后”。',
-			jiangfei:'请分别查阅【蒋琬】和【费袆】各自的介绍。',
+			jiangfei:'请分别查看「蒋琬」和「费袆」的武将介绍。',
 			mifuren:'刘备夫人。徐州别驾糜竺之妹。长坂兵败，她怀抱年仅两岁的刘禅在乱军中走散，被赵云发现；但麋夫人因为赵云只有一匹马，不肯上马，在将阿斗托付给赵云后投井而亡。',
 			chendong:'陈武，东吴将领，孙策攻打刘繇，陈武前来相助，孙策非常喜爱陈武，拜为校尉，使作先锋。陈武以十数骑兵力杀敌五十余人。后于赤壁等战役屡立功勋。董袭献上严虎的人头来降孙策。赤壁之战，董袭受周瑜命，分兵去汉阳，合肥会战时接应太史慈，逍遥津支援孙权。濡须口之战时，董袭在船上督战，船覆董袭坚守殉职。',
 			jiangqing:'擅长弓术。与周泰原为活跃于长江一带的江贼，孙策脱离袁术下江东自立门户时，和周泰一起率众投靠。 孙策攻刘繇，并引出城中麾下的陈横、薛礼、张英三名将领，陈横后被蒋钦一箭射杀，后与韩当等将乘舟过江，乱箭射杀敌军。曾在赤壁之战与周泰，还有擅使长枪的韩当率领水军在三江口踏江破敌。',
@@ -711,6 +712,85 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			//刘辟
+			olyicheng:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				async content(event,trigger,player){
+					let cards=get.cards(3);
+					await game.cardsGotoOrdering(cards);
+					await player.showCards(cards,get.translation(player)+'发动了【易城】');
+					if(player.countCards('h')){
+						const sum=cards.reduce((num,card)=>num+get.number(card),0);
+						const {result:{bool,moved}}=await player.chooseToMove('易城：请选择你要交换的牌').set('list',[
+							['牌堆顶',cards,list=>{
+								const sum2=list.reduce((num,card)=>num+get.number(card,false),0);
+								return '牌堆顶（现'+sum2+{'0':'=','-1':'<','1':'>'}[get.sgn(sum2-sum).toString()]+'原'+sum+'）';
+							}],
+							['手牌',player.getCards('h')],
+						]).set('filterOk',moved=>moved[1].some(i=>!get.owner(i))).set('processAI',list=>{
+							const player=get.event('player'),limit=Math.min(3,player.countCards('h'));
+							let cards=list[0][1].slice(),hs=player.getCards('h');
+							if(cards.reduce((num,card)=>num+get.value(card),0)>player.getCards('h').reduce((num,card)=>num+get.value(card),0)){
+								cards.sort((a,b)=>get.number(a)-get.number(b));
+								hs.sort((a,b)=>get.number(b)-get.number(a));
+								let cards2=cards.slice(0,limit),hs2=hs.slice(0,limit);
+								if(hs2.reduce((num,card)=>num+get.number(card),0)>cards2.reduce((num,card)=>num+get.number(card),0)){
+									cards.removeArray(cards2);hs.removeArray(hs2);
+									return [cards.concat(hs2),hs.concat(cards2)];
+								}
+								return [cards,hs];
+							}
+							else{
+								cards.sort((a,b)=>get.value(b)-get.value(a));
+								hs.sort((a,b)=>get.value(a)-get.value(b));
+								let cards2=cards.slice(0,limit),hs2=hs.slice(0,limit),list=[cards,hs];
+								for(let i=0;i<limit;i++){
+									if(get.value(cards2[i])>get.value(hs2[i])){
+										const change=[cards2[i],hs2[i]];
+										cards[i]=change[1];hs[i]=change[0];
+									}
+									else break;
+								}
+								return list;
+							}
+						});
+						if(bool){
+							const puts=player.getCards('h',i=>moved[0].includes(i));
+							const gains=cards.filter(i=>moved[1].includes(i));
+							if(puts.length&&gains.length){
+								player.$throw(puts,1000);
+								await player.lose(puts,ui.special);
+								await player.gain(gains,'gain2');
+								cards=moved[0].slice();
+								await player.showCards(cards,get.translation(player)+'【易城】第一次交换后');
+								if(cards.reduce((num,card)=>num+get.number(card),0)>sum&&player.countCards('h')){
+									const {result:{bool}}=await player.chooseBool('易城：是否使用全部手牌交换'+get.translation(cards)+'？').set('choice',(()=>{
+										return cards.reduce((num,card)=>num+get.value(card),0)>player.getCards('h').reduce((num,card)=>num+get.value(card),0);
+									})());
+									if(bool){
+										const hs=player.getCards('h');
+										player.$throw(hs,1000);
+										await player.lose(hs,ui.special);
+										await player.gain(cards,'gain2');
+										cards=hs.slice();
+										await player.showCards(cards,get.translation(player)+'【易城】第二次交换后');
+									}
+								}
+							}
+						}
+						if(cards.length){
+							await game.cardsDiscard(cards);
+							//game.log(cards,'被置入了弃牌堆');
+						}
+					}
+				},
+				ai:{
+					order:9,
+					result:{player:1},
+				},
+			},
 			//陆凯
 			olxuanzhu:{
 				mark:true,
@@ -1139,10 +1219,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									if(result2.bool){
 										const card=result2.cards[0];
 										if(get.name(card,target)==event.result.card.name){
-											player.popup('诿解成功');
+											player.popup('洗具');
 											stop=true;
 										}
-										else player.popup('诿解失败');
+										else player.popup('杯具');
 									}
 								}
 								if(!stop){
@@ -2457,8 +2537,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				check:function(card){
 					var player=_status.event.player;
-					if(player.hasSkill('hezhong')){
-						if(player.countCards('h')-ui.selected.cards.length>1) return 1/(get.value(card)||0.5);
+					if(player.hasSkill('hezhong')&&(!(player.hasSkill('hezhong_0')&&player.hasSkill('hezhong_1')))){
+						if(player.countCards('h')-ui.selected.cards.length>2) return 1/(get.value(card)||0.5);
 						return 0;
 					}
 					if(ui.selected.cards.length<player.countCards('h')/2) return 5-get.value(card);
@@ -2478,7 +2558,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					player.chooseToDiscard('h','宴如：弃置至少一半手牌',[Math.floor(player.countCards('h')/2),Infinity],true).set('ai',card=>{
 						var player=_status.event.player;
-						if(player.hasSkill('hezhong')&&player.countCards('h')-ui.selected.cards.length>1) return 1/(get.value(card)||0.5);
+						if(player.hasSkill('hezhong')&&(!(player.hasSkill('hezhong_0')&&player.hasSkill('hezhong_1')))&&player.countCards('h')-ui.selected.cards.length>2) return 1/(get.value(card)||0.5);
 						if(!player.hasSkill('hezhong')&&ui.selected.cards.length<Math.floor(player.countCards('h')/2)) return 1/(get.value(card)||0.5);
 						return 0;
 					});
@@ -3244,15 +3324,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			//OL彭羕
-			olqifan:{
+			olxiaofan:{
 				audio:2,
 				enable:'chooseToUse',
 				hiddenCard:function(player,name){
 					if(name!='wuxie'&&lib.inpile.includes(name)) return true;
 				},
-				getNum:()=>game.getGlobalHistory('useCard').reduce((list,evt)=>list.add(get.type2(evt.card)),[]).length,
+				getNum:(player)=>player.getHistory('useCard').reduce((list,evt)=>list.add(get.type2(evt.card)),[]).length,
 				filter:function(event,player){
-					if(event.responded||event.type=='wuxie'||event.olqifan) return false;
+					if(event.responded||event.type=='wuxie'||event.olxiaofan) return false;
 					for(var i of lib.inpile){
 						if(i!='wuxie'&&event.filterCard(get.autoViewAs({name:i},'unsure'),player,event)) return true;
 					}
@@ -3262,8 +3342,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					'step 0'
 					var evt=event.getParent(2);
-					evt.set('olqifan',true);
-					var cards=get.bottomCards(lib.skill.olqifan.getNum()+1,true);
+					evt.set('olxiaofan',true);
+					var cards=get.bottomCards(lib.skill.olxiaofan.getNum(player)+1,true);
 					var aozhan=player.hasSkill('aozhan');
 					player.chooseButton(['嚣翻：选择要使用的牌',cards]).set('filterButton',function(button){
 						return _status.event.cards.includes(button.link);
@@ -3300,11 +3380,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							},evt.player,evt)?'sha':'shan';
 						}
 						game.broadcastAll(function(result,name){
-							lib.skill.olqifan_backup.viewAs={name:name,cards:[result],isCard:true};
+							lib.skill.olxiaofan_backup.viewAs={name:name,cards:[result],isCard:true};
 						},card,name);
-						evt.set('_backupevent','olqifan_backup');
+						evt.set('_backupevent','olxiaofan_backup');
 						evt.set('openskilldialog',('请选择'+get.translation(card)+'的目标'))
-						evt.backup('olqifan_backup');
+						evt.backup('olxiaofan_backup');
 					}
 					evt.goto(0);
 				},
@@ -3326,8 +3406,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			olqifan_backup:{
-				sourceSkill:'olqifan',
+			olxiaofan_backup:{
+				sourceSkill:'olxiaofan',
 				precontent:function(){
 					delete event.result.skill;
 					var name=event.result.card.name,cards=event.result.card.cards.slice(0);
@@ -3338,9 +3418,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.result.card=card;
 					var id=get.id();
 					player.when('chooseToUseAfter').filter((evt)=>evt==event.getParent()).then(()=>{
-						var num=lib.skill.olqifan.getNum(),pos=('jeh').slice(0,num);
+						var num=lib.skill.olxiaofan.getNum(player),pos=('jeh').slice(0,num);
 						if(num>0&&player.countCards(pos)>0){
-							event.maxNum=Math.min(3,lib.skill.olqifan.getNum());
+							event.maxNum=Math.min(3,num);
 							event.num=0;
 						}
 						else event.finish();
@@ -3410,7 +3490,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger:{player:'useCard1'},
 						filter:function(event,player){
 							if(!event.targets||!event.targets.length) return false;
-							return event.targets.some(target=>player.countCards('h')+event.cards.length>target.countCards('h'));
+							let num=0;
+							if(event.cards&&event.cards.length){
+								const history=player.getHistory('lose',evt=>{
+									if(evt.getParent()!=event) return false;
+									return event.cards.some(card=>evt.hs.includes(card));
+								});
+								if(history.length) num+=event.cards.filter(card=>history[0].hs.includes(card)).length;
+							}
+							return event.targets.some(target=>player.countCards('h')+num>target.countCards('h')+(target==player?num:0));
 						},
 						forced:true,
 						popup:false,
@@ -16536,7 +16624,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return get.subtype(card)=='equip1';
 					});
 					if(!equip1){
-						player.popup('连计失败');
+						player.popup('杯具');
 						game.log('牌堆中无装备');
 						event.finish();
 						return;
@@ -18230,8 +18318,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								return get.info('ollongdan').ai.skillTagFilter(player,tag);
 							},
 							order:function(item,player){
+								if(!player||!player.storage){
+									player=_status.event.player;
+									if(!player||!player.storage) return 0;
+									if(Object.keys(player.storage).some(i=>{
+										return typeof i=='string'&&i.indexOf('fuhan')!=-1;
+									})) return 4;
+									return 1;
+								}
 								const awakened=Object.keys(player.storage).some(i=>typeof i=='string'&&i.indexOf('fuhan')!=-1);
-								if(player&&_status.event.type=='phase'){
+								if(_status.event.type=='phase'){
 									var max=0;
 									var list=['sha','tao','jiu'];
 									var map={sha:'shan',tao:'jiu',jiu:'tao'}
@@ -18245,7 +18341,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									if(max>0) max+=(awakened?0.3:-0.3);
 									return max;
 								}
-								if(!player) player=_status.event.player;
 								return awakened?4:1;
 							},
 						},
@@ -18674,8 +18769,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
 					var num;
 					var mode=get.mode();
-					if(mode=='identity'){
-						if(_status.mode=='purple') num=player.getEnemies().length;
+					if(mode=='identity'||mode=='doudizhu'){
+						if(mode=='identity'&&_status.mode=='purple') num=player.getEnemies().length;
 						else num=get.population('fan');
 					}
 					else if(mode=='versus'){
@@ -26433,6 +26528,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zhangren:['jsrg_zhangren','zhangren'],
 			wenqin:['ol_wenqin','pe_wenqin'],
 			lukai:['ol_lukai','lukai'],
+			liupi:['ol_liupi','liupi'],
 		},
 		translate:{
 			"xinfu_lingren":"凌人",
@@ -26798,6 +26894,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hongde_info:'当你一次获得或失去至少两张牌后，你可以令一名其他角色摸一张牌。',
 			dingpan:'定叛',
 			dingpan_info_identity:'出牌阶段限X次，你可以令一名装备区里有牌的角色摸一张牌，然后其选择一项：1.令你弃置其装备区里的一张牌；2.获得其装备区里的所有牌，若如此做，你对其造成1点伤害。（X为场上存活的反贼数）',
+			dingpan_info_doudizhu:'出牌阶段限X次，你可以令一名装备区里有牌的角色摸一张牌，然后其选择一项：1.令你弃置其装备区里的一张牌；2.获得其装备区里的所有牌，若如此做，你对其造成1点伤害。（X为场上存活的农民数）',
 			dingpan_info_versus_two:'出牌阶段限X次，你可以令一名装备区里有牌的角色摸一张牌，然后其选择一项：1.令你弃置其装备区里的一张牌；2.获得其装备区里的所有牌，若如此做，你对其造成1点伤害。（X为场上存活的最大阵营角色数）',
 			dingpan_info_versus:'出牌阶段限X次，你可以令一名装备区里有牌的角色摸一张牌，然后其选择一项：1.令你弃置其装备区里的一张牌；2.获得其装备区里的所有牌，若如此做，你对其造成1点伤害。（X为场上存活的敌方角色数）',
 			dingpan_info:'出牌阶段限一次，你可以令一名装备区里有牌的角色摸一张牌，然后其选择一项：1.令你弃置其装备区里的一张牌；2.获得其装备区里的所有牌，若如此做，你对其造成1点伤害。',
@@ -27584,8 +27681,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			oljianxuan:'谏旋',
 			oljianxuan_info:'当你受到伤害后，你可以令一名角色摸一张牌，然后若其手牌数等于你〖刚述①〗中的任意一项对应的数值，其重复此流程。',
 			ol_pengyang:'彭羕',
-			olqifan:'嚣翻',
-			olqifan_info:'当你需要使用不为【无懈可击】的牌时，你可以观看牌堆底的X+1张牌并使用其中的一张。此牌结算结束时，你依次弃置以下前X个区域中的所有牌：⒈判定区、⒉装备区、⒊手牌区（X为本回合使用过的牌中包含的类型数）。',
+			olxiaofan:'嚣翻',
+			olxiaofan_info:'当你需要使用不为【无懈可击】的牌时，你可以观看牌堆底的X+1张牌并使用其中的一张。此牌结算结束时，你依次弃置以下前X个区域中的所有牌：⒈判定区、⒉装备区、⒊手牌区（X为本回合你使用过的牌中包含的类型数）。',
 			oltuishi:'侻失',
 			oltuishi_info:'锁定技。①你不能使用【无懈可击】。②当你使用点数为字母的牌时，你令此牌无效并摸一张牌，且你对手牌数小于你的角色使用的下一张牌无距离和次数限制。',
 			ol_tw_zhangji:'张既',
@@ -27663,6 +27760,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			olxuanzhu_info:'转换技，每回合限一次，你可以将一张牌称为“玄”置于武将牌上，然后视为使用：阴，任意基本牌；阳，任意普通锦囊牌（须指定目标且仅指定一个目标）。若此次置于武将牌上的“玄”：不为装备牌，你弃置一张牌；为装备牌，你将所有“玄”置入弃牌堆，然后摸等量的牌。',
 			oljiane:'謇谔',
 			oljiane_info:'锁定技。①当你对其他角色使用的牌生效后，其本回合无法抵消牌。②当你抵消牌后，你本回合无法成为牌的目标。',
+			ol_liupi:'刘辟',
+			olyicheng:'易城',
+			olyicheng_info:'出牌阶段限一次，你可以亮出牌堆顶的三张牌，然后你可以以任意手牌交换这些牌，若这三张牌的点数和因此增加，则你可以选择用所有手牌交换这三张牌。',
 
 			sp_tianji:'天极·皇室宗亲',
 			sp_sibi:'四弼·辅国文曲',

@@ -1,3 +1,5 @@
+import { NonameAnnounceType } from "./interface.d.ts"
+
 export interface IAnnounceSubscriber {
 	subscribe(name: string): void;
 	unsubscribe(name: string): void;
@@ -21,7 +23,7 @@ export class Announce {
 	 * @param name - 要推送事件的名称
 	 * @param values - 要推送的数据
 	 */
-	publish<T>(name: string, values: T): T
+	publish<Type extends NonameAnnounceType, Name extends keyof Type>(name: Name, values: Parameters<Type[Name]>[0]): Parameters<Type[Name]>[0]
 
 	/**
 	 * 订阅给定名字的事件，并返回给定的函数
@@ -33,7 +35,7 @@ export class Announce {
 	 * @param name - 要订阅事件的名称
 	 * @param method - 事件触发时执行的函数
 	 */
-	subscribe<T>(name: string, method: (values: T) => void): (values: T) => void
+	subscribe<Type extends NonameAnnounceType, Name extends keyof Type>(name: Name, method: Type[Name]): Type[Name]
 
 	/**
 	 * 取消指定事件某一个函数的订阅，并返回该函数
@@ -43,7 +45,7 @@ export class Announce {
 	 * @param name - 要取消订阅事件的名称
 	 * @param method - 订阅指定事件的函数
 	 */
-	unsubscribe<T>(name: string, method: (values: T) => void): (values: T) => void
+	unsubscribe<Type extends NonameAnnounceType, Name extends keyof Type>(name: Name, method: Type[Name]): Type[Name]
 }
 
 export class AnnounceSubscriber<T> implements IAnnounceSubscriber {

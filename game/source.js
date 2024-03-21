@@ -124,6 +124,7 @@ window.noname_source_list=[
 	
 	'game/asset.js',
 	'game/codemirror.js',
+	'game/compiler-sfc.browser.js',
 	'game/config.js',
 	'game/core-js-bundle.js',
 	'game/directory.js',
@@ -140,6 +141,7 @@ window.noname_source_list=[
 	'game/server.js',
 	'game/source.js',
 	'game/update.js',
+	'game/vue.esm-browser.js',
 	
 	'image/card/cardtempname_bg.png',
 	'image/flappybird/BG.png',

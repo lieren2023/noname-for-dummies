@@ -229,9 +229,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					basic:{
-						order:4,
+						order:9.2,
 						value:[3,1],
-						useful:1,
+						useful:0.6,
 					},
 					wuxie:function(target,card,player,viewer,status){
 						if(get.attitude(viewer,player._trueMe||player)>0) return 0;

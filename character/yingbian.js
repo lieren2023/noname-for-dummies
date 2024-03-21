@@ -3339,14 +3339,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.addTempSkill('yanxi2');
 					var card2=result.links[0];
 					if(card2==card){
-						player.popup('猜对了');
+						player.popup('洗具');
 						cards.remove(card2);
 						player.$gain2(cards);
 						player.gain(cards,'log').gaintag.add('yanxi');
 						player.gain(card,target,'bySelf','give').gaintag.add('yanxi');
 					}
 					else{
-						player.popup('猜错了');
+						player.popup('杯具');
 						player.gain(card2,'gain2').gaintag.add('yanxi');
 					}
 				},
@@ -3554,7 +3554,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'phaseJieshuBegin'},
 				filter:function(event,player){
 					return player.hasMark('xijue')&&event.player.isAlive()&&event.player!=player&&player.countCards('h',function(card){
-						if(_status.connectMode) return true;
+						if(_status.connectMode||get.mode()!='guozhan') return true;
 						return get.type(card)=='basic';
 					});
 				},
@@ -3567,7 +3567,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(get.damageEffect(trigger.player,player,player)<=0){
 						nono=true;
 					}
-					var next=player.chooseToDiscard('是否弃置一枚“爵”和一张基本牌，对'+get.translation(trigger.player)+'发动【骁果】？',{type:'basic'});
+					var next=player.chooseToDiscard(`是否弃置一枚“爵”和一张${get.mode()=='guozhan'?'基本':'手'}牌，对${get.translation(trigger.player)}发动【骁果】？`,'h',function(card,player){
+						if(get.mode()!='guozhan') return true;
+						return get.type(card,player)=='basic';
+					});
 					next.set('ai',function(card){
 						if(_status.event.nono) return 0;
 						return 8-get.useful(card);
@@ -3799,7 +3802,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xijue_tuxi_info:'摸牌阶段摸牌时，你可以少摸任意张牌，然后获得等量的角色的各一张手牌。',
 			xijue_tuxi_info_guozhan:'摸牌阶段摸牌时，你可以少摸至多两张牌，然后获得等量的角色的各一张手牌。',
 			xijue_xiaoguo:'骁果',
-			xijue_xiaoguo_info:'其他角色的结束阶段开始时，你可以弃置一张基本牌，令该角色选择一项：1.弃置一张装备牌，然后你摸一张牌；2.受到你对其造成的1点伤害。',
+			xijue_xiaoguo_info:'其他角色的结束阶段开始时，你可以弃置一张手牌，令该角色选择一项：1.弃置一张装备牌，然后你摸一张牌；2.受到你对其造成的1点伤害。',
 			xijue_xiaoguo_info_guozhan:'其他角色的结束阶段开始时，你可以弃置一张基本牌，令该角色选择一项：1.弃置一张装备牌；2.受到你对其造成的1点伤害。',
 			gz_duyu:'杜预',
 			duyu:'晋杜预',

@@ -1434,7 +1434,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 													if (directoryList.length) {
 														var dir = directoryList.shift();
 														var filelist = directories[dir];
-														window.resolveLocalFileSystemURL(nonameInitialized + dir, function (entry) {
+														window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + dir, function (entry) {
 															var writeFile = function () {
 																if (filelist.length) {
 																	var filename = filelist.shift();
@@ -1525,7 +1525,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							unlink();
 						}
 						else {
-							window.resolveLocalFileSystemURL(nonameInitialized + page.currentpath, function (entry) {
+							window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + page.currentpath, function (entry) {
 								var unlink = function () {
 									if (selected.length) {
 										entry.getFile(selected.shift().filename, { create: false }, function (fileEntry) {
@@ -1580,7 +1580,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 									}
 								}
 								else {
-									window.resolveLocalFileSystemURL(nonameInitialized + this.path, function (entry) {
+									window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + this.path, function (entry) {
 										entry.removeRecursively(function () {
 											enterDirectory(page, page.currentpath);
 										});
@@ -1692,7 +1692,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 								lib.node.fs.mkdir(__dirname + '/' + path + '/' + str, refresh);
 							}
 							else {
-								window.resolveLocalFileSystemURL(nonameInitialized + path, function (entry) {
+								window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + path, function (entry) {
 									entry.getDirectory(str, { create: true }, refresh);
 								});
 							}
@@ -3762,7 +3762,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 										var url = lib.assetURL + 'extension/' + name + '/' + file;
 										createButton(i, url);
 										if (lib.device == 'ios' || lib.device == 'android') {
-											window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + name, function (entry) {
+											window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + 'extension/' + name, function (entry) {
 												entry.getFile(file, {}, function (fileEntry) {
 													fileEntry.file(function (fileToLoad) {
 														var fileReader = new FileReader();
@@ -4309,7 +4309,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 										var url = lib.assetURL + 'extension/' + name + '/' + file;
 										createButton(i, url, fullskin);
 										if (lib.device == 'ios' || lib.device == 'android') {
-											window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + name, function (entry) {
+											window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + 'extension/' + name, function (entry) {
 												entry.getFile(file, {}, function (fileEntry) {
 													fileEntry.file(function (fileToLoad) {
 														var fileReader = new FileReader();

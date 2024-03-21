@@ -1,4 +1,3 @@
-import {nonameInitialized} from '../../noname/util/index.js'
 game.import("extension",function(lib,game,ui,get,ai,_status){
 	// 关闭扩展后，自动将游戏人数恢复为八人，避免报错
 	if(!game.getExtensionConfig('搬运自用','enable') && lib.config.youxirenshu_identityguozhan!=false){
@@ -193,7 +192,10 @@ content:function(config,pack){
 		lib.characterTitle.dongbai = "魔姬";
 		lib.characterTitle.zhangren = "索命神射";
 		// onlyOL:'OL专属',
-		
+		lib.characterTitle.ol_sb_jiangwei = "炎志灼心";
+		lib.characterTitle.ol_sb_guanyu = "威震华夏";
+		lib.characterTitle.ol_sb_taishici = "矢志全忠孝";
+		lib.characterTitle.ol_sb_yuanshao = "席卷八荒";
 		// yingbian:'文德武备',
 		lib.characterTitle.chengjichengcui = "袒忿半瓦";
 		lib.characterTitle.wangxiang = "沂川跃鲤";
@@ -261,6 +263,9 @@ content:function(config,pack){
 		lib.characterTitle.liuyong = "甘陵王";
 		lib.characterTitle.zhangxuan = "玉宇嫁蔷";
 		// xianding:'限定专属',
+		lib.characterTitle.dc_sb_simayi = "韬谋韫势";
+		lib.characterTitle.dc_sb_zhouyu = "炽谋英隽";
+		lib.characterTitle.dc_sb_lusu = "鸿谋翼远";
 		lib.characterTitle.wu_luxun = "释武怀儒";
 		lib.characterTitle.wu_zhugeliang = "忠武良弼";
 		lib.characterTitle.guozhao = "碧海青天";
@@ -301,13 +306,15 @@ content:function(config,pack){
 		lib.characterTitle.ol_zhangliao = "雁门之刑天";
 		lib.characterTitle.shen_caopi = "诰天仰颂";
 		lib.characterTitle.shen_zhenji = "洛水凌波";
-		lib.characterTitle.boss_zhaoyun = lib.characterTitle.shen_zhaoyun;
+		lib.characterTitle.boss_zhaoyun = "天龙乘云";
 		// mobile:'移动版',
 		lib.characterTitle.nanhualaoxian = "冯虚御风";
 		lib.characterTitle.yangbiao = "德彰海内";
 		// shiji:'始计篇',
 		
 		// sb:'谋攻篇',
+		lib.characterTitle.sb_gaoshun = "";
+		lib.characterTitle.sb_xiahoudun = "";
 		lib.characterTitle.sb_xunyu = "";
 		lib.characterTitle.sb_caopi = "";
 		lib.characterTitle.sb_guanyu = "关圣帝君";
@@ -353,7 +360,11 @@ content:function(config,pack){
 		lib.characterTitle.tw_niufudongxie = "虺伴蝎行";
 		lib.characterTitle.kaisa = "Caesar";
 		// collab:'联动卡',
-		
+		lib.characterTitle.dc_zhaoyun = lib.characterTitle.boss_zhaoyun;
+		lib.characterTitle.dc_sunce = lib.characterTitle.sunce;
+		lib.characterTitle.dc_caocao = lib.characterTitle.caocao;
+		lib.characterTitle.dc_liubei = lib.characterTitle.liubei;
+		lib.characterTitle.dc_sunquan = lib.characterTitle.sunquan;
 		// offline:'线下武将',
 		lib.characterTitle.sp_liubei = "汉昭烈帝";
 		lib.characterTitle.sp_zhangfei = "横矛立马";
@@ -425,6 +436,17 @@ content:function(config,pack){
 		lib.characterTitle.ol_yuanshu = "野心渐增";
 		lib.characterTitle.jsp_caoren = "险不辞难";
 		lib.characterTitle.re_yujin = "魏武之刚";
+		
+		// guozhan.js
+		lib.characterTitle.gz_caocao = lib.characterTitle.caocao;
+		lib.characterTitle.gz_liubei = lib.characterTitle.liubei;
+		lib.characterTitle.gz_sunquan = lib.characterTitle.sunquan;
+		lib.characterTitle.gz_zhangjiao = lib.characterTitle.sp_zhangjiao;
+		
+		lib.characterTitle.gz_jun_liubei = "龙横蜀汉";
+		lib.characterTitle.gz_jun_zhangjiao = "时代的先驱";
+		lib.characterTitle.gz_jun_sunquan = "虎踞江东";
+		lib.characterTitle.gz_jun_caocao = "凤舞九天";
 		
 	}
 	
@@ -3385,13 +3407,21 @@ content:function(config,pack){
 							if(!lib.config.characters.contains(lib.config.all.characters[i])) continue;
 							packlist.push(lib.config.all.characters[i]);
 						}
-						for(var i in lib.characterPack){
-							if(!lib.config.all.characters.contains(i)){
-							// 适配新版本体
-							// if (lib.config.characters.includes(i) && !lib.config.all.characters.includes(i)) {
-								packlist.push(i);
-							}
-						}
+						
+						// 旧代码
+						// for(var i in lib.characterPack){
+							// if(!lib.config.all.characters.contains(i)){
+								// packlist.push(i);
+							// }
+						// }
+						// 适配新版本体
+						Object.keys(lib.characterPack).filter(key=>{
+							if(key.indexOf('mode_extension')!=0)return false;
+							const extName = key.slice(15);
+							//if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+							return lib.config[`extension_${extName}_characters_enable`] === true;
+						}).forEach(key=>packlist.add(key));
+						
 						for(var i=0;i<packlist.length;i++){
 							var span=document.createElement('div');
 							span.style.display='inline-block';
@@ -9577,7 +9607,7 @@ precontent:function(){
 					var obj = array.shift();
 					// 新增当扩展文件夹内缺少extension.js时报错提示
 					if (lib.device) {
-						window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + obj + '/' + 'extension.js', function(entry) {
+						window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + 'extension/' + obj + '/' + 'extension.js', function(entry) {
 							// alert('导入成功');
 						}, function() {
 							// 手机端用window.resolveLocalFileSystemURL无法检测文件是否存在，故更改了弹窗内容
@@ -11970,7 +12000,7 @@ config:{
 	author:"无名玩家<br>自写&搬运：<span class='bluetext'>棘手怀念摧毁</span>",
 	diskURL:"",
 	forumURL:"",
-	version:"1.10.9",
+	version:"1.10.10",
 },
 files:{"character":[],"card":[],"skill":[]}}})
 
@@ -12007,13 +12037,16 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 自由选将-搜索功能内部元素适配dialog宽度（溢出内容显示，超过一行避免和内部其他元素重叠）
 // 导航功能不遮挡选项
 // 2-17人addPlayer会自动安排布局
-// 禁将功能-禁用AI禁用的武将、禁用或启用无原画武将（剪影原画武将）
+// 禁将功能-禁用AI禁用的武将、禁用或启用：无原画武将（剪影原画武将）、双形态原画武将（已放弃）
 // AI禁将/禁将：收藏武将，最近武将
 // 资料卡修改：可双击原画/皮肤后放大看
+// 控制台获得技能按钮，参考神孙权
+// 编辑代码功能（资料卡编辑按钮）
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
 // 利用控制台命令代码绘制效果图（计划加入测试功能）
-// 其他优秀功能搬运（并魔改）：假装无敌-图片懒加载（能解决自由选将时候闪退的问题？）；假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能；天牢令-衍生技能详细显示；测试功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
+// 其他优秀功能搬运（并魔改）：假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能；天牢令-衍生技能详细显示；测试功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
+// 能解决自由选将时候闪退的问题？假装无敌-图片懒加载；自由选将分批加载
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -12051,5 +12084,3 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
 // card.nature修改？，包括④教程及说明.txt
-// 双形态原画武将：自由选将筛选、武将及卡牌统计功能、禁将与AI禁将？
-// 待适配：点击后试听阵亡配音// 改本体game.js函数die:function(){中if(lib.config.background_speak){

@@ -407,7 +407,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					value:[6,1],
 					useful:[3,1],
 					tag:{
-						draw:1
+						draw:3
 					},
 					result:{
 						target:function(player,target){
@@ -480,39 +480,79 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'trick',
 				enable:true,
-				filterTarget:function(card,player,target){
-					return (target.isMinHp()&&target.isDamaged())||target.isMinHandcard();
-				},
-				content:function(){
+				filterTarget:true,
+				content(){
 					'step 0'
 					if(target.isMinHp()&&target.isDamaged()){
 						target.recover();
 						event.rec=true;
 					}
 					'step 1'
-					if(target.isMinHandcard()){
-						target.draw(event.rec?1:2);
-					}
+					if(target.isMinHandcard()) target.draw(event.rec?1:2);
 				},
 				ai:{
-					order:2.5,
+					order(){
+						let player=_status.event.player,
+							nan=player.hasCard(card=>{
+								return get.name(card)==='nanman';
+							},'hs'),
+							wan=player.hasCard(card=>{
+								return get.name(card)==='wanjian';
+							},'hs'),
+							aoe=0,
+							max=0;
+						game.countPlayer(current=>{
+							if(get.attitude(player,current)<=0) return false;
+							let hp=current.isMinHp(),
+								hc=current.isMinHandcard();
+							if((nan || wan)&&(hp || hc)) aoe=1;
+							if(hp&&hc&&max!==1) max=current===player?1:-1;
+						});
+						if(aoe){
+							if(nan) aoe=Math.max(aoe,get.order('nanman'));
+							if(wan) aoe=Math.max(aoe,get.order('wanjian'));
+							return aoe+0.2;
+						}
+						if(max) return 5.8;
+						if(player.isDamaged()&&player.isMinHp()&&player.countCards('hs','tao')) return get.order('tao')+0.2;
+						return 0.5;
+					},
 					value:7,
 					result:{
-						target:function(player,target){
-							var num=0;
-							if(target.isMinHp()&&get.recoverEffect(target)>0){
-								if(target.hp==1){
-									num+=3;
+						target(player,target){
+							let num=0,
+								current=player.next,
+								mei=1,
+								draw=target.hasSkillTag('nogain')?0.1:1;
+							if(!ui.selected.cards) mei=0;
+							let mine=player.countCards('h',card=>{
+								if(mei>0&& ui.selected.cards.includes(card)) return false;
+								if(!mei&&get.name(card)==='phd_wmzk'){
+									mei=-1;
+									return false;
 								}
-								else{
-									num+=2;
-								}
+								return true;
+							});
+							if(player.hasSkillTag('noh')&&player.countCards('h')) mine++;
+							let min=mine;
+							while(current!==player){
+								if(current.countCards('h')<min) min=current.countCards('h');
+								current=current.next;
 							}
-							if(target.isMinHandcard()){
-								num+=2;
+							if(target.isMinHp()&&target.isDamaged()&&get.recoverEffect(target)>0){
+								if(target.hp===1) num+=3;
+								else num+=2;
 							}
+							if(player===target){
+								if(mine<=min) num+=(num?2:1)*draw;
+							}
+							else if(target.countCards('h')<=min) num+=(num?2:1)*draw;
 							return num;
 						}
+					},
+					tag:{
+						draw:1.2,
+						recover:0.5
 					}
 				}
 			},

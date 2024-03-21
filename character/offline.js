@@ -3480,6 +3480,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				usable:1,
 				filter:function(event,player){
 					var zhu=get.mode()=='identity'?get.zhu(player):game.filterPlayer(i=>i.getSeatNum()==1)[0];
+					if(!zhu) return false;
 					return zhu.countGainableCards(player,zhu==player?'ej':'hej');
 				},
 				filterTarget:function(card,player,target){

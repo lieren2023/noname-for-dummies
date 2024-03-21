@@ -83,6 +83,7 @@ var pinyin_dict_polyphone = {
 	"神行": " xíng",
 	"镇行": " xíng",
 	"行图": "xíng ",
+	"绝行": " xíng",
 	"好施": "hào ",
 	"荐降": " xiáng",
 	"破降": " xiáng",

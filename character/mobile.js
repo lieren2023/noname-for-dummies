@@ -26,7 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		character:{
-			yangfeng:['male','shu',4,['mbxuetu','mbweiming']],
+			yangfeng:['male','qun',4,['mbxuetu','mbweiming']],
 			xin_huojun:['male','shu',4,['sidai','jieyu'],['character:tw_huojun','die_audio:tw_huojun']],
 			muludawang:['male','qun','3/3/1',['shoufa','zhoulin','yuxiang']],
 			mb_chengui:['male','qun',3,['guimou','zhouxian']],
@@ -399,6 +399,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			//杨奉
 			mbxuetu:{
 				audio:2,
+				audioname:['re_yangfeng'],
 				enable:'phaseUse',
 				usable:2,
 				filter(event,player){
@@ -458,7 +459,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								delete player.storage.mbxuetu_used;
 							});
 						}
-						player.markAuto('mbxuetu_used', storage);
+						player.markAuto('mbxuetu_used',[status===0?storage:(!event.cards.length)]);
 						if (status === 0 && !storage || status === 1 && event.cards.length) {
 							await target.recover();
 						}
@@ -528,41 +529,45 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			mbweiming:{
-				audio:2,
-				trigger:{
-					player:'phaseUseBegin',
-				},
-				filter(event,player){
-					return game.hasPlayer(current => {
-						return !player.getStorage('mbweiming').includes(current);
-					});
-				},
+				audio:3,
 				dutySkill:true,
-				forced:true,
-				direct:true,
-				group:['mbweiming_achieve', 'mbweiming_fail'],
-				async content(event, trigger, player){
-					const targets = await player.chooseTarget('威命：记录一名未记录过的角色','当你杀死没有被记录过的角色后，则〖威命〗使命成功；如果在你杀死这些角色中的一名之前，有被记录过的角色死亡，则你〖威命〗使命失败。',true)
-						.set('filterTarget', (card, player, target) => {
-							return !player.getStorage('mbweiming').includes(target);
-						})
-						.set('ai', target => {
-							if (target === player) return 1;
-							return 1 + Math.sqrt(Math.abs(get.attitude(player, target))) * Math.abs(get.threaten(target)) / Math.sqrt(target.getHp() + 1) / Math.sqrt(target.countCards('hes') + 1);
-						})
-						.forResultTargets();
-					if (targets && targets.length > 0) {
-						const target = targets[0];
-						player.logSkill('mbweiming', target);
-						player.markAuto('mbweiming', target);
-					}
-				},
+				locked:true,
+				group:['mbweiming_achieve', 'mbweiming_fail','mbweiming_effect'],
 				intro:{
 					content: '已记录$',
 				},
 				subSkill: {
+					effect:{
+						audio:'mbweiming1.mp3',
+						trigger:{
+							player:'phaseUseBegin',
+						},
+						filter(event,player){
+							return game.hasPlayer(current => {
+								return !player.getStorage('mbweiming').includes(current);
+							});
+						},
+						forced:true,
+						direct:true,
+						async content(event, trigger, player){
+							const targets = await player.chooseTarget('威命：记录一名未记录过的角色','当你杀死没有被记录过的角色后，则〖威命〗使命成功；如果在你杀死这些角色中的一名之前，有被记录过的角色死亡，则你〖威命〗使命失败。',true)
+								.set('filterTarget', (card, player, target) => {
+									return !player.getStorage('mbweiming').includes(target);
+								})
+								.set('ai', target => {
+									if (target === player) return 1;
+									return 1 + Math.sqrt(Math.abs(get.attitude(player, target))) * Math.abs(get.threaten(target)) / Math.sqrt(target.getHp() + 1) / Math.sqrt(target.countCards('hes') + 1);
+								})
+								.forResultTargets();
+							if (targets && targets.length > 0) {
+								const target = targets[0];
+								player.logSkill('mbweiming_effect', target);
+								player.markAuto('mbweiming', target);
+							}
+						},
+					},
 					achieve: {
-						audio:'mbweiming',
+						audio:'mbweiming2.mp3',
 						trigger:{
 							source:'dieAfter',
 						},
@@ -582,7 +587,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					fail: {
-						audio:'mbweiming',
+						audio:'mbweiming3.mp3',
 						trigger:{
 							global:'dieAfter',
 						},
@@ -595,6 +600,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.log(player,'使命失败');
 							player.awakenSkill('mbweiming');
 							player.storage.mbxuetu_status = 2;
+							game.broadcastAll(player=>{
+								player.tempname.add('re_yangfeng');
+							},player);
 							await game.asyncDelayx();
 						}
 					},
@@ -735,8 +743,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player,name){
 					if(name=='damageSource'&&player.getHistory('sourceDamage').indexOf(event)!=0) return false;
 					return game.hasPlayer(target=>{
-						if(name=='damageEnd') return get.distance(player,target)>2;
-						return get.distance(player,target)<=2;
+						if(get.mode()!='doudizhu'){
+							if(name=='damageEnd'&&get.distance(player,target)<=2) return false;
+							if(name=='damageSource'&&get.distance(player,target)>2) return false;
+						}
+						const zhoufa=player.storage.zhoulin_zhoufa;
+						if(!zhoufa) return true;
+						if(zhoufa=='豹'||zhoufa=='兔') return true;
+						if(zhoufa=='鹰') return target.countCards('he');
+						return target.countDiscardableCards(player,'e');
 					});
 				},
 				direct:true,
@@ -748,10 +763,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						'你随机弃置其装备区的一张牌',
 						'令其摸一张牌',
 					][['豹','鹰','熊','兔'].indexOf(zhoufa)]:'令其随机执行一个效果';
-					const {result:{bool,targets}}=await player.chooseTarget(get.prompt('shoufa'),'选择一名距离'+(event.triggername=='damageEnd'?'':'不')+'大于2的角色，'+str,(card,player,target)=>{
+					const nodoudizhu=(get.mode()=='doudizhu'?'':('距离'+(event.triggername=='damageEnd'?'':'不')+'大于2的'));
+					const {result:{bool,targets}}=await player.chooseTarget(get.prompt('shoufa'),'选择一名'+nodoudizhu+'角色，'+str,(card,player,target)=>{
 						const name=_status.event.triggername;
-						if(name=='damageEnd'&&get.distance(player,target)<=2) return false;
-						if(name=='damageSource'&&get.distance(player,target)>2) return false;
+						if(get.mode()!='doudizhu'){
+							if(name=='damageEnd'&&get.distance(player,target)<=2) return false;
+							if(name=='damageSource'&&get.distance(player,target)>2) return false;
+						}
 						const zhoufa=player.storage.zhoulin_zhoufa;
 						if(!zhoufa) return true;
 						if(zhoufa=='豹'||zhoufa=='兔') return true;
@@ -15840,8 +15858,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			shoufa:function(player){
 				const zhoufa=player.storage.zhoulin_zhoufa;
-				if(!zhoufa) return '当你受到伤害后/于一回合首次造成伤害后，你可以选择一名与你距离大于/不大于2的角色，令其随机执行以下一项：豹，令其受到1点无来源伤害；鹰，你随机获得其一张牌；熊，你随机弃置其装备区的一张牌；兔，令其摸一张牌。';
-				let str='当你受到伤害后/于一回合首次造成伤害后，你可以选择一名与你距离大于/不大于2的角色，';
+				const nodoudizhu=(get.mode()=='doudizhu'?'':'与你距离大于/不大于2的');
+				if(!zhoufa) return '当你受到伤害后/于一回合首次造成伤害后，你可以选择一名'+nodoudizhu+'角色，令其随机执行以下一项：豹，令其受到1点无来源伤害；鹰，你随机获得其一张牌；熊，你随机弃置其装备区的一张牌；兔，令其摸一张牌。';
+				let str='当你受到伤害后/于一回合首次造成伤害后，你可以选择一名'+nodoudizhu+'角色，';
 				str+=[
 					'令其受到1点无来源伤害',
 					'你随机获得其一张牌',
@@ -16673,8 +16692,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			re_liru_prefix:'手杀界',
 			re_chenqun:'手杀界陈群',
 			re_chenqun_prefix:'手杀界',
-			old_yuanshu:'手杀界袁术',
-			old_yuanshu_prefix:'手杀界',
 			re_liru:'手杀界李儒',
 			re_liru_prefix:'手杀界',
 			re_chenqun:'手杀界陈群',
@@ -16736,6 +16753,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			muludawang:'木鹿大王',
 			shoufa:'兽法',
 			shoufa_info:'当你受到伤害后/于一回合首次造成伤害后，你可以选择一名与你距离大于/不大于2的角色，令其随机执行以下一项：豹，令其受到1点无来源伤害；鹰，你随机获得其一张牌；熊，你随机弃置其装备区的一张牌；兔，令其摸一张牌。',
+			shoufa_info_doudizhu:'当你受到伤害后/于一回合首次造成伤害后，你可以选择一名角色，令其随机执行以下一项：豹，令其受到1点无来源伤害；鹰，你随机获得其一张牌；熊，你随机弃置其装备区的一张牌；兔，令其摸一张牌。',
 			yuxiang:'御象',
 			yuxiang_info:'锁定技，若你有护甲值，则：①你计算与其他角色的距离-1，其他角色计算与你的距离+1；②当你受到火焰伤害时，此伤害+1。',
 			zhoulin:'咒鳞',
