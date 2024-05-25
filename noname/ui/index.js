@@ -1,25 +1,22 @@
-import { Uninstantable, nonameInitialized } from "../util/index.js";
-import { Library as lib } from '../library/index.js';
-import { Game as game } from "../game/index.js";
-import { Get as get } from "../get/index.js";
+import { lib } from "../library/index.js";
+import { game } from "../game/index.js";
+import { get } from "../get/index.js";
 import { _status } from "../status/index.js";
-import { GNC as gnc } from '../gnc/index.js';
-import { AI as ai } from "../ai/index.js";
 import { Click } from "./click/index.js";
 import { Create } from "./create/index.js";
 
-export class UI extends Uninstantable {
-	static updates = [];
-	static thrown = [];
-	static touchlines = [];
-	static todiscard = {};
+export class UI {
+	updates = [];
+	thrown = [];
+	touchlines = [];
+	todiscard = {};
 	/**
 	 * @type { HTMLStyleElement[] }
 	 */
-	static playerPositions = [];
-	static create = Create;
-	static click = Click;
-	static selected = {
+	playerPositions = [];
+	create = new Create();
+	click = new Click();
+	selected = {
 		/**
 		 * @type { Button[] }
 		 */
@@ -31,88 +28,129 @@ export class UI extends Uninstantable {
 		/**
 		 * @type { Player[] }
 		 */
-		targets: []
+		targets: [],
 	};
 	/**
 	 * @type { Dialog[] }
 	 */
-	static dialogs;
+	dialogs;
 	/**
 	 * @type { Dialog }
 	 */
-	static dialog;
+	dialog;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static arena;
+	arena;
 	/**
 	 * @type { Control[] }
 	 */
-	static controls;
+	controls;
 	/**
 	 * @type { Control }
 	 */
-	static control;
+	control;
 	/**
 	 * @type { Control | undefined }
 	 */
-	static confirm;
+	confirm;
 	/**
 	 * @type { Control | undefined }
 	 */
-	static skills;
+	skills;
 	/**
 	 * @type { Control | undefined }
 	 */
-	static skills1;
+	skills1;
 	/**
 	 * @type { Control | undefined }
 	 */
-	static skills2;
+	skills2;
 	/**
 	 * @type { Control | undefined }
 	 */
-	static skills3;
+	skills3;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static window;
+	window;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static pause;
+	pause;
 	/**
 	 * @type { HTMLAudioElement }
 	 */
-	static backgroundMusic;
+	backgroundMusic;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static special;
+	special;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static fakeme;
+	fakeme;
 	/**
 	 * @type { HTMLDivElement }
 	 */
-	static chess;
+	chess;
 	/**
 	 * 手动在菜单栏中添加一个武将包的ui
 	 * @type { ((packName: string) => void)[] }
 	 */
-	static updateCharacterPackMenu = [];
+	updateCharacterPackMenu = [];
 	/**
 	 * 手动在菜单栏中添加一个卡牌包的ui
 	 * @type { ((packName: string) => void)[] }
 	 */
-	static updateCardPackMenu = [];
-	static refresh(node) {
+	updateCardPackMenu = [];
+	/**
+	 * @type { HTMLDivElement } 挑战模式下正在操作的角色
+	 */
+	mebg;
+	/**
+	 * @type { Function | undefined }
+	 */
+	updateUpdate;
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	commandnode;
+	/**
+	 * @type {() => void}
+	 */
+	updateVideoMenu;
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	menuContainer;
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	auto;
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	wuxie;
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	tempnowuxie;
+	/**
+	 * @type {HTMLDivElement[]}
+	 */
+	toastQueue = [];
+  
+	/**
+	 * @type {HTMLDivElement}
+	 */
+	cardPile;
+	refresh(node) {
 		void window.getComputedStyle(node, null).getPropertyValue("opacity");
 	}
-	static clear() {
-		game.addVideo('uiClear');
-		var thrown = document.getElementsByClassName('thrown');
+	clear() {
+		game.addVideo("uiClear");
+		var thrown = document.getElementsByClassName("thrown");
 		var nodes = [];
 		var i;
 		for (i = 0; i < thrown.length; i++) {
@@ -122,9 +160,10 @@ export class UI extends Uninstantable {
 			if (!nodes[i].fixed) nodes[i].delete();
 		}
 	}
-	static updatec() {
+	updatec() {
 		if (_status.noupdatec) return;
-		var length = 0, minoffset = -Infinity;
+		var length = 0,
+			minoffset = -Infinity;
 		var controls = [];
 		var widths = [];
 		var leftwidths = [];
@@ -135,41 +174,40 @@ export class UI extends Uninstantable {
 				length += thiswidth;
 				if (first) {
 					leftwidths.push(thiswidth);
-				}
-				else {
+				} else {
 					widths.push(thiswidth);
 				}
-			}
-			else {
+			} else {
 				length += node.offsetWidth;
 				if (first) {
 					leftwidths.push(node.offsetWidth);
-				}
-				else {
+				} else {
 					widths.push(node.offsetWidth);
 				}
 			}
 			if (first) {
 				controls.unshift(node);
-			}
-			else {
+			} else {
 				controls.push(node);
 			}
 		};
 		widths = leftwidths.concat(widths);
 		var staylefts = [];
 		for (var i = 0; i < ui.control.childNodes.length; i++) {
-			if (ui.control.childNodes[i].classList.contains('removing')) continue;
+			if (ui.control.childNodes[i].classList.contains("removing")) continue;
 			if (lib.config.wuxie_right && ui.control.childNodes[i].stayleft) {
 				staylefts.push(ui.control.childNodes[i]);
-			}
-			else {
+			} else {
 				add(ui.control.childNodes[i]);
 			}
 		}
 		if (staylefts.length) {
 			var fullwidth = 0;
-			var fullright = (game.layout == 'long' || game.layout == 'long2' || game.chess || (game.layout != 'nova' && parseInt(ui.arena.dataset.number) <= 5));
+			var fullright =
+				game.layout == "long" ||
+				game.layout == "long2" ||
+				game.chess ||
+				(game.layout != "nova" && parseInt(ui.arena.dataset.number) <= 5);
 			for (var i = 0; i < widths.length; i++) {
 				fullwidth += widths[i] + 6;
 				if (get.is.phoneLayout()) fullwidth += 6;
@@ -183,41 +221,45 @@ export class UI extends Uninstantable {
 				if (get.is.phoneLayout()) {
 					fullwidth += 18;
 					currentLeft += 18;
-				}
-				else {
+				} else {
 					fullwidth += 12;
 					currentLeft += 12;
 				}
 			}
 			if (fullright) {
 				fullwidth += 124;
-				if ((game.layout == 'long2' || game.layout == 'nova') && ui.arena.dataset.number == '8' && get.mode() != 'boss') {
+				if (
+					(game.layout == "long2" || game.layout == "nova") &&
+					ui.arena.dataset.number == "8" &&
+					get.mode() != "boss"
+				) {
 					fullwidth += game.me.getLeft();
 				}
-			}
-			else {
+			} else {
 				fullwidth += 154;
 			}
 			for (var stayleft of staylefts) {
-				if (game.layout != 'default') {
+				if (game.layout != "default") {
 					var current_offset = stayleft._offset;
 					if (fullright) {
 						stayleft._offset = Math.ceil(-ui.arena.offsetWidth / 2) + 135;
-						if ((game.layout == 'long2' || game.layout == 'nova') && ui.arena.dataset.number == '8' && get.mode() != 'boss') {
+						if (
+							(game.layout == "long2" || game.layout == "nova") &&
+							ui.arena.dataset.number == "8" &&
+							get.mode() != "boss"
+						) {
 							stayleft._offset += game.me.getLeft();
 						}
-					}
-					else {
+					} else {
 						stayleft._offset = Math.ceil(-ui.arena.offsetWidth / 2) + 165;
 					}
 					stayleft._offset += stayleft.currentLeft;
 
 					if (current_offset != stayleft._offset) {
-						stayleft.addTempClass('controlpressdownx', 500);
-						stayleft.style.transform = 'translateX(' + stayleft._offset + 'px)';
+						stayleft.addTempClass("controlpressdownx", 500);
+						stayleft.style.transform = "translateX(" + stayleft._offset + "px)";
 					}
-				}
-				else {
+				} else {
 					add(stayleft, true);
 				}
 			}
@@ -231,8 +273,8 @@ export class UI extends Uninstantable {
 		if (minoffset > offset) offset = minoffset;
 		var control = controls.shift();
 		if (control._offset != offset) {
-			control.addTempClass('controlpressdownx', 500);
-			control.style.transform = 'translateX(' + offset + 'px)';
+			control.addTempClass("controlpressdownx", 500);
+			control.style.transform = "translateX(" + offset + "px)";
 			control._offset = offset;
 		}
 		while (controls.length) {
@@ -243,13 +285,13 @@ export class UI extends Uninstantable {
 				offset += 6;
 			}
 			if (control._offset != offset) {
-				control.addTempClass('controlpressdownx', 500);
-				control.style.transform = 'translateX(' + offset + 'px)';
+				control.addTempClass("controlpressdownx", 500);
+				control.style.transform = "translateX(" + offset + "px)";
 				control._offset = offset;
 			}
 		}
 	}
-	static updatex() {
+	updatex() {
 		ui.update.apply(this, arguments);
 		ui.updatehl();
 		for (var i = 0; i < lib.onresize.length; i++) {
@@ -261,171 +303,161 @@ export class UI extends Uninstantable {
 		ui.updatez();
 		delete ui._updatexr;
 	}
-	static updatexr() {
+	updatexr() {
 		if (ui._updatexr) {
 			clearTimeout(ui._updatexr);
 		}
 		ui._updatexr = setTimeout(ui.updatex, 500);
 	}
-	static updatejm(player, nodes, start, inv) {
-		if (typeof start != 'number') {
+	updatejm(player, nodes, start, inv) {
+		if (typeof start != "number") {
 			start = 0;
 		}
 		var str;
-		if (get.is.mobileMe(player) || game.layout == 'default' || player.classList.contains('linked')) {
-			str = 'translateX(';
+		if (get.is.mobileMe(player) || game.layout == "default" || player.classList.contains("linked")) {
+			str = "translateX(";
 			if (inv) {
-				str += '-';
+				str += "-";
 			}
-		}
-		else {
-			str = 'translateY(';
+		} else {
+			str = "translateY(";
 		}
 		var num = 0;
 		for (var i = 0; i < nodes.childElementCount; i++) {
 			var node = nodes.childNodes[i];
 			if (i < start) {
-				node.style.transform = '';
-			}
-			else if (node.classList.contains('removing')) {
+				node.style.transform = "";
+			} else if (node.classList.contains("removing")) {
 				start++;
-			}
-			else {
+			} else {
 				ui.refresh(node);
-				node.classList.remove('drawinghidden');
-				node._transform = str + ((i - start) * 28) + 'px)';
+				node.classList.remove("drawinghidden");
+				node._transform = str + (i - start) * 28 + "px)";
 				node.style.transform = node._transform;
 			}
 		}
 	}
-	static updatem(player) {
+	updatem(player) {
 		if (player) {
 			var start = 0;
-			if (!player.classList.contains('linked2') || !ui.arena.classList.contains('nolink')) {
+			if (!player.classList.contains("linked2") || !ui.arena.classList.contains("nolink")) {
 				start = 1;
 			}
 			ui.updatejm(player, player.node.marks, start, get.is.mobileMe(player));
-		}
-		else {
+		} else {
 			for (var i = 0; i < game.players.length; i++) {
 				ui.updatem(game.players[i]);
 			}
 		}
 	}
-	static updatej(player) {
+	updatej(player) {
 		if (player) {
 			ui.updatejm(player, player.node.judges);
-		}
-		else {
+		} else {
 			for (var i = 0; i < game.players.length; i++) {
 				ui.updatej(game.players[i]);
 			}
 		}
 	}
-	static updatehl() {
+	updatehl() {
 		if (!game.me) return;
 		if (!ui.handcards1Container || !ui.handcards2Container) return;
 		if (!ui.handcards1Container.childNodes.length) return;
-		var hs1 = [], hs2 = [];
+		var hs1 = [],
+			hs2 = [];
 		for (var i = 0; i < ui.handcards1Container.firstChild.childElementCount; i++) {
-			if (!ui.handcards1Container.firstChild.childNodes[i].classList.contains('removing')) {
+			if (!ui.handcards1Container.firstChild.childNodes[i].classList.contains("removing")) {
 				hs1.push(ui.handcards1Container.firstChild.childNodes[i]);
 			}
 		}
 		for (var i = 0; i < ui.handcards2Container.firstChild.childElementCount; i++) {
-			if (!ui.handcards2Container.firstChild.childNodes[i].classList.contains('removing')) {
+			if (!ui.handcards2Container.firstChild.childNodes[i].classList.contains("removing")) {
 				hs2.push(ui.handcards2Container.firstChild.childNodes[i]);
 			}
 		}
-		var offset1, offset12 = 0;
+		var offset1,
+			offset12 = 0;
 		if (!lib.config.fold_card) {
 			offset1 = 112;
-			ui.handcards1Container.classList.add('scrollh');
-		}
-		else {
+			ui.handcards1Container.classList.add("scrollh");
+		} else {
 			offset1 = Math.min(112, (ui.handcards1Container.offsetWidth - 128) / (hs1.length - 1));
 			if (hs1.length > 1 && offset1 < 32) {
 				offset1 = 32;
-				ui.handcards1Container.classList.add('scrollh');
-			}
-			else {
-				ui.handcards1Container.classList.remove('scrollh');
+				ui.handcards1Container.classList.add("scrollh");
+			} else {
+				ui.handcards1Container.classList.remove("scrollh");
 			}
 		}
 		if (offset1 < 100) {
 			offset12 = 100 - offset1;
 		}
 		for (var i = 0; i < hs1.length; i++) {
-			hs1[i].style.transform = 'translateX(' + (i * offset1) + 'px)';
-			hs1[i]._transform = 'translateX(' + (i * offset1) + 'px)';
+			hs1[i].style.transform = "translateX(" + i * offset1 + "px)";
+			hs1[i]._transform = "translateX(" + i * offset1 + "px)";
 			ui.refresh(hs1[i]);
-			hs1[i].classList.remove('drawinghidden');
+			hs1[i].classList.remove("drawinghidden");
 			if (offset12 > 40) {
 				offset12 = 90 - hs1[i].node.info.offsetWidth;
-				hs1[i].node.info.querySelector('span').style.display = 'none';
-				if (hs1[i].node.name.classList.contains('long')) {
-					hs1[i].node.name.style.transform = 'translateY(16px)  scale(0.85)';
-					hs1[i].node.name.style.transformOrigin = 'top left';
+				hs1[i].node.info.querySelector("span").style.display = "none";
+				if (hs1[i].node.name.classList.contains("long")) {
+					hs1[i].node.name.style.transform = "translateY(16px)  scale(0.85)";
+					hs1[i].node.name.style.transformOrigin = "top left";
+				} else {
+					hs1[i].node.name.style.transform = "translateY(16px)";
 				}
-				else {
-					hs1[i].node.name.style.transform = 'translateY(16px)';
-				}
-				hs1[i].node.info.style.transform = 'translateX(-' + offset12 + 'px) translateY(-3px)';
-			}
-			else {
-				hs1[i].node.info.querySelector('span').style.display = '';
-				hs1[i].node.name.style.transform = '';
-				hs1[i].node.name.style.transformOrigin = '';
-				hs1[i].node.info.style.transform = 'translateX(-' + offset12 + 'px)';
+				hs1[i].node.info.style.transform = "translateX(-" + offset12 + "px) translateY(-3px)";
+			} else {
+				hs1[i].node.info.querySelector("span").style.display = "";
+				hs1[i].node.name.style.transform = "";
+				hs1[i].node.name.style.transformOrigin = "";
+				hs1[i].node.info.style.transform = "translateX(-" + offset12 + "px)";
 			}
 		}
-		ui.handcards1Container.firstChild.style.width = (offset1 * (hs1.length - 1) + 118) + 'px';
+		ui.handcards1Container.firstChild.style.width = offset1 * (hs1.length - 1) + 118 + "px";
 
-		var offset2, offset22 = 0;
+		var offset2,
+			offset22 = 0;
 		if (!lib.config.fold_card) {
 			offset2 = 112;
-			ui.handcards2Container.classList.add('scrollh');
-		}
-		else {
+			ui.handcards2Container.classList.add("scrollh");
+		} else {
 			offset2 = Math.min(112, (ui.handcards2Container.offsetWidth - 128) / (hs2.length - 1));
 			if (hs2.length > 1 && offset2 < 32) {
 				offset2 = 32;
-				ui.handcards2Container.classList.add('scrollh');
-			}
-			else {
-				ui.handcards2Container.classList.remove('scrollh');
+				ui.handcards2Container.classList.add("scrollh");
+			} else {
+				ui.handcards2Container.classList.remove("scrollh");
 			}
 		}
 		if (offset2 < 100) {
 			offset22 = 100 - offset2;
 		}
 		for (var i = 0; i < hs2.length; i++) {
-			hs2[i].style.transform = 'translateX(' + (i * offset2) + 'px)';
-			hs2[i]._transform = 'translateX(' + (i * offset2) + 'px)';
+			hs2[i].style.transform = "translateX(" + i * offset2 + "px)";
+			hs2[i]._transform = "translateX(" + i * offset2 + "px)";
 			ui.refresh(hs2[i]);
-			hs2[i].classList.remove('drawinghidden');
+			hs2[i].classList.remove("drawinghidden");
 			if (offset22 > 40) {
 				offset22 = 90 - hs2[i].node.info.offsetWidth;
-				hs2[i].node.info.querySelector('span').style.display = 'none';
-				if (hs2[i].node.name.classList.contains('long')) {
-					hs2[i].node.name.style.transform = 'translateY(16px)  scale(0.85)';
-					hs2[i].node.name.style.transformOrigin = 'top left';
+				hs2[i].node.info.querySelector("span").style.display = "none";
+				if (hs2[i].node.name.classList.contains("long")) {
+					hs2[i].node.name.style.transform = "translateY(16px)  scale(0.85)";
+					hs2[i].node.name.style.transformOrigin = "top left";
+				} else {
+					hs2[i].node.name.style.transform = "translateY(16px)";
 				}
-				else {
-					hs2[i].node.name.style.transform = 'translateY(16px)';
-				}
-				hs2[i].node.info.style.transform = 'translateX(-' + offset22 + 'px) translateY(-3px)';
-			}
-			else {
-				hs2[i].node.info.querySelector('span').style.display = '';
-				hs2[i].node.name.style.transform = '';
-				hs2[i].node.name.style.transformOrigin = '';
-				hs2[i].node.info.style.transform = 'translateX(-' + offset22 + 'px)';
+				hs2[i].node.info.style.transform = "translateX(-" + offset22 + "px) translateY(-3px)";
+			} else {
+				hs2[i].node.info.querySelector("span").style.display = "";
+				hs2[i].node.name.style.transform = "";
+				hs2[i].node.name.style.transformOrigin = "";
+				hs2[i].node.info.style.transform = "translateX(-" + offset22 + "px)";
 			}
 		}
-		ui.handcards2Container.firstChild.style.width = (offset2 * (hs2.length - 1) + 118) + 'px';
+		ui.handcards2Container.firstChild.style.width = offset2 * (hs2.length - 1) + 118 + "px";
 	}
-	static updateh(compute) {
+	updateh(compute) {
 		if (!game.me) return;
 		if (!ui.handcards1Container) return;
 		if (lib.config.low_performance) {
@@ -442,140 +474,146 @@ export class UI extends Uninstantable {
 		ui.updatehx(game.me.node.handcards1);
 		ui.updatehx(game.me.node.handcards2);
 	}
-	static updatehx(node) {
+	updatehx(node) {
 		var width = node.parentNode._handcardsWidth;
-		var num = node.childElementCount - node.getElementsByClassName('removing').length;
-		node.classList.remove('fold0');
-		node.classList.remove('fold1');
-		node.classList.remove('fold2');
-		node.classList.remove('fold3');
+		var num = node.childElementCount - node.getElementsByClassName("removing").length;
+		node.classList.remove("fold0");
+		node.classList.remove("fold1");
+		node.classList.remove("fold2");
+		node.classList.remove("fold3");
 		if (num * 78 + 40 >= width) {
 			// node.dataset.fold=3;
-			node.classList.add('fold3');
-		}
-		else if (num * 93 + 25 >= width) {
+			node.classList.add("fold3");
+		} else if (num * 93 + 25 >= width) {
 			// node.dataset.fold=2;
-			node.classList.add('fold2');
-		}
-		else if (num * 112 + 6 >= width) {
+			node.classList.add("fold2");
+		} else if (num * 112 + 6 >= width) {
 			// node.dataset.fold=1;
-			node.classList.add('fold1');
-		}
-		else {
+			node.classList.add("fold1");
+		} else {
 			// node.dataset.fold=0;
-			node.classList.add('fold0');
+			node.classList.add("fold0");
 		}
 	}
-	static updated() {
+	updated() {
 		if (document.documentElement.offsetWidth < 900 || document.documentElement.offsetHeight < 500) {
 			game.deviceZoom = Math.min(
 				Math.round(document.documentElement.offsetWidth / 98) / 10,
 				Math.round(document.documentElement.offsetHeight / 50) / 10
 			);
-		}
-		else {
+		} else {
 			game.deviceZoom = 1;
 		}
 	}
-	static updatez() {
+	updatez() {
 		var width = document.documentElement.offsetWidth;
 		var height = document.documentElement.offsetHeight;
 		var zoom = game.documentZoom;
 		if (zoom != 1) {
-			document.body.style.width = Math.round(width / zoom) + 'px';
-			document.body.style.height = Math.round(height / zoom) + 'px';
-			document.body.style.transform = 'scale(' + (Math.floor(zoom * 100) / 100) + ')';
-		}
-		else {
-			document.body.style.width = width + 'px';
-			document.body.style.height = height + 'px';
-			document.body.style.transform = '';
+			document.body.style.width = Math.round(width / zoom) + "px";
+			document.body.style.height = Math.round(height / zoom) + "px";
+			document.body.style.transform = "scale(" + Math.floor(zoom * 100) / 100 + ")";
+		} else {
+			document.body.style.width = width + "px";
+			document.body.style.height = height + "px";
+			document.body.style.transform = "";
 		}
 	}
-	static update() {
+	update() {
 		for (var i = 0; i < ui.updates.length; i++) {
 			ui.updates[i]();
 		}
-		if (ui.dialog && !ui.dialog.classList.contains('noupdate')) {
+		if (ui.dialog && !ui.dialog.classList.contains("noupdate")) {
 			if (game.chess) {
-				if (ui.dialog.content.scrollHeight < 240 && (!ui.dialog.buttons || !ui.dialog.buttons.length) && !ui.dialog.forcebutton) {
-					ui.dialog.style.height = ui.dialog.content.offsetHeight + 'px';
-					ui.dialog.classList.add('slim');
+				if (
+					ui.dialog.content.scrollHeight < 240 &&
+					(!ui.dialog.buttons || !ui.dialog.buttons.length) &&
+					!ui.dialog.forcebutton
+				) {
+					ui.dialog.style.height = ui.dialog.content.offsetHeight + "px";
+					ui.dialog.classList.add("slim");
+				} else {
+					ui.dialog.style.height = "";
+					ui.dialog.classList.remove("slim");
 				}
-				else {
-					ui.dialog.style.height = '';
-					ui.dialog.classList.remove('slim');
-				}
-			}
-			else {
-				if ((!ui.dialog.buttons || !ui.dialog.buttons.length) && !ui.dialog.forcebutton && ui.dialog.classList.contains('fullheight') == false && get.mode() != 'stone') {
-					ui.dialog.classList.add('nobutton');
+			} else {
+				if (
+					(!ui.dialog.buttons || !ui.dialog.buttons.length) &&
+					!ui.dialog.forcebutton &&
+					ui.dialog.classList.contains("fullheight") == false &&
+					get.mode() != "stone"
+				) {
+					ui.dialog.classList.add("nobutton");
 					if (ui.dialog.content.offsetHeight < 240) {
 						if (!ui.dialog._heightset) {
 							ui.dialog._heightset = ui.dialog.style.height || true;
 						}
-						ui.dialog.style.height = ui.dialog.content.offsetHeight + 'px';
-						if (lib.config.show_log != 'off') {
-							ui.dialog.classList.add('scroll1');
-							ui.dialog.classList.add('scroll2');
+						ui.dialog.style.height = ui.dialog.content.offsetHeight + "px";
+						if (lib.config.show_log != "off") {
+							ui.dialog.classList.add("scroll1");
+							ui.dialog.classList.add("scroll2");
 							return;
 						}
-					}
-					else {
-						if (typeof ui.dialog._heightset == 'string') {
+					} else {
+						if (typeof ui.dialog._heightset == "string") {
 							ui.dialog.style.height = ui.dialog._heightset;
-						}
-						else if (ui.dialog._heightset) {
-							ui.dialog.style.height = '';
+						} else if (ui.dialog._heightset) {
+							ui.dialog.style.height = "";
 						}
 						delete ui.dialog._heightset;
 					}
-				}
-				else {
-					if (typeof ui.dialog._heightset == 'string') {
+				} else {
+					if (typeof ui.dialog._heightset == "string") {
 						ui.dialog.style.height = ui.dialog._heightset;
-					}
-					else if (ui.dialog._heightset) {
-						ui.dialog.style.height = '';
+					} else if (ui.dialog._heightset) {
+						ui.dialog.style.height = "";
 					}
 					delete ui.dialog._heightset;
-					ui.dialog.classList.remove('nobutton');
+					ui.dialog.classList.remove("nobutton");
 				}
 			}
 			var height1 = ui.dialog.content.offsetHeight;
 			var height2 = ui.dialog.contentContainer.offsetHeight;
 			if (game.chess) {
 				if (height1 < 240) {
-					ui.dialog.style.height = height1 + 'px';
+					ui.dialog.style.height = height1 + "px";
 				}
-			}
-			else {
-				if (!ui.dialog.forcebutton && !ui.dialog._scrollset && (height1 <= 190 || (height2 >= height1 && height2 >= 210))) {
-					ui.dialog.classList.remove('scroll1');
-					ui.dialog.classList.remove('scroll2');
-				}
-				else {
-					ui.dialog.classList.add('scroll1');
-					ui.dialog.classList.add('scroll2');
-					if (game.layout != 'default') {
-						ui.dialog.style.height = Math.min(height1, ((game.layout == 'long2' || game.layout == 'nova') && ui.arena.classList.contains('choose-character')) ? 380 : 350) + 'px';
+			} else {
+				if (
+					!ui.dialog.forcebutton &&
+					!ui.dialog._scrollset &&
+					(height1 <= 190 || (height2 >= height1 && height2 >= 210))
+				) {
+					ui.dialog.classList.remove("scroll1");
+					ui.dialog.classList.remove("scroll2");
+				} else {
+					ui.dialog.classList.add("scroll1");
+					ui.dialog.classList.add("scroll2");
+					if (game.layout != "default") {
+						ui.dialog.style.height =
+							Math.min(
+								height1,
+								(game.layout == "long2" || game.layout == "nova") &&
+									ui.arena.classList.contains("choose-character")
+									? 380
+									: 350
+							) + "px";
 						ui.dialog._scrollset = true;
 					}
 				}
-				if (game.layout == 'long2' || game.layout == 'nova') {
+				if (game.layout == "long2" || game.layout == "nova") {
 					if (height1 + 240 >= ui.arena.offsetHeight) {
-						ui.dialog.classList.add('scroll3');
-					}
-					else {
-						ui.dialog.classList.remove('scroll3');
+						ui.dialog.classList.add("scroll3");
+					} else {
+						ui.dialog.classList.remove("scroll3");
 					}
 				}
 			}
 		}
 	}
-	static recycle(node, key) {
+	recycle(node, key) {
 		if (!ui._recycle) ui._recycle = {};
-		if (typeof node == 'string') {
+		if (typeof node == "string") {
 			return ui._recycle[node];
 		}
 		ui._recycle[key] = node;
@@ -585,8 +623,8 @@ export class UI extends Uninstantable {
 	 * @author Tipx-L
 	 * @param {number} [numberOfPlayers]
 	 */
-	static updateConnectPlayerPositions(numberOfPlayers) {
-		if (typeof numberOfPlayers != 'number') {
+	updateConnectPlayerPositions(numberOfPlayers) {
+		if (typeof numberOfPlayers != "number") {
 			const configOL = lib.configOL;
 			numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
 		}
@@ -596,7 +634,7 @@ export class UI extends Uninstantable {
 			game.dynamicStyle.remove(position);
 		});
 		playerPositions.length = 0;
-		const temporaryPlayer = ui.create.div('.player.connect', ui.window).hide();
+		const temporaryPlayer = ui.create.div(".player.connect", ui.window).hide();
 		const computedStyle = getComputedStyle(temporaryPlayer);
 		const halfWidth = parseFloat(computedStyle.width) / 2;
 		const halfHeight = parseFloat(computedStyle.height) / 2;
@@ -608,10 +646,9 @@ export class UI extends Uninstantable {
 			const selector = `#window>.player.connect[data-position='${ordinal}']`;
 			const css = {
 				left: `calc(${upperPercentage * (ordinal + 1)}% - ${halfWidth}px)`,
-				top: `calc(${100 / 3}% - ${halfHeight}px)`
+				top: `calc(${100 / 3}% - ${halfHeight}px)`,
 			};
-			if (scale < 1)
-				css["transform"] = `scale(${scale})`;
+			if (scale < 1) css["transform"] = `scale(${scale})`;
 
 			game.dynamicStyle.add(selector, css);
 			playerPositions.push(selector);
@@ -621,10 +658,9 @@ export class UI extends Uninstantable {
 			const selector = `#window>.player.connect[data-position='${ordinal}']`;
 			const css = {
 				left: `calc(${lowerPercentage * (ordinal - halfNumberOfPlayers + 1)}% - ${halfWidth}px)`,
-				top: `calc(${100 * 2 / 3}% - ${halfHeight}px)`
+				top: `calc(${(100 * 2) / 3}% - ${halfHeight}px)`,
 			};
-			if (scale < 1)
-				css["transform"] = `scale(${scale})`;
+			if (scale < 1) css["transform"] = `scale(${scale})`;
 
 			game.dynamicStyle.add(selector, css);
 			playerPositions.push(selector);
@@ -635,8 +671,8 @@ export class UI extends Uninstantable {
 	 * @author Tipx-L
 	 * @param {number} [numberOfPlayers]
 	 */
-	static updatePlayerPositions(numberOfPlayers) {
-		if (typeof numberOfPlayers != 'number') numberOfPlayers = ui.arena.dataset.number;
+	updatePlayerPositions(numberOfPlayers) {
+		if (typeof numberOfPlayers != "number") numberOfPlayers = ui.arena.dataset.number;
 		//当人数不超过8人时，还是用以前的布局
 		if (!numberOfPlayers || numberOfPlayers <= 8) return;
 		const playerPositions = ui.playerPositions;
@@ -645,11 +681,11 @@ export class UI extends Uninstantable {
 		});
 		playerPositions.length = 0;
 		//单个人物的宽度，这里要设置玩家的实际的宽度
-		const temporaryPlayer = ui.create.div('.player', ui.arena).hide();
+		const temporaryPlayer = ui.create.div(".player", ui.arena).hide();
 		const computedStyle = getComputedStyle(temporaryPlayer);
 		const scale = 6 / numberOfPlayers;
 		//玩家顶部距离父容器上边缘的距离偏移的单位距离
-		const quarterHeight = parseFloat(computedStyle.height) / 4 * scale;
+		const quarterHeight = (parseFloat(computedStyle.height) / 4) * scale;
 		const halfWidth = parseFloat(computedStyle.width) / 2;
 		temporaryPlayer.remove();
 		//列数，即假如8人场，除去自己后，上面7个人占7列
@@ -659,19 +695,34 @@ export class UI extends Uninstantable {
 		for (let ordinal = 1; ordinal < numberOfPlayers; ordinal++) {
 			const reversedOrdinal = columnCount - ordinal;
 			//动态计算玩家的top属性，实现拱桥的效果；只让两边的各两个人向下偏移一些
-			const top = Math.max(0, Math.round(numberOfPlayers / 5) - Math.min(Math.abs(ordinal - 1), Math.abs(reversedOrdinal))) * quarterHeight;
+			const top =
+				Math.max(
+					0,
+					Math.round(numberOfPlayers / 5) -
+						Math.min(Math.abs(ordinal - 1), Math.abs(reversedOrdinal))
+				) * quarterHeight;
 			const selector = `#arena[data-number='${numberOfPlayers}']>.player[data-position='${ordinal}']`;
 			game.dynamicStyle.add(selector, {
 				left: `calc(${percentage * reversedOrdinal + 5}% - ${halfWidth}px)`,
 				top: `${top}px`,
-				transform: `scale(${scale})`
+				transform: `scale(${scale})`,
 			});
 			playerPositions.push(selector);
 		}
 	}
-	static updateRoundNumber(roundNumber, cardPileNumber) {
+	updateRoundNumber(roundNumber, cardPileNumber) {
 		if (ui.cardPileNumber) ui.cardPileNumber.innerHTML = `${roundNumber}轮 剩余牌: ${cardPileNumber}`;
 	}
 }
 
-export const ui = UI;
+export let ui = new UI();
+
+/**
+ * @param { InstanceType<typeof UI> } [instance]
+ */
+export let setUI = (instance) => {
+	ui = instance || new UI();
+	if (lib.config.dev) {
+		window.ui = ui;
+	}
+};

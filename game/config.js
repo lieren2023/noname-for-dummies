@@ -70,6 +70,7 @@ window.config={
 	skip_shan:true,
 	unauto_choose:true,
 	touchscreen:true,
+	swipe:false,
 	swipe_left:'pause',
 	swipe_right:'pause',
 	dev:true,

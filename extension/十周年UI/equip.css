@@ -43,15 +43,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
 .equips-wrap>.equips-back>div:first-child {
 	opacity: 0;
 }
@@ -69,58 +60,14 @@
 	align-items: center;
 	align-content: center;
 	justify-content: center;
-								
 	z-index: 5;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .equips-wrap>.equips>div.selectable {
 	cursor: pointer;
 	transform: translateX(10px);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .equips-wrap .equips>div[data-card-subype='equip5'] .equips-wrap>.equips-back>div.equip0 {
@@ -191,7 +138,6 @@
 	font-size: 13px;
 	font-weight: bold;
 	font-family: "shousha" !important;
-					   
 	pointer-events: none;
 	z-index: 1;
 }
@@ -215,15 +161,7 @@
 }
 
 .equips-wrap>.equips>.card>.image {
-				
-		   
-			 
-				
-			 
-				 
-					   
 	visibility: hidden !important;	
-			
 }
 
 .equips-wrap>.equips>.card:not(.fullskin)>.image {
@@ -314,9 +252,9 @@
 	align-items: center;
 	align-content: center;
 	justify-content: center;
-background: rgba(242, 232, 213, 0.6) !important;/*装备底色*/
-border: 1px solid rgb(95, 55, 45);/*装备边框*/
-border-image: none !important;
+	background: rgba(242, 232, 213, 0.6) !important;/*装备底色*/
+	border: 1px solid rgb(95, 55, 45);/*装备边框*/
+	border-image: none !important;
 	box-sizing: border-box;
 	border-radius: 0px;
 	width: 100%;
@@ -374,4 +312,10 @@ border-image: none !important;
 .player>.equips>.card[data-suit='spade']>.name2,
 .player>.equips>.card[data-suit='club']>.name2 {
 	color: #181818;
+}
+
+
+/* 适配炉石模式 */
+#arena:not(.chess).textequip .player[data-position='0'] .equips>.card{
+	background-image: none !important;
 }

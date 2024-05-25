@@ -1,4 +1,7 @@
 game.import("extension",function(lib,game,ui,get,ai,_status){
+	// 适配新版本体，加强对未将数组contains方法改为includes方法的旧扩展的兼容（控制台警告），注意classList还是用contains方法
+	Array.prototype.contains = Array.prototype.includes;//懒得一个个改了，直接用这个消去报错。
+	
 	// 关闭扩展后，自动将游戏人数恢复为八人，避免报错
 	if(!game.getExtensionConfig('搬运自用','enable') && lib.config.youxirenshu_identityguozhan!=false){
 		game.saveConfig('player_number','8','identity');
@@ -8,13 +11,24 @@ game.import("extension",function(lib,game,ui,get,ai,_status){
 return {
 name:"搬运自用",
 content:function(config,pack){
-	// 按钮宽度调整（武将/卡牌的全部禁用/全部启用）
-	game.dynamicStyle.update(".content>.pointerdiv", {
-		width: "calc(100% - 18px) !important"
-	});
+	// 临时修复塔防等模式的武将显示问题
+	if(!['chess', 'tafang', 'stone'].includes(get.mode())){
+		// 按钮宽度调整（武将/卡牌的全部禁用/全部启用）
+		game.dynamicStyle.update(".content>.pointerdiv", {
+			width: "calc(100% - 18px) !important"
+		});
+	}
 	
 	// 武将称号补充（缓更中）
 	if(config.wujiangchenghao){
+		// 删除本体武将称号（放的位置不对）
+		for (let key in lib.characterTitle) {
+			if (lib.characterTitle[key].startsWith('S') || lib.characterTitle[key].startsWith('#g') || lib.characterTitle[key].startsWith('#b') || lib.characterTitle[key].startsWith('#r') || lib.characterTitle[key].startsWith('#p')) {
+				lib.characterTitle[key] = '';
+			}
+		}
+		
+		// lib.characterTitle.AAA = lib.characterTitle.BBB赋值时注意顺序（lib.characterTitle.BBB要先写且有值）
 		// standard:'标准',
 		lib.characterTitle.old_re_lidian = "深明大义";
 		lib.characterTitle.ganfuren = "昭烈皇后";
@@ -51,6 +65,7 @@ content:function(config,pack){
 		// refresh:'界限突破',
 		lib.characterTitle.re_xushu = "化剑为犁";
 		lib.characterTitle.re_lidian = lib.characterTitle.old_re_lidian;
+		lib.characterTitle.xin_yuji = "太平道人";
 		// shenhua:'神话再临',
 		lib.characterTitle.re_huangzhong = "老当益壮";
 		lib.characterTitle.old_zhoutai = "历战之驱";
@@ -61,7 +76,7 @@ content:function(config,pack){
 		lib.characterTitle.re_weiyan = "嗜血的独狼";
 		lib.characterTitle.xiaoqiao = "矫情之花";
 		lib.characterTitle.sp_zhangjiao = "天公将军";
-		lib.characterTitle.re_yuji = "太平道人";
+		lib.characterTitle.re_yuji = lib.characterTitle.xin_yuji;
 		lib.characterTitle.sp_zhugeliang = "卧龙";
 		lib.characterTitle.pangtong = "凤雏";
 		lib.characterTitle.xunyu = "王佐之才";
@@ -185,17 +200,23 @@ content:function(config,pack){
 		lib.characterTitle.xuezong = "彬彬之玊";
 		lib.characterTitle.old_huaxiong = "魔将";
 		lib.characterTitle.yujin = "讨暴坚垒";
+		lib.characterTitle.linghuyu = "";
+		lib.characterTitle.yj_simafu = "";
+		lib.characterTitle.yj_xuangongzhu = "";
+		lib.characterTitle.xukun = "";
 		// sp:'璀璨星河',
 		lib.characterTitle.hansui = "雄踞北疆";
 		lib.characterTitle.fanjiangzhangda = "你死我亡";
 		lib.characterTitle.wutugu = "霸体金刚";
 		lib.characterTitle.dongbai = "魔姬";
+		lib.characterTitle.daxiaoqiao = "江东之花";
 		lib.characterTitle.zhangren = "索命神射";
 		// onlyOL:'OL专属',
 		lib.characterTitle.ol_sb_jiangwei = "炎志灼心";
 		lib.characterTitle.ol_sb_guanyu = "威震华夏";
 		lib.characterTitle.ol_sb_taishici = "矢志全忠孝";
 		lib.characterTitle.ol_sb_yuanshao = "席卷八荒";
+		lib.characterTitle.ol_sb_pangtong = "";
 		// yingbian:'文德武备',
 		lib.characterTitle.chengjichengcui = "袒忿半瓦";
 		lib.characterTitle.wangxiang = "沂川跃鲤";
@@ -239,6 +260,9 @@ content:function(config,pack){
 		lib.characterTitle.clan_wanglun = "半缘修道";
 		lib.characterTitle.clan_xunyou = "深密绝谟";
 		lib.characterTitle.clan_wuqiao = "孤节卅岁";
+		lib.characterTitle.clan_wangguang = "才性离异";
+		lib.characterTitle.clan_wangmingshan = "擅书多艺";
+		lib.characterTitle.clan_zhongyao = "开达理干";
 		// xinghuoliaoyuan:'星火燎原',
 		lib.characterTitle.wangcan = "七子之冠冕";
 		lib.characterTitle.sp_taishici = "北海酬恩";
@@ -263,16 +287,23 @@ content:function(config,pack){
 		lib.characterTitle.liuyong = "甘陵王";
 		lib.characterTitle.zhangxuan = "玉宇嫁蔷";
 		// xianding:'限定专属',
+		lib.characterTitle.dc_sb_zhugejin = "清雅德纯";
+		lib.characterTitle.dc_sb_jiaxu = "";
+		lib.characterTitle.sp_zhenji = "善言贤女";
+		lib.characterTitle.wu_guanyu = "义武千秋";
 		lib.characterTitle.dc_sb_simayi = "韬谋韫势";
 		lib.characterTitle.dc_sb_zhouyu = "炽谋英隽";
 		lib.characterTitle.dc_sb_lusu = "鸿谋翼远";
 		lib.characterTitle.wu_luxun = "释武怀儒";
+		lib.characterTitle.dc_daxiaoqiao = lib.characterTitle.daxiaoqiao;
 		lib.characterTitle.wu_zhugeliang = "忠武良弼";
 		lib.characterTitle.guozhao = "碧海青天";
 		// sp2:'系列专属',
 		lib.characterTitle.weiwenzhugezhi = "帆至夷州";
 		lib.characterTitle.xushao = "识人读心";
+		lib.characterTitle.zhangchangpu = "矜严明训";
 		// extra:'神将',
+		lib.characterTitle.dc_shen_huatuo = "灵魂的医者";
 		lib.characterTitle.shen_xuzhu = "嗜战的熊罴";
 		lib.characterTitle.shen_lusu = "兴吴之邓禹";
 		lib.characterTitle.shen_huatuo = "悬壶济世";
@@ -308,19 +339,21 @@ content:function(config,pack){
 		lib.characterTitle.shen_zhenji = "洛水凌波";
 		lib.characterTitle.boss_zhaoyun = "天龙乘云";
 		// mobile:'移动版',
+		lib.characterTitle.shichangshi = "祸乱纲常";
 		lib.characterTitle.nanhualaoxian = "冯虚御风";
 		lib.characterTitle.yangbiao = "德彰海内";
 		// shiji:'始计篇',
 		
 		// sb:'谋攻篇',
+		lib.characterTitle.sb_handang = "";
+		lib.characterTitle.sb_gongsunzan = "";
 		lib.characterTitle.sb_gaoshun = "";
 		lib.characterTitle.sb_xiahoudun = "";
-		lib.characterTitle.sb_xunyu = "";
-		lib.characterTitle.sb_caopi = "";
+		lib.characterTitle.sb_xunyu = lib.characterTitle.xunyu;
+		lib.characterTitle.sb_caopi = "魏文帝";
 		lib.characterTitle.sb_guanyu = "关圣帝君";
 		lib.characterTitle.sb_huangyueying = "足智多谋";
 		lib.characterTitle.sb_sp_zhugeliang = "忠武侯";
-		lib.characterTitle.sb_zhugeliang = "忠武侯";
 		lib.characterTitle.sb_zhanghe = lib.characterTitle.zhanghe;
 		lib.characterTitle.sb_yujin = "威严毅重";
 		lib.characterTitle.sb_huaxiong = "跋扈雄狮";
@@ -357,7 +390,10 @@ content:function(config,pack){
 		lib.characterTitle.sb_yl_luzhi = lib.characterTitle.yl_luzhi;
 		lib.characterTitle.sb_xiaoqiao = lib.characterTitle.xiaoqiao;
 		// tw:'外服武将',
+		lib.characterTitle.tw_yanliang = "何惧华雄";
+		lib.characterTitle.tw_wenchou = "有去无回";
 		lib.characterTitle.tw_niufudongxie = "虺伴蝎行";
+		lib.characterTitle.tw_daxiaoqiao = lib.characterTitle.daxiaoqiao;
 		lib.characterTitle.kaisa = "Caesar";
 		// collab:'联动卡',
 		lib.characterTitle.dc_zhaoyun = lib.characterTitle.boss_zhaoyun;
@@ -365,7 +401,10 @@ content:function(config,pack){
 		lib.characterTitle.dc_caocao = lib.characterTitle.caocao;
 		lib.characterTitle.dc_liubei = lib.characterTitle.liubei;
 		lib.characterTitle.dc_sunquan = lib.characterTitle.sunquan;
+		lib.characterTitle.dc_wuyi = lib.characterTitle.wuyi;
 		// offline:'线下武将',
+		lib.characterTitle.yj_zhouji = "江东的红莲";
+		lib.characterTitle.jsp_caoren = "险不辞难";
 		lib.characterTitle.sp_liubei = "汉昭烈帝";
 		lib.characterTitle.sp_zhangfei = "横矛立马";
 		lib.characterTitle.sp_xiahoudun = "啖睛的苍狼";
@@ -434,7 +473,7 @@ content:function(config,pack){
 		// lib.characterTitle.junk_sunquan = lib.characterTitle.shen_sunquan;
 		lib.characterTitle.junk_sunquan = "大魏吴王";//彩蛋
 		lib.characterTitle.ol_yuanshu = "野心渐增";
-		lib.characterTitle.jsp_caoren = "险不辞难";
+		lib.characterTitle.yuji = lib.characterTitle.xin_yuji;
 		lib.characterTitle.re_yujin = "魏武之刚";
 		
 		// guozhan.js
@@ -442,6 +481,8 @@ content:function(config,pack){
 		lib.characterTitle.gz_liubei = lib.characterTitle.liubei;
 		lib.characterTitle.gz_sunquan = lib.characterTitle.sunquan;
 		lib.characterTitle.gz_zhangjiao = lib.characterTitle.sp_zhangjiao;
+		
+		lib.characterTitle.gz_yuji = "魂绕左右";
 		
 		lib.characterTitle.gz_jun_liubei = "龙横蜀汉";
 		lib.characterTitle.gz_jun_zhangjiao = "时代的先驱";
@@ -464,7 +505,7 @@ content:function(config,pack){
 	delete lib.translate.boss_yingzhong_append;
 	
 	// 武将引文补充（缓更中）
-	if(config.wujiangyinwen){
+	if(config.wujiangyinwen && config.youjiancaidan){
 		var isguozhanmode = lib.config.mode === 'guozhan';
 		var isversusmode_three = lib.config.mode==='versus'&&get.config('versus_mode')==='three';
 		var issinglemode = lib.config.mode === 'single';
@@ -478,7 +519,8 @@ content:function(config,pack){
 			var styleRight = `<br><div style="width:98%;text-align:right;font-size:13px;font-style:italic">${content}</div>`;
 			return styleRight;
 		}
-		function setTranslation(characterPacks, translationTextLeft, translationTextRight) {
+		// 定义window.setWuJiangYinWenTranslation，扩展可用此法写引文了（开启武将引文补充功能）
+		window.setWuJiangYinWenTranslation = function (characterPacks, translationTextLeft, translationTextRight) {
 			var style = addStyleLeft(translationTextLeft);
 			if (translationTextRight!='') {
 				style += addStyleRight(translationTextRight);
@@ -508,11 +550,11 @@ content:function(config,pack){
 		}
 		
 		// C
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_caocao',
 			true,
 		], '山不厌高，海不厌深。周公吐哺，天下归心。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_caocao',
 			isguozhanmode,
 			'lib.characterPack.standard.caocao',
@@ -520,15 +562,15 @@ content:function(config,pack){
 			'lib.characterSingle.caocao',
 			issinglemode,
 		], '宁教我负天下人，休教天下人负我。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.jsrg.jsrg_caocao',
 			true,
 		], '若天命在吾，吾为周文王矣。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_caohong',
 			isguozhanmode,
 		], '梁、沛之间，非子廉无有今日。', '——卞皇后');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.new_caoren',
 			true,
 			'lib.characterPack.shenhua.old_caoren',
@@ -536,17 +578,17 @@ content:function(config,pack){
 			'lib.characterPack.mode_guozhan.gz_caoren',
 			isguozhanmode,
 		], '将军真天人也！', '——陈矫');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.caozhang',
 			true,
 		], '长驱蹈匈奴，左顾凌鲜卑。', '——曹植');
 		// D
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.shenhua.dengai',
 			true,
 		], '马到山根断，兵来石径分。', '——《三国演义》');
 		// G
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.ganning',
 			true,
 			'lib.characterPack.mode_guozhan.gz_ganning',
@@ -554,30 +596,30 @@ content:function(config,pack){
 			'lib.characterSingle.ganning',
 			issinglemode,
 		], '孟德有张辽，孤有甘兴霸，足以相敌也！', '——孙权');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.guanyu',
 			true,
 			'lib.characterPack.mode_guozhan.gz_guanyu',
 			isguozhanmode,
 		], '孟起虽雄烈过人，亦乃黥布、彭越之徒耳；当与翼德并驱争先，犹未及美髯公之绝伦超群也。', '——诸葛亮');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_guanyu',
 			true,
 		], '他回来了，带着一身新装备——鬼龙斩月刀和梦魇赤兔马。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.jsrg.jsrg_guojia',
 			true,
 		], '虽然天数三分定，妙算神机亦可图。若是当时存奉孝，难容西蜀与东吴。', '——《三国演义》');
 		// H
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.old_huaxiong',
 			true,
 		], '潘凤又被华雄斩了！', '——飞马来报');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.huaxiong',
 			true,
 		], '小将愿往斩华雄头，献于帐下！', '——关羽');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.huanggai',
 			true,
 			'lib.characterPack.mode_guozhan.gz_huanggai',
@@ -586,85 +628,85 @@ content:function(config,pack){
 			issinglemode,
 		], '某受孙氏厚恩，虽肝脑涂地，亦无怨悔。', '');
 		// J
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_jiangfei',
 			isguozhanmode,
 		], '蒋琬、费祎荷国之重，亦见谥。', '——《后主传》');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.shenhua.jiangwei',
 			true,
 		], '大胆应无惧，雄心誓不回。', '——《三国演义》');
 		// K
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_kongrong',
 			isguozhanmode,
 		], '融负有高气，志在靖难，而才疏意广，迄无成功。', '——《后汉书》');
 		// L
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.lingtong',
 			true,
 			'lib.characterPack.old.old_lingtong',
 			true,
 		], '公绩，亡者已矣，苟使卿在，何患无人？', '——孙权');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_liubei',
 			isguozhanmode,
 		], '先主之弘毅宽厚，知人待士，盖有高祖之风，英雄之器焉。', '——陈寿');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.lvbu',
 			true,
 			'lib.characterPack.mode_guozhan.gz_lvbu',
 			isguozhanmode,
 		], '骁勇无敌，善战无前，然勇而少谋，暴而少仁。', '——陈宫');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_lvbu',
 			true,
 		], '颤抖着滚开吧杂鱼们！这世上还有谁能满足我！？', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.lvmeng',
 			true,
 			'lib.characterPack.mode_guozhan.gz_lvmeng',
 			isguozhanmode,
 		], '吕蒙勇而有谋断，识军计，谲郝普，擒关羽，最其妙者。', '——陈寿');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_lvmeng',
 			true,
 		], '看那温暖而盛情的光芒，我们别无选择。', '');
 		// M
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.old_madai',
 			true,
 			'lib.characterPack.old.madai',
 			true,
 		], '吾敢杀汝！', '');
 		// P
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.panfeng',
 			true,
 			'lib.characterPack.mode_guozhan.gz_panfeng',
 			isguozhanmode,
 		], '吾有上将潘凤，可斩华雄。', '——韩馥');
 		// S
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_simayi',
 			true,
 		], '终于，结束了么……', '“不，这是新的开始。”');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_sunquan',
 			isguozhanmode,
 		], '生子当如孙仲谋。', '——曹操');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.jsrg.jsrg_sunce',
 			true,
 		], '然策一举而遂收江东，为鼎足之资，使之不死，当为魏之大患。', '——何去非');
 		// W
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.wangyi',
 			true,
 			'lib.characterPack.old.old_wangyi',
 			true,
 		], '凡自冀城之难，至于祁山，昂出九奇，异辄参焉。', '——《列女传》');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.weiyan',
 			true,
 			'lib.characterPack.mode_guozhan.gz_weiyan',
@@ -672,12 +714,12 @@ content:function(config,pack){
 			'lib.characterSingle.weiyan',
 			issinglemode,
 		], '谁敢杀我？', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.sp.wenpin',
 			isversusmode_three,
 		], '仲业，卿真忠臣也。', '——曹操');
 		// X
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.xiahoudun',
 			true,
 			'lib.characterPack.mode_guozhan.gz_xiahoudun',
@@ -687,13 +729,13 @@ content:function(config,pack){
 			'lib.characterSingle.xiahoudun',
 			issinglemode,
 		], '惇，魏之元功，勋书竹帛。', '——司马炎');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.xuzhu',
 			true,
 			'lib.characterPack.mode_guozhan.gz_xuzhu',
 			isguozhanmode,
 		], '吾见恶战者莫如许褚，真虎痴也！', '——马超');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.xuhuang',
 			true,
 			'lib.characterPack.mode_guozhan.gz_xuhuang',
@@ -701,39 +743,39 @@ content:function(config,pack){
 			'lib.characterSingle.xuhuang',
 			issinglemode,
 		], '古人患不遭明君，今幸遇之，当以功自效，何用私誉为！', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.old_xusheng',
 			true,
 			'lib.characterPack.mode_guozhan.gz_xusheng',
 			isguozhanmode,
 		], '江东将相如此，非久下人者也。', '——邢贞');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.xunyou',
 			true,
 		], '庶乎算无遗策，经达权变，其良、平之亚欤！', '——陈寿');
 		// Y
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.old.re_yujin',
 			true,
 		], '太祖建兹武功，而时之良将，五子为先，于禁最号毅重，然弗克其终。', '——陈寿');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_re_yuanshao',
 			isguozhanmode,
 		], '振一郡之卒，撮冀州之众，威震河朔，名重天下。', '——沮授');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_yuejin',
 			isguozhanmode,
 		], '乐进以骁果显名，而鉴其行事，未副所闻。', '——陈寿');
 		// Z
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_zangba',
 			isguozhanmode,
 		], '若假霸步骑万人，必能横行江表。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.yijiang.zhangchunhua',
 			true,
 		], '宣穆阅礼，偶德潜鳞，翊天造之艰虞，嗣涂山之逸响，宝运归其后胤，盖有母仪之助焉。', '——《晋书·后妃传》');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.zhangfei',
 			true,
 			'lib.characterPack.mode_guozhan.gz_zhangfei',
@@ -741,11 +783,11 @@ content:function(config,pack){
 			'lib.characterSingle.zhangfei',
 			issinglemode,
 		], '吾乃燕人张翼德也，谁敢与我决一死战！', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.mode_guozhan.gz_jun_zhangjiao',
 			isguozhanmode,
 		], '苍天已死，黄天当立，岁在甲子，天下大吉。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.zhangliao',
 			true,
 			'lib.characterPack.refresh.re_zhangliao',
@@ -753,7 +795,7 @@ content:function(config,pack){
 			'lib.characterPack.mode_guozhan.gz_zhangliao',
 			isguozhanmode,
 		], '张辽虽病，不可挡也，慎之！', '——孙权');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.standard.zhaoyun',
 			true,
 			'lib.characterPack.mode_guozhan.gz_zhaoyun',
@@ -761,19 +803,19 @@ content:function(config,pack){
 			'lib.characterSingle.zhaoyun',
 			issinglemode,
 		], '子龙一身都是胆也。', '——刘备');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_zhaoyun',
 			true,
 		], '子廉，我没有看错，山坡上那位将军是神龙下凡！', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_zhouyu',
 			true,
 		], '凝听吧，孟德，这献给你的镇魂曲。', '');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_zhugeliang',
 			true,
 		], '状诸葛多智而近妖。', '——鲁迅');
-		setTranslation([
+		setWuJiangYinWenTranslation([
 			'lib.characterPack.jsrg.jsrg_zhugeliang',
 			true,
 		], '庶竭驽钝，攘除奸凶，兴复汉室，还于旧都。', '——诸葛亮《出师表》');
@@ -856,128 +898,164 @@ content:function(config,pack){
 		for(var i in obj) lib.translate[i+"_append"]=obj[i];
 	}
 	
-	// 发送交互表情时间修改
-	// 修改game.js的函数nodeintro:(node,simple,evt)=>{
-	get.nodeintro=function(node,simple,evt){
-		var uiintro = ui.create.dialog('hidden', 'notouchscroll');
-		if (node.classList.contains('player') && !node.name) {
-			return uiintro;
+	// 右键菜单修改
+	if(config.youjiancaidan){
+		// 修复三板斧不能正常显示的bug
+		function addBrAndSpace(str) {
+			// 如果字符串长度小于等于2，则原样返回
+			if (str.length <= 2) {
+				return str;
+			}
+			// 用正则表达式在每两个字之后插入 <br> 标签和空格
+			return str.replace(/(..)/g, '$1<br><span style="letter-spacing: 0.75em;">&nbsp;</span>').replace(/<br><span style="letter-spacing: 0.75em;">&nbsp;<\/span>$/, ''); // 去除末尾可能的多余 <br> 和空格
 		}
-		var i, translation, intro, str;
-		if (node._nointro) return;
-		if (typeof node._customintro == 'function') {
-			if (node._customintro(uiintro, evt) === false) return;
-			if (evt) lib.placePoppedDialog(uiintro, evt);
-		}
-		else if (Array.isArray(node._customintro)) {
-			var caption = node._customintro[0];
-			var content = node._customintro[1];
-			if (typeof caption == 'function') {
-				caption = caption(node);
+		// 发送交互表情时间修改
+		// 修改game.js的函数nodeintro:(node,simple,evt)=>{
+		get.nodeintro=function(node,simple,evt){
+			var uiintro = ui.create.dialog('hidden', 'notouchscroll');
+			if (node.classList.contains('player') && !node.name) {
+				return uiintro;
 			}
-			if (typeof content == 'function') {
-				content = content(node);
+			var i, translation, intro, str;
+			if (node._nointro) return;
+			if (typeof node._customintro == 'function') {
+				if (node._customintro(uiintro, evt) === false) return;
+				if (evt) lib.placePoppedDialog(uiintro, evt);
 			}
-			uiintro.add(caption);
-			uiintro.add('<div class="text center" style="padding-bottom:5px">' + content + '</div>');
-		}
-		else if (node.classList.contains('player') || node.linkplayer) {
-			if (node.linkplayer) {
-				node = node.link;
-			}
-			let capt = get.translation(node.name);
-			const characterInfo = get.character(node.name), sex = node.sex || characterInfo[0];
-			if (sex && sex != 'unknown' && lib.config.show_sex) capt += `&nbsp;&nbsp;${sex == 'none' ? '无' : get.translation(sex)}`;
-			const group = node.group;
-			if (group && group != 'unknown' && lib.config.show_group) capt += `&nbsp;&nbsp;${get.translation(group)}`;
-			uiintro.add(capt);
-
-			if (lib.characterTitle[node.name]) {
-				uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
-			}
-
-			if (get.characterInitFilter(node.name)) {
-				const initFilters = get.characterInitFilter(node.name).filter(tag => {
-					if (!lib.characterInitFilter[node.name]) return true;
-					return lib.characterInitFilter[node.name](tag) !== false;
-				});
-				if(initFilters.length){
-					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
-					uiintro.addText(str);
+			else if (Array.isArray(node._customintro)) {
+				var caption = node._customintro[0];
+				var content = node._customintro[1];
+				if (typeof caption == 'function') {
+					caption = caption(node);
 				}
+				if (typeof content == 'function') {
+					content = content(node);
+				}
+				uiintro.add(caption);
+				uiintro.add('<div class="text center" style="padding-bottom:5px">' + content + '</div>');
 			}
+			else if (node.classList.contains('player') || node.linkplayer) {
+				if (node.linkplayer) {
+					node = node.link;
+				}
+				let capt = get.translation(node.name);
+				const characterInfo = get.character(node.name), sex = node.sex || characterInfo[0];
+				if (sex && sex != 'unknown' && lib.config.show_sex) capt += `&nbsp;&nbsp;${sex == 'none' ? '无' : get.translation(sex)}`;
+				const group = node.group;
+				if (group && group != 'unknown' && lib.config.show_group) capt += `&nbsp;&nbsp;${get.translation(group)}`;
+				uiintro.add(capt);
 
-			if (!node.noclick) {
-				const allShown = (node.isUnderControl() || (!game.observe && game.me && game.me.hasSkillTag('viewHandcard', null, node, true)));
-				const shownHs = node.getShownCards();
-				if (shownHs.length) {
-					uiintro.add('<div class="text center">明置的手牌</div>');
-					uiintro.addSmall(shownHs);
-					if (allShown) {
+				if (lib.characterTitle[node.name]) {
+					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
+				}
+
+				if (get.characterInitFilter(node.name)) {
+					const initFilters = get.characterInitFilter(node.name).filter(tag => {
+						if (!lib.characterInitFilter[node.name]) return true;
+						return lib.characterInitFilter[node.name](tag) !== false;
+					});
+					if(initFilters.length){
+						const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
+						uiintro.addText(str);
+					}
+				}
+
+				if (!node.noclick) {
+					const allShown = (node.isUnderControl() || (!game.observe && game.me && game.me.hasSkillTag('viewHandcard', null, node, true)));
+					const shownHs = node.getShownCards();
+					if (shownHs.length) {
+						uiintro.add('<div class="text center">明置的手牌</div>');
+						uiintro.addSmall(shownHs);
+						if (allShown) {
+							var hs = node.getCards('h');
+							hs.removeArray(shownHs);
+							if (hs.length) {
+								uiintro.add('<div class="text center">其他手牌</div>');
+								uiintro.addSmall(hs);
+							}
+						}
+					}
+					else if (allShown) {
 						var hs = node.getCards('h');
-						hs.removeArray(shownHs);
 						if (hs.length) {
-							uiintro.add('<div class="text center">其他手牌</div>');
+							uiintro.add('<div class="text center">手牌</div>');
 							uiintro.addSmall(hs);
 						}
 					}
 				}
-				else if (allShown) {
-					var hs = node.getCards('h');
-					if (hs.length) {
-						uiintro.add('<div class="text center">手牌</div>');
-						uiintro.addSmall(hs);
+
+				var skills = node.getSkills(null, false, false).slice(0);
+				var skills2 = game.filterSkills(skills, node);
+				if (node == game.me && node.hiddenSkills.length) {
+					skills.addArray(node.hiddenSkills);
+				}
+				for (var i in node.disabledSkills) {
+					if (node.disabledSkills[i].length == 1 &&
+						node.disabledSkills[i][0] == i + '_awake' &&
+						!node.hiddenSkills.includes(i)) {
+						skills.add(i);
 					}
 				}
-			}
-
-			var skills = node.getSkills(null, false, false).slice(0);
-			var skills2 = game.filterSkills(skills, node);
-			if (node == game.me && node.hiddenSkills.length) {
-				skills.addArray(node.hiddenSkills);
-			}
-			for (var i in node.disabledSkills) {
-				if (node.disabledSkills[i].length == 1 &&
-					node.disabledSkills[i][0] == i + '_awake' &&
-					!node.hiddenSkills.includes(i)) {
-					skills.add(i);
-				}
-			}
-			for (i = 0; i < skills.length; i++) {
-				if (lib.skill[skills[i]] && (lib.skill[skills[i]].nopop || lib.skill[skills[i]].equipSkill)) continue;
-				if (lib.translate[skills[i] + '_info']) {
-					if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
-					else {
-						translation = get.translation(skills[i]);
-						if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
-					}
-
-					if (node.forbiddenSkills[skills[i]]) {
-						var forbidstr = '<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>';
-						if (node.forbiddenSkills[skills[i]].length) {
-							forbidstr += '（与' + get.translation(node.forbiddenSkills[skills[i]]) + '冲突）<br>';
-						}
+				for (i = 0; i < skills.length; i++) {
+					if (lib.skill[skills[i]] && (lib.skill[skills[i]].nopop || lib.skill[skills[i]].equipSkill)) continue;
+					if (lib.translate[skills[i] + '_info']) {
+						if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
 						else {
-							forbidstr += '（双将禁用）<br>';
+							translation = get.translation(skills[i]);
+							if (!lib.skill[skills[i]].nobracket) translation = `【${addBrAndSpace(translation)}】`;
 						}
-						forbidstr += get.skillInfoTranslation(skills[i], node) + '</div></div>';
-						uiintro.add(forbidstr);
-					}
-					else if (!skills2.includes(skills[i])) {
-						if (lib.skill[skills[i]].preHidden && get.mode() == 'guozhan') {
-							uiintro.add('<div><div class="skill" style="opacity:0.5">' + translation + '</div><div><span style="opacity:0.5">' + get.skillInfoTranslation(skills[i], node) + '</span><br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">预亮技能</div></div></div>');
-							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
-							if (_status.prehidden_skills.includes(skills[i])) {
-								underlinenode.classList.remove('on');
+
+						if (node.forbiddenSkills[skills[i]]) {
+							var forbidstr = '<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>';
+							if (node.forbiddenSkills[skills[i]].length) {
+								forbidstr += '（与' + get.translation(node.forbiddenSkills[skills[i]]) + '冲突）<br>';
 							}
-							underlinenode.link = skills[i];
-							underlinenode.listen(ui.click.hiddenskill);
+							else {
+								forbidstr += '（双将禁用）<br>';
+							}
+							forbidstr += get.skillInfoTranslation(skills[i], node) + '</div></div>';
+							uiintro.add(forbidstr);
 						}
-						else uiintro.add('<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-					}
-					else if (lib.skill[skills[i]].temp || !node.skills.includes(skills[i]) || lib.skill[skills[i]].thundertext) {
-						if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
-							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
+						else if (!skills2.includes(skills[i])) {
+							if (lib.skill[skills[i]].preHidden && get.mode() == 'guozhan') {
+								uiintro.add('<div><div class="skill" style="opacity:0.5">' + translation + '</div><div><span style="opacity:0.5">' + get.skillInfoTranslation(skills[i], node) + '</span><br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">预亮技能</div></div></div>');
+								var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
+								if (_status.prehidden_skills.includes(skills[i])) {
+									underlinenode.classList.remove('on');
+								}
+								underlinenode.link = skills[i];
+								underlinenode.listen(ui.click.hiddenskill);
+							}
+							else uiintro.add('<div style="opacity:0.5"><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
+						}
+						else if (lib.skill[skills[i]].temp || !node.skills.includes(skills[i]) || lib.skill[skills[i]].thundertext) {
+							if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
+								uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
+								var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
+								if (lib.skill[skills[i]].frequent) {
+									if (lib.config.autoskilllist.includes(skills[i])) {
+										underlinenode.classList.remove('on');
+									}
+								}
+								if (lib.skill[skills[i]].subfrequent) {
+									for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
+										if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
+											underlinenode.classList.remove('on');
+										}
+									}
+								}
+								if (lib.config.autoskilllist.includes(skills[i])) {
+									underlinenode.classList.remove('on');
+								}
+								underlinenode.link = skills[i];
+								underlinenode.listen(ui.click.autoskill2);
+							}
+							else {
+								uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
+							}
+						}
+						else if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
+							uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
 							var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
 							if (lib.skill[skills[i]].frequent) {
 								if (lib.config.autoskilllist.includes(skills[i])) {
@@ -997,780 +1075,22 @@ content:function(config,pack){
 							underlinenode.link = skills[i];
 							underlinenode.listen(ui.click.autoskill2);
 						}
-						else {
-							uiintro.add('<div><div class="skill thundertext thunderauto">' + translation + '</div><div class="thundertext thunderauto">' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-						}
-					}
-					else if (lib.skill[skills[i]].frequent || lib.skill[skills[i]].subfrequent) {
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
-						var underlinenode = uiintro.content.lastChild.querySelector('.underlinenode');
-						if (lib.skill[skills[i]].frequent) {
-							if (lib.config.autoskilllist.includes(skills[i])) {
-								underlinenode.classList.remove('on');
-							}
-						}
-						if (lib.skill[skills[i]].subfrequent) {
-							for (var j = 0; j < lib.skill[skills[i]].subfrequent.length; j++) {
-								if (lib.config.autoskilllist.includes(skills[i] + '_' + lib.skill[skills[i]].subfrequent[j])) {
-									underlinenode.classList.remove('on');
-								}
-							}
-						}
-						if (lib.config.autoskilllist.includes(skills[i])) {
-							underlinenode.classList.remove('on');
-						}
-						underlinenode.link = skills[i];
-						underlinenode.listen(ui.click.autoskill2);
-					}
-					else if (lib.skill[skills[i]].clickable && node.isIn() && node.isUnderControl(true)) {
-						var intronode = uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
-						if (!_status.gameStarted || (lib.skill[skills[i]].clickableFilter && !lib.skill[skills[i]].clickableFilter(node))) {
-							intronode.classList.add('disabled');
-							intronode.style.opacity = 0.5;
-						}
-						else {
-							intronode.link = node;
-							intronode.func = lib.skill[skills[i]].clickable;
-							intronode.classList.add('pointerdiv');
-							intronode.listen(ui.click.skillbutton);
-						}
-					}
-					else {
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
-					}
-					if (lib.translate[skills[i] + '_append']) {
-						uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
-					}
-				}
-			}
-			
-			// 新增武将引文接口
-			if (config.wujiangyinwen && lib.translatecharacterappend[node.name]) {
-				uiintro.add('<div class="text">' + lib.translatecharacterappend[node.name] + '</div>');
-			}
-			
-			// if(get.is.phoneLayout()){
-			// 	var storage=node.storage;
-			// 	for(i in storage){
-			// 		if(get.info(i)&&get.info(i).intro){
-			// 			intro=get.info(i).intro;
-			// 			if(node.getSkills().concat(lib.skill.global).includes(i)==false&&!intro.show) continue;
-			// 			var name=intro.name?intro.name:get.translation(i);
-			// 			if(typeof name=='function'){
-			// 				name=name(storage[i],node);
-			// 			}
-			// 			translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
-			// 			var stint=get.storageintro(intro.content,storage[i],node,null,i);
-			// 			if(stint){
-			// 				translation+=stint+'</div></div>';
-			// 				uiintro.add(translation);
-			// 			}
-			// 		}
-			// 	}
-			// }
-
-			if (lib.config.right_range && _status.gameStarted) {
-				uiintro.add(ui.create.div('.placeholder'));
-				var table, tr, td;
-				table = document.createElement('table');
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-				td = document.createElement('td');
-				td.innerHTML = '距离';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '手牌';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '行动';
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = '伤害';
-				tr.appendChild(td);
-
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-				td = document.createElement('td');
-				if (node == game.me || !game.me || !game.me.isIn()) {
-					td.innerHTML = '-';
-				}
-				else {
-					var dist1 = get.numStr(Math.max(1, game.me.distanceTo(node)));
-					var dist2 = get.numStr(Math.max(1, node.distanceTo(game.me)));
-					if (dist1 == dist2) {
-						td.innerHTML = dist1;
-					}
-					else {
-						td.innerHTML = dist1 + '/' + dist2;
-					}
-				}
-				tr.appendChild(td);
-				td = document.createElement('td');
-				let handcardLimit = node.getHandcardLimit();
-				td.innerHTML = `${node.countCards('h')}/${handcardLimit >= 114514 ? '∞' : handcardLimit}`;
-				tr.appendChild(td);
-				td = document.createElement('td');
-				td.innerHTML = node.phaseNumber;
-				tr.appendChild(td);
-				td = document.createElement('td');
-
-				(function () {
-					num = 0;
-					for (var j = 0; j < node.stat.length; j++) {
-						if (typeof node.stat[j].damage == 'number') num += node.stat[j].damage;
-					}
-					td.innerHTML = num;
-				}());
-				tr.appendChild(td);
-				table.style.width = 'calc(100% - 20px)';
-				table.style.marginLeft = '10px';
-
-				uiintro.content.appendChild(table);
-				if (!lib.config.show_favourite) {
-					table.style.paddingBottom = '5px';
-				}
-			}
-			if (!simple || get.is.phoneLayout()) {
-				var es = node.getCards('e');
-				for (var i = 0; i < es.length; i++) {
-					var cardinfo = lib.card[es[i].name];
-					if (cardinfo && cardinfo.cardPrompt) uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + cardinfo.cardPrompt(es[i]) + '</div></div>');
-					else uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + lib.translate[es[i].name + '_info'] + '</div></div>');
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
-
-					if (lib.translate[es[i].name + '_append']) {
-						uiintro.add('<div class="text">' + lib.translate[es[i].name + '_append'] + '</div>');
-					}
-				}
-				var js = node.getCards('j');
-				for (var i = 0; i < js.length; i++) {
-					if (js[i].viewAs && js[i].viewAs != js[i].name) {
-						let html = js[i].outerHTML;
-						let cardInfo = lib.card[js[i].viewAs], showCardIntro=true;
-						if (cardInfo.blankCard) {
-							var cardOwner = get.owner(js[i]);
-							if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
-						}
-						if (!showCardIntro) {
-							html=ui.create.button(js[i],'blank').outerHTML;
-						}
-						uiintro.add('<div><div class="skill">' + html + '</div><div>' + lib.translate[js[i].viewAs] + '：' + lib.translate[js[i].viewAs + '_info'] + '</div></div>');
-					}
-					else {
-						uiintro.add('<div><div class="skill">' + js[i].outerHTML + '</div><div>' + lib.translate[js[i].name + '_info'] + '</div></div>');
-					}
-					uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
-				}
-				if (get.is.phoneLayout()) {
-					var markCoutainer = ui.create.div('.mark-container.marks');
-					for (var i in node.marks) {
-						var nodemark = node.marks[i].cloneNode(true);
-						nodemark.classList.add('pointerdiv');
-						nodemark.link = node.marks[i];
-						nodemark.style.transform = '';
-						markCoutainer.appendChild(nodemark);
-						nodemark.listen(function () {
-							uiintro.noresume = true;
-							var rect = this.link.getBoundingClientRect();
-							ui.click.intro.call(this.link, {
-								clientX: rect.left + rect.width,
-								clientY: rect.top + rect.height / 2,
-							});
-							if (lib.config.touchscreen) {
-								uiintro._close();
-							}
-						});
-					}
-					if (markCoutainer.childElementCount) {
-						uiintro.addText('标记');
-						uiintro.add(markCoutainer);
-					}
-				}
-			}
-			if (!game.observe && _status.gameStarted && game.me && node != game.me) {
-				ui.throwEmotion = [];
-				uiintro.addText('发送交互表情');
-				var click = function () {
-					if (_status.dragged) return;
-					if (_status.justdragged) return;
-					if (_status.throwEmotionWait) return;
-					var emotion = this.link;
-					if (game.online) {
-						game.send('throwEmotion', node, emotion);
-					}
-					else game.me.throwEmotion(node, emotion);
-					uiintro._close();
-					_status.throwEmotionWait = true;
-					setTimeout(function () {
-						_status.throwEmotionWait = false;
-						if (ui.throwEmotion) {
-							for (var i of ui.throwEmotion) i.classList.remove('exclude');
-						}
-					}, (emotion == 'flower' || emotion == 'egg') ? 5 : 10);
-				};
-				var td;
-				var table = document.createElement('div');
-				table.classList.add('add-setting');
-				table.style.margin = '0';
-				table.style.width = '100%';
-				table.style.position = 'relative';
-				var listi = ['flower', 'egg'];
-				for (var i = 0; i < listi.length; i++) {
-					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
-					ui.throwEmotion.add(td);
-					if (_status.throwEmotionWait) td.classList.add('exclude');
-					td.link = listi[i];
-					table.appendChild(td);
-					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
-					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
-				}
-				uiintro.content.appendChild(table);
-				table = document.createElement('div');
-				table.classList.add('add-setting');
-				table.style.margin = '0';
-				table.style.width = '100%';
-				table.style.position = 'relative';
-				var listi = ['wine', 'shoe'];
-				if (game.me.storage.zhuSkill_shanli) listi = ['yuxisx', 'jiasuo'];
-				for (var i = 0; i < listi.length; i++) {
-					td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
-					ui.throwEmotion.add(td);
-					if (_status.throwEmotionWait) td.classList.add('exclude');
-					td.link = listi[i];
-					table.appendChild(td);
-					td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
-					td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
-				}
-				uiintro.content.appendChild(table);
-			}
-			var modepack = lib.characterPack['mode_' + get.mode()];
-			if (lib.config.show_favourite && lib.character[node.name] && game.players.includes(node) &&
-				(!modepack || !modepack[node.name]) && (!simple || get.is.phoneLayout())) {
-				var addFavourite = ui.create.div('.text.center.pointerdiv');
-				addFavourite.link = node.name;
-				if (lib.config.favouriteCharacter.includes(node.name)) {
-					addFavourite.innerHTML = '移除收藏';
-				}
-				else {
-					addFavourite.innerHTML = '添加收藏';
-				}
-				addFavourite.listen(ui.click.favouriteCharacter);
-				uiintro.add(addFavourite);
-			}
-			if (!simple || get.is.phoneLayout()) {
-				if ((lib.config.change_skin || lib.skin) && !node.isUnseen()) {
-					var num = 1;
-					var introadded = false;
-					var createButtons = function (num, avatar2) {
-						if (!introadded) {
-							introadded = true;
-							uiintro.add('<div class="text center">更改皮肤</div>');
-						}
-						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
-						lib.setMousewheel(buttons);
-						var nameskin = (avatar2 ? node.name2 : node.name1);
-						var nameskin2 = nameskin;
-						var gzbool = false;
-						if (nameskin.startsWith('gz_shibing')) {
-							nameskin = nameskin.slice(3, 11);
-						}
-						else if (nameskin.startsWith('gz_')) {
-							nameskin = nameskin.slice(3);
-							gzbool = true;
-						}
-						for (var i = 0; i <= num; i++) {
-							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
-								if (this._link) {
-									if (avatar2) {
-										lib.config.skin[nameskin] = this._link;
-										node.node.avatar2.style.backgroundImage = this.style.backgroundImage;
-									}
-									else {
-										lib.config.skin[nameskin] = this._link;
-										node.node.avatar.style.backgroundImage = this.style.backgroundImage;
-									}
-								}
-								else {
-									delete lib.config.skin[nameskin];
-									if (avatar2) {
-										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar2.setBackground(nameskin2, 'character');
-										else node.node.avatar2.setBackground(nameskin, 'character');
-									}
-									else {
-										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar.setBackground(nameskin2, 'character');
-										else node.node.avatar.setBackground(nameskin, 'character');
-									}
-								}
-								game.saveConfig('skin', lib.config.skin);
-							});
-							button._link = i;
-							if (i) {
-								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
+						else if (lib.skill[skills[i]].clickable && node.isIn() && node.isUnderControl(true)) {
+							var intronode = uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
+							if (!_status.gameStarted || (lib.skill[skills[i]].clickableFilter && !lib.skill[skills[i]].clickableFilter(node))) {
+								intronode.classList.add('disabled');
+								intronode.style.opacity = 0.5;
 							}
 							else {
-								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
-								else button.setBackground(nameskin, 'character', 'noskin');
+								intronode.link = node;
+								intronode.func = lib.skill[skills[i]].clickable;
+								intronode.classList.add('pointerdiv');
+								intronode.listen(ui.click.skillbutton);
 							}
-						}
-						uiintro.add(buttons);
-					};
-					var loadImage = function (avatar2) {
-						var img = new Image();
-						img.onload = function () {
-							num++;
-							loadImage(avatar2);
-						};
-						img.onerror = function () {
-							num--;
-							if (num) {
-								createButtons(num, avatar2);
-							}
-							if (!avatar2) {
-								if (!node.classList.contains('unseen2') && node.name2) {
-									num = 1;
-									loadImage(true);
-								}
-							}
-						};
-						var nameskin = (avatar2 ? node.name2 : node.name1);
-						var nameskin2 = nameskin;
-						var gzbool = false;
-						if (nameskin.startsWith('gz_shibing')) {
-							nameskin = nameskin.slice(3, 11);
-						}
-						else if (nameskin.startsWith('gz_')) {
-							nameskin = nameskin.slice(3);
-							gzbool = true;
-						}
-						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
-					};
-					if (lib.config.change_skin) {
-						if (!node.isUnseen(0)) {
-							loadImage();
-						}
-						else if (node.name2) {
-							loadImage(true);
-						}
-					}
-					else {
-						setTimeout(function () {
-							var nameskin1 = node.name1;
-							var nameskin2 = node.name2;
-							if (nameskin1 && nameskin1.startsWith('gz_')) {
-								nameskin1 = nameskin1.slice(3);
-							}
-							if (nameskin2 && nameskin2.startsWith('gz_')) {
-								nameskin2 = nameskin2.slice(3);
-							}
-							if (!node.isUnseen(0) && lib.skin[nameskin1]) {
-								createButtons(lib.skin[nameskin1]);
-							}
-							if (!node.isUnseen(1) && lib.skin[nameskin2]) {
-								createButtons(lib.skin[nameskin2], true);
-							}
-						});
-					}
-				}
-			}
-
-			uiintro.add(ui.create.div('.placeholder.slim'));
-		}
-		else if (node.classList.contains('mark') && node.info &&
-			node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.classList.contains('player')) {
-			var info = node.info;
-			var player = node.parentNode.parentNode;
-			if (info.name) {
-				if (typeof info.name == 'function') {
-					var named = info.name(player.storage[node.skill], player);
-					if (named) {
-						uiintro.add(named);
-					}
-				}
-				else {
-					uiintro.add(info.name);
-				}
-			}
-			else if (info.name !== false) {
-				uiintro.add(get.translation(node.skill));
-			}
-			if (typeof info.id == 'string' && info.id.startsWith('subplayer') &&
-				player.isUnderControl(true) && player.storage[info.id] && !_status.video) {
-				var storage = player.storage[info.id];
-				uiintro.addText('当前体力：' + storage.hp + '/' + storage.maxHp);
-				if (storage.hs.length) {
-					uiintro.addText('手牌区');
-					uiintro.addSmall(storage.hs);
-				}
-				if (storage.es.length) {
-					uiintro.addText('装备区');
-					uiintro.addSmall(storage.es);
-				}
-			}
-			if (typeof info.mark == 'function') {
-				var stint = info.mark(uiintro, player.storage[node.skill], player);
-				if (stint) {
-					var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
-					if (!stint.startsWith('<div class="skill"')) {
-						uiintro._place_text = placetext;
-					}
-					// if(stint.length<=100){
-					// 	uiintro.add('<div class="text center">'+stint+'</div>');
-					// }
-					// else{
-					// 	uiintro.add('<div class="text">'+stint+'</div>');
-					// }
-				}
-			}
-			else {
-				var stint = get.storageintro(info.content, player.storage[node.skill], player, uiintro, node.skill);
-				if (stint) {
-					if (stint[0] == '@') {
-						uiintro.add('<div class="caption">' + stint.slice(1) + '</div>');
-					}
-					else {
-						var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
-						if (!stint.startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					// else if(stint.length<=100){
-					// 	uiintro.add('<div class="text center">'+stint+'</div>');
-					// }
-					// else{
-					// 	uiintro.add('<div class="text">'+stint+'</div>');
-					// }
-				}
-			}
-			uiintro.add(ui.create.div('.placeholder.slim'));
-		}
-		else if (node.classList.contains('card')) {
-			//卡牌长按介绍
-			if (ui.arena.classList.contains('observe') && node.parentNode.classList.contains('handcards')) {
-				return;
-			}
-			var name = node.name;
-			if (node.parentNode.cardMod) {
-				var moded = false;
-				for (var i in node.parentNode.cardMod) {
-					var item = node.parentNode.cardMod[i](node);
-					if (Array.isArray(item)) {
-						moded = true;
-						uiintro.add(item[0]);
-						uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + item[1] + '</div>');
-					}
-				}
-				if (moded) return uiintro;
-			}
-			if (node.link && node.link.name && lib.card[node.link.name]) {
-				name = node.link.name;
-			}
-			if (get.position(node) == 'j' && node.viewAs && node.viewAs != name) {
-				uiintro.add(get.translation(node.viewAs));
-				var cardInfo = lib.card[node.viewAs], showCardIntro=true;
-				if (cardInfo.blankCard) {
-					var cardOwner = get.owner(node);
-					if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
-				}
-				if (showCardIntro) uiintro.add('<div class="text center">（' + get.translation(get.translation(node)) + '）</div>');
-				// uiintro.add(get.translation(node.viewAs)+'<br><div class="text center" style="padding-top:5px;">（'+get.translation(node)+'）</div>');
-				uiintro.nosub = true;
-				name = node.viewAs;
-			}
-			else {
-				uiintro.add(get.translation(node));
-			}
-			if (node._banning) {
-				var clickBanned = function () {
-					var banned = lib.config[this.bannedname] || [];
-					if (banned.includes(name)) {
-						banned.remove(name);
-					}
-					else {
-						banned.push(name);
-					}
-					game.saveConfig(this.bannedname, banned);
-					this.classList.toggle('on');
-					if (node.updateBanned) {
-						node.updateBanned();
-					}
-				};
-				var modeorder = lib.config.modeorder || [];
-				for (var i in lib.mode) {
-					modeorder.add(i);
-				}
-				var list = [];
-				uiintro.contentContainer.listen(function (e) {
-					ui.click.touchpop();
-					e.stopPropagation();
-				});
-				for (var i = 0; i < modeorder.length; i++) {
-					if (node._banning == 'online') {
-						if (!lib.mode[modeorder[i]].connect) continue;
-					}
-					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
-						continue;
-					}
-					if (lib.config.all.mode.includes(modeorder[i])) {
-						list.push(modeorder[i]);
-					}
-				}
-				if (lib.card[name] && lib.card[name].type == 'trick') list.push('zhinang_tricks');
-				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
-				var banall = false;
-				for (var i = 0; i < list.length; i++) {
-					var cfg = ui.create.div('.config', list[i] == 'zhinang_tricks' ? '设为智囊' : (lib.translate[list[i]] + '模式'), page);
-					cfg.classList.add('toggle');
-					if (list[i] == 'zhinang_tricks') {
-						cfg.bannedname = ((node._banning == 'offline') ? '' : 'connect_') + 'zhinang_tricks';
-					}
-					else if (node._banning == 'offline') {
-						cfg.bannedname = list[i] + '_bannedcards';
-					}
-					else {
-						cfg.bannedname = 'connect_' + list[i] + '_bannedcards';
-					}
-					cfg.listen(clickBanned);
-					ui.create.div(ui.create.div(cfg));
-					var banned = lib.config[cfg.bannedname] || [];
-					if (banned.includes(name) == (list[i] == 'zhinang_tricks')) {
-						cfg.classList.add('on');
-						banall = true;
-					}
-				}
-				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
-					if (this.innerHTML == '全部禁用') {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部启用';
-					}
-					else {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部禁用';
-					}
-				}).style.marginTop = '-10px';
-				ui.create.div('.placeholder.slim', uiintro.content);
-			}
-			else {
-				if (lib.translate[name + '_info']) {
-					if (!uiintro.nosub) {
-						if (lib.card[name] && lib.card[name].derivation) {
-							if (typeof lib.card[name].derivation == 'string') {
-								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivation) + '</div>');
-							}
-							else if (lib.card[name].derivationpack) {
-								uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivationpack + '_card_config') + '包</div>');
-							}
-						}
-						let typeinfo = '';
-						if (lib.card[name] && lib.card[name].unique) {
-							typeinfo += ('特殊' + get.translation(lib.card[name].type) + '牌');
-						}
-						else if (lib.card[name] && lib.card[name].type && lib.translate[lib.card[name].type]) {
-							typeinfo += (get.translation(lib.card[name].type) + '牌');
-						}
-						if (get.subtype(name, false)) {
-							typeinfo += ('-' + get.translation(get.subtype(name, false)));
-						}
-						if (typeinfo) {
-							uiintro.add('<div class="text center">' + typeinfo + '</div>');
-						}
-						if (lib.card[name].unique && lib.card[name].type == 'equip') {
-							if (lib.cardPile.guozhan && lib.cardPack.guozhan.includes(name)) {
-								uiintro.add('<div class="text center">专属装备</div>').style.marginTop = '-5px';
-							}
-							else {
-								uiintro.add('<div class="text center">特殊装备</div>').style.marginTop = '-5px';
-							}
-						}
-						if (lib.card[name] && lib.card[name].addinfomenu) {
-							uiintro.add('<div class="text center">' + lib.card[name].addinfomenu + '</div>');
-						}
-						if (get.subtype(name, false) == 'equip1') {
-							var added = false;
-							if (lib.card[node.name] && lib.card[node.name].distance) {
-								var dist = lib.card[node.name].distance;
-								if (dist.attackFrom) {
-									added = true;
-									uiintro.add('<div class="text center">攻击范围：' + (-dist.attackFrom + 1) + '</div>');
-								}
-							}
-							if (!added) {
-								uiintro.add('<div class="text center">攻击范围：1</div>');
-							}
-						}
-					}
-					if (lib.card[name].cardPrompt) {
-						var str = lib.card[name].cardPrompt(node.link || node), placetext = uiintro.add('<div class="text" style="display:inline">' + str + '</div>');
-						if (!str.startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					else if (lib.translate[name + '_info']) {
-						var placetext = uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_info'] + '</div>');
-						if (!lib.translate[name + '_info'].startsWith('<div class="skill"')) {
-							uiintro._place_text = placetext;
-						}
-					}
-					if (get.is.yingbianConditional(node.link || node)) {
-						const yingbianEffects = get.yingbianEffects(node.link || node);
-						if (!yingbianEffects.length) {
-							const defaultYingbianEffect = get.defaultYingbianEffect(node.link || node);
-							if (lib.yingbian.prompt.has(defaultYingbianEffect)) yingbianEffects.push(defaultYingbianEffect);
-						}
-						if (yingbianEffects.length && showCardIntro) uiintro.add(`<div class="text" style="font-family: yuanli">应变：${yingbianEffects.map(value => lib.yingbian.prompt.get(value)).join('；')}</div>`);
-					}
-					if (lib.translate[name + '_append']) {
-						uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_append'] + '</div>');
-					}
-				}
-				uiintro.add(ui.create.div('.placeholder.slim'));
-			}
-		}
-		else if (node.classList.contains('character')) {
-			const character = node.link, characterInfo = get.character(node.link);
-			let capt = get.translation(character);
-			if (characterInfo) {
-				const infoSex = characterInfo[0];
-				if (infoSex && lib.config.show_sex) capt += `&nbsp;&nbsp;${infoSex == 'none' ? '无' : lib.translate[infoSex]}`;
-				const infoGroup = characterInfo[1];
-				if (infoGroup && lib.config.show_group) {
-					const group = get.is.double(character, true);
-					if (group) capt += `&nbsp;&nbsp;${group.map(value => get.translation(value)).join('/')}`;
-					else capt += `&nbsp;&nbsp;${lib.translate[infoGroup]}`;
-				}
-			}
-			uiintro.add(capt);
-
-			if (lib.characterTitle[node.link]) {
-				uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
-			}
-
-			if (get.characterInitFilter(node.link)) {
-				const initFilters = get.characterInitFilter(node.link).filter(tag => {
-					if (!lib.characterInitFilter[node.link]) return true;
-					return lib.characterInitFilter[node.link](tag) !== false;
-				});
-				if(initFilters.length){
-					const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
-					uiintro.addText(str);
-				}
-			}
-
-			if (node._banning) {
-				var clickBanned = function () {
-					var banned = lib.config[this.bannedname] || [];
-					if (banned.includes(character)) {
-						banned.remove(character);
-					}
-					else {
-						banned.push(character);
-					}
-					game.saveConfig(this.bannedname, banned);
-					this.classList.toggle('on');
-					if (node.updateBanned) {
-						node.updateBanned();
-					}
-				};
-				var modeorder = lib.config.modeorder || [];
-				for (var i in lib.mode) {
-					modeorder.add(i);
-				}
-				var list = [];
-				uiintro.contentContainer.listen(function (e) {
-					ui.click.touchpop();
-					e.stopPropagation();
-				});
-				for (var i = 0; i < modeorder.length; i++) {
-					if (node._banning == 'online') {
-						if (!lib.mode[modeorder[i]].connect) continue;
-						if (!lib.config['connect_' + modeorder[i] + '_banned']) {
-							lib.config['connect_' + modeorder[i] + '_banned'] = [];
-						}
-					}
-					else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
-						continue;
-					}
-					if (lib.config.all.mode.includes(modeorder[i])) {
-						list.push(modeorder[i]);
-					}
-				}
-				var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
-				var banall = false;
-				for (var i = 0; i < list.length; i++) {
-					var cfg = ui.create.div('.config', lib.translate[list[i]] + '模式', page);
-					cfg.classList.add('toggle');
-					if (node._banning == 'offline') {
-						cfg.bannedname = list[i] + '_banned';
-					}
-					else {
-						cfg.bannedname = 'connect_' + list[i] + '_banned';
-					}
-					cfg.listen(clickBanned);
-					ui.create.div(ui.create.div(cfg));
-					var banned = lib.config[cfg.bannedname] || [];
-					if (!banned.includes(character)) {
-						cfg.classList.add('on');
-						banall = true;
-					}
-				}
-				if (node._banning == 'offline') {
-					var cfg = ui.create.div('.config', '随机选将可用', page);
-					cfg.classList.add('toggle');
-					cfg.listen(function () {
-						this.classList.toggle('on');
-						if (this.classList.contains('on')) {
-							lib.config.forbidai_user.remove(character);
 						}
 						else {
-							lib.config.forbidai_user.add(character);
+							uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i], node) + '</div></div>');
 						}
-						game.saveConfig('forbidai_user', lib.config.forbidai_user);
-					});
-					ui.create.div(ui.create.div(cfg));
-					if (!lib.config.forbidai_user.includes(character)) {
-						cfg.classList.add('on');
-					}
-				}
-				ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
-					if (this.innerHTML == '全部禁用') {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部启用';
-					}
-					else {
-						for (var i = 0; i < page.childElementCount; i++) {
-							if (page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
-								clickBanned.call(page.childNodes[i]);
-							}
-						}
-						this.innerHTML = '全部禁用';
-					}
-				}).style.marginTop = '-10px';
-				ui.create.div('.placeholder.slim', uiintro.content);
-			}
-			else {
-				var infoitem = get.character(character);
-				var skills = infoitem[3];
-				for (i = 0; i < skills.length; i++) {
-					if (lib.translate[skills[i] + '_info']) {
-						if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
-						else {
-							translation = get.translation(skills[i]);
-							if (!lib.skill[skills[i]].nobracket) translation = `【${translation.slice(0, 2)}】`;
-						}
-
-						uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i]) + '</div></div>');
-
 						if (lib.translate[skills[i] + '_append']) {
 							uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
 						}
@@ -1778,17 +1098,210 @@ content:function(config,pack){
 				}
 				
 				// 新增武将引文接口
-				if (config.wujiangyinwen && lib.translatecharacterappend[node.link]) {
-					uiintro.add('<div class="text">' + lib.translatecharacterappend[node.link] + '</div>');
+				if (config.wujiangyinwen && lib.translatecharacterappend[node.name]) {
+					uiintro.add('<div class="text">' + lib.translatecharacterappend[node.name] + '</div>');
 				}
 				
+				// if(get.is.phoneLayout()){
+				// 	var storage=node.storage;
+				// 	for(i in storage){
+				// 		if(get.info(i)&&get.info(i).intro){
+				// 			intro=get.info(i).intro;
+				// 			if(node.getSkills().concat(lib.skill.global).includes(i)==false&&!intro.show) continue;
+				// 			var name=intro.name?intro.name:get.translation(i);
+				// 			if(typeof name=='function'){
+				// 				name=name(storage[i],node);
+				// 			}
+				// 			translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
+				// 			var stint=get.storageintro(intro.content,storage[i],node,null,i);
+				// 			if(stint){
+				// 				translation+=stint+'</div></div>';
+				// 				uiintro.add(translation);
+				// 			}
+				// 		}
+				// 	}
+				// }
+
+				if (lib.config.right_range && _status.gameStarted) {
+					uiintro.add(ui.create.div('.placeholder'));
+					var table, tr, td;
+					table = document.createElement('table');
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+					td = document.createElement('td');
+					td.innerHTML = '距离';
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.innerHTML = '手牌';
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.innerHTML = '行动';
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.innerHTML = '伤害';
+					tr.appendChild(td);
+
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+					td = document.createElement('td');
+					if (node == game.me || !game.me || !game.me.isIn()) {
+						td.innerHTML = '-';
+					}
+					else {
+						var dist1 = get.numStr(Math.max(1, game.me.distanceTo(node)));
+						var dist2 = get.numStr(Math.max(1, node.distanceTo(game.me)));
+						if (dist1 == dist2) {
+							td.innerHTML = dist1;
+						}
+						else {
+							td.innerHTML = dist1 + '/' + dist2;
+						}
+					}
+					tr.appendChild(td);
+					td = document.createElement('td');
+					let handcardLimit = node.getHandcardLimit();
+					td.innerHTML = `${node.countCards('h')}/${handcardLimit >= 114514 ? '∞' : handcardLimit}`;
+					tr.appendChild(td);
+					td = document.createElement('td');
+					td.innerHTML = node.phaseNumber;
+					tr.appendChild(td);
+					td = document.createElement('td');
+
+					(function () {
+						num = 0;
+						for (var j = 0; j < node.stat.length; j++) {
+							if (typeof node.stat[j].damage == 'number') num += node.stat[j].damage;
+						}
+						td.innerHTML = num;
+					}());
+					tr.appendChild(td);
+					table.style.width = 'calc(100% - 20px)';
+					table.style.marginLeft = '10px';
+
+					uiintro.content.appendChild(table);
+					if (!lib.config.show_favourite) {
+						table.style.paddingBottom = '5px';
+					}
+				}
+				if (!simple || get.is.phoneLayout()) {
+					var es = node.getCards('e');
+					for (var i = 0; i < es.length; i++) {
+						var cardinfo = lib.card[es[i].name];
+						if (cardinfo && cardinfo.cardPrompt) uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + cardinfo.cardPrompt(es[i]) + '</div></div>');
+						else uiintro.add('<div><div class="skill">' + es[i].outerHTML + '</div><div>' + lib.translate[es[i].name + '_info'] + '</div></div>');
+						uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
+
+						if (lib.translate[es[i].name + '_append']) {
+							uiintro.add('<div class="text">' + lib.translate[es[i].name + '_append'] + '</div>');
+						}
+					}
+					var js = node.getCards('j');
+					for (var i = 0; i < js.length; i++) {
+						if (js[i].viewAs && js[i].viewAs != js[i].name) {
+							let html = js[i].outerHTML;
+							let cardInfo = lib.card[js[i].viewAs], showCardIntro=true;
+							if (cardInfo.blankCard) {
+								var cardOwner = get.owner(js[i]);
+								if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
+							}
+							if (!showCardIntro) {
+								html=ui.create.button(js[i],'blank').outerHTML;
+							}
+							uiintro.add('<div><div class="skill">' + html + '</div><div>' + lib.translate[js[i].viewAs] + '：' + lib.translate[js[i].viewAs + '_info'] + '</div></div>');
+						}
+						else {
+							uiintro.add('<div><div class="skill">' + js[i].outerHTML + '</div><div>' + lib.translate[js[i].name + '_info'] + '</div></div>');
+						}
+						uiintro.content.lastChild.querySelector('.skill>.card').style.transform = '';
+					}
+					if (get.is.phoneLayout()) {
+						var markCoutainer = ui.create.div('.mark-container.marks');
+						for (var i in node.marks) {
+							var nodemark = node.marks[i].cloneNode(true);
+							nodemark.classList.add('pointerdiv');
+							nodemark.link = node.marks[i];
+							nodemark.style.transform = '';
+							markCoutainer.appendChild(nodemark);
+							nodemark.listen(function () {
+								uiintro.noresume = true;
+								var rect = this.link.getBoundingClientRect();
+								ui.click.intro.call(this.link, {
+									clientX: rect.left + rect.width,
+									clientY: rect.top + rect.height / 2,
+								});
+								if (lib.config.touchscreen) {
+									uiintro._close();
+								}
+							});
+						}
+						if (markCoutainer.childElementCount) {
+							uiintro.addText('标记');
+							uiintro.add(markCoutainer);
+						}
+					}
+				}
+				if (!game.observe && _status.gameStarted && game.me && node != game.me) {
+					ui.throwEmotion = [];
+					uiintro.addText('发送交互表情');
+					var click = function () {
+						if (_status.dragged) return;
+						if (_status.justdragged) return;
+						if (_status.throwEmotionWait) return;
+						var emotion = this.link;
+						if (game.online) {
+							game.send('throwEmotion', node, emotion);
+						}
+						else game.me.throwEmotion(node, emotion);
+						uiintro._close();
+						_status.throwEmotionWait = true;
+						setTimeout(function () {
+							_status.throwEmotionWait = false;
+							if (ui.throwEmotion) {
+								for (var i of ui.throwEmotion) i.classList.remove('exclude');
+							}
+						}, (emotion == 'flower' || emotion == 'egg') ? 5 : 10);
+					};
+					var td;
+					var table = document.createElement('div');
+					table.classList.add('add-setting');
+					table.style.margin = '0';
+					table.style.width = '100%';
+					table.style.position = 'relative';
+					var listi = ['flower', 'egg'];
+					for (var i = 0; i < listi.length; i++) {
+						td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
+						ui.throwEmotion.add(td);
+						if (_status.throwEmotionWait) td.classList.add('exclude');
+						td.link = listi[i];
+						table.appendChild(td);
+						td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
+						td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
+					}
+					uiintro.content.appendChild(table);
+					table = document.createElement('div');
+					table.classList.add('add-setting');
+					table.style.margin = '0';
+					table.style.width = '100%';
+					table.style.position = 'relative';
+					var listi = ['wine', 'shoe'];
+					if (game.me.storage.zhuSkill_shanli) listi = ['yuxisx', 'jiasuo'];
+					for (var i = 0; i < listi.length; i++) {
+						td = ui.create.div('.menubutton.reduce_radius.pointerdiv.tdnode');
+						ui.throwEmotion.add(td);
+						if (_status.throwEmotionWait) td.classList.add('exclude');
+						td.link = listi[i];
+						table.appendChild(td);
+						td.innerHTML = '<span>' + get.translation(listi[i]) + '</span>';
+						td.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', click);
+					}
+					uiintro.content.appendChild(table);
+				}
 				var modepack = lib.characterPack['mode_' + get.mode()];
-				if (lib.config.show_favourite &&
-					lib.character[node.link] && (!modepack || !modepack[node.link]) && (!simple || get.is.phoneLayout())) {
+				if (lib.config.show_favourite && lib.character[node.name] && game.players.includes(node) &&
+					(!modepack || !modepack[node.name]) && (!simple || get.is.phoneLayout())) {
 					var addFavourite = ui.create.div('.text.center.pointerdiv');
-					addFavourite.link = node.link;
-					addFavourite.style.marginBottom = '15px';
-					if (lib.config.favouriteCharacter.includes(node.link)) {
+					addFavourite.link = node.name;
+					if (lib.config.favouriteCharacter.includes(node.name)) {
 						addFavourite.innerHTML = '移除收藏';
 					}
 					else {
@@ -1797,194 +1310,735 @@ content:function(config,pack){
 					addFavourite.listen(ui.click.favouriteCharacter);
 					uiintro.add(addFavourite);
 				}
-				else {
-					uiintro.add(ui.create.div('.placeholder.slim'));
-				}
-				var addskin = false;
-				if (node.parentNode.classList.contains('menu-buttons')) {
-					addskin = !lib.config.show_charactercard;
-				}
-				else {
-					addskin = lib.config.change_skin || lib.skin;
-				}
-				if (addskin && (!simple || get.is.phoneLayout())) {
-					var num = 1;
-					var introadded = false;
-					var nameskin = node.link;
-					var nameskin2 = nameskin;
-					var gzbool = false;
-					if (nameskin.startsWith('gz_shibing')) {
-						nameskin = nameskin.slice(3, 11);
-					}
-					else if (nameskin.startsWith('gz_')) {
-						nameskin = nameskin.slice(3);
-						gzbool = true;
-					}
-					var createButtons = function (num) {
-						if (!num) return;
-						if (!introadded) {
-							introadded = true;
-							uiintro.add('<div class="text center">更改皮肤</div>');
-						}
-						var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
-						lib.setMousewheel(buttons);
-						for (var i = 0; i <= num; i++) {
-							var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
-								if (this._link) {
-									lib.config.skin[nameskin] = this._link;
-									node.style.backgroundImage = this.style.backgroundImage;
+				if (!simple || get.is.phoneLayout()) {
+					if ((lib.config.change_skin || lib.skin) && !node.isUnseen()) {
+						var num = 1;
+						var introadded = false;
+						var createButtons = function (num, avatar2) {
+							if (!introadded) {
+								introadded = true;
+								uiintro.add('<div class="text center">更改皮肤</div>');
+							}
+							var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
+							lib.setMousewheel(buttons);
+							var nameskin = (avatar2 ? node.name2 : node.name1);
+							var nameskin2 = nameskin;
+							var gzbool = false;
+							if (nameskin.startsWith('gz_shibing')) {
+								nameskin = nameskin.slice(3, 11);
+							}
+							else if (nameskin.startsWith('gz_')) {
+								nameskin = nameskin.slice(3);
+								gzbool = true;
+							}
+							for (var i = 0; i <= num; i++) {
+								var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
+									if (this._link) {
+										if (avatar2) {
+											lib.config.skin[nameskin] = this._link;
+											node.node.avatar2.style.backgroundImage = this.style.backgroundImage;
+										}
+										else {
+											lib.config.skin[nameskin] = this._link;
+											node.node.avatar.style.backgroundImage = this.style.backgroundImage;
+										}
+									}
+									else {
+										delete lib.config.skin[nameskin];
+										if (avatar2) {
+											if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar2.setBackground(nameskin2, 'character');
+											else node.node.avatar2.setBackground(nameskin, 'character');
+										}
+										else {
+											if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.node.avatar.setBackground(nameskin2, 'character');
+											else node.node.avatar.setBackground(nameskin, 'character');
+										}
+									}
 									game.saveConfig('skin', lib.config.skin);
+								});
+								button._link = i;
+								if (i) {
+									button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
 								}
 								else {
-									delete lib.config.skin[nameskin];
-									if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.setBackground(nameskin2, 'character');
-									else node.setBackground(nameskin, 'character');
-									game.saveConfig('skin', lib.config.skin);
+									if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
+									else button.setBackground(nameskin, 'character', 'noskin');
 								}
-							});
-							button._link = i;
-							if (i) {
-								button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
 							}
-							else {
-								if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
-								else button.setBackground(nameskin, 'character', 'noskin');
+							uiintro.add(buttons);
+						};
+						var loadImage = function (avatar2) {
+							var img = new Image();
+							img.onload = function () {
+								num++;
+								loadImage(avatar2);
+							};
+							img.onerror = function () {
+								num--;
+								if (num) {
+									createButtons(num, avatar2);
+								}
+								if (!avatar2) {
+									if (!node.classList.contains('unseen2') && node.name2) {
+										num = 1;
+										loadImage(true);
+									}
+								}
+							};
+							var nameskin = (avatar2 ? node.name2 : node.name1);
+							var nameskin2 = nameskin;
+							var gzbool = false;
+							if (nameskin.startsWith('gz_shibing')) {
+								nameskin = nameskin.slice(3, 11);
+							}
+							else if (nameskin.startsWith('gz_')) {
+								nameskin = nameskin.slice(3);
+								gzbool = true;
+							}
+							img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
+						};
+						if (lib.config.change_skin) {
+							if (!node.isUnseen(0)) {
+								loadImage();
+							}
+							else if (node.name2) {
+								loadImage(true);
 							}
 						}
-						uiintro.add(buttons);
-					};
-					var loadImage = function () {
-						var img = new Image();
-						img.onload = function () {
-							num++;
-							loadImage();
-						};
-						img.onerror = function () {
-							num--;
-							createButtons(num);
-						};
-						img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
-					};
-					if (lib.config.change_skin) {
-						loadImage();
+						else {
+							setTimeout(function () {
+								var nameskin1 = node.name1;
+								var nameskin2 = node.name2;
+								if (nameskin1 && nameskin1.startsWith('gz_')) {
+									nameskin1 = nameskin1.slice(3);
+								}
+								if (nameskin2 && nameskin2.startsWith('gz_')) {
+									nameskin2 = nameskin2.slice(3);
+								}
+								if (!node.isUnseen(0) && lib.skin[nameskin1]) {
+									createButtons(lib.skin[nameskin1]);
+								}
+								if (!node.isUnseen(1) && lib.skin[nameskin2]) {
+									createButtons(lib.skin[nameskin2], true);
+								}
+							});
+						}
+					}
+				}
+
+				uiintro.add(ui.create.div('.placeholder.slim'));
+			}
+			else if (node.classList.contains('mark') && node.info &&
+				node.parentNode && node.parentNode.parentNode && node.parentNode.parentNode.classList.contains('player')) {
+				var info = node.info;
+				var player = node.parentNode.parentNode;
+				if (info.name) {
+					if (typeof info.name == 'function') {
+						var named = info.name(player.storage[node.skill], player);
+						if (named) {
+							uiintro.add(named);
+						}
 					}
 					else {
-						setTimeout(function () {
-							createButtons(lib.skin[nameskin]);
+						uiintro.add(info.name);
+					}
+				}
+				else if (info.name !== false) {
+					uiintro.add(get.translation(node.skill));
+				}
+				if (typeof info.id == 'string' && info.id.startsWith('subplayer') &&
+					player.isUnderControl(true) && player.storage[info.id] && !_status.video) {
+					var storage = player.storage[info.id];
+					uiintro.addText('当前体力：' + storage.hp + '/' + storage.maxHp);
+					if (storage.hs.length) {
+						uiintro.addText('手牌区');
+						uiintro.addSmall(storage.hs);
+					}
+					if (storage.es.length) {
+						uiintro.addText('装备区');
+						uiintro.addSmall(storage.es);
+					}
+				}
+				if (typeof info.mark == 'function') {
+					var stint = info.mark(uiintro, player.storage[node.skill], player);
+					if (stint) {
+						var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
+						if (!stint.startsWith('<div class="skill"')) {
+							uiintro._place_text = placetext;
+						}
+						// if(stint.length<=100){
+						// 	uiintro.add('<div class="text center">'+stint+'</div>');
+						// }
+						// else{
+						// 	uiintro.add('<div class="text">'+stint+'</div>');
+						// }
+					}
+				}
+				else {
+					var stint = get.storageintro(info.content, player.storage[node.skill], player, uiintro, node.skill);
+					if (stint) {
+						if (stint[0] == '@') {
+							uiintro.add('<div class="caption">' + stint.slice(1) + '</div>');
+						}
+						else {
+							var placetext = uiintro.add('<div class="text" style="display:inline">' + stint + '</div>');
+							if (!stint.startsWith('<div class="skill"')) {
+								uiintro._place_text = placetext;
+							}
+						}
+						// else if(stint.length<=100){
+						// 	uiintro.add('<div class="text center">'+stint+'</div>');
+						// }
+						// else{
+						// 	uiintro.add('<div class="text">'+stint+'</div>');
+						// }
+					}
+				}
+				uiintro.add(ui.create.div('.placeholder.slim'));
+			}
+			else if (node.classList.contains('card')) {
+				//卡牌长按介绍
+				if (ui.arena.classList.contains('observe') && node.parentNode.classList.contains('handcards')) {
+					return;
+				}
+				var name = node.name;
+				if (node.parentNode.cardMod) {
+					var moded = false;
+					for (var i in node.parentNode.cardMod) {
+						var item = node.parentNode.cardMod[i](node);
+						if (Array.isArray(item)) {
+							moded = true;
+							uiintro.add(item[0]);
+							uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + item[1] + '</div>');
+						}
+					}
+					if (moded) return uiintro;
+				}
+				if (node.link && node.link.name && lib.card[node.link.name]) {
+					name = node.link.name;
+				}
+				if (get.position(node) == 'j' && node.viewAs && node.viewAs != name) {
+					uiintro.add(get.translation(node.viewAs));
+					var cardInfo = lib.card[node.viewAs], showCardIntro=true;
+					if (cardInfo.blankCard) {
+						var cardOwner = get.owner(node);
+						if (cardOwner && !cardOwner.isUnderControl(true)) showCardIntro = false;
+					}
+					if (showCardIntro) uiintro.add('<div class="text center">（' + get.translation(get.translation(node)) + '）</div>');
+					// uiintro.add(get.translation(node.viewAs)+'<br><div class="text center" style="padding-top:5px;">（'+get.translation(node)+'）</div>');
+					uiintro.nosub = true;
+					name = node.viewAs;
+				}
+				else {
+					uiintro.add(get.translation(node));
+				}
+				if (node._banning) {
+					var clickBanned = function () {
+						var banned = lib.config[this.bannedname] || [];
+						if (banned.includes(name)) {
+							banned.remove(name);
+						}
+						else {
+							banned.push(name);
+						}
+						game.saveConfig(this.bannedname, banned);
+						this.classList.toggle('on');
+						if (node.updateBanned) {
+							node.updateBanned();
+						}
+					};
+					var modeorder = lib.config.modeorder || [];
+					for (var i in lib.mode) {
+						modeorder.add(i);
+					}
+					var list = [];
+					uiintro.contentContainer.listen(function (e) {
+						ui.click.touchpop();
+						e.stopPropagation();
+					});
+					for (var i = 0; i < modeorder.length; i++) {
+						if (node._banning == 'online') {
+							if (!lib.mode[modeorder[i]].connect) continue;
+						}
+						else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
+							continue;
+						}
+						if (lib.config.all.mode.includes(modeorder[i])) {
+							list.push(modeorder[i]);
+						}
+					}
+					if (lib.card[name] && lib.card[name].type == 'trick') list.push('zhinang_tricks');
+					var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
+					var banall = false;
+					for (var i = 0; i < list.length; i++) {
+						var cfg = ui.create.div('.config', list[i] == 'zhinang_tricks' ? '设为智囊' : (lib.translate[list[i]] + '模式'), page);
+						cfg.classList.add('toggle');
+						if (list[i] == 'zhinang_tricks') {
+							cfg.bannedname = ((node._banning == 'offline') ? '' : 'connect_') + 'zhinang_tricks';
+						}
+						else if (node._banning == 'offline') {
+							cfg.bannedname = list[i] + '_bannedcards';
+						}
+						else {
+							cfg.bannedname = 'connect_' + list[i] + '_bannedcards';
+						}
+						cfg.listen(clickBanned);
+						ui.create.div(ui.create.div(cfg));
+						var banned = lib.config[cfg.bannedname] || [];
+						if (banned.includes(name) == (list[i] == 'zhinang_tricks')) {
+							cfg.classList.add('on');
+							banall = true;
+						}
+					}
+					ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
+						if (this.innerHTML == '全部禁用') {
+							for (var i = 0; i < page.childElementCount; i++) {
+								if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
+									clickBanned.call(page.childNodes[i]);
+								}
+							}
+							this.innerHTML = '全部启用';
+						}
+						else {
+							for (var i = 0; i < page.childElementCount; i++) {
+								if (page.childNodes[i].bannedname.indexOf('zhinang_tricks') == -1 && page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
+									clickBanned.call(page.childNodes[i]);
+								}
+							}
+							this.innerHTML = '全部禁用';
+						}
+					}).style.marginTop = '-10px';
+					ui.create.div('.placeholder.slim', uiintro.content);
+				}
+				else {
+					if (lib.translate[name + '_info']) {
+						if (!uiintro.nosub) {
+							if (lib.card[name] && lib.card[name].derivation) {
+								if (typeof lib.card[name].derivation == 'string') {
+									uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivation) + '</div>');
+								}
+								else if (lib.card[name].derivationpack) {
+									uiintro.add('<div class="text center">来源：' + get.translation(lib.card[name].derivationpack + '_card_config') + '包</div>');
+								}
+							}
+							let typeinfo = '';
+							if (lib.card[name] && lib.card[name].unique) {
+								typeinfo += ('特殊' + get.translation(lib.card[name].type) + '牌');
+							}
+							else if (lib.card[name] && lib.card[name].type && lib.translate[lib.card[name].type]) {
+								typeinfo += (get.translation(lib.card[name].type) + '牌');
+							}
+							if (get.subtype(name, false)) {
+								typeinfo += ('-' + get.translation(get.subtype(name, false)));
+							}
+							if (typeinfo) {
+								uiintro.add('<div class="text center">' + typeinfo + '</div>');
+							}
+							if (lib.card[name].unique && lib.card[name].type == 'equip') {
+								if (lib.cardPile.guozhan && lib.cardPack.guozhan.includes(name)) {
+									uiintro.add('<div class="text center">专属装备</div>').style.marginTop = '-5px';
+								}
+								else {
+									uiintro.add('<div class="text center">特殊装备</div>').style.marginTop = '-5px';
+								}
+							}
+							if (lib.card[name] && lib.card[name].addinfomenu) {
+								uiintro.add('<div class="text center">' + lib.card[name].addinfomenu + '</div>');
+							}
+							if (get.subtype(name, false) == 'equip1') {
+								var added = false;
+								if (lib.card[node.name] && lib.card[node.name].distance) {
+									var dist = lib.card[node.name].distance;
+									if (dist.attackFrom) {
+										added = true;
+										uiintro.add('<div class="text center">攻击范围：' + (-dist.attackFrom + 1) + '</div>');
+									}
+								}
+								if (!added) {
+									uiintro.add('<div class="text center">攻击范围：1</div>');
+								}
+							}
+						}
+						if (lib.card[name].cardPrompt) {
+							var str = lib.card[name].cardPrompt(node.link || node), placetext = uiintro.add('<div class="text" style="display:inline">' + str + '</div>');
+							if (!str.startsWith('<div class="skill"')) {
+								uiintro._place_text = placetext;
+							}
+						}
+						else if (lib.translate[name + '_info']) {
+							var placetext = uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_info'] + '</div>');
+							if (!lib.translate[name + '_info'].startsWith('<div class="skill"')) {
+								uiintro._place_text = placetext;
+							}
+						}
+						if (get.is.yingbianConditional(node.link || node)) {
+							const yingbianEffects = get.yingbianEffects(node.link || node);
+							if (!yingbianEffects.length) {
+								const defaultYingbianEffect = get.defaultYingbianEffect(node.link || node);
+								if (lib.yingbian.prompt.has(defaultYingbianEffect)) yingbianEffects.push(defaultYingbianEffect);
+							}
+							if (yingbianEffects.length && showCardIntro) uiintro.add(`<div class="text" style="font-family: yuanli">应变：${yingbianEffects.map(value => lib.yingbian.prompt.get(value)).join('；')}</div>`);
+						}
+						if (lib.translate[name + '_append']) {
+							uiintro.add('<div class="text" style="display:inline">' + lib.translate[name + '_append'] + '</div>');
+						}
+					}
+					uiintro.add(ui.create.div('.placeholder.slim'));
+				}
+			}
+			else if (node.classList.contains('character')) {
+				const character = node.link, characterInfo = get.character(node.link);
+				let capt = get.translation(character);
+				if (characterInfo) {
+					const infoSex = characterInfo[0];
+					if (infoSex && lib.config.show_sex) capt += `&nbsp;&nbsp;${infoSex == 'none' ? '无' : lib.translate[infoSex]}`;
+					const infoGroup = characterInfo[1];
+					if (infoGroup && lib.config.show_group) {
+						const group = get.is.double(character, true);
+						if (group) capt += `&nbsp;&nbsp;${group.map(value => get.translation(value)).join('/')}`;
+						else capt += `&nbsp;&nbsp;${lib.translate[infoGroup]}`;
+					}
+				}
+				uiintro.add(capt);
+
+				if (lib.characterTitle[node.link]) {
+					uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
+				}
+
+				if (get.characterInitFilter(node.link)) {
+					const initFilters = get.characterInitFilter(node.link).filter(tag => {
+						if (!lib.characterInitFilter[node.link]) return true;
+						return lib.characterInitFilter[node.link](tag) !== false;
+					});
+					if(initFilters.length){
+						const str = initFilters.reduce((strx, stry) => strx + lib.InitFilter[stry] + '<br>', '').slice(0, -4);
+						uiintro.addText(str);
+					}
+				}
+
+				if (node._banning) {
+					var clickBanned = function () {
+						var banned = lib.config[this.bannedname] || [];
+						if (banned.includes(character)) {
+							banned.remove(character);
+						}
+						else {
+							banned.push(character);
+						}
+						game.saveConfig(this.bannedname, banned);
+						this.classList.toggle('on');
+						if (node.updateBanned) {
+							node.updateBanned();
+						}
+					};
+					var modeorder = lib.config.modeorder || [];
+					for (var i in lib.mode) {
+						modeorder.add(i);
+					}
+					var list = [];
+					uiintro.contentContainer.listen(function (e) {
+						ui.click.touchpop();
+						e.stopPropagation();
+					});
+					for (var i = 0; i < modeorder.length; i++) {
+						if (node._banning == 'online') {
+							if (!lib.mode[modeorder[i]].connect) continue;
+							if (!lib.config['connect_' + modeorder[i] + '_banned']) {
+								lib.config['connect_' + modeorder[i] + '_banned'] = [];
+							}
+						}
+						else if (modeorder[i] == 'connect' || modeorder[i] == 'brawl') {
+							continue;
+						}
+						if (lib.config.all.mode.includes(modeorder[i])) {
+							list.push(modeorder[i]);
+						}
+					}
+					var page = ui.create.div('.menu-buttons.configpopped', uiintro.content);
+					var banall = false;
+					for (var i = 0; i < list.length; i++) {
+						var cfg = ui.create.div('.config', lib.translate[list[i]] + '模式', page);
+						cfg.classList.add('toggle');
+						if (node._banning == 'offline') {
+							cfg.bannedname = list[i] + '_banned';
+						}
+						else {
+							cfg.bannedname = 'connect_' + list[i] + '_banned';
+						}
+						cfg.listen(clickBanned);
+						ui.create.div(ui.create.div(cfg));
+						var banned = lib.config[cfg.bannedname] || [];
+						if (!banned.includes(character)) {
+							cfg.classList.add('on');
+							banall = true;
+						}
+					}
+					if (node._banning == 'offline') {
+						var cfg = ui.create.div('.config', '随机选将可用', page);
+						cfg.classList.add('toggle');
+						cfg.listen(function () {
+							this.classList.toggle('on');
+							if (this.classList.contains('on')) {
+								lib.config.forbidai_user.remove(character);
+							}
+							else {
+								lib.config.forbidai_user.add(character);
+							}
+							game.saveConfig('forbidai_user', lib.config.forbidai_user);
 						});
+						ui.create.div(ui.create.div(cfg));
+						if (!lib.config.forbidai_user.includes(character)) {
+							cfg.classList.add('on');
+						}
+					}
+					ui.create.div('.menubutton.pointerdiv', banall ? '全部禁用' : '全部启用', uiintro.content, function () {
+						if (this.innerHTML == '全部禁用') {
+							for (var i = 0; i < page.childElementCount; i++) {
+								if (page.childNodes[i].bannedname && page.childNodes[i].classList.contains('on')) {
+									clickBanned.call(page.childNodes[i]);
+								}
+							}
+							this.innerHTML = '全部启用';
+						}
+						else {
+							for (var i = 0; i < page.childElementCount; i++) {
+								if (page.childNodes[i].bannedname && !page.childNodes[i].classList.contains('on')) {
+									clickBanned.call(page.childNodes[i]);
+								}
+							}
+							this.innerHTML = '全部禁用';
+						}
+					}).style.marginTop = '-10px';
+					ui.create.div('.placeholder.slim', uiintro.content);
+				}
+				else {
+					var infoitem = get.character(character);
+					var skills = infoitem[3];
+					for (i = 0; i < skills.length; i++) {
+						if (lib.translate[skills[i] + '_info']) {
+							if (lib.translate[skills[i] + '_ab']) translation = lib.translate[skills[i] + '_ab'];
+							else {
+								translation = get.translation(skills[i]);
+								if (!lib.skill[skills[i]].nobracket) translation = `【${addBrAndSpace(translation)}】`;
+							}
+
+							uiintro.add('<div><div class="skill">' + translation + '</div><div>' + get.skillInfoTranslation(skills[i]) + '</div></div>');
+
+							if (lib.translate[skills[i] + '_append']) {
+								uiintro._place_text = uiintro.add('<div class="text">' + lib.translate[skills[i] + '_append'] + '</div>');
+							}
+						}
+					}
+					
+					// 新增武将引文接口
+					if (config.wujiangyinwen && lib.translatecharacterappend[node.link]) {
+						uiintro.add('<div class="text">' + lib.translatecharacterappend[node.link] + '</div>');
+					}
+					
+					var modepack = lib.characterPack['mode_' + get.mode()];
+					if (lib.config.show_favourite &&
+						lib.character[node.link] && (!modepack || !modepack[node.link]) && (!simple || get.is.phoneLayout())) {
+						var addFavourite = ui.create.div('.text.center.pointerdiv');
+						addFavourite.link = node.link;
+						addFavourite.style.marginBottom = '15px';
+						if (lib.config.favouriteCharacter.includes(node.link)) {
+							addFavourite.innerHTML = '移除收藏';
+						}
+						else {
+							addFavourite.innerHTML = '添加收藏';
+						}
+						addFavourite.listen(ui.click.favouriteCharacter);
+						uiintro.add(addFavourite);
+					}
+					else {
+						uiintro.add(ui.create.div('.placeholder.slim'));
+					}
+					var addskin = false;
+					if (node.parentNode.classList.contains('menu-buttons')) {
+						addskin = !lib.config.show_charactercard;
+					}
+					else {
+						addskin = lib.config.change_skin || lib.skin;
+					}
+					if (addskin && (!simple || get.is.phoneLayout())) {
+						var num = 1;
+						var introadded = false;
+						var nameskin = node.link;
+						var nameskin2 = nameskin;
+						var gzbool = false;
+						if (nameskin.startsWith('gz_shibing')) {
+							nameskin = nameskin.slice(3, 11);
+						}
+						else if (nameskin.startsWith('gz_')) {
+							nameskin = nameskin.slice(3);
+							gzbool = true;
+						}
+						var createButtons = function (num) {
+							if (!num) return;
+							if (!introadded) {
+								introadded = true;
+								uiintro.add('<div class="text center">更改皮肤</div>');
+							}
+							var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
+							lib.setMousewheel(buttons);
+							for (var i = 0; i <= num; i++) {
+								var button = ui.create.div('.button.character.pointerdiv', buttons, function () {
+									if (this._link) {
+										lib.config.skin[nameskin] = this._link;
+										node.style.backgroundImage = this.style.backgroundImage;
+										game.saveConfig('skin', lib.config.skin);
+									}
+									else {
+										delete lib.config.skin[nameskin];
+										if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) node.setBackground(nameskin2, 'character');
+										else node.setBackground(nameskin, 'character');
+										game.saveConfig('skin', lib.config.skin);
+									}
+								});
+								button._link = i;
+								if (i) {
+									button.setBackgroundImage('image/skin/' + nameskin + '/' + i + '.jpg');
+								}
+								else {
+									if (gzbool && lib.character[nameskin2][4].includes('gzskin') && lib.config.mode_config.guozhan.guozhanSkin) button.setBackground(nameskin2, 'character', 'noskin');
+									else button.setBackground(nameskin, 'character', 'noskin');
+								}
+							}
+							uiintro.add(buttons);
+						};
+						var loadImage = function () {
+							var img = new Image();
+							img.onload = function () {
+								num++;
+								loadImage();
+							};
+							img.onerror = function () {
+								num--;
+								createButtons(num);
+							};
+							img.src = lib.assetURL + 'image/skin/' + nameskin + '/' + num + '.jpg';
+						};
+						if (lib.config.change_skin) {
+							loadImage();
+						}
+						else {
+							setTimeout(function () {
+								createButtons(lib.skin[nameskin]);
+							});
+						}
 					}
 				}
 			}
-		}
-		else if (node.classList.contains('equips') && ui.arena.classList.contains('selecting')) {
-			(function () {
-				uiintro.add('选择装备');
-				uiintro.addSmall(Array.from(node.childNodes).filter(node => !node.classList.contains('emptyequip') && !node.classList.contains('feichu')), true);
-				uiintro.clickintro = true;
-				ui.control.hide();
-				uiintro._onclose = function () {
-					ui.control.show();
-				};
-				var confirmbutton;
-				for (var i = 0; i < uiintro.buttons.length; i++) {
-					var button = uiintro.buttons[i];
-					button.classList.add('pointerdiv');
-					if (button.link.classList.contains('selected')) {
-						button.classList.add('selected');
+			else if (node.classList.contains('equips') && ui.arena.classList.contains('selecting')) {
+				(function () {
+					uiintro.add('选择装备');
+					uiintro.addSmall(Array.from(node.childNodes).filter(node => !node.classList.contains('emptyequip') && !node.classList.contains('feichu')), true);
+					uiintro.clickintro = true;
+					ui.control.hide();
+					uiintro._onclose = function () {
+						ui.control.show();
+					};
+					var confirmbutton;
+					for (var i = 0; i < uiintro.buttons.length; i++) {
+						var button = uiintro.buttons[i];
+						button.classList.add('pointerdiv');
+						if (button.link.classList.contains('selected')) {
+							button.classList.add('selected');
+						}
+						button.listen(function (e) {
+							ui.click.card.call(this.link, 'popequip');
+							ui.click.window.call(ui.window, e);
+							if (this.link.classList.contains('selected')) {
+								this.classList.add('selected');
+							}
+							else {
+								this.classList.remove('selected');
+							}
+							if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
+								confirmbutton.classList.remove('disabled');
+							}
+							else {
+								confirmbutton.classList.add('disabled');
+							}
+						});
 					}
-					button.listen(function (e) {
-						ui.click.card.call(this.link, 'popequip');
-						ui.click.window.call(ui.window, e);
-						if (this.link.classList.contains('selected')) {
-							this.classList.add('selected');
+					var buttoncontainer = uiintro.add(ui.create.div());
+					buttoncontainer.style.display = 'block';
+					confirmbutton = ui.create.div('.menubutton.large.pointerdiv', '确定', function () {
+						if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
+							uiintro._clickintro();
+							ui.click.ok(ui.confirm.firstChild);
 						}
-						else {
-							this.classList.remove('selected');
-						}
+					}, buttoncontainer);
+					confirmbutton.style.position = 'relative';
+					setTimeout(function () {
 						if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
 							confirmbutton.classList.remove('disabled');
 						}
 						else {
 							confirmbutton.classList.add('disabled');
 						}
-					});
+					}, 300);
+				}());
+			}
+			else if (node.classList.contains('identity') && node.dataset.career) {
+				var career = node.dataset.career;
+				uiintro.add(get.translation(career));
+				uiintro.add('<div class="text center" style="padding-bottom:5px">' + lib.translate['_' + career + '_skill_info'] + '</div>');
+			}
+			else if (node.classList.contains('skillbar')) {
+				if (node == ui.friendBar) {
+					uiintro.add('友方怒气值');
+					uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.friendRage + '/100</div>');
 				}
-				var buttoncontainer = uiintro.add(ui.create.div());
-				buttoncontainer.style.display = 'block';
-				confirmbutton = ui.create.div('.menubutton.large.pointerdiv', '确定', function () {
-					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
-						uiintro._clickintro();
-						ui.click.ok(ui.confirm.firstChild);
-					}
-				}, buttoncontainer);
-				confirmbutton.style.position = 'relative';
-				setTimeout(function () {
-					if (ui.confirm && ui.confirm.str && ui.confirm.str.includes('o')) {
-						confirmbutton.classList.remove('disabled');
+				else if (node == ui.enemyBar) {
+					uiintro.add('敌方怒气值');
+					uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.enemyRage + '/100</div>');
+				}
+			}
+			else if (node.parentNode == ui.historybar) {
+				if (node.dead) {
+					if (!node.source || node.source == node.player) {
+						uiintro.add('<div class="text center">' + get.translation(node.player) + '阵亡</div>');
+						uiintro.addSmall([node.player]);
 					}
 					else {
-						confirmbutton.classList.add('disabled');
+						uiintro.add('<div class="text center">' + get.translation(node.player) + '被' + get.translation(node.source) + '杀害</div>');
+						uiintro.addSmall([node.source]);
 					}
-				}, 300);
-			}());
-		}
-		else if (node.classList.contains('identity') && node.dataset.career) {
-			var career = node.dataset.career;
-			uiintro.add(get.translation(career));
-			uiintro.add('<div class="text center" style="padding-bottom:5px">' + lib.translate['_' + career + '_skill_info'] + '</div>');
-		}
-		else if (node.classList.contains('skillbar')) {
-			if (node == ui.friendBar) {
-				uiintro.add('友方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.friendRage + '/100</div>');
-			}
-			else if (node == ui.enemyBar) {
-				uiintro.add('敌方怒气值');
-				uiintro.add('<div class="text center" style="padding-bottom:5px">' + _status.enemyRage + '/100</div>');
-			}
-		}
-		else if (node.parentNode == ui.historybar) {
-			if (node.dead) {
-				if (!node.source || node.source == node.player) {
-					uiintro.add('<div class="text center">' + get.translation(node.player) + '阵亡</div>');
-					uiintro.addSmall([node.player]);
 				}
-				else {
-					uiintro.add('<div class="text center">' + get.translation(node.player) + '被' + get.translation(node.source) + '杀害</div>');
-					uiintro.addSmall([node.source]);
+				if (node.skill) {
+					uiintro.add('<div class="text center">' + get.translation(node.skill, 'skill') + '</div>');
+					uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + get.translation(node.skill, 'info') + '</div>');
+				}
+				if (node.targets && get.itemtype(node.targets) == 'players') {
+					uiintro.add('<div class="text center">目标</div>');
+					uiintro.addSmall(node.targets);
+				}
+				if (node.players && node.players.length > 1) {
+					uiintro.add('<div class="text center">使用者</div>');
+					uiintro.addSmall(node.players);
+				}
+				if (node.cards && node.cards.length) {
+					uiintro.add('<div class="text center">卡牌</div>');
+					uiintro.addSmall(node.cards);
+				}
+				for (var i = 0; i < node.added.length; i++) {
+					uiintro.add(node.added[i]);
+				}
+				if (node.added.length) {
+					uiintro.add(ui.create.div('.placeholder.slim'));
+				}
+				if (uiintro.content.firstChild) {
+					uiintro.content.firstChild.style.paddingTop = '3px';
 				}
 			}
-			if (node.skill) {
-				uiintro.add('<div class="text center">' + get.translation(node.skill, 'skill') + '</div>');
-				uiintro._place_text = uiintro.add('<div class="text" style="display:inline">' + get.translation(node.skill, 'info') + '</div>');
+			if (lib.config.touchscreen) {
+				lib.setScroll(uiintro.contentContainer);
 			}
-			if (node.targets && get.itemtype(node.targets) == 'players') {
-				uiintro.add('<div class="text center">目标</div>');
-				uiintro.addSmall(node.targets);
-			}
-			if (node.players && node.players.length > 1) {
-				uiintro.add('<div class="text center">使用者</div>');
-				uiintro.addSmall(node.players);
-			}
-			if (node.cards && node.cards.length) {
-				uiintro.add('<div class="text center">卡牌</div>');
-				uiintro.addSmall(node.cards);
-			}
-			for (var i = 0; i < node.added.length; i++) {
-				uiintro.add(node.added[i]);
-			}
-			if (node.added.length) {
-				uiintro.add(ui.create.div('.placeholder.slim'));
-			}
-			if (uiintro.content.firstChild) {
-				uiintro.content.firstChild.style.paddingTop = '3px';
-			}
-		}
-		if (lib.config.touchscreen) {
-			lib.setScroll(uiintro.contentContainer);
-		}
-		return uiintro;
-	};
+			return uiintro;
+		};
+	}
 	
 	// 整合自写并魔改的2-17人扩展
 	lib.arenaReady.push(function(){
@@ -2737,7 +2791,7 @@ content:function(config,pack){
 			lib.config.mode_config.identity.identity.push(['zhu','zhong','zhong','zhong','zhong','zhong','nei','fan','fan','fan','fan','fan','fan','fan']);
 		}
 		if(config.fourteen14Man=='3'){
-			lib.config.mode_config.identity.identity.push(['zhu','zhong','zhong','zhong','zhong','zhong','zhong','fan','fan','fan','fan','fan','fan','fan']); 
+			lib.config.mode_config.identity.identity.push(['zhu','zhong','zhong','zhong','zhong','zhong','zhong','fan','fan','fan','fan','fan','fan','fan']);
 		}
 		if(config.fourteen14Man=='4'){
 			lib.config.mode_config.identity.identity.push(['zhu','fan','fan','fan','fan','fan','fan','fan','fan','fan','fan','fan','fan','fan']);
@@ -2831,7 +2885,7 @@ content:function(config,pack){
 		firstDo:true,
 		trigger:{player:['playercontrol','chooseToUseBegin','chooseToRespondBegin','chooseToDiscardBegin','chooseToCompareBegin',
 		'chooseButtonBegin','chooseCardBegin','chooseTargetBegin','chooseCardTargetBegin','chooseControlBegin',
-		'chooseBoolBegin','choosePlayerCardBegin','discardPlayerCardBegin','gainPlayerCardBegin','chooseToMoveBegin','chooseToPlayBeatmapBegin',
+		'chooseBoolBegin','choosePlayerCardBegin','discardPlayerCardBegin','gainPlayerCardBegin','chooseToMoveBegin','chooseToPlayBeatmapBegin','chooseToGiveBegin',
 		'phaseZhunbeiBefore'
 		]},
 		forced:true,
@@ -2859,50 +2913,6 @@ content:function(config,pack){
 			},
 		},
 	};
-	
-	// 手牌上限显示，搬运自假装无敌扩展，已征得清瑶的“徒弟”的修改许可
-	if (config.byzy_shoupaishangxian) {
-		// var libUpdate = player => {
-			// var numh = player.countCards('h');
-			// var nummh = player.getHandcardLimit();
-			// if (nummh == Infinity) nummh = '∞';
-			// player.node.count.innerHTML = numh + '/' + nummh;
-		// }
-		// if (Array.isArray(lib.element.player.updates)) {
-			// lib.element.player.updates.unshift(libUpdate)
-		// } else {
-			// lib.element.player.updates = [libUpdate]
-		// }
-		
-		// 临时修复手牌上限显示无法及时更新的bug
-		lib.skill._showMaxHandCard = {
-			trigger: {
-				global: ['gameStart', 'roundStart'],
-			},
-			forced: true,
-			popup: false,
-			silent: true,
-			content: function () {
-				var libUpdate = player => {
-					var numh = player.countCards('h');
-					var nummh = player.getHandcardLimit();
-					if (nummh == Infinity) nummh = '∞';
-					player.node.count.innerHTML = numh + '/' + nummh;
-				}
-				if (Array.isArray(lib.element.player.updates)) {
-					lib.element.player.updates.unshift(libUpdate)
-				} else {
-					lib.element.player.updates = [libUpdate]
-				}
-				
-				var interval = setInterval(() => {
-					if (!ui.window.contains(player)) return clearInterval(interval);
-					libUpdate(player);
-				}, 500);
-			},
-		};
-		
-	}
 	
 	// 交换位置功能，搬运自祖安武将扩展，分离自原功能【游戏自定义工具】，已征得Helasisy星云的修改许可
 	if (config.byzy_diycharacterskill) {
@@ -3015,14 +3025,17 @@ content:function(config,pack){
 					}
 					else{
 						for(var i in lib.character){
-							if(lib.character[i][4].contains('minskin')) continue;
-							if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
-								if(lib.config.mode=='boss') continue;
-								if(!lib.character[i][4].contains('bossallowed')) continue;
+							// 修复幻化之战重新选将弹窗
+							if(lib.character[i][4]){
+								if(lib.character[i][4].contains('minskin')) continue;
+								if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
+									if(lib.config.mode=='boss') continue;
+									if(!lib.character[i][4].contains('bossallowed')) continue;
+								}
+								
+								if(lib.character[i][4].contains('stonehidden')) continue;
+								if(lib.character[i][4].contains('unseen')) continue;
 							}
-							
-							if(lib.character[i][4].contains('stonehidden')) continue;
-							if(lib.character[i][4].contains('unseen')) continue;
 							if(lib.config.banned.contains(i)) continue;
 							if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) continue;
 							if(filter&&filter(i)) continue;
@@ -3589,44 +3602,6 @@ content:function(config,pack){
 					
 					/*
 					//仅仅下面是新加的，by Curpond
-					
-					let container = dialog.querySelector('.content-container>.content')
-					let Searcher = ui.create.div('.searcher.caption')
-					let input = document.createElement('input')
-					input.style.textAlign = 'center'
-					input.style.border = 'solid 2px #294510'
-					input.style.borderRadius = '6px'
-					input.style.fontWeight = 'bold'
-					input.style.fontSize = '21px'
-					let find = ui.create.button(['find', '搜索'], 'tdnodes')
-					find.style.display = 'inline'
-					let clickfind = function (e) {
-						e.stopPropagation()
-						let value = input.value
-						if (value == '') {
-							game.alert('搜索不能为空')
-							input.focus()
-							return
-						}
-						let list = []
-						for (let btn of dialog.buttons) {
-
-							if ((new RegExp(value, 'g').test(get.translation(btn.link)))) {
-								btn.classList.remove('nodisplay')
-							} else {
-								btn.classList.add('nodisplay')
-							}
-						}
-						
-					}
-					input.addEventListener('keyup', (e) => {
-						
-						if (e.key == 'Enter') clickfind(e)
-					})
-					find.listen(clickfind)
-					Searcher.appendChild(input)
-					Searcher.appendChild(find)
-					container.prepend(Searcher)
 					*/
 					
 					return dialog;
@@ -3643,7 +3618,7 @@ content:function(config,pack){
 			var kzol_create_characterDialog=ui.create.characterDialog;
 			ui.create.characterDialog=function(){
 				var dialog=kzol_create_characterDialog.apply(this,arguments);
-				if(lib.config.mode=='stone') return dialog;
+				// if(lib.config.mode=='stone') return dialog;
 				var content_container=dialog.childNodes[0];
 				var content=content_container.childNodes[0];
 				var switch_con=content.childNodes[0];
@@ -3663,9 +3638,9 @@ content:function(config,pack){
 				'<select size="1" style="margin-left: 10px;width:95px;height:21px;">'+
 				'<option value="all">任意关键字</option>'+
 				'<option value="name0">武将名翻译</option>'+
-				'<option value="name1">武将名id</option>'+
+				'<option value="name1">武将名ID</option>'+
 				'<option value="skill0">技能名翻译</option>'+
-				'<option value="skill1">技能名id</option>'+
+				'<option value="skill1">技能名ID</option>'+
 				'<option value="skill2">技能描述</option>'+
 				'</select>'+
 				'<button style="margin-left: 10px;">确定</button>'; // 添加确定按钮
@@ -4171,9 +4146,71 @@ content:function(config,pack){
 		};
 	}
 	
+	// 图片懒加载功能，搬运自假装无敌扩展
+	// 武将太多也会卡一阵子，因为操作的元素太多了
+	// 待修复：对策、谋弈美化卡牌不显示，十常侍、起许劭、左慈、神典韦等武将卡牌不显示
+	if (config.byzy_LoadImageOptimization) {
+		// 配置观察元素的参数
+		const options = {
+			root: null,
+			rootMargin: "0px",
+			threshold: 0
+		};
+		
+		// 监听元素是否进入可视区
+		function onIntersection(entries) {
+			entries.forEach(entry => {
+				if (entry.intersectionRatio <= 0) return;
+				const target = entry.target;
+				if (!target._intersectionObserver) return;
+				
+				// 停止观察元素
+				target._intersectionObserver.unobserve(target);
+				
+				// 加载图片
+				// target.style.backgroundImage = `url("${target._loadSrc}")`;
+				// 适配新版本体
+				target.style.backgroundImage = `${target._loadSrc}`;
+				
+				// 清除相关属性
+				delete target._intersectionObserver;
+				delete target._loadSrc;
+			});
+		}
+		
+		// 懒加载武将图片
+		const originSetBackgroundImage = HTMLDivElement.prototype.setBackgroundImage;
+		HTMLDivElement.prototype.setBackgroundImage = function (imgUrl) {
+			// 卡牌经常丢失图片，不优化了
+			// if (imgUrl.includes('card')) {
+				// return originSetBackgroundImage.call(this, imgUrl);
+			// }
+			
+			if (this._intersectionObserver) {
+				this._intersectionObserver.unobserve(this);
+				delete this._intersectionObserver
+			}
+			
+			// 记录图片链接
+			// this._loadSrc = `${lib.assetURL}${imgUrl}`;
+			// 适配新版本体
+			if (Array.isArray(imgUrl)) {
+				this._loadSrc = imgUrl.unique().map(v => `url("${lib.assetURL}${v}")`).join(",");
+			}
+			else {
+				this._loadSrc = `url("${lib.assetURL}${imgUrl}")`;
+			}
+			
+			// 添加交叉观察器
+			const observer = new IntersectionObserver(onIntersection, options);
+			this._intersectionObserver = observer;
+			observer.observe(this);
+		}
+	}
+	
 	// 资料卡修改
 	if(config.byzy_zlkxg && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable'])) {
-		lib.notshowSkillNamePinyin=['阵亡','胜利','注意事项','关卡说明','五子良将纛','五虎将大旗','缘江烽火图','黄巾天兵符','大键角色图','水转百戏图','太平要术'];
+		lib.notshowSkillNamePinyin=['阵亡','胜利','注意事项','关卡说明','五子良将纛','五虎将大旗','缘江烽火图','黄巾天兵符','大键角色图','水转百戏图','太平要术','五禽戏','麻婆豆腐'];
 		
 		if (ui.css.characterbutton)
 			ui.css.characterbutton.remove();
@@ -4183,8 +4220,170 @@ content:function(config,pack){
 		ui.css.characterbutton.sheet.insertRule('.menubg.charactercard>.characterbutton {left: 5px;padding-left: 0;padding-right: 0;width: 190px;top: 250px;height: 50px;white-space: nowrap;overflow-x: scroll;}',0);
 		ui.css.characterbutton.sheet.insertRule('.menubg.charactercard>.characterbutton>.menubutton.large {width: 85px;height: 30px;line-height: 30px;padding: 0;font-size: 20px;margin-top: 10px;margin-left: 5px;margin-right: 5px;position: relative;}',0);
 		
+		// 去除 HTML 标签
+		function removeHTMLspan(originalText){
+			return originalText.replace(/<[^>]+>/g, '');
+		}
+		
+		// 资料卡点击查看武将信息
+		window.byzy_zlkdjckwjxx=function(playername){
+			if(lib.config['extension_搬运自用_byzy_zlkwjxx'] != false){
+				var packName=[];
+				var packSortName=[];
+				// 所在武将包
+				for(var i in lib.characterPack){
+					for(var j in lib.characterPack[i]){
+						if(j == playername){
+							packName.push(i);
+						}
+					}
+				}
+				// 所在武将包的分类
+				for(var m in lib.characterSort){
+					for(var n in lib.characterSort[m]){
+						if(lib.characterSort[m][n].includes(playername)){
+							packSortName.push(n);
+						}
+					}
+				}
+				// 武将称号
+				var originalText = lib.characterTitle[playername]; // 获取原始文本
+				if (originalText) { // 判断是否为空
+					// 如果不为空，则去除颜色样式和武将性别显示
+					var playerNameTitle = originalText.replace(/(^#g|^#b|^#r|^#p)|( <span style="color:#00ADE7">♂<\/span>| <span style="color:#E56587">♀<\/span>| <span style="color:#00ADE7">♂<\/span><span style="color:#E56587">♀<\/span>|<span style="color:#00ADE7">♂<\/span>|<span style="color:#E56587">♀<\/span>|<span style="color:#00ADE7">♂<\/span><span style="color:#E56587">♀<\/span>)$/g, '');
+				} else {
+					var playerNameTitle = originalText; // 如果为空，则返回原始文本
+				}
+				
+				var str11="• 武将名ID";
+				var str12=playername;
+				var str21="• 武将名翻译";
+				var str22=removeHTMLspan(lib.translate[playername]);
+				var str31="• 所在武将包 [ID]";
+				var str32=removeHTMLspan(lib.translate[packName + '_character_config']) +' [' + packName + ']';
+				var str41="• 所在武将包的分类 [ID]";
+				var str42=packSortName.length?(removeHTMLspan(lib.translate[packSortName]) +' [' + packSortName + ']'):'无武将包分类';
+				var str51="• 武将称号 [拼音]";
+				var str52=playerNameTitle?(removeHTMLspan(playerNameTitle) + ' ['+ get.pinyin(removeHTMLspan(playerNameTitle)) + ']'):"暂无武将称号";
+				var str=str11+'\n'+str12+'\n'+str21+'\n'+str22+'\n'+str31+'\n'+str32+'\n'+str41+'\n'+str42+'\n'+str51+'\n'+str52;
+				alert(str);
+				game.print(str);
+				console.log(str);
+			}
+		};
+		
+		// 资料卡点击查看技能信息
+		window.byzy_zlkdjckjndm=function(skillname){
+			if(lib.config['extension_搬运自用_byzy_zlkcode'] != false){
+				var str11="• 技能名ID";
+				var str12=skillname;
+				var str21="• 技能名翻译";
+				var str22=removeHTMLspan(lib.translate[skillname]);
+				var str31="• 技能描述";
+				var str32=removeHTMLspan(lib.translate[skillname + '_info']) || '无技能描述';
+				var str41="• 技能代码";
+				var str42=get.stringify(get.info(skillname));
+				var str=str11+'\n'+str12+'\n'+str21+'\n'+str22+'\n'+str31+'\n'+str32+'\n'+str41+'\n'+str42;
+				alert(str);
+				game.print(str);
+				console.log(str);
+			}
+		};
+		
+		// 资料卡试听衍生技能配音
+		// 搬运自下方并修改，注意同步更新
+		window.byzy_zlkstysjnpy=function(playername,skillname){
+			if(lib.config['extension_搬运自用_byzy_zlkysjnpy'] != false){
+				// 不播放阵亡/胜利配音
+				if(skillname=='byzyzhenwangpeiyin'||skillname=='byzyshenglipeiyin') return;
+				// 修改1
+				if(lib.config.background_speak){
+					// 修改2
+					var info=get.info(skillname);
+					if(!info) return;
+					var audioname=skillname;
+					
+					if(info.audioname2&&info.audioname2[playername]){
+						audioname=info.audioname2[playername];
+						info=lib.skill[audioname];
+					}
+					var audioinfo=info.audio;
+					var that=this;
+					var getIndex=function(i){
+						// 修改3
+						if (!that.audioindex||_status.uiclickcharactercard) {
+							that.audioindex = {}; // 初始化为空对象
+						}
+						if(typeof that.audioindex[skillname]!='number'||_status.uiclickcharactercard){
+							_status.uiclickcharactercard=false;
+							that.audioindex[skillname]=i;
+						}
+						that.audioindex[skillname]++;
+						if(that.audioindex[skillname]>i){
+							that.audioindex[skillname]=1;
+						}
+						return that.audioindex[skillname];
+					};
+					if(typeof audioinfo=='string'){
+						if(audioinfo.indexOf('ext:')==0){
+							audioinfo=audioinfo.split(':');
+							if(audioinfo.length==3){
+								if(audioinfo[2]=='true'){
+									game.playAudio('..','extension',audioinfo[1],audioname);
+								}
+								else{
+									audioinfo[2]=parseInt(audioinfo[2]);
+									if(audioinfo[2]){
+										game.playAudio('..','extension',audioinfo[1],audioname+getIndex(audioinfo[2]));
+									}
+								}
+							}
+							return;
+						}
+						else{
+							audioname=audioinfo;
+							if(lib.skill[audioinfo]){
+								audioinfo=lib.skill[audioinfo].audio;
+							}
+						}
+					}
+					else if(Array.isArray(audioinfo)){
+						audioname=audioinfo[0];
+						audioinfo=audioinfo[1];
+					}
+					if(typeof audioinfo=='number'){
+						if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+						// 临时修复tempname标签武将配音播放错误
+						if(Array.isArray(info.audioname)&&!info.audioname.contains(playername)&&lib.character[playername]&&lib.character[playername][4].some(tag=>tag.startsWith('tempname'))) audioname=audioname+'_'+info.audioname;
+						game.playAudio('skill',audioname+getIndex(audioinfo));
+					}
+					else if(typeof audioinfo=="object"&&"type" in audioinfo&&audioinfo.type=="direct"&&"files" in audioinfo){
+						let audioFiles=audioinfo.files;
+						if(typeof audioFiles=="object"){
+							if(!Array.isArray(audioFiles)&&playername&&playername in audioFiles)audioFiles=audioFiles[playername];
+							if(Array.isArray(audioFiles)){
+								const length=audioFiles.length;
+								game.playAudio(audioFiles[getIndex(length)-1]);
+							}
+						}
+					}
+					else if(audioinfo){
+						if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+						game.playAudio('skill',audioname);
+					}
+					else if(true&&info.audio!==false){
+						if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+						game.playSkillAudio(audioname,getIndex(2));
+					}
+				}
+			}
+		};
+		
 		// 修改game.js的函数charactercard:function(name,sourcenode,noedit,resume,avatar){
 		ui.click.charactercard=function(name,sourcenode,noedit,resume,avatar){
+			// 多个阵亡配音按顺序播放
+			_status.uiclickcharactercard=true;
+			
 			if(_status.dragged) return;
 			if(lib.config.theme!='simple'){
 				ui.window.classList.add('shortcutpaused');
@@ -4386,7 +4585,7 @@ content:function(config,pack){
 				setTimeout(function(){
 					pinyinbutton.classList.remove('active');
 				},300);
-				// 点击后切换资料卡注解，关闭资料卡并再次打开生效：显示武将名注解选项和显示技能名注解选项统一切换拼音/代码ID，暂时仅支持样式二（若非样式二则点击后设为样式二）
+				// 点击后切换资料卡注解：显示武将名注解选项和显示技能名注解选项统一切换拼音/代码ID，暂时仅支持样式二（若非样式二则点击后设为样式二）
 				if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_characternamepinyin=='showCodeIdentifier2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2'){
 					if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showPinyin2'){
 						game.saveConfig('show_characternamepinyin','showCodeIdentifier2');
@@ -4403,8 +4602,38 @@ content:function(config,pack){
 					game.saveConfig('show_skillnamepinyin','showPinyin2');
 					pinyinbutton.innerHTML='拼音';
 				}
+				refreshintro();
+				var index;
+				// 获取父元素
+				var parentElement = document.getElementById('skills_node');
+				// 获取父元素下具有 .active 类的子元素
+				var activeElements = parentElement.querySelectorAll('.active');
+				// 遍历所有带有 .active 类的子元素
+				activeElements.forEach(function(element) {
+					// 获取每个带有 .active 类的子元素在其父元素中的索引
+					index = Array.from(parentElement.children).indexOf(element);
+				});
+				var current=this;
+				current.link=list[index];
+				clickSkill.call(current,'init');
 			});
 			pinyinbutton.classList.remove('active');
+			// 台词按钮
+			var taicibutton=ui.create.div('.menubutton.large.taici',characterbutton,'台词',function(){
+				// 点击设置台词是否显示，功能同资料卡显示台词
+				if(lib.config['extension_搬运自用_byzy_zlkxstc'] == false){
+					lib.extensionMenu.extension_搬运自用.byzy_zlkxstc.onclick(true);
+					this.classList.add('active');
+				}
+				else if(lib.config['extension_搬运自用_byzy_zlkxstc'] != false){
+					lib.extensionMenu.extension_搬运自用.byzy_zlkxstc.onclick(false);
+					this.classList.remove('active');
+				}
+				refreshintro();
+			});
+			if(lib.config['extension_搬运自用_byzy_zlkxstc'] != false){
+				taicibutton.classList.add('active');
+			}else taicibutton.classList.remove('active');
 			// 阵亡按钮
 			var diebutton=ui.create.div('.menubutton.large.die',characterbutton,'阵亡',function(){
 				this.classList.add('active');
@@ -4414,10 +4643,53 @@ content:function(config,pack){
 				// 点击后试听阵亡配音
 				// 改本体game.js函数die:function(){中if(lib.config.background_speak){
 				if(lib.config.background_speak){
-					if(lib.character[name]&&lib.character[name][4].contains('sanguomingjiang_die_audio')){
+					if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].contains('sanguomingjiang_die_audio')){
+						if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].some(tag=>tag.startsWith('die_audio'))){
+							var tag=lib.character[name][4].find(tag=>tag.startsWith('die_audio'));
+							var list=tag.split(':').slice(1);
+							// 多个阵亡配音按顺序播放
+							if(list.length>1){
+								// getIndexFun来自下方getIndex
+								var that=this;
+								var getIndexFun=function(i){
+									if(typeof that.audioindex!='number'){
+										that.audioindex=i;
+									}
+									that.audioindex++;
+									if(that.audioindex>i){
+										that.audioindex=1;
+									}
+									return that.audioindex;
+								};
+								game.playAudio('..','extension','三国24名将','audio',list[getIndexFun(list.length)-1]);
+							} else game.playAudio('..','extension','三国24名将','audio',list.length?list[0]:name);
+						} else
 						game.playAudio('..','extension','三国24名将','audio',name);
 					}
-					else if(lib.character[name]&&lib.character[name][4].some(tag=>/^die:.+$/.test(tag))){
+					else if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].contains('xyx_die_audio')){
+						if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].some(tag=>tag.startsWith('die_audio'))){
+							var tag=lib.character[name][4].find(tag=>tag.startsWith('die_audio'));
+							var list=tag.split(':').slice(1);
+							// 多个阵亡配音按顺序播放
+							if(list.length>1){
+								// getIndexFun来自下方getIndex
+								var that=this;
+								var getIndexFun=function(i){
+									if(typeof that.audioindex!='number'){
+										that.audioindex=i;
+									}
+									that.audioindex++;
+									if(that.audioindex>i){
+										that.audioindex=1;
+									}
+									return that.audioindex;
+								};
+								game.playAudio('..','extension','小游戏整合','audio',list[getIndexFun(list.length)-1]);
+							} else game.playAudio('..','extension','小游戏整合','audio',list.length?list[0]:name);
+						} else
+						game.playAudio('..','extension','小游戏整合','audio',name);
+					}
+					else if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].some(tag=>/^die:.+$/.test(tag))){
 						var tag=lib.character[name][4].find(tag=>/^die:.+$/.test(tag));
 						var reg=new RegExp("^ext:(.+)?/");
 						var match=tag.match(/^die:(.+)$/);
@@ -4427,9 +4699,25 @@ content:function(config,pack){
 							game.playAudio(path);
 						}
 					}
-					else if(lib.character[name]&&lib.character[name][4].some(tag=>tag.startsWith('die_audio'))){
+					else if(lib.character[name]&&lib.character[name][4]&&lib.character[name][4].some(tag=>tag.startsWith('die_audio'))){
 						var tag=lib.character[name][4].find(tag=>tag.startsWith('die_audio'));
 						var list=tag.split(':').slice(1);
+						// 多个阵亡配音按顺序播放
+						if(list.length>1){
+							// getIndexFun来自下方getIndex
+							var that=this;
+							var getIndexFun=function(i){
+								if(typeof that.audioindex!='number'){
+									that.audioindex=i;
+								}
+								that.audioindex++;
+								if(that.audioindex>i){
+									that.audioindex=1;
+								}
+								return that.audioindex;
+							};
+							game.playAudio('die',list[getIndexFun(list.length)-1]);
+						} else
 						game.playAudio('die',list.length?list[0]:name);
 					}
 					else{
@@ -4454,173 +4742,142 @@ content:function(config,pack){
 			winbutton.classList.remove('active');
 			
 			
-			// 样式二
-			if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_characternamepinyin=='showCodeIdentifier2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2'){
-				var intro=ui.create.div('.characterintro',get.characterIntro(name),uiintro);
-				if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_characternamepinyin=='showCodeIdentifier2'){
-					var charactername=get.rawName2(name);
-					var characterpinyin=lib.config.show_characternamepinyin=='showCodeIdentifier2'?name:get.pinyin(charactername);
+			// 搬运自下方并修改，注意同步更新
+			function refreshintro(){
+				// 暂时仅支持样式二
+				if(intro){
 					var nameinfo=get.character(name);
-					var charactersex=get.translation(nameinfo[0]);
-					const charactergroups=get.is.double(name,true);
-					let charactergroup;
-					if(charactergroups) charactergroup=charactergroups.map(i=>get.translation(i)).join('/')
-					else charactergroup=get.translation(nameinfo[1]);
-					var characterhp=nameinfo[2];
-					var characterintroinfo=get.characterIntro(name);
-					var spacemark=' | ';
-					if(charactername.length>3) spacemark='<span style="font-size:7px">'+' '+'</span>'+'|'+'<span style="font-size:7px">'+' '+'</span>';
-					intro.innerHTML='<span style="font-weight:bold;margin-right:5px">'+charactername+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+characterpinyin+']'+'</span>'+spacemark+charactersex+spacemark+charactergroup+spacemark+characterhp+'<span style="line-height:2"></span>'+'<br>'+characterintroinfo;
-				}
-				var intro2=ui.create.div('.characterintro.intro2',uiintro);
-				var list=get.character(name,3)||[];
-				var skills=ui.create.div('.characterskill',uiintro);
-				if(lib.config.touchscreen){
-					lib.setScroll(intro);
-					lib.setScroll(intro2);
-					lib.setScroll(skills);
-				}
-
-				if(lib.config.mousewheel){
-					skills.onmousewheel=ui.click.mousewheel;
-				}
-				var clickSkill=function(e){
-					while(intro2.firstChild){
-						intro2.removeChild(intro2.lastChild);
+					// 修改1
+					// var intro=ui.create.div('.characterintro',get.characterIntro(name),uiintro);
+					if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_characternamepinyin=='showCodeIdentifier2'){
+						var charactername=get.rawName2(name);
+						var characterpinyin=lib.config.show_characternamepinyin=='showCodeIdentifier2'?name:get.pinyin(charactername);
+						var charactersex=get.translation(nameinfo[0]);
+						const charactergroups=get.is.double(name,true);
+						let charactergroup;
+						if(charactergroups) charactergroup=charactergroups.map(i=>get.translation(i)).join('/')
+						else charactergroup=get.translation(nameinfo[1]);
+						var characterhp=nameinfo[2];
+						var characterintroinfo=get.characterIntro(name);
+						var spacemark=' | ';
+						if(charactername.length>3) spacemark='<span style="font-size:7px">'+' '+'</span>'+'|'+'<span style="font-size:7px">'+' '+'</span>';
+						// intro.innerHTML='<span style="font-weight:bold;margin-right:5px">'+charactername+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+characterpinyin+']'+'</span>'+spacemark+charactersex+spacemark+charactergroup+spacemark+characterhp+'<span style="line-height:2"></span>'+'<br>'+characterintroinfo;
+						intro.innerHTML=
+							'<div onclick="window.byzy_zlkdjckwjxx(\'' + name + '\')">' +
+							'<span style="font-weight:bold;margin-right:5px">'+charactername+'</span>'+
+							'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+characterpinyin+']'+'</span>'+
+							'</div>' +
+							spacemark+charactersex+spacemark+charactergroup+spacemark+characterhp+'<span style="line-height:2"></span>'+'<br>'+characterintroinfo;
+					} else {
+						// 修改2
+						intro.innerHTML=get.characterIntro(name);
 					}
-					var current=this.parentNode.querySelector('.active');
-					if(current){
-						current.classList.remove('active');
-					}
-					this.classList.add('active');
-					var skillname=get.translation(this.link);
-					var skilltranslationinfo=get.skillInfoTranslation(this.link);
-					if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&!lib.notshowSkillNamePinyin.contains(skillname)){
-						var skillpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?this.link:get.pinyin(skillname);
-						intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+skillpinyin+']'+'</span>'+'  '+skilltranslationinfo;
-					}else{
-						intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+skilltranslationinfo;
-					}
-					var info=get.info(this.link);
-					var skill=this.link;
-					var playername=this.linkname;
-					var skillnode=this;
-					if(info.derivation){
-						var derivation=info.derivation;
-						if(typeof derivation=='string'){
-							derivation=[derivation];
-						}
-						for(var i=0;i<derivation.length;i++){
-							var derivationname=get.translation(derivation[i]);
-							var derivationtranslationinfo=get.skillInfoTranslation(derivation[i]);
-							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
-								var derivationpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?derivation[i]:get.pinyin(derivationname);
-								intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+derivationpinyin+']'+'</span>'+'  '+derivationtranslationinfo;
-							}else{
-								intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+derivationtranslationinfo;
-							}
-						}
-					}
-					if(info.alter){
-						intro2.innerHTML+='<br><br><div class="hrefnode skillversion"></div>';
-						var skillversionnode=intro2.querySelector('.hrefnode.skillversion');
-						if(lib.config.vintageSkills.contains(skill)){
-							skillversionnode.innerHTML='切换至新版';
-						}
-						else{
-							skillversionnode.innerHTML='切换至旧版';
-						}
-						skillversionnode.listen(function(){
-							if(lib.config.vintageSkills.contains(skill)){
-								lib.config.vintageSkills.remove(skill);
-								lib.translate[skill+'_info']=lib.translate[skill+'_info_alter'];
-							}
-							else{
-								lib.config.vintageSkills.push(skill);
-								lib.translate[skill+'_info']=lib.translate[skill+'_info_origin'];
-							}
-							game.saveConfig('vintageSkills',lib.config.vintageSkills);
-							clickSkill.call(skillnode,'init');
+					
+					// 资料卡显示台词
+					if(lib.config['extension_搬运自用_byzy_zlkxstc'] != false){
+						// 添加台词部分
+						// 阵亡台词Map
+						const dieAudios = game.parseDieTextMap(name).filter(i => "text" in i);
+						// 技能台词Map
+						const skillAudioMap = new Map();
+						nameinfo[3].forEach(skill => {
+							const voiceMap = game.parseSkillText(skill, name, null, true);
+							if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
 						});
-					}
-					// if(e!=='init') game.trySkillAudio(this.link,playername);
-					// 有bug，先用旧版
-					if(lib.config.background_speak&&e!=='init'){
-						var audioname=this.link;
-						if(info.audioname2&&info.audioname2[playername]){
-							audioname=info.audioname2[playername];
-							info=lib.skill[audioname];
-						}
-						var audioinfo=info.audio;
-						var that=this;
-						var getIndex=function(i){
-							if(typeof that.audioindex!='number'){
-								that.audioindex=i;
-							}
-							that.audioindex++;
-							if(that.audioindex>i){
-								that.audioindex=1;
-							}
-							return that.audioindex;
-						};
-						if(typeof audioinfo=='string'){
-							if(audioinfo.indexOf('ext:')==0){
-								audioinfo=audioinfo.split(':');
-								if(audioinfo.length==3){
-									if(audioinfo[2]=='true'){
-										game.playAudio('..','extension',audioinfo[1],audioname);
-									}
-									else{
-										audioinfo[2]=parseInt(audioinfo[2]);
-										if(audioinfo[2]){
-											game.playAudio('..','extension',audioinfo[1],audioname+getIndex(audioinfo[2]));
-										}
-									}
+						// 衍生技能台词Map
+						const derivationSkillAudioMap = new Map();
+						nameinfo[3].forEach(skill => {
+							var info = get.info(skill);
+							if(info.derivation) {
+								var derivation = info.derivation;
+								if(typeof derivation == 'string') {
+									derivation = [derivation];
 								}
-								return;
-							}
-							else{
-								audioname=audioinfo;
-								if(lib.skill[audioinfo]){
-									audioinfo=lib.skill[audioinfo].audio;
+								for(var i=0; i<derivation.length; i++) {
+									if (derivation[i].indexOf('_faq') != -1) continue;
+									const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+									if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
 								}
 							}
-						}
-						else if(Array.isArray(audioinfo)){
-							audioname=audioinfo[0];
-							audioinfo=audioinfo[1];
-						}
-						if(typeof audioinfo=='number'){
-							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
-							game.playAudio('skill',audioname+getIndex(audioinfo));
-						}
-						else if(typeof audioinfo=="object"&&"type" in audioinfo&&audioinfo.type=="direct"&&"files" in audioinfo){
-							let audioFiles=audioinfo.files;
-							if(typeof audioFiles=="object"){
-								if(!Array.isArray(audioFiles)&&playername&&playername in audioFiles)audioFiles=audioFiles[playername];
-								if(Array.isArray(audioFiles)){
-									const length=audioFiles.length;
-									game.playAudio(audioFiles[getIndex(length)-1]);
-								}
+						});
+						if (dieAudios.length || skillAudioMap.size > 0) {
+							// 分界线
+							const eleHr = document.createElement("hr");
+							eleHr.style.marginTop = "11px";
+							intro.appendChild(eleHr);
+							// 技能台词
+							if (skillAudioMap.size > 0) {
+								const skillNameSpan = document.createElement("span");
+								skillNameSpan.style.lineHeight = "1.7";
+								skillNameSpan.innerHTML = `• 技能台词<br>`;
+								intro.appendChild(skillNameSpan);
+								skillAudioMap.forEach((texts, skill) => {
+									const skillNameSpan1 = document.createElement("span"),
+										skillNameSpanStyle1 = skillNameSpan1.style;
+									skillNameSpanStyle1.fontWeight = "bold";
+									skillNameSpanStyle1.fontSize = "15.7px";
+									skillNameSpanStyle1.lineHeight = "1.4";
+									skillNameSpan1.innerHTML = `${get.translation(skill)}<br>`;
+									intro.appendChild(skillNameSpan1);
+									texts.forEach((text, index) => {
+										const skillTextSpan = document.createElement("span");
+										skillTextSpan.style.fontSize = "15.2px";
+										skillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+										intro.appendChild(skillTextSpan);
+									});
+								});
 							}
-						}
-						else if(audioinfo){
-							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
-							game.playAudio('skill',audioname);
-						}
-						else if(true&&info.audio!==false){
-							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
-							game.playSkillAudio(audioname,getIndex(2));
+							// 衍生技能台词
+							if (derivationSkillAudioMap.size > 0) {
+								const derivationSkillNameSpan = document.createElement("span");
+								derivationSkillNameSpan.style.lineHeight = "1.7";
+								derivationSkillNameSpan.innerHTML = `• 衍生技能台词<br>`;
+								intro.appendChild(derivationSkillNameSpan);
+								derivationSkillAudioMap.forEach((texts, skill) => {
+									const derivationSkillNameSpan1 = document.createElement("span"),
+										derivationSkillNameSpanStyle1 = derivationSkillNameSpan1.style;
+									derivationSkillNameSpanStyle1.fontWeight = "bold";
+									derivationSkillNameSpanStyle1.fontSize = "15.7px";
+									derivationSkillNameSpanStyle1.lineHeight = "1.4";
+									derivationSkillNameSpan1.innerHTML = `${get.translation(skill)}<br>`;
+									intro.appendChild(derivationSkillNameSpan1);
+									texts.forEach((text, index) => {
+										const derivationSkillTextSpan = document.createElement("span");
+										derivationSkillTextSpan.style.fontSize = "15.2px";
+										derivationSkillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+										intro.appendChild(derivationSkillTextSpan);
+									});
+								});
+							}
+							// 阵亡台词
+							if (dieAudios.length > 0) {
+								const skillNameSpan2 = document.createElement("span"),
+									skillNameSpanStyle2 = skillNameSpan2.style;
+								skillNameSpanStyle2.lineHeight = "1.9";
+								skillNameSpan2.innerHTML = `• 阵亡台词`;
+								intro.appendChild(skillNameSpan2);
+								dieAudios.forEach((item, index) => {
+									const dieTextSpan = document.createElement("span");
+									dieTextSpan.style.fontSize = "15.2px";
+									dieTextSpan.innerHTML = `<br>${dieAudios.length > 1 ? `${index + 1}. ` : ""}${item.text}`;
+									intro.appendChild(dieTextSpan);
+								});
+							}
 						}
 					}
 				}
-			}else{
+			}
+			
+			
+			// 默认样式修改为样式二
+			if(lib.config.show_characternamepinyin=='showPinyin'||lib.config.show_skillnamepinyin=='showPinyin'||lib.config.show_characternamepinyin=='showCodeIdentifier'||lib.config.show_skillnamepinyin=='showCodeIdentifier'){
 				// 样式一
+				const nameInfo=get.character(name);
 				const introduction=ui.create.div('.characterintro',uiintro),showCharacterNamePinyin=lib.config.show_characternamepinyin;
 				if(showCharacterNamePinyin!='doNotShow'){
 					const characterIntroTable=ui.create.div('.character-intro-table',introduction),span=document.createElement('span');
 					span.style.fontWeight='bold';
-					const nameInfo=get.character(name),exInfo=nameInfo[4],characterName=exInfo&&exInfo.includes('ruby')?lib.translate[name]:get.rawName2(name);
+					const exInfo=nameInfo[4],characterName=exInfo&&exInfo.includes('ruby')?lib.translate[name]:get.rawName2(name);
 					span.innerHTML=characterName;
 					const ruby=document.createElement('ruby');
 					ruby.appendChild(span);
@@ -4653,14 +4910,16 @@ content:function(config,pack){
 						image.src=source;
 					})).then(image=>characterSexDiv.appendChild(image)).catch(()=>characterSexDiv.innerHTML=get.translation(characterSex));
 					const characterGroupDiv=ui.create.div('.character-group',characterIntroTable),characterGroups=get.is.double(name,true);
-					if(characterGroups) Promise.all(characterGroups.map(characterGroup=>new Promise((resolve,reject)=>{
-						const imageName=`group_${characterGroup}`,information=lib.card[imageName];
-						if(!information) resolve(`${lib.assetURL}image/card/${imageName}.png`);
-						const image=information.image;
-						if(!image) resolve(`${lib.assetURL}image/card/${imageName}.png`);
-						else if(image.startsWith('db:')) game.getDB('image',image.slice(3)).then(resolve,reject);
-						else if(image.startsWith('ext:')) resolve(`${lib.assetURL}${image.replace(/^ext:/,'extension/')}`);
-						else resolve(`${lib.assetURL}${image}`);
+					if(characterGroups) Promise.all(characterGroups.map(characterGroup=>
+						Promise.resolve().then(async () => {
+						const imageName = `group_${characterGroup}`,
+							information = lib.card[imageName];
+						if (!information) return `${lib.assetURL}image/card/${imageName}.png`;
+						const image = information.image;
+						if (!image) return `${lib.assetURL}image/card/${imageName}.png`;
+						if (image.startsWith("db:")) return await game.getDB("image", image.slice(3));
+						if (image.startsWith("ext:")) return `${lib.assetURL}${image.replace(/^ext:/, "extension/")}`;
+						return `${lib.assetURL}${image}`;
 					}).then(source=>new Promise((resolve,reject)=>{
 						const image=new Image();
 						image.onload=()=>resolve(image);
@@ -4673,14 +4932,15 @@ content:function(config,pack){
 					}).catch(()=>characterGroupDiv.innerHTML=characterGroups.map(characterGroup=>get.translation(characterGroup)).join('/'));
 					else{
 						const characterGroup=nameInfo[1];
-						new Promise((resolve,reject)=>{
-							const imageName=`group_${characterGroup}`,information=lib.card[imageName];
-							if(!information) resolve(`${lib.assetURL}image/card/${imageName}.png`);
-							const image=information.image;
-							if(!image) resolve(`${lib.assetURL}image/card/${imageName}.png`);
-							else if(image.startsWith('db:')) game.getDB('image',image.slice(3)).then(resolve,reject);
-							else if(image.startsWith('ext:')) resolve(`${lib.assetURL}${image.replace(/^ext:/,'extension/')}`);
-							else resolve(`${lib.assetURL}${image}`);
+						Promise.resolve().then(async () => {
+							const imageName = `group_${characterGroup}`,
+								information = lib.card[imageName];
+							if (!information) return `${lib.assetURL}image/card/${imageName}.png`;
+							const image = information.image;
+							if (!image) return `${lib.assetURL}image/card/${imageName}.png`;
+							if (image.startsWith("db:")) return await game.getDB("image", image.slice(3));
+							if (image.startsWith("ext:")) return `${lib.assetURL}${image.replace(/^ext:/, "extension/")}`;
+							return `${lib.assetURL}${image}`;
 						}).then(source=>new Promise((resolve,reject)=>{
 							const image=new Image();
 							image.onload=()=>resolve(image);
@@ -4704,9 +4964,93 @@ content:function(config,pack){
 				const htmlParser=document.createElement('body');
 				htmlParser.innerHTML=get.characterIntro(name);
 				Array.from(htmlParser.childNodes).forEach(value=>introduction.appendChild(value));
+				
+				// 资料卡显示台词
+				if(lib.config['extension_搬运自用_byzy_zlkxstc'] != false){
+					// 添加台词部分
+					// 阵亡台词Map
+					const dieAudios = game.parseDieTextMap(name).filter(i => "text" in i);
+					// 技能台词Map
+					const skillAudioMap = new Map();
+					nameInfo[3].forEach(skill => {
+						const voiceMap = game.parseSkillText(skill, name, null, true);
+						if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
+					});
+					// 衍生技能台词Map
+					const derivationSkillAudioMap = new Map();
+					nameInfo[3].forEach(skill => {
+						var info = get.info(skill);
+						if(info.derivation) {
+							var derivation = info.derivation;
+							if(typeof derivation == 'string') {
+								derivation = [derivation];
+							}
+							for(var i=0; i<derivation.length; i++) {
+								if (derivation[i].indexOf('_faq') != -1) continue;
+								const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+								if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
+							}
+						}
+					});
+					if (dieAudios.length || skillAudioMap.size > 0) {
+						// 分界线
+						introduction.appendChild(document.createElement("hr"));
+						// 技能台词
+						if (skillAudioMap.size > 0) {
+							const skillNameSpan = document.createElement("span");
+							skillNameSpan.innerHTML = `技能台词<br>`;
+							introduction.appendChild(skillNameSpan);
+							skillAudioMap.forEach((texts, skill) => {
+								const skillNameSpan = document.createElement("span"),
+									skillNameSpanStyle = skillNameSpan.style;
+								skillNameSpanStyle.fontWeight = "bold";
+								skillNameSpan.innerHTML = `<br>${get.translation(skill)}<br>`;
+								introduction.appendChild(skillNameSpan);
+								texts.forEach((text, index) => {
+									const skillTextSpan = document.createElement("span");
+									skillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+									introduction.appendChild(skillTextSpan);
+								});
+							});
+						}
+						// 衍生技能台词
+						if (derivationSkillAudioMap.size > 0) {
+							const derivationSkillNameSpan = document.createElement("span");
+							derivationSkillNameSpan.innerHTML = `<br>衍生技能台词<br>`;
+							introduction.appendChild(derivationSkillNameSpan);
+							derivationSkillAudioMap.forEach((texts, skill) => {
+								const derivationSkillNameSpan1 = document.createElement("span"),
+									derivationSkillNameSpanStyle1 = derivationSkillNameSpan1.style;
+								derivationSkillNameSpanStyle1.fontWeight = "bold";
+								derivationSkillNameSpan1.innerHTML = `<br>${get.translation(skill)}<br>`;
+								introduction.appendChild(derivationSkillNameSpan1);
+								texts.forEach((text, index) => {
+									const derivationSkillTextSpan = document.createElement("span");
+									derivationSkillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+									introduction.appendChild(derivationSkillTextSpan);
+								});
+							});
+						}
+						// 阵亡台词
+						if (dieAudios.length > 0) {
+							const skillNameSpan = document.createElement("span"),
+								skillNameSpanStyle = skillNameSpan.style;
+							skillNameSpanStyle.fontWeight = "bold";
+							skillNameSpan.innerHTML = `<br>阵亡台词`;
+							introduction.appendChild(skillNameSpan);
+							dieAudios.forEach((item, index) => {
+								const dieTextSpan = document.createElement("span");
+								dieTextSpan.innerHTML = `<br>${dieAudios.length > 1 ? `${index + 1}. ` : ""}${item.text}`;
+								introduction.appendChild(dieTextSpan);
+							});
+						}
+					}
+				}
+				
 				const introduction2=ui.create.div('.characterintro.intro2',uiintro);
 				var list=get.character(name,3)||[];
 				var skills=ui.create.div('.characterskill',uiintro);
+				skills.id='skills_node';
 				if(lib.config.touchscreen){
 					lib.setScroll(introduction);
 					lib.setScroll(introduction2);
@@ -4766,7 +5110,7 @@ content:function(config,pack){
 							derivationNameSpanStyle.fontWeight='bold';
 							const derivationName=get.translation(derivation);
 							derivationNameSpan.innerHTML=derivationName;
-							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
+							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationName)){
 								const ruby=document.createElement('ruby');
 								ruby.appendChild(derivationNameSpan);
 								const leftParenthesisRP=document.createElement('rp');
@@ -4814,8 +5158,8 @@ content:function(config,pack){
 							clickSkill.call(skillnode,'init');
 						});
 					}
-					// if(e!=='init') game.trySkillAudio(this.link,playername);
-					// 有bug，先用旧版
+					
+					// 暂时先用旧版
 					if(lib.config.background_speak&&e!=='init'){
 						var audioname=this.link;
 						if(info.audioname2&&info.audioname2[playername]){
@@ -4863,6 +5207,8 @@ content:function(config,pack){
 						}
 						if(typeof audioinfo=='number'){
 							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+							// 临时修复tempname标签武将配音播放错误
+							if(Array.isArray(info.audioname)&&!info.audioname.contains(playername)&&lib.character[playername]&&lib.character[playername][4].some(tag=>tag.startsWith('tempname'))) audioname=audioname+'_'+info.audioname;
 							game.playAudio('skill',audioname+getIndex(audioinfo));
 						}
 						else if(typeof audioinfo=="object"&&"type" in audioinfo&&audioinfo.type=="direct"&&"files" in audioinfo){
@@ -4884,6 +5230,335 @@ content:function(config,pack){
 							game.playSkillAudio(audioname,getIndex(2));
 						}
 					}
+					/*
+					if (lib.config.background_speak && e !== "init") {
+						let audio,
+							skillnode = this;
+						const playedAudios = [];
+						(function play() {
+							if (!skillnode.audioList || !skillnode.audioList.length) {
+								skillnode.audioList = game.parseSkillAudio(skillnode.link, playername);
+								if (
+									!skillnode.audioList.length ||
+									skillnode.audioList.length == playedAudios.length
+								)
+									return;
+							}
+							audio = skillnode.audioList.shift();
+							playedAudios.push(audio);
+							game.playAudio(audio, play);
+						})();
+					}
+					*/
+				}
+			}else{
+				// 样式二
+				var nameinfo=get.character(name);
+				var intro=ui.create.div('.characterintro',get.characterIntro(name),uiintro);
+				if(lib.config.show_characternamepinyin=='showPinyin2'||lib.config.show_characternamepinyin=='showCodeIdentifier2'){
+					var charactername=get.rawName2(name);
+					var characterpinyin=lib.config.show_characternamepinyin=='showCodeIdentifier2'?name:get.pinyin(charactername);
+					var charactersex=get.translation(nameinfo[0]);
+					const charactergroups=get.is.double(name,true);
+					let charactergroup;
+					if(charactergroups) charactergroup=charactergroups.map(i=>get.translation(i)).join('/')
+					else charactergroup=get.translation(nameinfo[1]);
+					var characterhp=nameinfo[2];
+					var characterintroinfo=get.characterIntro(name);
+					var spacemark=' | ';
+					if(charactername.length>3) spacemark='<span style="font-size:7px">'+' '+'</span>'+'|'+'<span style="font-size:7px">'+' '+'</span>';
+					// intro.innerHTML='<span style="font-weight:bold;margin-right:5px">'+charactername+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+characterpinyin+']'+'</span>'+spacemark+charactersex+spacemark+charactergroup+spacemark+characterhp+'<span style="line-height:2"></span>'+'<br>'+characterintroinfo;
+					intro.innerHTML=
+						'<div onclick="window.byzy_zlkdjckwjxx(\'' + name + '\')">' +
+						'<span style="font-weight:bold;margin-right:5px">'+charactername+'</span>'+
+						'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+characterpinyin+']'+'</span>'+
+						'</div>' +
+						spacemark+charactersex+spacemark+charactergroup+spacemark+characterhp+'<span style="line-height:2"></span>'+'<br>'+characterintroinfo;
+				}
+				
+				// 资料卡显示台词
+				if(lib.config['extension_搬运自用_byzy_zlkxstc'] != false){
+					// 添加台词部分
+					// 阵亡台词Map
+					const dieAudios = game.parseDieTextMap(name).filter(i => "text" in i);
+					// 技能台词Map
+					const skillAudioMap = new Map();
+					nameinfo[3].forEach(skill => {
+						const voiceMap = game.parseSkillText(skill, name, null, true);
+						if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
+					});
+					// 衍生技能台词Map
+					const derivationSkillAudioMap = new Map();
+					nameinfo[3].forEach(skill => {
+						var info = get.info(skill);
+						if(info.derivation) {
+							var derivation = info.derivation;
+							if(typeof derivation == 'string') {
+								derivation = [derivation];
+							}
+							for(var i=0; i<derivation.length; i++) {
+								if (derivation[i].indexOf('_faq') != -1) continue;
+								const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+								if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
+							}
+						}
+					});
+					if (dieAudios.length || skillAudioMap.size > 0) {
+						// 分界线
+						const eleHr = document.createElement("hr");
+						eleHr.style.marginTop = "11px";
+						intro.appendChild(eleHr);
+						// 技能台词
+						if (skillAudioMap.size > 0) {
+							const skillNameSpan = document.createElement("span");
+							skillNameSpan.style.lineHeight = "1.7";
+							skillNameSpan.innerHTML = `• 技能台词<br>`;
+							intro.appendChild(skillNameSpan);
+							skillAudioMap.forEach((texts, skill) => {
+								const skillNameSpan1 = document.createElement("span"),
+									skillNameSpanStyle1 = skillNameSpan1.style;
+								skillNameSpanStyle1.fontWeight = "bold";
+								skillNameSpanStyle1.fontSize = "15.7px";
+								skillNameSpanStyle1.lineHeight = "1.4";
+								skillNameSpan1.innerHTML = `${get.translation(skill)}<br>`;
+								intro.appendChild(skillNameSpan1);
+								texts.forEach((text, index) => {
+									const skillTextSpan = document.createElement("span");
+									skillTextSpan.style.fontSize = "15.2px";
+									skillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+									intro.appendChild(skillTextSpan);
+								});
+							});
+						}
+						// 衍生技能台词
+						if (derivationSkillAudioMap.size > 0) {
+							const derivationSkillNameSpan = document.createElement("span");
+							derivationSkillNameSpan.style.lineHeight = "1.7";
+							derivationSkillNameSpan.innerHTML = `• 衍生技能台词<br>`;
+							intro.appendChild(derivationSkillNameSpan);
+							derivationSkillAudioMap.forEach((texts, skill) => {
+								const derivationSkillNameSpan1 = document.createElement("span"),
+									derivationSkillNameSpanStyle1 = derivationSkillNameSpan1.style;
+								derivationSkillNameSpanStyle1.fontWeight = "bold";
+								derivationSkillNameSpanStyle1.fontSize = "15.7px";
+								derivationSkillNameSpanStyle1.lineHeight = "1.4";
+								derivationSkillNameSpan1.innerHTML = `${get.translation(skill)}<br>`;
+								intro.appendChild(derivationSkillNameSpan1);
+								texts.forEach((text, index) => {
+									const derivationSkillTextSpan = document.createElement("span");
+									derivationSkillTextSpan.style.fontSize = "15.2px";
+									derivationSkillTextSpan.innerHTML = `${texts.length > 1 ? `${index + 1}. ` : ""}${text}<br>`;
+									intro.appendChild(derivationSkillTextSpan);
+								});
+							});
+						}
+						// 阵亡台词
+						if (dieAudios.length > 0) {
+							const skillNameSpan2 = document.createElement("span"),
+								skillNameSpanStyle2 = skillNameSpan2.style;
+							skillNameSpanStyle2.lineHeight = "1.9";
+							skillNameSpan2.innerHTML = `• 阵亡台词`;
+							intro.appendChild(skillNameSpan2);
+							dieAudios.forEach((item, index) => {
+								const dieTextSpan = document.createElement("span");
+								dieTextSpan.style.fontSize = "15.2px";
+								dieTextSpan.innerHTML = `<br>${dieAudios.length > 1 ? `${index + 1}. ` : ""}${item.text}`;
+								intro.appendChild(dieTextSpan);
+							});
+						}
+					}
+				}
+				
+				var intro2=ui.create.div('.characterintro.intro2',uiintro);
+				var list=get.character(name,3)||[];
+				var skills=ui.create.div('.characterskill',uiintro);
+				skills.id='skills_node';
+				if(lib.config.touchscreen){
+					lib.setScroll(intro);
+					lib.setScroll(intro2);
+					lib.setScroll(skills);
+				}
+
+				if(lib.config.mousewheel){
+					skills.onmousewheel=ui.click.mousewheel;
+				}
+				var clickSkill=function(e){
+					while(intro2.firstChild){
+						intro2.removeChild(intro2.lastChild);
+					}
+					var current=this.parentNode.querySelector('.active');
+					if(current){
+						current.classList.remove('active');
+					}
+					this.classList.add('active');
+					var skillname=get.translation(this.link);
+					var skilltranslationinfo=get.skillInfoTranslation(this.link);
+					if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&!lib.notshowSkillNamePinyin.contains(skillname)){
+						var skillpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?this.link:get.pinyin(skillname);
+						// intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+skillpinyin+']'+'</span>'+'  '+skilltranslationinfo;
+						intro2.innerHTML =
+							'<div onclick="window.byzy_zlkstysjnpy(\'' + this.linkname + '\', \'' + this.link + '\')">' +
+							'<span style="font-weight:bold;margin-right:5px">' + skillname + '</span>' +
+							'</div>' +
+							'<div onclick="window.byzy_zlkdjckjndm(\'' + this.link + '\')">' +
+							'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">' + '[' + skillpinyin + ']' + '</span>' +
+							'</div>' +
+							' ' + skilltranslationinfo;
+					}else{
+						// intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+skilltranslationinfo;
+						intro2.innerHTML=
+							'<div onclick="window.byzy_zlkstysjnpy(\'' + this.linkname + '\', \'' + this.link + '\')">' +
+							'<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+
+							'</div>' +
+							skilltranslationinfo;
+					}
+					var info=get.info(this.link);
+					var skill=this.link;
+					var playername=this.linkname;
+					var skillnode=this;
+					if(info.derivation){
+						var derivation=info.derivation;
+						if(typeof derivation=='string'){
+							derivation=[derivation];
+						}
+						for(var i=0;i<derivation.length;i++){
+							var derivationname=get.translation(derivation[i]);
+							var derivationtranslationinfo=get.skillInfoTranslation(derivation[i]);
+							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
+								var derivationpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?derivation[i]:get.pinyin(derivationname);
+								// intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+derivationpinyin+']'+'</span>'+'  '+derivationtranslationinfo;
+								intro2.innerHTML +=
+									'<br><br><div onclick="window.byzy_zlkstysjnpy(\'' + this.linkname + '\', \'' + derivation[i] + '\')">' +
+									'<span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+
+									'</div>' +
+									'<div onclick="window.byzy_zlkdjckjndm(\'' + derivation[i] + '\')">' +
+									'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+derivationpinyin+']'+'</span>'+
+									'</div>' +
+									' ' + derivationtranslationinfo;
+							}else{
+								// intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+derivationtranslationinfo;
+								intro2.innerHTML+=
+									'<br><br><div onclick="window.byzy_zlkstysjnpy(\'' + this.linkname + '\', \'' + derivation[i] + '\')">' +
+									'<span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+
+									'</div>' +
+									derivationtranslationinfo;
+							}
+						}
+					}
+					if(info.alter){
+						intro2.innerHTML+='<br><br><div class="hrefnode skillversion"></div>';
+						var skillversionnode=intro2.querySelector('.hrefnode.skillversion');
+						if(lib.config.vintageSkills.contains(skill)){
+							skillversionnode.innerHTML='切换至新版';
+						}
+						else{
+							skillversionnode.innerHTML='切换至旧版';
+						}
+						skillversionnode.listen(function(){
+							if(lib.config.vintageSkills.contains(skill)){
+								lib.config.vintageSkills.remove(skill);
+								lib.translate[skill+'_info']=lib.translate[skill+'_info_alter'];
+							}
+							else{
+								lib.config.vintageSkills.push(skill);
+								lib.translate[skill+'_info']=lib.translate[skill+'_info_origin'];
+							}
+							game.saveConfig('vintageSkills',lib.config.vintageSkills);
+							clickSkill.call(skillnode,'init');
+						});
+					}
+					
+					// 暂时先用旧版
+					if(lib.config.background_speak&&e!=='init'){
+						var audioname=this.link;
+						if(info.audioname2&&info.audioname2[playername]){
+							audioname=info.audioname2[playername];
+							info=lib.skill[audioname];
+						}
+						var audioinfo=info.audio;
+						var that=this;
+						var getIndex=function(i){
+							if(typeof that.audioindex!='number'){
+								that.audioindex=i;
+							}
+							that.audioindex++;
+							if(that.audioindex>i){
+								that.audioindex=1;
+							}
+							return that.audioindex;
+						};
+						if(typeof audioinfo=='string'){
+							if(audioinfo.indexOf('ext:')==0){
+								audioinfo=audioinfo.split(':');
+								if(audioinfo.length==3){
+									if(audioinfo[2]=='true'){
+										game.playAudio('..','extension',audioinfo[1],audioname);
+									}
+									else{
+										audioinfo[2]=parseInt(audioinfo[2]);
+										if(audioinfo[2]){
+											game.playAudio('..','extension',audioinfo[1],audioname+getIndex(audioinfo[2]));
+										}
+									}
+								}
+								return;
+							}
+							else{
+								audioname=audioinfo;
+								if(lib.skill[audioinfo]){
+									audioinfo=lib.skill[audioinfo].audio;
+								}
+							}
+						}
+						else if(Array.isArray(audioinfo)){
+							audioname=audioinfo[0];
+							audioinfo=audioinfo[1];
+						}
+						if(typeof audioinfo=='number'){
+							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+							// 临时修复tempname标签武将配音播放错误
+							if(Array.isArray(info.audioname)&&!info.audioname.contains(playername)&&lib.character[playername]&&lib.character[playername][4].some(tag=>tag.startsWith('tempname'))) audioname=audioname+'_'+info.audioname;
+							game.playAudio('skill',audioname+getIndex(audioinfo));
+						}
+						else if(typeof audioinfo=="object"&&"type" in audioinfo&&audioinfo.type=="direct"&&"files" in audioinfo){
+							let audioFiles=audioinfo.files;
+							if(typeof audioFiles=="object"){
+								if(!Array.isArray(audioFiles)&&playername&&playername in audioFiles)audioFiles=audioFiles[playername];
+								if(Array.isArray(audioFiles)){
+									const length=audioFiles.length;
+									game.playAudio(audioFiles[getIndex(length)-1]);
+								}
+							}
+						}
+						else if(audioinfo){
+							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+							game.playAudio('skill',audioname);
+						}
+						else if(true&&info.audio!==false){
+							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
+							game.playSkillAudio(audioname,getIndex(2));
+						}
+					}
+					/*
+					if (lib.config.background_speak && e !== "init") {
+						let audio,
+							skillnode = this;
+						const playedAudios = [];
+						(function play() {
+							if (!skillnode.audioList || !skillnode.audioList.length) {
+								skillnode.audioList = game.parseSkillAudio(skillnode.link, playername);
+								if (
+									!skillnode.audioList.length ||
+									skillnode.audioList.length == playedAudios.length
+								)
+									return;
+							}
+							audio = skillnode.audioList.shift();
+							playedAudios.push(audio);
+							game.playAudio(audio, play);
+						})();
+					}
+					*/
 				}
 			}
 			
@@ -4910,11 +5585,11 @@ content:function(config,pack){
 		};
 	}
 	
-	// 下面是资料页试听阵亡配音的代码（搬运自金庸群侠传扩展，已征得大熊小猫的修改许可），暂不支持扩展阵亡配音试听（彩蛋：三国24名将扩展支持阵亡配音试听）
-	// 新增资料页试听胜利配音（棘手怀念摧毁修改）
+	// 下面是资料卡试听阵亡配音的代码（搬运自金庸群侠传扩展，已征得大熊小猫的修改许可），暂不支持扩展阵亡配音试听，要先打开资料卡修改开关才能生效（彩蛋：三国24名将、小游戏整合扩展支持阵亡配音试听）
+	// 新增资料卡试听胜利配音（棘手怀念摧毁修改）
 	// 修改ui.click.charactercard，此行为与千幻聆音等扩展冲突，请关闭本功能（新增是否开启千幻聆音扩展的判断，避免冲突弹窗）
 	// 咸鱼大佬的资料页阵亡配音代码，不会被武将作为技能获得，开始游戏后依然能看到
-	if((config.byzy_zwpy||config.byzy_slpy) && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable'])) {
+	if(config.byzy_zlkxg && (config.byzy_zwpy||config.byzy_slpy) && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable'])) {
 		setTimeout(function(){
 			// 闭包
 			// 旧版，改本体game.js函数playAudio:function(){
@@ -4925,10 +5600,87 @@ content:function(config,pack){
 					var name2=arguments[1];
 					if(name2.indexOf('sanguomingjiang_die_audio:')==0){
 						var playername=name2.split(':')[1];
-						if(lib.character[playername]&&lib.character[playername][4].contains('sanguomingjiang_die_audio')){
+						if(lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].contains('sanguomingjiang_die_audio')){
+							if(lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].some(tag=>tag.startsWith('die_audio'))){
+								var tag=lib.character[playername][4].find(tag=>tag.startsWith('die_audio'));
+								var list=tag.split(':').slice(1);
+								// 多个阵亡配音按顺序播放
+								if(list.length>1){
+									// getIndexFun来自下方getIndex
+									var that=this;
+									var getIndexFun=function(i){
+										if (!that.audioindex||_status.uiclickcharactercard) {
+											that.audioindex = {}; // 初始化为空对象
+										}
+										if(typeof that.audioindex[playername]!='number'||_status.uiclickcharactercard){
+											_status.uiclickcharactercard=false;
+											that.audioindex[playername]=i;
+										}
+										that.audioindex[playername]++;
+										if(that.audioindex[playername]>i){
+											that.audioindex[playername]=1;
+										}
+										return that.audioindex[playername];
+									};
+									byzyOrigin_playAudio('..','extension','三国24名将','audio',list[getIndexFun(list.length)-1]);
+								} else
+								byzyOrigin_playAudio('..','extension','三国24名将','audio',list.length?list[0]:playername);
+							}else
 							byzyOrigin_playAudio('..','extension','三国24名将','audio',playername);
-						}else if (lib.character[playername]&&lib.character[playername][4].contains('die_audio')){
-							byzyOrigin_playAudio('die',playername);
+						}else if(lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].contains('xyx_die_audio')){
+							if(lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].some(tag=>tag.startsWith('die_audio'))){
+								var tag=lib.character[playername][4].find(tag=>tag.startsWith('die_audio'));
+								var list=tag.split(':').slice(1);
+								// 多个阵亡配音按顺序播放
+								if(list.length>1){
+									// getIndexFun来自下方getIndex
+									var that=this;
+									var getIndexFun=function(i){
+										if (!that.audioindex||_status.uiclickcharactercard) {
+											that.audioindex = {}; // 初始化为空对象
+										}
+										if(typeof that.audioindex[playername]!='number'||_status.uiclickcharactercard){
+											_status.uiclickcharactercard=false;
+											that.audioindex[playername]=i;
+										}
+										that.audioindex[playername]++;
+										if(that.audioindex[playername]>i){
+											that.audioindex[playername]=1;
+										}
+										return that.audioindex[playername];
+									};
+									byzyOrigin_playAudio('..','extension','小游戏整合','audio',list[getIndexFun(list.length)-1]);
+								} else
+								byzyOrigin_playAudio('..','extension','小游戏整合','audio',list.length?list[0]:playername);
+							}else
+							byzyOrigin_playAudio('..','extension','小游戏整合','audio',playername);
+						// }else if (lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].contains('die_audio')){
+							// byzyOrigin_playAudio('die',playername);
+						// 临时修复die_audio标签武将配音播放错误
+						}else if(lib.character[playername]&&lib.character[playername][4]&&lib.character[playername][4].some(tag=>tag.startsWith('die_audio'))){
+							var tag=lib.character[playername][4].find(tag=>tag.startsWith('die_audio'));
+							var list=tag.split(':').slice(1);
+							// 多个阵亡配音按顺序播放
+							if(list.length>1){
+								// getIndexFun来自下方getIndex
+								var that=this;
+								var getIndexFun=function(i){
+									if (!that.audioindex||_status.uiclickcharactercard) {
+										that.audioindex = {}; // 初始化为空对象
+									}
+									if(typeof that.audioindex[playername]!='number'||_status.uiclickcharactercard){
+										_status.uiclickcharactercard=false;
+										that.audioindex[playername]=i;
+									}
+									that.audioindex[playername]++;
+									if(that.audioindex[playername]>i){
+										that.audioindex[playername]=1;
+									}
+									return that.audioindex[playername];
+								};
+								byzyOrigin_playAudio('die',list[getIndexFun(list.length)-1]);
+							} else
+							byzyOrigin_playAudio('die',list.length?list[0]:playername);
 						}else{
 							byzyOrigin_playAudio('die',playername,function() {
 								byzyOrigin_playAudio('die',playername.slice(playername.indexOf('_')+1));
@@ -4947,10 +5699,13 @@ content:function(config,pack){
 			game.trySkillAudio=function(skill,player,directaudio){
 				if(get.translation(skill)=='阵亡'){
 					// 改本体game.js函数die:function(){中if(lib.config.background_speak){
-					if(lib.character[player]&&lib.character[player][4].contains('sanguomingjiang_die_audio')){
+					if(lib.character[player]&&lib.character[player][4]&&lib.character[player][4].contains('sanguomingjiang_die_audio')){
 						game.playAudio('..','extension','三国24名将','audio',player);
 					}
-					else if(lib.character[player]&&lib.character[player][4].some(tag=>/^die:.+$/.test(tag))){
+					else if(lib.character[player]&&lib.character[player][4]&&lib.character[player][4].contains('xyx_die_audio')){
+						game.playAudio('..','extension','小游戏整合','audio',player);
+					}
+					else if(lib.character[player]&&lib.character[player][4]&&lib.character[player][4].some(tag=>/^die:.+$/.test(tag))){
 						var tag=lib.character[player][4].find(tag=>/^die:.+$/.test(tag));
 						var reg=new RegExp("^ext:(.+)?/");
 						var match=tag.match(/^die:(.+)$/);
@@ -4960,7 +5715,7 @@ content:function(config,pack){
 							game.playAudio(path);
 						}
 					}
-					else if(lib.character[player]&&lib.character[player][4].some(tag=>tag.startsWith('die_audio'))){
+					else if(lib.character[player]&&lib.character[player][4]&&lib.character[player][4].some(tag=>tag.startsWith('die_audio'))){
 						var tag=lib.character[player][4].find(tag=>tag.startsWith('die_audio'));
 						var list=tag.split(':').slice(1);
 						game.playAudio('die',list.length?list[0]:player);
@@ -4991,7 +5746,35 @@ content:function(config,pack){
 					// 阵亡文本
 					lib.skill["byzyzhenwangpeiyin"]={};
 					lib.skill["byzyzhenwangpeiyin"]["audio"]="sanguomingjiang_die_audio:"+name;
-					var strinfo='暂无配音文本';
+					// var strinfo='台词文本见上方';
+					
+					// 新增判断有无台词文本的功能
+					var strinfo;
+					let dieAudios = [];
+					if (lib.character[name] && lib.character[name][4] && lib.character[name][4].some(tag => tag.startsWith('die_audio'))) {
+						var tag = lib.character[name][4].find(tag => tag.startsWith('die_audio'));
+						dieAudios = tag.split(':').slice(1);
+					}
+					if(dieAudios && dieAudios.length > 0){
+						let hasTranslate = false;
+						dieAudios.forEach(item => {
+							let key;
+							if(item.startsWith("ext:")){
+								key = item.slice(4).split("/")[1];
+							}
+							else {
+								key = item;
+							}
+							if(lib.translate[`#${key}:die`]) hasTranslate = true;
+						});
+						if(hasTranslate) {
+							strinfo='台词文本见上方';
+						} else strinfo='暂无台词文本';
+					} else {
+						if(lib.translate[`#${name}:die`]) {
+							strinfo='台词文本见上方';
+						} else strinfo='暂无台词文本';
+					}
 					
 					// 不着色
 					var diestr="阵亡";
@@ -5011,7 +5794,7 @@ content:function(config,pack){
 					// 胜利文本
 					lib.skill["byzyshenglipeiyin"]={};
 					lib.skill["byzyshenglipeiyin"]["audio"]="sanguomingjiang_win_audio:"+name;
-					var strinfo_1='暂无配音文本';
+					var strinfo_1='暂无台词文本';
 					
 					// 不着色
 					var winstr="胜利";
@@ -5458,22 +6241,22 @@ content:function(config,pack){
 							}
 							break;
 						}
-						case 'gainCardequip6':{
+						case 'gainCardequip5':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip6'&&(!cards.includes(card));
+								return get.subtype(card)=='equip5'&&(!cards.includes(card));
 								});
 								target.gain(card2);
 								cards.push(card2);
 							}
 							break;
 						}
-						case 'gainCardequip5':{
+						case 'gainCardequip6':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip5'&&(!cards.includes(card));
+								return get.subtype(card)=='equip6'&&(!cards.includes(card));
 								});
 								target.gain(card2);
 								cards.push(card2);
@@ -6022,13 +6805,13 @@ content:function(config,pack){
 		select.add(option);
 		
 		option=document.createElement('option');
-		option.text="从牌堆&弃牌堆获得装备牌-特殊装备";
-		option.value="gainCardequip6";
+		option.text="从牌堆&弃牌堆获得装备牌-宝物";
+		option.value="gainCardequip5";
 		select.add(option);
 		
 		option=document.createElement('option');
-		option.text="从牌堆&弃牌堆获得装备牌-宝物";
-		option.value="gainCardequip5";
+		option.text="从牌堆&弃牌堆获得装备牌-特殊装备";
+		option.value="gainCardequip6";
 		select.add(option);
 		
 		option=document.createElement('option');
@@ -6791,16 +7574,27 @@ content:function(config,pack){
 				// 所有的武将包武将
 				for(var k in lib.characterPack){
 					for(var i in lib.characterPack[k]){
-						if(!(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].contains('unseen'))){
-							avatar_list.push(i);
-						}
+						if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+							if(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].includes('unseen')) continue;
+							if(!lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+								continue;
+							} else if(!lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+								continue;
+							} else avatar_list.push(i);
+						} else avatar_list.push(i);
 					}
 				}
 			} else {
 				// 武将包开启的武将
 				for(var i in lib.character){
-					if(lib.character[i][4].contains('unseen')) continue;
-					avatar_list.push(i);
+					if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+						if(lib.character[i][4] && lib.character[i][4].includes('unseen')) continue;
+						if(lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+							avatar_list.push(i);
+						} else if(lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+							avatar_list.push(i);
+						} else continue;
+					} else avatar_list.push(i);
 				}
 			}
 			avatar_list.sort(lib.sort.capt);
@@ -6827,18 +7621,33 @@ content:function(config,pack){
 					// 所有的武将包武将
 					for(var k in lib.characterPack){
 						for(var i in lib.characterPack[k]){
-							if(!(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].contains('unseen'))){
-								if(lib.translate[i].indexOf('诸葛亮') != -1||(lib.translate[i].indexOf('卧龙') != -1&&lib.translate[i].indexOf('卧龙凤雏') == -1)){
-									list.push(i);
+							if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+								if(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].includes('unseen')) continue;
+								if(lib.translate[i]&&(lib.translate[i].includes('诸葛亮')||(lib.translate[i].includes('卧龙')&&!lib.translate[i].includes('卧龙凤雏')))){
+									if(!lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+										continue;
+									} else if(!lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+										continue;
+									} else list.push(i);
 								}
+							} else if(lib.translate[i]&&(lib.translate[i].includes('诸葛亮')||(lib.translate[i].includes('卧龙')&&!lib.translate[i].includes('卧龙凤雏')))){
+								list.push(i);
 							}
 						}
 					}
 				} else {
 					// 武将包开启的武将
 					for(var i in lib.character){
-						if(lib.character[i][4].contains('unseen')) continue;
-						if(lib.translate[i].indexOf('诸葛亮') != -1||(lib.translate[i].indexOf('卧龙') != -1&&lib.translate[i].indexOf('卧龙凤雏') == -1)){
+						if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+							if(lib.character[i][4] && lib.character[i][4].includes('unseen')) continue;
+							if(lib.translate[i]&&(lib.translate[i].includes('诸葛亮')||(lib.translate[i].includes('卧龙')&&!lib.translate[i].includes('卧龙凤雏')))){
+								if(lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+									list.push(i);
+								} else if(lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+									list.push(i);
+								} else continue;
+							}
+						} else if(lib.translate[i]&&(lib.translate[i].includes('诸葛亮')||(lib.translate[i].includes('卧龙')&&!lib.translate[i].includes('卧龙凤雏')))){
 							list.push(i);
 						}
 					}
@@ -6848,18 +7657,33 @@ content:function(config,pack){
 					// 所有的武将包武将
 					for(var k in lib.characterPack){
 						for(var i in lib.characterPack[k]){
-							if(!(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].contains('unseen'))){
-								if(lib.translate[i].indexOf(item) != -1){
-									list.push(i);
+							if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+								if(lib.characterPack[k][i][4] && lib.characterPack[k][i][4].includes('unseen')) continue;
+								if(lib.translate[i]&&lib.translate[i].includes(item)){
+									if(!lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+										continue;
+									} else if(!lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+										continue;
+									} else list.push(i);
 								}
+							} else if(lib.translate[i]&&lib.translate[i].includes(item)){
+								list.push(i);
 							}
 						}
 					}
 				} else {
 					// 武将包开启的武将
 					for(var i in lib.character){
-						if(lib.character[i][4].contains('unseen')) continue;
-						if(lib.translate[i].indexOf(item) != -1){
+						if(lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)){
+							if(lib.character[i][4] && lib.character[i][4].includes('unseen')) continue;
+							if(lib.translate[i]&&lib.translate[i].includes(item)){
+								if(lib.config['extension_搬运自用_byzy_tongrenmoshijinjiang']&&lib.config.banned.includes(i)){
+									list.push(i);
+								} else if(lib.config['extension_搬运自用_byzy_tongrenmoshiaijinjiang']&&(lib.config.forbidai.includes(i)||lib.config.forbidai_user.includes(i))){
+									list.push(i);
+								} else continue;
+							}
+						} else if(lib.translate[i]&&lib.translate[i].includes(item)){
 							list.push(i);
 						}
 					}
@@ -6883,14 +7707,20 @@ content:function(config,pack){
 			if (lib.config.byzy_tongrenmoshifenpei=="1") {
 				// 武将分配规则：全随机分配
 				for (var i = 0; i < game.players.length; i++) {
+					// bug修复：更换武将牌后AI没了
+					var gamePlayersAI=game.players[i].ai;
 					game.players[i].uninit();
+					game.players[i].ai=gamePlayersAI;
 					game.players[i].init(list.randomGet());
 				}
 			} else {
 				// 武将分配规则：随机分配
 				var originalList = list.slice(); // 保存原始同人武将列表
 				for (var i = 0; i < game.players.length; i++) {
+					// bug修复：更换武将牌后AI没了
+					var gamePlayersAI=game.players[i].ai;
 					game.players[i].uninit(); // 先移除武将牌，避免后面原先隐匿的武将更换武将牌后无皮肤
+					game.players[i].ai=gamePlayersAI;
 					var selectedElement = originalList.randomGet(); // 随机分配一个武将
 					game.players[i].init(selectedElement); // 使用随机武将进行初始化
 					var index = originalList.indexOf(selectedElement); // 获取选中武将在列表中的索引
@@ -6997,8 +7827,8 @@ precontent:function(){
 					}
 					if(player.identity=='mingzhong'){
 						if(!player.isInitFilter('noZhuHp')){
-							player.hp++;
 							player.maxHp++;
+							player.hp++;
 							player.update();
 						}
 					}
@@ -7027,8 +7857,8 @@ precontent:function(){
 					}
 					if(game.players.length>4){
 						if(!player.isInitFilter('noZhuHp')){
-							player.hp++;
 							player.maxHp++;
+							player.hp++;
 							player.update();
 						}
 					}
@@ -7690,7 +8520,12 @@ precontent:function(){
 						}
 						game.addRecentCharacter(result.buttons[0].link);
 					}
-					if (get.config('choose_group') && chooseGroup) {
+					// 修复双势力武将无法重新选势力的bug
+					var name = event.choosed[0];
+					if (get.is.double(name)) {
+						game.me._groupChosen = true;
+						game.me.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力");
+					} else if (get.config('choose_group') && chooseGroup) {
 						var list = lib.group.slice(0);
 						list.remove('shen');
 						// 神武将选择势力（若开启）可点击取消了
@@ -7704,17 +8539,26 @@ precontent:function(){
 				if(event.group=='cancel2'){
 					event.group='shen';
 				}
+				// bug修复：更换武将牌后AI没了
 				if (event.chosen.length) {
+					var gamePlayersAI=target.ai;
 					lib.element.player.uninit.call(target);
+					target.ai=gamePlayersAI;
 					lib.element.player.init.call(target, event.chosen[0], event.chosen[1]);
 				} else if (event.modchosen) {
+					var gamePlayersAI=target.ai;
 					lib.element.player.uninit.call(target);
+					target.ai=gamePlayersAI;
 					lib.element.player.init.call(target, event.modchosen[0], event.modchosen[1]);
 				} else if (event.choosed.length == 2) {
+					var gamePlayersAI=target.ai;
 					lib.element.player.uninit.call(target);
+					target.ai=gamePlayersAI;
 					lib.element.player.init.call(target, event.choosed[0], event.choosed[1]);
 				} else {
+					var gamePlayersAI=target.ai;
 					lib.element.player.uninit.call(target);
+					target.ai=gamePlayersAI;
 					lib.element.player.init.call(target, event.choosed[0]);
 				}
 				event.list.remove(get.sourceCharacter(target.name1));
@@ -7722,8 +8566,8 @@ precontent:function(){
 				if (target == game.zhu && _status.mode != 'purple') {
 					if (!event.stratagemMode&&game.players.length > 4 || get.mode() == 'doudizhu') {
 						if(!target.isInitFilter('noZhuHp')){
-							target.hp++;
 							target.maxHp++;
+							target.hp++;
 							target.update();
 						}
 					}
@@ -7815,8 +8659,8 @@ precontent:function(){
 				if (_status.mode == 'purple') {
 					if (target == game.rZhu || target == game.bZhu) {
 						if(!target.isInitFilter('noZhuHp')){
-							target.hp++;
 							target.maxHp++;
+							target.hp++;
 							target.update();
 						}
 					}
@@ -8189,6 +9033,7 @@ precontent:function(){
 	// AI禁选的武将
 	// !lib.character[i][4].contains('forbidai')
 	// !lib.config.forbidai.contains(i)
+	// !lib.config.forbidai_user.contains(i)
 	// 具体不参与统计的武将详见characterDisabled:function(i,libCharacter){函数return true
 	// 主公武将
 	// lib.characterPack.mode_guozhan[i][4].contains('zhu')
@@ -9271,38 +10116,118 @@ precontent:function(){
 		}
 		if(num==14){
 			if (ui.coin!=undefined) {
-				game.changeCoin(999999);
+				game.changeCoin(999);
 			}
 		}
 		if(num==15){
 			if (ui.coin!=undefined) {
-				game.changeCoin(-999999);
+				game.changeCoin(-999);
 			}
 		}
 		if(num==16){
 			if (ui.coin!=undefined) {
-				lib.config.coin=999999;
+				lib.config.coin=999;
+				// 即时生效
+				var str;
+				if (lib.config.coin_display_playpackconfig == "text") {
+					str =
+						"<span>" +
+						lib.config.coin +
+						"</span><span>金</span>";
+				} else {
+					str =
+						'<span style="position:absolute">㉤</span><span style="margin-left:18px;font-family:xinwei;line-height:10px">' +
+						lib.config.coin +
+						"</span>";
+				}
+				ui.coin.innerHTML = str;
 			}
 		}
 		if(num==17){
 			if (ui.coin!=undefined) {
 				lib.config.coin=Infinity;
+				// 即时生效
+				var str;
+				if (lib.config.coin_display_playpackconfig == "text") {
+					str =
+						"<span>" +
+						lib.config.coin +
+						"</span><span>金</span>";
+				} else {
+					str =
+						'<span style="position:absolute">㉤</span><span style="margin-left:18px;font-family:xinwei;line-height:10px">' +
+						lib.config.coin +
+						"</span>";
+				}
+				ui.coin.innerHTML = str;
 			}
 		}
 		if(num==18){
-			window.location.reload();
+			if (ui.money!=undefined) {
+				game.changeDust(999);
+			}
 		}
 		if(num==19){
+			if (ui.money!=undefined) {
+				game.changeDust(-999);
+			}
+		}
+		if(num==20){
+			if (ui.money!=undefined) {
+				game.data.dust=999;
+				game.saveData();
+				// 即时生效
+				ui.money.childNodes[1].innerHTML=game.data.dust;
+			}
+		}
+		if(num==21){
+			if (ui.money!=undefined) {
+				game.data.dust=Infinity;
+				game.saveData();
+				// 即时生效
+				ui.money.childNodes[1].innerHTML=game.data.dust;
+			}
+		}
+		if(num==22){
+			if (ui.money!=undefined) {
+				game.changeMoney(999);
+			}
+		}
+		if(num==23){
+			if (ui.money!=undefined) {
+				game.changeMoney(-999);
+			}
+		}
+		if(num==24){
+			if (ui.money!=undefined) {
+				game.data.money=999;
+				game.saveData();
+				// 即时生效
+				ui.money.lastChild.innerHTML=game.data.money;
+			}
+		}
+		if(num==25){
+			if (ui.money!=undefined) {
+				game.data.money=Infinity;
+				game.saveData();
+				// 即时生效
+				ui.money.lastChild.innerHTML=game.data.money;
+			}
+		}
+		if(num==26){
+			window.location.reload();
+		}
+		if(num==27){
 			game.saveConfig('version','1.9.1');
 			game.reload();
 		}
-		if(num==20){
+		if(num==28){
 			var str=navigator.appVersion;
 			alert(str);
 			game.print(str);
 			console.log(str);
 		}
-		if(num==21){
+		if(num==29){
 			if (!lib.device) {
 				lib.node.debug();
 			}
@@ -9311,15 +10236,22 @@ precontent:function(){
 		// 游戏模式
 		if(num==501){
 			for (var i = 0; i < game.players.length; i++) {
-				var myhp=game.me.hp;
-				var mymaxhp=game.me.maxHp;
-				var mygroup=game.me.group;
-				if(game.players[i]!=game.me) game.players[i].uninit();
-				game.players[i].init(game.me.name1,game.me.name2); 
-				game.players[i].hp=myhp;
-				game.players[i].maxHp=mymaxhp;
-				game.players[i].changeGroup(mygroup);
-				game.players[i].update();
+				if(game.players[i]!=game.me) {
+					var myhp=game.me.hp;
+					var mymaxhp=game.me.maxHp;
+					var mygroup=game.me.group;
+					
+					// bug修复：更换武将牌后AI没了
+					var gamePlayersAI=game.players[i].ai;
+					game.players[i].uninit();
+					game.players[i].ai=gamePlayersAI;
+					game.players[i].init(game.me.name1,game.me.name2);
+					
+					game.players[i].hp=myhp;
+					game.players[i].maxHp=mymaxhp;
+					game.players[i].changeGroup(mygroup);
+					game.players[i].update();
+				}
 			}
 		}
 		if(num==502){
@@ -10266,8 +11198,8 @@ config:{
 				'<br>PART Ⅰ 自写功能（含魔改）'+
 				'<br>'+
 				'<br>※ 武将及卡牌统计功能'+
-				'<br>- 点击下方<span style="text-decoration: underline;">武将及卡牌统计功能</span>链接按钮，输出武将及卡牌统计结果，可通过弹窗显示、命令框或控制台查看'+
-				'<br>- 当前模式武将统计：<br>隐藏武将及隐藏武将包内的武将、被禁用的武将（在武将-禁将里的武将和AI禁选的武将等）等不参与统计<br>国战模式君主武将参与统计<br>武将包开仅点将可用后包内武将不参与当前模式武将统计（即开启武将资料页-禁用-随机选将可用开关的武将参与统计）<br>武将包关闭后的武将仍参与当前模式禁将数统计（尽管不在武将-禁将里显示）'+
+				'<br>- 点击下方<span style="text-decoration: underline;">武将及卡牌统计功能</span>链接按钮，输出武将及卡牌统计结果，可通过弹窗显示、命令框（其它-命令）或控制台查看'+
+				'<br>- 当前模式武将统计：<br>隐藏武将及隐藏武将包内的武将、被禁用的武将（在武将-禁将里的武将和AI禁选的武将等）等不参与统计<br>国战模式君主武将参与统计<br>武将包开仅点将可用后包内武将不参与当前模式武将统计（即开启武将资料卡-禁用-随机选将可用开关的武将参与统计）<br>武将包关闭后的武将仍参与当前模式禁将数统计（尽管不在武将-禁将里显示）'+
 				'<br>- 总武将统计：<br>隐藏武将及隐藏武将包内的武将<br>国战武将、挑战武将等要在对应的模式下才能参与统计，国战武将-君主武将数要在国战模式下才能正确统计'+
 				'<br>- 武将包统计：<br>隐藏的武将包不参与总武将包数统计'+
 				'<br>- 卡牌统计：<br>卡牌-衍生不参与卡牌数统计'+
@@ -10293,91 +11225,107 @@ config:{
 				'<br>- 游戏结束-战斗胜利：直接结束游戏，进入游戏结束统计界面（显示战斗胜利），即时生效'+
 				'<br>- 游戏结束-战斗失败：直接结束游戏，进入游戏结束统计界面（显示战斗失败），即时生效'+
 				'<br>- 游戏结束-平局：直接结束游戏，进入游戏结束统计界面（显示平局），即时生效'+
-				'<br>- 获得999999金币：使用前要开启富甲天下扩展，即时生效'+
-				'<br>- 扣除999999金币：使用前要开启富甲天下扩展，即时生效'+
-				'<br>- 金币数量设为999999：使用前要开启富甲天下扩展，金币变动时生效（温馨提示：想要恢复0金币，先点击金币数量设为999999，再点击扣除999999金币）'+
-				'<br>- 无限金币：使用前要开启富甲天下扩展，金币变动时生效'+
+				'<br>- 修改金币功能（使用前要开启富甲天下扩展）：获得999金币、扣除999金币、金币数量=999、无限金币，即时生效；温馨提示：想要恢复0金币，先将金币数量设为999，再点击扣除999金币'+
+				'<br>- 修改招募令和修改金币功能（战棋模式用），用法同上。'+
 				'<br>- 重启进入启动页界面：即时生效'+
 				'<br>- 查看本体更新内容：修改本体版本号为旧版，自动重启后就能查看更新内容'+
-				'<br>- 返回浏览器的版本信息：可通过弹窗显示、命令框或控制台查看'+
+				'<br>- 返回浏览器的版本信息：可通过弹窗显示、命令框（其它-命令）或控制台查看'+
 				'<br>- 电脑端启用控制台：快捷键为Ctrl+J'+
 				'<br>'+
 				'<br>※ 自娱自乐(即时生效)<br>- 开启后玩家将代替所有场上角色行动，即时生效'+
 				'<br>'+
 				'<br>※ 手牌可视(即时生效)<br>- 开启后，玩家可以看到场上其他所有角色的手牌（手机端可长按/电脑端可右击武将牌查看，拆顺等选择手牌的界面可看到手牌），即时生效'+
 				'<br>'+
-				'<br>※ 选项导航功能<br>- 搬运自扩展ol的选项导航（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可）<br>- 输入后回车/确定返回搜索结果，再回车一下/再按一次确定跳转至下一个搜索结果'+
-				'<br>'+
-				'<br>※ 加入顶部左侧菜单<br>- 将“导”字按钮加入顶部左侧菜单栏，点击后快捷打开扩展界面（参考自特效测试扩展），设置为默认开启'+
-				'<br>'+
-				'<br>※ 整合自写并魔改的2-17人扩展，请点击展开下方2-17人扩展【使用说明】查看↓'+
+				'<br>▷ 2-17人扩展：整合自写并魔改的扩展，请点击展开下方2-17人扩展【使用说明】查看↓'+
 				'<br>◇ 妙用：局局1v7，教程如下↓<br>① 本扩展八人场身份选择：1主0忠7反0内<br>② 屏蔽身份：忠臣内奸反贼<br>另：如果想自己1人打7个自己，进行同样的设置后，开乱斗-同将模式即可（设置是继承身份模式的）'+
 				'<br>'+
-				'<br>※ AI禁将功能'+
+				'<br>▷ AI禁将功能'+
 				'<br>- 参考自玄武江湖扩展，AI根据性别、势力或武将评级禁选武将，将AI根据势力、武将评级禁选武将改为开关设置，可更加自由地选择配置禁选组合'+
 				'<br><span style=\"color:red\">- 和其他扩展的AI禁将功能同时使用可能会导致无法选将，若遇冲突请关闭本选项！</span>'+
 				'<br>'+
+				'<br>▷ 禁将与解除禁将'+
 				'<br>※ 禁将功能'+
-				'<br>- 解除所有游戏模式禁将：启用在武将-禁将里的武将（所有游戏模式），相当于将武将资料页-禁用-所有游戏模式开关开启（全部启用），自动重启后生效'+
-				'<br>- 解除非当前模式禁将：启用在武将-禁将里的武将（非当前游戏模式），相当于将武将资料页-禁用-非当前游戏模式开关开启，自动重启后生效'+
-				'<br>- 应用当前禁将到全部：将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料页-禁用-所有游戏模式开关关闭（全部禁用），自动重启后生效'+
-				'<br>- 所有武将随机选将可用：将武将包仅点将可用开关全部关闭&武将资料页-禁用-随机选将可用开关全部开启，自动重启后生效'+
-				'<br>- 场上所有角色禁将：在已有禁将的基础上继续场上所有角色禁将（当前游戏模式），即把场上所有角色的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上所有角色禁将”功能'+
-				'<br>- 解除场上所有角色禁将：在已有禁将的基础上解除场上所有角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启，手动重启后生效'+
-				'<br>- 场上其他角色禁将：在已有禁将的基础上继续场上其他角色禁将（当前游戏模式），即把场上其他角色的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上其他角色禁将”功能'+
-				'<br>- 解除场上其他角色禁将：在已有禁将的基础上解除场上其他角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启，手动重启后生效'+
+				'<br>- 解除所有游戏模式禁将：启用在武将-禁将里的武将（所有游戏模式），相当于将武将资料卡-禁用-所有游戏模式开关开启（全部启用），自动重启后生效'+
+				'<br>- 解除非当前模式禁将：启用在武将-禁将里的武将（非当前游戏模式），相当于将武将资料卡-禁用-非当前游戏模式开关开启，自动重启后生效'+
+				'<br>- 应用当前禁将到全部：将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用），自动重启后生效'+
+				'<br>- 所有武将随机选将可用：将武将包仅点将可用开关全部关闭&武将资料卡-禁用-随机选将可用开关全部开启，自动重启后生效'+
+				'<br>- 场上所有角色禁将：在已有禁将的基础上继续场上所有角色禁将（当前游戏模式），即把场上所有角色的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上所有角色禁将”功能'+
+				'<br>- 解除场上所有角色禁将：在已有禁将的基础上解除场上所有角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启，手动重启后生效'+
+				'<br>- 场上其他角色禁将：在已有禁将的基础上继续场上其他角色禁将（当前游戏模式），即把场上其他角色的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上其他角色禁将”功能'+
+				'<br>- 解除场上其他角色禁将：在已有禁将的基础上解除场上其他角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启，手动重启后生效'+
 				'<br>'+
-				'<br>※ 当前模式禁将<br>- 在当前游戏模式下，在已有禁将的基础上继续禁用武将，即把要禁用的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭，点击选项后自动重启后生效<br>- 若想将当前游戏模式禁将应用到非当前游戏模式可使用禁将功能的应用当前禁将到全部'+
+				'<br>※ 当前模式禁将<br>- 在当前游戏模式下，在已有禁将的基础上继续禁用武将，即把要禁用的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭，点击选项后自动重启后生效<br>- 若想将当前游戏模式禁将应用到非当前游戏模式可使用禁将功能的应用当前禁将到全部'+
 				'<br>'+
-				'<br>※ 解除当前模式禁将<br>- 在当前游戏模式下，在已有禁将的基础上解除禁用武将，即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启，点击选项后自动重启后生效<br>- 其他解除禁将的功能可使用禁将功能'+
+				'<br>※ 解除当前模式禁将<br>- 在当前游戏模式下，在已有禁将的基础上解除禁用武将，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启，点击选项后自动重启后生效<br>- 其他解除禁将的功能可使用禁将功能'+
 				'<br>'+
 				'<br>◇ 妙用：仅体验本体新增的武将（体验扩展新增的武将同理），教程如下↓'+
 				'<br>法1（本体扩展通用，扩展同理，在文件管理器中的操作略有差异）：<br>① 在文件管理器中操作：删除<span style=\"color:#0086FF\">游戏目录</span>/character内的文件，将旧版本体character里的文件放到对应位置<br>② 在无名杀中操作：本扩展点击当前模式禁将-全部禁将<br>③ 在文件管理器中操作：将新版本体character里的文件放到<span style=\"color:#0086FF\">游戏目录</span>/character内<br>④ 重启/重新打开无名杀'+
 				'<br>法2（仅适用于本体）：<br>① 安装衍生篇扩展<br>② 在无名杀中操作：衍生篇扩展-本体武将补丁-选择旧版本，本扩展点击当前模式禁将-全部禁将<br>③ 在无名杀中操作：衍生篇扩展-本体武将补丁-选择新版本<br>④ 重启/重新打开无名杀'+
 				'<br><span style=\"color:red\">- 由于禁将导致的报错，无需重置无名杀！<br>法一：关闭弹窗后，直接切换至其他的游戏模式（如挑战模式），再开启本体的武将重启即可<br>法二：直接退出游戏，然后从启动页重新进入其他的游戏模式（如挑战模式），再开启本体的武将重启即可</span>'+
 				'<br>'+
+				'<br>▷ 武将称号&性别'+
+				'<br>※ 武将称号补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将称号（缓更中）'+
+				'<br>'+
+				'<br>※ 武将性别显示<br>- 默认开启，重启后生效。开启后关闭本体的显示角色性别开关，在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将性别（含扩展）；关闭后开启本体的显示角色性别开关（若不想显示武将性别，还需前往本体选项-显示-显示角色性别关闭）'+
+				'<br>'+
+				'<br>▷ 武将&卡牌引文：代码参考自群英荟萃乀摧林扩展'+
+				'<br>'+
+				'<br>※ 长按/右击弹出菜单修改<br>- 默认开启，修改手机端长按/电脑端右击武将头像后的武将信息查看界面菜单；新增武将引文接口，开启后才能使用武将引文补充；发送交互表情时间修改；其他修复<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span>'+
+				'<br>'+
+				'<br>※ 武将引文补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将引文（缓更中），需先开启右键菜单修改'+
+				'<br>'+
+				'<br>※ 卡牌引文补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的卡牌信息查看界面显示卡牌引文（缓更中）'+
+				'<br>'+
+				'<br>▷ 自由选将增强'+
 				'<br>※ 自由选将-搜索功能<br>- 武将搜索代码摘抄自扩展ol（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可）<br>- 默认开启，自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）；移动代码以解决自由选将搜索功能存在关闭扩展后不消失的问题；新增确定按钮以修复部分手机可能存在回车无法使用的bug'+
 				'<br>'+
 				'<br>※ 自由选将-筛选按钮扩充<br>- 默认开启，扩充按钮：男性、女性、双性，可根据性别筛选（统计）武将；主公（可筛选主公武将）；护甲（可筛选带护甲的武将）、不同体力上限筛选，实现更加自由灵活地禁选将'+
 				'<br>'+
 				'<br>※ 自由选将-随机按钮<br>- 由假装无敌扩展原功能【AI选将】分离而来，开启后，将在自由选将界面添加“随机”筛选按钮，点击该按钮可切换显示全部武将和随机武将，设置为默认开启'+
 				'<br>'+
-				'<br>※ 武将称号补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将称号（缓更中）'+
-				'<br>'+
-				'<br>※ 武将性别显示<br>- 默认开启，重启后生效。开启后关闭本体的显示角色性别开关，在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将性别（含扩展）；关闭后开启本体的显示角色性别开关（若不想显示武将性别，还需前往本体选项-显示-显示角色性别关闭）'+
-				'<br>'+
-				'<br>▷ 武将&卡牌引文补充：代码参考自群英荟萃乀摧林扩展'+
-				'<br>'+
-				'<br>※ 武将引文补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将引文（缓更中）'+
-				'<br>'+
-				'<br>※ 卡牌引文补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的卡牌信息查看界面显示卡牌引文（缓更中）'+
-				'<br>'+
 				'<br>▷ 游戏模式：详情请点击下方【游戏模式介绍】折叠选项查看'+
 				'<br>'+
+				'<br>▷ 开关扩展功能'+
 				'<br>※ 开关扩展功能<br>- 一键开启或关闭扩展，自动重启后生效'+
+				'<br>'+
+				'<br>※ 绘制效果图（测试中）<br>- 利用控制台命令代码绘制效果图，即点即用'+
 				'<br>'+
 				'<br>PART Ⅱ 搬运功能（并魔改）'+
 				'<br>'+
+				'<br>▷ 导航功能'+
+				'<br>※ 选项导航功能<br>- 搬运自扩展ol的选项导航（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可）<br>- 输入后回车/确定返回搜索结果，再回车一下/再按一次确定跳转至下一个搜索结果'+
+				'<br>'+
+				'<br>※ 加入顶部左侧菜单<br>- 将“导”字按钮加入顶部左侧菜单栏，点击后快捷打开扩展界面（参考自特效测试扩展），设置为默认开启'+
+				'<br>'+
+				'<br>▷ 资料卡功能'+
+				'<br>※ 资料卡修改<br>- 修改本体的资料卡，具体请长按/右击选项查看<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
+				'<br>※ 资料卡点击查看武将信息<br>- 开启后，点击武将名或武将名注解，可查看武将信息，包括：武将名ID、武将名翻译、所在武将包、所在武将包的分类等（通过弹窗显示、命令框（其它-命令）或控制台查看），即时生效（要先打开资料卡修改开关和选项-显示-显示武将名注解才能生效）'+
+				'<br>※ 资料卡点击查看技能信息<br>- 搬运自金庸群侠传扩展（点击查看技能代码）<br>- 开启后，点击技能名注解，可查看技能信息，包括：技能名ID、技能名翻译、技能描述、技能代码等（通过弹窗显示、命令框（其它-命令）或控制台查看），即时生效（要先打开资料卡修改开关和选项-显示-显示技能名注解才能生效）'+
+				'<br>※ 资料卡显示台词<br>- 开启后显示台词，关闭后不显示台词，即时生效（要先打开资料卡修改开关才能生效）'+
+				'<br>※ 资料卡试听衍生技能配音<br>- 开启后，点击技能介绍的技能名，可试听衍生技能配音，即时生效（要先打开资料卡修改开关才能生效）'+
+				'<br>※ 资料卡试听阵亡配音<br>- 搬运自金庸群侠传扩展，已征得大熊小猫的修改许可<br>- 开启后，会在资料卡界面添加阵亡按钮，点击后可试听武将阵亡配音，要先打开资料卡修改开关才能生效（默认设为开启，暂不支持扩展阵亡配音试听）<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
+				'<br>※ 资料卡试听胜利配音【暂不可用，等本体更新中】<br>- 开启后，会在资料卡界面添加胜利按钮，点击后可试听武将胜利配音（默认设为开启，暂不支持扩展胜利配音试听，要先打开资料卡修改开关才能生效）<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
+				'<br>'+
+				'<br>▷ 控制台功能'+
 				'<br>※ 控制台-功能加强版<br>- 原作者为诗笺，搬运自蜀汉中兴扩展，已征得修改许可<br>- 本体控制台（选项-其它-控制）的加强版，魔改并新增大量新功能（包括对话框大小位置调整、注释掉记住对话框位置代码、增加选择数值选项、将大量控制台命令代码写入扩展等）<br>- 开启：手动点击下方<span style="text-decoration: underline;">控制台-功能加强版</span>链接按钮开启；若开启加入顶部左侧菜单开关，还可点击顶部左侧菜单栏的“控”字按钮打开控制台<br>- 执行：对话框点击“执”按钮执行控制台命令代码<br>- 关闭：对话框点击“关”按钮关闭'+
 				'<br>- 温馨提示：控制台点击“执”按钮可更新玩家状态；可在非托管状态下通过控制台执行重新选将功能(限身份场、斗地主、国战)；自曝身份仅适用于身份模式，不影响AI；显示身份适用于身份模式（不影响AI）和国战模式；清空技能时，带有Charlotte标签的技能无法被清除；横置/翻面受技能限制，强制横置/强制翻面不受技能限制'+
 				'<br>'+
 				'<br>※ 加入顶部左侧菜单<br>- 将控制台打开方式由界面的“控”字按钮改为加入顶部左侧菜单的“控”字按钮（参考自特效测试扩展），设置为默认开启'+
 				'<br>'+
-				'<br>※ 重新选将功能<br>- 原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可<br>- 原功能名为【AI选将】，删除原版自由选将搜索功能以避免和自由选将-搜索功能冲突、“仙”势力及其筛选按钮，新增神武将选择势力（若开启）可点击取消了（棘手怀念摧毁一步到位懒人包专属魔改）、修复使用控制台多选武将重新选将对话框的显示问题、重新选将功能可以点击取消按钮取消重新选将了、修复明忠模式点重新选将会暴露主公身份的bug等<br>- 开启后，游戏开始时玩家可以为AI或自己重新选将(限身份场、斗地主、国战)'+
+				'<br>▷ 重新选将功能'+
+				'<br>※ 重新选将功能<br>- 原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可<br>- 原功能名为【AI选将】，删除原版自由选将搜索功能以避免和自由选将-搜索功能冲突、“仙”势力及其筛选按钮，新增神武将选择势力（若开启）可点击取消了（棘手怀念摧毁一步到位懒人包专属魔改）、修复使用控制台多选武将重新选将对话框的显示问题、重新选将功能可以点击取消按钮取消重新选将了、修复明忠模式点重新选将会暴露主公身份的bug、修复双势力武将无法重新选势力的bug等<br>- 开启后，游戏开始时玩家可以为AI或自己重新选将(限身份场、斗地主、国战)'+
 				'<br>'+
 				'<br>※ 重选单双将(即时生效)<br>- 游戏开始时或游戏中重新选将时可重选单双将了，即时生效(限身份场、斗地主)<br>- 例如可在单将模式重新选双将，或者在双将模式重新选单将'+
 				'<br>'+
-				'<br>※ 手牌上限显示<br>- 原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可<br>- 开启后，游戏内显示的手牌数将改为显示手牌数与手牌上限(例：2/3，代表拥有2张牌，手牌上限为3)'+
-				'<br>'+
+				'<br>▷ 交换位置功能'+
 				'<br>※ 交换位置功能<br>- 原作者为Helasisy星云，搬运自祖安武将扩展，已征得修改许可<br>- 分离自原功能【游戏自定义工具】，增加限身份场、斗地主、国战<br>- 开启后，游戏开始时玩家可以交换两名角色的座次，从而自定义场上所有角色的位置'+
 				'<br>'+
-				'<br>※ 一键导入重启功能<br>- 原作者为永远的萌新，搬运自特效测试扩展，已征得修改许可<br><span style=\"color:red\">- 【超级好用，强烈推荐！！！】</span><br>- 删除原版导入助手的功能（更多导入方法可下载特效测试扩展体验）<br>- 新增自动一键导入重启功能，默认设为自动开启<br>- 新增当扩展文件夹内缺少extension.js时报错提示<br>- 扩展导入完成后，再次重启时，检测（开启的扩展的）扩展文件夹名是否正确，新增为防出现bug请修正的提示；玩家需按提示逐个修正扩展文件夹名，都修改完成后重启才不会出现弹窗提示<br>- 教程如下，请点击展开下方【一键导入重启】查看↓'+
+				'<br>▷ 一键导入重启<br>- 原作者为永远的萌新，搬运自特效测试扩展，已征得修改许可<br><span style=\"color:red\">- 【超级好用，强烈推荐！！！】</span><br>- 删除原版导入助手的功能（更多导入方法可下载特效测试扩展体验）<br>- 新增自动一键导入重启功能，默认设为自动开启<br>- 新增当扩展文件夹内缺少extension.js时报错提示<br>- 扩展导入完成后，再次重启时，检测（开启的扩展的）扩展文件夹名是否正确，新增为防出现bug请修正的提示；玩家需按提示逐个修正扩展文件夹名，都修改完成后重启才不会出现弹窗提示<br>- 教程如下，请点击展开下方【一键导入重启】查看↓'+
 				'<br>'+
-				'<br>※ 资料页试听阵亡配音<br>- 搬运自金庸群侠传扩展，已征得大熊小猫的修改许可<br>- 开启后，会在资料页界面添加阵亡按钮，点击后可试听武将阵亡配音（默认设为开启，暂不支持扩展阵亡配音试听）<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
-				'<br>※ 资料页试听胜利配音【暂不可用，等本体更新中】<br>- 棘手怀念摧毁修改<br>- 开启后，会在资料页界面添加胜利按钮，点击后可试听武将胜利配音（默认设为开启，暂不支持扩展胜利配音试听）<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
-				'<br>※ 资料卡修改<br>- 棘手怀念摧毁修改<br>- 修改本体的资料卡：禁将按钮和收藏按钮可滑动；新增注解按钮，点击后切换资料卡注解，关闭资料卡并再次打开生效；新增阵亡按钮和胜利按钮，用于试听配音<br><span style=\"color:red\">- 若遇冲突请关闭本选项！</span><br>- 新增是否开启千幻聆音扩展的判断，避免冲突弹窗（若开启千幻聆音扩展则本功能失效）'+
-				'<br>'+
+				'<br>▷ 减少报错功能'+
 				'<br>※ 取消弹窗警告<br>- 原作者为Sukincen，搬运自群英会扩展，已征得修改许可<br>- 默认关闭此选项，开启此项并重启后取消弹窗警告（自欺欺人），推荐用于忽略报错勉强能玩的场景等'+
+				'<br>'+
+				'<br>※ 图片懒加载<br>- 原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展<br>- 开启后，游戏内的武将图片将会开启懒加载，不会一次性全部加载，只有在窗口显示了才会去加载，避免一次性加载太多图片导致游戏卡顿（在自由选将会闪退的时候打开，能解决该问题）'+
 				'<br>'+
 				'<br>▷ 其他<br>- 参考将灵重置版扩展、群英荟萃乀摧林扩展，实现选项菜单的折叠'+
 				'<br>'
@@ -10436,14 +11384,22 @@ config:{
 			"11":"游戏结束-战斗胜利",
 			"12":"游戏结束-战斗失败",
 			"13":"游戏结束-平局",
-			"14":"获得999999金币",
-			"15":"扣除999999金币",
-			"16":"金币数量设为999999",
+			"14":"获得999金币",
+			"15":"扣除999金币",
+			"16":"金币数量=999",
 			"17":"无限金币",
-			"18":"重启进入启动页界面",
-			"19":"查看本体更新内容",
-			"20":"返回浏览器的版本信息",
-			"21":"电脑端启用控制台",
+			"18":"(战棋)获得999招募令",
+			"19":"(战棋)扣除999招募令",
+			"20":"(战棋)招募令数量=999",
+			"21":"(战棋)无限招募令",
+			"22":"(战棋)获得999金币",
+			"23":"(战棋)扣除999金币",
+			"24":"(战棋)金币数量=999",
+			"25":"(战棋)无限金币",
+			"26":"重启进入启动页界面",
+			"27":"查看本体更新内容",
+			"28":"返回浏览器的版本信息",
+			"29":"电脑端启用控制台",
 		},
 		onclick:function(item){
 			if(item == '1'){
@@ -11248,46 +12204,46 @@ config:{
 		},
 		onclick:function(item){
 			if(item == '1'){
-				if(confirm("是否解除所有游戏模式禁将，即启用在武将-禁将里的武将（所有游戏模式），相当于将武将资料页-禁用-所有游戏模式开关开启（全部启用）。\n\r继续请点击【确定】，自动重启后生效。")){
+				if(confirm("是否解除所有游戏模式禁将，即启用在武将-禁将里的武将（所有游戏模式），相当于将武将资料卡-禁用-所有游戏模式开关开启（全部启用）。\n\r继续请点击【确定】，自动重启后生效。")){
 					game.zxgn(1001);
 					game.reload();
 				};
 			}
 			if(item == '2'){
-				if(confirm("当前游戏模式为："+lib.translate[lib.config.mode]+"\n是否解除非当前游戏模式禁将，即启用在武将-禁将里的武将（非当前游戏模式），相当于将武将资料页-禁用-非当前游戏模式开关开启。\n\r继续请点击【确定】，自动重启后生效。")){
+				if(confirm("当前游戏模式为："+lib.translate[lib.config.mode]+"\n是否解除非当前游戏模式禁将，即启用在武将-禁将里的武将（非当前游戏模式），相当于将武将资料卡-禁用-非当前游戏模式开关开启。\n\r继续请点击【确定】，自动重启后生效。")){
 					game.zxgn(1002);
 					game.reload();
 				};
 			}
 			if(item == '3'){
-				if(confirm("是否应用当前禁将到全部，即将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料页-禁用-所有游戏模式开关关闭（全部禁用）。\n\r继续请点击【确定】，自动重启后生效。")){
+				if(confirm("是否应用当前禁将到全部，即将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用）。\n\r继续请点击【确定】，自动重启后生效。")){
 					game.zxgn(1003);
 					game.reload();
 				};
 			}
 			if(item == '4'){
-				if(confirm("是否设置所有武将随机选将可用，即将武将包仅点将可用开关全部关闭&武将资料页-禁用-随机选将可用开关全部开启。\n\r继续请点击【确定】，自动重启后生效。")){
+				if(confirm("是否设置所有武将随机选将可用，即将武将包仅点将可用开关全部关闭&武将资料卡-禁用-随机选将可用开关全部开启。\n\r继续请点击【确定】，自动重启后生效。")){
 					game.zxgn(1004);
 					game.reload();
 				};
 			}
 			if(item == '5'){
-				if(confirm("是否在已有禁将的基础上继续场上所有角色禁将（当前游戏模式），即把场上所有角色的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭。\n\r继续请点击【确定】，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上所有角色禁将”功能。")){
+				if(confirm("是否在已有禁将的基础上继续场上所有角色禁将（当前游戏模式），即把场上所有角色的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭。\n\r继续请点击【确定】，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上所有角色禁将”功能。")){
 					game.zxgn(1005);
 				};
 			}
 			if(item == '6'){
-				if(confirm("是否在已有禁将的基础上解除场上所有角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启。\n\r继续请点击【确定】，手动重启后生效。")){
+				if(confirm("是否在已有禁将的基础上解除场上所有角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启。\n\r继续请点击【确定】，手动重启后生效。")){
 					game.zxgn(1006);
 				};
 			}
 			if(item == '7'){
-				if(confirm("是否在已有禁将的基础上继续场上其他角色禁将（当前游戏模式），即把场上其他角色的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭。\n\r继续请点击【确定】，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上其他角色禁将”功能。")){
+				if(confirm("是否在已有禁将的基础上继续场上其他角色禁将（当前游戏模式），即把场上其他角色的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭。\n\r继续请点击【确定】，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上其他角色禁将”功能。")){
 					game.zxgn(1007);
 				};
 			}
 			if(item == '8'){
-				if(confirm("是否在已有禁将的基础上解除场上其他角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启。\n\r继续请点击【确定】，手动重启后生效。")){
+				if(confirm("是否在已有禁将的基础上解除场上其他角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启。\n\r继续请点击【确定】，手动重启后生效。")){
 					game.zxgn(1008);
 				};
 			}
@@ -11296,7 +12252,7 @@ config:{
 	
 	"byzy_dqmsjj":{
 		"name":"当前模式禁将",
-		"intro":"在当前游戏模式下，在已有禁将的基础上继续禁用武将，点击选项后自动重启后生效；即把要禁用的武将加入武将-禁将，相当于将武将资料页-禁用-当前游戏模式开关关闭。<br>若想将当前游戏模式禁将应用到非当前游戏模式可使用禁将功能的应用当前禁将到全部。",
+		"intro":"在当前游戏模式下，在已有禁将的基础上继续禁用武将，点击选项后自动重启后生效；即把要禁用的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭。<br>若想将当前游戏模式禁将应用到非当前游戏模式可使用禁将功能的应用当前禁将到全部。",
 		"init":"1",
 		"item":{
 			"1":"全部禁将",
@@ -11348,7 +12304,7 @@ config:{
 	
 	"byzy_jcdqmsjj":{
 		"name":"解除当前模式禁将",
-		"intro":"在当前游戏模式下，在已有禁将的基础上解除禁用武将，点击选项后自动重启后生效；即启用在武将-禁将里的武将，相当于将武将资料页-禁用-当前游戏模式开关开启。<br>其他解除禁将的功能可使用禁将功能。",
+		"intro":"在当前游戏模式下，在已有禁将的基础上解除禁用武将，点击选项后自动重启后生效；即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启。<br>其他解除禁将的功能可使用禁将功能。",
 		"init":"42",
 		"item":{
 			"42":"解除全部禁将",
@@ -11400,26 +12356,71 @@ config:{
 	
 	// 分割线
 	"byzyfgx5":{
-		"name":"<font size='4'>-----自由选将增强-----</font>",
+		"name":"<font size='4'>------资料卡功能------</font>",
 		"clear":true,
 	},
 	
-	zyxjssgn: {
-		name: "自由选将-搜索功能",
-		intro: "搬运自扩展ol，自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）。",
-		init: true,
+	byzy_fenjiexian2:{
+		clear:true,
+		name:"<font size='3'><li>鸣谢：金庸群侠传</font>",
 	},
 	
-	zyxjsxankz: {
-		name: "自由选将-筛选按钮扩充",
-		intro: "扩充自由选将筛选按钮：男性、女性、双性，可根据性别筛选（统计）武将；主公（可筛选主公武将）；护甲（可筛选带护甲的武将）、不同体力上限筛选，实现更加自由灵活地禁选将。",
-		init: true,
+	"byzy_zlkxg": {
+		"name": "资料卡修改",
+		"intro": "修改本体的资料卡（暂时仅支持样式二）：<br>左下角区域（禁将按钮和收藏按钮）可滑动了；<br>左下角区域，新增注解按钮，点击后切换资料卡注解，即时生效；<br>左下角区域，新增台词按钮，点击设置台词是否显示，功能同资料卡显示台词，即时生效；<br>左下角区域，新增阵亡按钮和胜利按钮，用于试听配音。<br>其他修改略，要先打开资料卡修改开关才能生效。<br>若遇冲突请关闭本选项！",
+		"init": true,
 	},
 	
-	"byzy_anniusuiji": {
-		name: '自由选将-随机按钮',
-		init: true,
-		intro: '由原功能【AI选将】分离而来，开启后，将在自由选将界面添加“随机”筛选按钮，点击该按钮可切换显示全部武将和随机武将。',
+	"byzy_zlkwjxx":{
+		"name": "资料卡点击查看武将信息",
+		"intro": "开启后，点击武将名或武将名注解，可查看武将信息，包括：武将名ID、武将名翻译、所在武将包、所在武将包的分类等（通过弹窗显示、命令框（其它-命令）或控制台查看），即时生效（要先打开资料卡修改开关和选项-显示-显示武将名注解才能生效）。",
+		"init":lib.config.byzy_zlkwjxx === undefined ? true : lib.config.byzy_zlkwjxx,
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_zlkwjxx',item);
+			game.saveConfig('byzy_zlkwjxx',item);
+		},
+	},
+	
+	"byzy_zlkcode":{
+		"name": "资料卡点击查看技能信息",
+		"intro": "开启后，点击技能名注解，可查看技能信息，包括：技能名ID、技能名翻译、技能描述、技能代码等（通过弹窗显示、命令框（其它-命令）或控制台查看），即时生效（要先打开资料卡修改开关和选项-显示-显示技能名注解才能生效）。",
+		"init":lib.config.byzy_zlkcode === undefined ? true : lib.config.byzy_zlkcode,
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_zlkcode',item);
+			game.saveConfig('byzy_zlkcode',item);
+		},
+	},
+	
+	"byzy_zlkxstc":{
+		"name": "资料卡显示台词",
+		"intro": "开启后显示台词，关闭后不显示台词，即时生效（要先打开资料卡修改开关才能生效）。",
+		"init":lib.config.byzy_zlkxstc === undefined ? true : lib.config.byzy_zlkxstc,
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_zlkxstc',item);
+			game.saveConfig('byzy_zlkxstc',item);
+		},
+	},
+	
+	"byzy_zlkysjnpy":{
+		"name": "资料卡试听衍生技能配音",
+		"intro": "开启后，点击技能介绍的技能名，可试听衍生技能配音，即时生效（要先打开资料卡修改开关才能生效）。",
+		"init":lib.config.byzy_zlkysjnpy === undefined ? true : lib.config.byzy_zlkysjnpy,
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_zlkysjnpy',item);
+			game.saveConfig('byzy_zlkysjnpy',item);
+		},
+	},
+	
+	"byzy_zwpy": {
+		"name": "资料卡试听阵亡配音",
+		"intro": "开启后，会在资料卡界面添加阵亡按钮，点击后可试听武将阵亡配音（暂不支持扩展阵亡配音试听，要先打开资料卡修改开关才能生效）。<br>若遇冲突请关闭本选项！",
+		"init": true,
+	},
+	
+	"byzy_slpy": {
+		"name": "资料卡试听胜利配音",
+		"intro": "【暂不可用，等本体更新中】开启后，会在资料卡界面添加胜利按钮，点击后可试听武将胜利配音（暂不支持扩展胜利配音试听，要先打开资料卡修改开关才能生效）。<br>若遇冲突请关闭本选项！",
+		"init": false,
 	},
 	
 	// 分割线
@@ -11456,14 +12457,20 @@ config:{
 		"clear":true,
 	},
 	
-	byzy_fenjiexian2:{
+	byzy_fenjiexian3:{
 		clear:true,
 		name:"<font size='3'><li>鸣谢：群英荟萃乀摧林</font>",
 	},
 	
+	youjiancaidan: {
+		name: '长按/右击弹出菜单修改',
+		intro: "修改手机端长按/电脑端右击武将头像后的武将信息查看界面菜单：<br>新增武将引文接口，开启后才能使用武将引文补充；<br>发送交互表情时间修改；<br>其他修复<br>若遇冲突请关闭本选项！",
+		init: true,
+	},
+	
 	wujiangyinwen: {
 		name: '武将引文补充',
-		intro: "开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将引文（缓更中）。",
+		intro: "开启后在手机端长按/电脑端右击武将头像后的武将信息查看界面显示武将引文（缓更中），需先开启右键菜单修改。",
 		init: true,
 	},
 	
@@ -11475,11 +12482,11 @@ config:{
 	
 	// 分割线
 	"byzyfgx8":{
-		"name":"<font size='4'>------搬运自用-------</font>",
+		"name":"<font size='4'>------控制台功能------</font>",
 		"clear":true,
 	},
 	
-	byzy_fenjiexian3:{
+	byzy_fenjiexian4:{
 		clear:true,
 		name:"<font size='3'><li>鸣谢：蜀汉中兴</font>",
 	},
@@ -11498,7 +12505,37 @@ config:{
 		"intro": "将“控”字按钮加入顶部左侧菜单栏，点击后可快捷打开控制台。",
 	},
 	
-	byzy_fenjiexian4:{
+	// 分割线
+	"byzyfgx9":{
+		"name":"<font size='4'>-----自由选将增强-----</font>",
+		"clear":true,
+	},
+	
+	zyxjssgn: {
+		name: "自由选将-搜索功能",
+		intro: "搬运自扩展ol，自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）。",
+		init: true,
+	},
+	
+	zyxjsxankz: {
+		name: "自由选将-筛选按钮扩充",
+		intro: "扩充自由选将筛选按钮：男性、女性、双性，可根据性别筛选（统计）武将；主公（可筛选主公武将）；护甲（可筛选带护甲的武将）、不同体力上限筛选，实现更加自由灵活地禁选将。",
+		init: true,
+	},
+	
+	"byzy_anniusuiji": {
+		name: '自由选将-随机按钮',
+		init: true,
+		intro: '由原功能【AI选将】分离而来，开启后，将在自由选将界面添加“随机”筛选按钮，点击该按钮可切换显示全部武将和随机武将。',
+	},
+	
+	// 分割线
+	"byzyfgx10":{
+		"name":"<font size='4'>-----重新选将功能-----</font>",
+		"clear":true,
+	},
+	
+	byzy_fenjiexian5:{
 		clear:true,
 		name:"<font size='3'><li>鸣谢：假装无敌</font>",
 	},
@@ -11524,13 +12561,13 @@ config:{
 		}
 	},
 	
-	"byzy_shoupaishangxian": {
-		name: '手牌上限显示',
-		init: false,
-		intro: '开启后，游戏内显示的手牌数将改为显示手牌数与手牌上限。(例：2/3，代表拥有2张牌，手牌上限为3)',
+	// 分割线
+	"byzyfgx11":{
+		"name":"<font size='4'>-----交换位置功能-----</font>",
+		"clear":true,
 	},
 	
-	byzy_fenjiexian5:{
+	byzy_fenjiexian6:{
 		clear:true,
 		name:"<font size='3'><li>鸣谢：祖安武将</font>",
 	},
@@ -11541,7 +12578,13 @@ config:{
 		intro: '分离自原功能【游戏自定义工具】，开启后，游戏开始时玩家可以交换两名角色的座次，从而自定义场上所有角色的位置。(限身份场、斗地主、国战)',
 	},
 	
-	byzy_fenjiexian6:{
+	// 分割线
+	"byzyfgx12":{
+		"name":"<font size='4'>-----一键导入重启-----</font>",
+		"clear":true,
+	},
+	
+	byzy_fenjiexian7:{
 		clear:true,
 		name:"<font size='3'><li>鸣谢：特效测试</font>",
 	},
@@ -11598,27 +12641,10 @@ config:{
 		},
 	},
 	
-	byzy_fenjiexian7:{
-		clear:true,
-		name:"<font size='3'><li>鸣谢：金庸群侠传</font>",
-	},
-	
-	"byzy_zwpy": {
-		"name": "资料页试听阵亡配音",
-		"intro": "开启后，会在资料页界面添加阵亡按钮，点击后可试听武将阵亡配音（暂不支持扩展阵亡配音试听）。<br>若遇冲突请关闭本选项！",
-		"init": true,
-	},
-	
-	"byzy_slpy": {
-		"name": "资料页试听胜利配音",
-		"intro": "【暂不可用，等本体更新中】开启后，会在资料页界面添加胜利按钮，点击后可试听武将胜利配音（暂不支持扩展胜利配音试听）。<br>若遇冲突请关闭本选项！",
-		"init": false,
-	},
-	
-	"byzy_zlkxg": {
-		"name": "资料卡修改",
-		"intro": "修改本体的资料卡：禁将按钮和收藏按钮可滑动；新增注解按钮，点击后切换资料卡注解，关闭资料卡并再次打开生效；新增阵亡按钮和胜利按钮，用于试听配音。<br>若遇冲突请关闭本选项！",
-		"init": true,
+	// 分割线
+	"byzyfgx13":{
+		"name":"<font size='4'>-----减少报错功能-----</font><br><font size='2'>通常可开启这些设置减少报错弹窗：<br>① 选项-通用-兼容模式<br>② 选项-通用-无视扩展报错</font>",
+		"clear":true,
 	},
 	
 	byzy_fenjiexian8:{
@@ -11632,8 +12658,19 @@ config:{
 		init:false,
 	},
 	
+	byzy_fenjiexian9:{
+		clear:true,
+		name:"<font size='3'><li>鸣谢：假装无敌</font>",
+	},
+	
+	"byzy_LoadImageOptimization": {
+		name: '图片懒加载',
+		init: false,
+		intro: '开启后，游戏内的武将图片将会开启懒加载，不会一次性全部加载，只有在窗口显示了才会去加载，避免一次性加载太多图片导致游戏卡顿（在自由选将会闪退的时候打开，能解决该问题）。',
+	},
+	
 	// 分割线
-	"byzyfgx9":{
+	"byzyfgx14":{
 		"name":"<font size='4'>------游戏模式-------</font>",
 		"clear":true,
 	},
@@ -11812,12 +12849,6 @@ config:{
 		init:false,
 	},
 	
-	// 分割线
-	"byzyfgx10":{
-		"name":"<font size='4'>------测试功能-------</font>",
-		"clear":true,
-	},
-	
 	byzy_youximoshitjms:{
 		clear:true,
 		name:"<li>同人模式（点击后折叠）▽",
@@ -11829,6 +12860,8 @@ config:{
 					this.nextSibling.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
 				];
 				this.innerHTML="<li>同人模式（点击后展开）▷";
 				lib.config.byzy_youximoshitjms.forEach(function(element) {element.hide()});
@@ -11863,7 +12896,7 @@ config:{
 	
 	"byzy_tongrenmoshixuanjiang":{
 		"name":"选将范围",
-		"intro":"设置同人模式选将范围，手动重启后生效；可选择武将包开启的武将（设为默认）或所有的武将包武将。",
+		"intro":"设置同人模式选将范围，可与“选将范围-AI禁将可选”和“选将范围-禁将可选”搭配使用，手动重启后生效。",
 		"init":lib.config.byzy_tongrenmoshixuanjiang === undefined ? "0" : lib.config.byzy_tongrenmoshixuanjiang,
 		"item": {
 			"0":"武将包开启的武将",
@@ -11873,6 +12906,18 @@ config:{
 			game.saveConfig('extension_搬运自用_byzy_tongrenmoshixuanjiang',item);
 			game.saveConfig('byzy_tongrenmoshixuanjiang',item);
 		},
+	},
+	
+	"byzy_tongrenmoshiaijinjiang":{
+		name:"选将范围-AI禁将可选",
+		intro:"同人模式选将范围补充设置：开启本开关后，被设为AI禁选的武将可选，即时生效。<br>注：此处“被设为AI禁选的武将”指通过开启“仅点将可用”开关（即关闭武将资料卡-禁用-随机选将可用开关）等方式设为AI禁选的武将",
+		init:false,
+	},
+	
+	"byzy_tongrenmoshijinjiang":{
+		name:"选将范围-禁将可选",
+		intro:"同人模式选将范围补充设置：开启本开关后，被设为禁用的武将可选，即时生效。<br>注：此处“被设为禁用的武将”指通过关闭武将资料卡-禁用-相应游戏模式开关（即加入相应游戏模式武将-禁将）等方式设为禁用的武将",
+		init:false,
 	},
 	
 	"byzy_tongrenmoshifenpei":{
@@ -11891,11 +12936,11 @@ config:{
 	
 	"byzy_tongrenmoshixuanxiang":{
 		"name":"选项显示",
-		"intro":"设置同人模式(即时生效)选项的显示：一人单选项方便选择；一人多选项可查看武将名id。",
+		"intro":"设置同人模式(即时生效)选项的显示：一人单选项方便选择；一人多选项可查看武将名ID。",
 		"init":lib.config.byzy_tongrenmoshixuanxiang === undefined ? "0" : lib.config.byzy_tongrenmoshixuanxiang,
 		"item": {
 			"0":"一人单选项",
-			"1":"一人多选项[武将名id]",
+			"1":"一人多选项[武将名ID]",
 		},
 		onclick:function(item){
 			game.saveConfig('extension_搬运自用_byzy_tongrenmoshixuanxiang',item);
@@ -11904,7 +12949,264 @@ config:{
 	},
 	
 	// 分割线
-	"byzyfgx11":{
+	"byzyfgx15":{
+		"name":"<font size='4'>-----测试中的功能-----</font>",
+		"clear":true,
+	},
+	
+	byzy_fenjiexian10:{
+		clear:true,
+		name:"<font size='3'><li>绘制效果图</font>",
+	},
+	
+	"byzy_hzxgt":{
+		"name":"效果",
+		"intro":"利用控制台命令代码绘制效果图，即点即用。",
+		"init":"1",
+		"item":{
+			"1":"懒人包-效果图1",
+			// "2":"懒人包-效果图2",
+			// "3":"懒人包-效果图(国战双将)",
+			"4":"懒人包-女将图",
+			"5":"懒人包-女将图(幼年形态)",
+			// "6":"懒人包-女将图(双将双形态)",
+			"7":"三国24名将-虚拟天团",
+			"8":"自定义-可自行添加代码",
+		},
+		onclick:function(item){
+			var gameplayers0=game.me;
+			var gameplayers1=game.me.nextSeat;
+			var gameplayers2=game.me.nextSeat.nextSeat;
+			var gameplayers3=game.me.nextSeat.nextSeat.nextSeat;
+			var gameplayers4=game.me.nextSeat.nextSeat.nextSeat.nextSeat;
+			var gameplayers5=game.me.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat;
+			var gameplayers6=game.me.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat;
+			var gameplayers7=game.me.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat.nextSeat;
+			if(item == '1'){
+				/* 懒人包-效果图1 */
+				// 最佳使用时机是“我”为主公，游戏开始后第一回合的摸牌阶段结束时
+				// 正常的身份模式（暂定8人场）
+				for(var m=0;m<game.dead.length;m++){
+					game.dead[m].revive(game.dead[m].maxHp);
+				}
+				
+				gameplayers0.init("shen_diaochan");
+				gameplayers1.init("zhongyan");
+				gameplayers2.init("wu_zhugeliang");
+				gameplayers3.init("tw_niufudongxie");
+				gameplayers4.init("yue_daqiao");
+				gameplayers5.init("jsrg_lvbu");
+				gameplayers6.init("clan_zhonghui");
+				gameplayers7.init("sb_huaxiong");
+				
+				for (var n = 0; n < game.players.length; n++) {
+					// 主公加1体力上限和1点体力
+					if (game.players[n] == game.zhu) {
+						if(!game.players[n].isInitFilter('noZhuHp')){
+							game.players[n].maxHp++;
+							game.players[n].hp++;
+							game.players[n].update();
+						}
+					}
+				}
+				
+				var card01=get.cardPile(function(card){return get.subtype(card)=='equip1'&&card.name!='zhangba';},'cardPile'); if(card01) gameplayers0.useCard(card01,gameplayers0);
+				var card02 = gameplayers0.getCards("h"); gameplayers0.discard(card02);
+				var cards03=[];
+				for(var i=0;i<1;i++){
+					var card03=get.cardPile(function(card){
+						return (get.type(card)=='equip')&&(!cards03.includes(card));
+					});
+					gameplayers0.gain(card03);
+					cards03.push(card03);
+				}
+				var cards04=[];
+				for(var j=0;j<2;j++){
+					var card04=get.cardPile(function(card){
+						return (get.type(card)=='trick')&&(!cards04.includes(card));
+					});
+					gameplayers0.gain(card04);
+					cards04.push(card04);
+				}
+				var cards05=[];
+				for(var k=0;k<2;k++){
+					var card05=get.cardPile(function(card){
+						return (get.type(card)=='basic')&&(!cards05.includes(card));
+					});
+					gameplayers0.gain(card05);
+					cards05.push(card05);
+				}
+				
+				gameplayers1.classList.add('linked2');
+				var card11=get.cardPile(function(card){return get.subtype(card)=='equip3';},'cardPile'); if(card11) gameplayers1.useCard(card11,gameplayers1);
+				gameplayers1.chooseToDiscard('h',true,gameplayers1.countCards('h')-1);
+				
+				var card12=get.cardPile(function(card){return get.subtype(card)=='equip4';},'cardPile'); if(card12) gameplayers2.useCard(card12,gameplayers2);
+				
+				gameplayers3.classList.add('turnedover');
+				gameplayers3.drawTo(5);
+				
+				gameplayers4.damage(2,gameplayers3);
+				
+				gameplayers5.die();
+				
+				var card61=get.cardPile(function(card){return get.subtype(card)=='equip5';},'cardPile'); if(card61) gameplayers6.useCard(card61,gameplayers6);
+				gameplayers6.chooseToDiscard('h',true,gameplayers6.countCards('h')-2);
+				gameplayers6.hp=2;gameplayers6.update();
+				
+				var card71=get.cardPile(function(card){return get.type(card)=='delay'&&card.name!='shandian';},'cardPile'); if(card71) gameplayers7.useCard(card71,gameplayers7);
+				var card72=get.cardPile(function(card){return get.subtype(card)=='equip2';},'cardPile'); if(card72) gameplayers7.useCard(card72,gameplayers7);
+				gameplayers7.chooseToDiscard('h',true,gameplayers7.countCards('h')-3);
+			}
+			if(item == '2'){
+				/* 懒人包-效果图2 */
+				
+			}
+			if(item == '3'){
+				/* 懒人包-效果图(国战双将) */
+				// 国战模式
+				
+			}
+			if(item == '4'){
+				/* 懒人包-女将图 */
+				// 正常的身份模式（暂定8人场）
+				for(var m=0;m<game.dead.length;m++){
+					game.dead[m].revive(game.dead[m].maxHp);
+				}
+				
+				gameplayers0.init("guanyinping");
+				gameplayers1.init("zhangqiying");
+				gameplayers2.init("zhoufei");
+				gameplayers3.init("zhugeguo");
+				gameplayers4.init("huaman");
+				gameplayers5.init("sunluban");
+				gameplayers6.init("wanniangongzhu");
+				gameplayers7.init("sunshangxiang");
+				
+				for (var n = 0; n < game.players.length; n++) {
+					// 主公加1体力上限和1点体力
+					if (game.players[n] == game.zhu) {
+						if(!game.players[n].isInitFilter('noZhuHp')){
+							game.players[n].maxHp++;
+							game.players[n].hp++;
+							game.players[n].update();
+						}
+					}
+				}
+			}
+			if(item == '5'){
+				/* 懒人包-女将图(幼年形态) */
+				// 正常的身份模式（暂定8人场）
+				for(var m=0;m<game.dead.length;m++){
+					game.dead[m].revive(game.dead[m].maxHp);
+				}
+				
+				gameplayers0.init("guanyinping");
+				gameplayers1.init("zhangqiying");
+				gameplayers2.init("zhoufei");
+				gameplayers3.init("zhugeguo");
+				gameplayers4.init("huaman");
+				gameplayers5.init("sunluban");
+				gameplayers6.init("wanniangongzhu");
+				gameplayers7.init("sunshangxiang");
+				
+				for (var n = 0; n < game.players.length; n++) {
+					// 主公加1体力上限和1点体力
+					if (game.players[n] == game.zhu) {
+						if(!game.players[n].isInitFilter('noZhuHp')){
+							game.players[n].maxHp++;
+							game.players[n].hp++;
+							game.players[n].update();
+						}
+					}
+				}
+				
+				// 暂时先这么写吧，后续会加曹金玉caojinyu 4、张星彩zhangxingcai 7、羊徽瑜yanghuiyu 4、吴苋wuxian 6、杨婉yangwan 7，改随机生成、同名武将解锁
+				var name0="guanyinping",num0=10;
+				gameplayers0.node.avatar.setBackgroundImage("image/skin/" + name0 + "/" + num0 + ".jpg");
+				var name1="zhangqiying",num1=11;
+				gameplayers1.node.avatar.setBackgroundImage("image/skin/" + name1 + "/" + num1 + ".jpg");
+				var name2="zhoufei",num2=7;
+				gameplayers2.node.avatar.setBackgroundImage("image/skin/" + name2 + "/" + num2 + ".jpg");
+				var name3="zhugeguo",num3=7;
+				gameplayers3.node.avatar.setBackgroundImage("image/skin/" + name3 + "/" + num3 + ".jpg");
+				var name4="huaman",num4=8;
+				gameplayers4.node.avatar.setBackgroundImage("image/skin/" + name4 + "/" + num4 + ".jpg");
+				var name5="sunluban",num5=10;
+				gameplayers5.node.avatar.setBackgroundImage("image/skin/" + name5 + "/" + num5 + ".jpg");
+				var name6="wanniangongzhu",num6=4;
+				gameplayers6.node.avatar.setBackgroundImage("image/skin/" + name6 + "/" + num6 + ".jpg");
+				var name7="sunshangxiang",num7=11;
+				gameplayers7.node.avatar.setBackgroundImage("image/skin/" + name7 + "/" + num7 + ".jpg");
+			}
+			if(item == '6'){
+				/* 懒人包-女将图(双将双形态) */
+				// 正常的身份模式（暂定8人场），双将、成年形态和幼年形态
+				
+			}
+			if(item == '7'){
+				/* 三国24名将-虚拟天团 */
+				// 要先开启三国24名将扩展
+				if(lib.config.extensions && lib.config.extensions.contains('三国24名将') && lib.config['extension_三国24名将_enable']){
+					// 正常的身份模式（暂定8人场）
+					for(var m=0;m<game.dead.length;m++){
+						game.dead[m].revive(game.dead[m].maxHp);
+					}
+					
+					gameplayers0.init("wms_z_sunshangxiang");
+					gameplayers1.init("wms_z_yuanshao");
+					gameplayers2.init("wms_z_liushan");
+					gameplayers3.init("wms_z_machao");
+					gameplayers4.init("wms_z_yuji");
+					gameplayers5.init("wms_z_ganning");
+					gameplayers6.init("wms_z_dengai");
+					gameplayers7.init("wms_z_zhenji");
+					
+					for (var n = 0; n < game.players.length; n++) {
+						// 主公加1体力上限和1点体力
+						if (game.players[n] == game.zhu) {
+							if(!game.players[n].isInitFilter('noZhuHp')){
+								game.players[n].maxHp++;
+								game.players[n].hp++;
+								game.players[n].update();
+							}
+						}
+					}
+					
+					// 暂时先这么写吧，后续会加花鬘wms_z_huaman、徐晃wms_z_xuhuang、诸葛亮wms_z_zhugeliang、曹植wms_z_caozhi，改随机生成
+					var skin_outcroppedPath='extension/三国24名将/skin_outcropped/standard/';
+					var num="虚拟天团";
+					var name0="wms_z_sunshangxiang";
+					gameplayers0.node.avatar.setBackgroundImage(skin_outcroppedPath + name0 + "/" + num + ".jpg");
+					var name1="wms_z_yuanshao";
+					gameplayers1.node.avatar.setBackgroundImage(skin_outcroppedPath + name1 + "/" + num + ".jpg");
+					var name2="wms_z_liushan";
+					gameplayers2.node.avatar.setBackgroundImage(skin_outcroppedPath + name2 + "/" + num + ".jpg");
+					var name3="wms_z_machao";
+					gameplayers3.node.avatar.setBackgroundImage(skin_outcroppedPath + name3 + "/" + num + ".jpg");
+					var name4="wms_z_yuji";
+					gameplayers4.node.avatar.setBackgroundImage(skin_outcroppedPath + name4 + "/" + num + ".jpg");
+					var name5="wms_z_ganning";
+					gameplayers5.node.avatar.setBackgroundImage(skin_outcroppedPath + name5 + "/" + num + ".jpg");
+					var name6="wms_z_dengai";
+					gameplayers6.node.avatar.setBackgroundImage(skin_outcroppedPath + name6 + "/" + num + ".jpg");
+					var name7="wms_z_zhenji";
+					gameplayers7.node.avatar.setBackgroundImage(skin_outcroppedPath + name7 + "/" + num + ".jpg");
+					
+					// 露头皮肤切换
+					lib.extensionMenu.extension_三国24名将.wms_z_ltqh.onclick(true);
+				}
+			}
+			if(item == '8'){
+				/* 自定义-可自行添加代码 */
+				// 比如可以加一些新武将
+				
+			}
+		},
+	},
+	
+	// 分割线
+	"byzyfgx16":{
 		"name":"<font size='4'>-----开关扩展功能-----</font>",
 		"clear":true,
 	},
@@ -11934,7 +13236,7 @@ config:{
 		},
 	},
 	
-	byzy_fenjiexian9:{
+	byzy_fenjiexian11:{
 		clear:true,
 		name:"<font size='3'><li>新功能开发中，敬请期待......</font>",
 	},
@@ -12000,7 +13302,7 @@ config:{
 	author:"无名玩家<br>自写&搬运：<span class='bluetext'>棘手怀念摧毁</span>",
 	diskURL:"",
 	forumURL:"",
-	version:"1.10.10",
+	version:"1.10.11.3",
 },
 files:{"character":[],"card":[],"skill":[]}}})
 
@@ -12015,12 +13317,18 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 三国杀Wiki，链接：https://sanguosha.fandom.com/zh/wiki/%E4%B8%89%E5%9B%BD%E6%9D%80_%E7%BB%B4%E5%9F%BA
 // ……
 
+// bug修复记录：
+// -bug：更换武将牌后AI没了（比如不会自动标记身份，不停无懈自己的无懈），同人模式/复刻模式等游戏模式、重新选将功能等
+// -原因：因为uninit()把ai也清了
+// -修复方案：uninit前先保存ai，之后补ai
+
 // 等待后续修复：
 // 手机端用window.resolveLocalFileSystemURL无法检测文件是否存在，故更改了弹窗内容
 // 总双势力武将等统计错误
 // 场上所有角色禁将+解除场上其他角色禁将无法禁用“我”（玩家）的武将、禁将名出现undefined
 // 选项导航功能的搜索，未输入点确定弹出提示内容不正确，未输入时保持请输入关键字显示
 // 控制台从牌堆&弃牌堆获得牌不能选择多名角色
+// 资料卡点击查看技能信息的alert显示有问题（部分代码显示错误/显示不全），请到控制台查看没有问题的代码
 
 // 后续更新计划：
 // 交换位置AI（参考败移？）
@@ -12042,11 +13350,12 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 资料卡修改：可双击原画/皮肤后放大看
 // 控制台获得技能按钮，参考神孙权
 // 编辑代码功能（资料卡编辑按钮）
+// 弹框查看存在list里的各种武将（可视化）
+// 真白板模式，真清空模式
+// 神将势力没随机选？自由选将没随机选？重新选将，选势力[0]改随机
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
-// 利用控制台命令代码绘制效果图（计划加入测试功能）
-// 其他优秀功能搬运（并魔改）：假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能；天牢令-衍生技能详细显示；测试功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
-// 能解决自由选将时候闪退的问题？假装无敌-图片懒加载；自由选将分批加载
+// 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能（加到控制台）；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -12055,9 +13364,8 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 单将模式、双将模式开关（目前替换武将牌后全为单将）
 // 主公调整体力和体力上限、斗地主加飞扬跋扈技能（开关，默认开启）
 // 控制台打印武将
-// 同将模式item改下拉列表？
+// 同人模式item改下拉列表？
 // 相同武将名区分，如神孙权
-// 选将范围包括或不包括扩展开关
 // 再战问题
 // 处理特殊武将（开关，默认开启）
 // 添加：
@@ -12069,18 +13377,26 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 张虎 张虎乐綝
 // 大乔 大乔小乔
 // 小乔 大乔小乔
-// 小乔 大小乔
+// 蒋琬 蒋琬费祎
+// 费祎 蒋琬费祎
+// 颜良 颜良文丑
+// 文丑 颜良文丑
 // ...
 
-// 同人模式卧龙AI使用锦囊后不停无懈自己？
 // 国战自由选将取消后亮将不隐匿
 // 重新选将未开启的武将包可选开启、开启后的排序
 // 性别不止男性、女性、双性
 
-// 资料页试听胜利配音【暂不可用，等本体更新中】。思路1：更改游戏结束音效读取路径（随机播放一名胜利阵营角色的胜利配音，优先播放存活的角色）；思路2：更改阵亡配音为胜利配音（但在一些特殊模式无法识别）。可参考假装无敌MVP？
-// 一将成名2023、谋攻篇等武将称号待补充
+// 资料卡试听胜利配音【暂不可用，等本体更新中】。思路1：更改游戏结束音效读取路径（随机播放一名胜利阵营角色的胜利配音，优先播放存活的角色）；思路2：更改阵亡配音为胜利配音（但在一些特殊模式无法识别）。可参考假装无敌MVP？
 // 懒人包临时修改本体css以适配控制台按钮显示，按钮宽度调整通过修改本体临时修复；非懒人包可开启临时修复开关（请等待后续更新）
 // AI优化：卡牌价值修改
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
 // card.nature修改？，包括④教程及说明.txt
+// 控制台新增将体力回复至功能、国战模式暗置武将功能、控制台获得杀闪桃伤害类锦囊牌等具体分类
+// 露头皮肤效果图、其他选项先关露头皮肤？
+// 发动技能显示台词开关
+// 双击武将切换双形态？
+// 特殊处理武将（张郃、神赵云、神关羽等）的资料卡试听技能配音
+// 标准、一将成名、OL专属、限定专属、谋攻篇、江山如故等武将称号待补充
+// lib.notshowSkillNamePinyin改用ID识别，注意小游戏整合扩展更新（玉真子的剑、刀、斧、枪、戟、弓等）

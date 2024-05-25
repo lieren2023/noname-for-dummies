@@ -6,9 +6,10 @@
 var pinyin_dict_polyphone = {
 	// noname's pinyin
 	// START
-	// 武将名
+	// 名词
 	"用间": " jiàn",
 	
+	// 武将名
 	"乐进": "yuè ",
 	"乐就": "yuè ",
 	"乐綝": "yuè chēn",
@@ -66,6 +67,7 @@ var pinyin_dict_polyphone = {
 	"库特莉亚芙卡": "     kǎ",
 	"露娜": "lù ",
 	// 技能名
+	"弹雀": "tán què",
 	"重身": "chóng ",
 	"畜鸣": "chù ",
 	"聆乐": " yuè",
@@ -150,6 +152,8 @@ var pinyin_dict_polyphone = {
 	"量反": "liàng ",
 	"复难": " nàn",
 	"膴仕": "wǔ ",
+	"骜肆": "ào ",
+	"犷骜": " ào",
 	
 	"蒙斥": "méng ",
 	
@@ -183,9 +187,12 @@ var pinyin_dict_polyphone = {
 	"虎煞": " shà",
 	"煞魂": "shà ",
 	// END
+	// 增补
 	"撒贝宁": "sà  ",
 	"卡比": "kǎ ",
+	"桀骜": " ào",
 	
+	// 原版（含修复）
 	"阿Ｑ": "ā ",
 	"阿爸": "ā ",
 	"阿鼻": "ā ",
@@ -41588,6 +41595,10 @@ var pinyin_dict_withtone = "yī,dīng zhēng,kǎo qiǎo yú,qī,shàng,xià,hǎn
 	 * @param splitter 返回结果拼接字符
 	 */
 	function parsePolyphone(chinese, result, splitter, withtone) {
+		// 先删除中文字符之外的所有字符（包括英文字母、数字、标点符号、空格和其他非中文字符），然后再查找多音字
+		chinese = chinese.replace(/[^\u4e00-\u9fa5]/g, '');
+		if(chinese.length == 0) return result;
+		
 		var poly = window.pinyin_dict_polyphone;
 		var max = 7; // 最多只考虑7个汉字的多音字词，虽然词库里面有10个字的，但是数量非常少，为了整体效率暂时忽略之
 		var temp = poly[chinese];
@@ -41604,10 +41615,6 @@ var pinyin_dict_withtone = "yī,dīng zhēng,kǎo qiǎo yú,qī,shàng,xià,hǎn
 		for (var i = 0; i < chinese.length;(i++,m++)) {
 			temp = '';
 			for (var j = 0; j < max && (i + j) < chinese.length; j++) {
-				if (!dict.withtone[chinese[i]]) {
-					i+=(result[m].length-1);
-					break;
-				} // 如果碰到非汉字直接停止本次查找
 				temp += chinese[i + j];
 				var res = poly[temp];
 				if (res) // 如果找到了多音字词语

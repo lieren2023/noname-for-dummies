@@ -1,20 +1,22 @@
-import { Get as get } from '../get/index.js';
-import { Game as game } from '../game/index.js';
-import { status as _status } from '../status/index.js';
-import { UI as ui } from '../ui/index.js';
-import { Library as lib } from '../library/index.js';
-import { GNC as gnc } from '../gnc/index.js';
-import { Uninstantable } from "../util/index.js";
+import { get } from "../get/index.js";
+import { lib } from "../library/index.js";
+import { Basic } from "./basic.js";
 
-import { Basic } from './basic.js';
+export class AI {
+	basic = new Basic();
+	get = get;
+}
 
-export class AI extends Uninstantable {
-	static basic = Basic;
-	static get = get;
+export let ai = new AI();
+
+/**
+ * @param { InstanceType<typeof AI> } [instance]
+ */
+export let setAI = (instance) => {
+	ai = instance || new AI();
+	if (lib.config.dev) {
+		window.ai = ai;
+	}
 };
 
-export const ai = AI;
-
-export {
-	Basic
-}
+export { Basic };

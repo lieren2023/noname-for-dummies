@@ -897,3 +897,28 @@ span[data-nature='qunmm'] {
 	max-height: 112px;
 	z-index: 1;
 }
+
+/* 适配战棋/塔防/炉石模式 */
+#chess-container {
+	height: calc(100% - 154px) !important;
+	top: 13px !important;
+}
+#mebg {
+	height: 0px !important;
+}
+#arena.chess > #mebg {
+	bottom: -50px !important;
+}
+#arena.chess > .hand-wrap>.fakeme.avatar {/*战棋/塔防模式头像*/
+	height: 176px;
+}
+.fakeme.player {
+	left: calc(100% + 105px) !important;
+}
+#arena.chess>.hand-wrap,
+#arena.chess>.hand-back {
+	width: 57.5%;
+}
+#arena.chess > .dialog {
+	max-height: inherit !important;
+}

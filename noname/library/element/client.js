@@ -1,17 +1,15 @@
-import { AI as ai } from '../../ai/index.js';
-import { Get as get } from '../../get/index.js';
-import { Game as game } from '../../game/index.js';
-import { Library as lib } from "../index.js";
-import { status as _status } from '../../status/index.js';
-import { UI as ui } from '../../ui/index.js';
-import { GNC as gnc } from '../../gnc/index.js';
+import { get } from "../../get/index.js";
+import { game } from "../../game/index.js";
+import { lib } from "../index.js";
+import { _status } from "../../status/index.js";
+import { ui } from "../../ui/index.js";
 
 export class Client {
 	/**
 	 * @param {import('../index.js').NodeWS | InstanceType<typeof import('ws').WebSocket> | Client} ws
 	 */
 	constructor(ws) {
-		if (ws instanceof Client) throw new Error('Client cannot copy.')
+		if (ws instanceof Client) throw new Error("Client cannot copy.");
 		this.ws = ws;
 		/**
 		 * @type { string }
@@ -23,16 +21,15 @@ export class Client {
 	send() {
 		if (this.closed) return this;
 		var args = Array.from(arguments);
-		if (typeof args[0] == 'function') {
-			args.unshift('exec');
+		if (typeof args[0] == "function") {
+			args.unshift("exec");
 		}
 		for (var i = 1; i < args.length; i++) {
 			args[i] = get.stringifiedResult(args[i]);
 		}
 		try {
 			this.ws.send(JSON.stringify(args));
-		}
-		catch (e) {
+		} catch (e) {
 			this.ws.close();
 		}
 		return this;
@@ -56,20 +53,19 @@ export class Client {
 				game.onlinezhu = null;
 			}
 			game.updateWaiting();
-		}
-		else if (lib.playerOL[this.id]) {
+		} else if (lib.playerOL[this.id]) {
 			var player = lib.playerOL[this.id];
-			player.setNickname(player.nickname + ' - 离线');
+			player.setNickname(player.nickname + " - 离线");
 			// @ts-ignore
 			game.broadcast(function (player) {
-				player.setNickname(player.nickname + ' - 离线');
+				player.setNickname(player.nickname + " - 离线");
 			}, player);
-			player.unwait('ai');
+			player.unwait("ai");
 		}
 
 		if (window.isNonameServer) {
 			// @ts-ignore
-			document.querySelector('#server_count').innerHTML = lib.node.clients.length;
+			document.querySelector("#server_count").innerHTML = lib.node.clients.length;
 		}
 		return this;
 	}

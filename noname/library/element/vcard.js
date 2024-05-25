@@ -1,9 +1,6 @@
-import { AI as ai } from '../../ai/index.js';
-import { Get as get } from '../../get/index.js';
-import { Game as game } from '../../game/index.js';
-import { Library as lib } from "../index.js";
-import { status as _status } from '../../status/index.js';
-import { UI as ui } from '../../ui/index.js';
+import { get } from "../../get/index.js";
+import { lib } from "../index.js";
+import { _status } from "../../status/index.js";
 
 export class VCard {
 	/**
@@ -32,7 +29,7 @@ export class VCard {
 			this.nature = suitOrCard[3];
 		}
 		// @ts-ignore
-		else if (get.itemtype(suitOrCard) == 'card') {
+		else if (get.itemtype(suitOrCard) == "card") {
 			this.name = get.name(suitOrCard);
 			this.suit = get.suit(suitOrCard);
 			this.color = get.color(suitOrCard);
@@ -53,16 +50,16 @@ export class VCard {
 			const info = get.info(this, false);
 			if (info) {
 				const autoViewAs = info.autoViewAs;
-				if (typeof autoViewAs == 'string') this.name = autoViewAs;
+				if (typeof autoViewAs == "string") this.name = autoViewAs;
 			}
-		}
-		else if (suitOrCard && typeof suitOrCard != 'string') {
-			Object.keys(suitOrCard).forEach(key => {
+		} else if (suitOrCard && typeof suitOrCard != "string") {
+			Object.keys(suitOrCard).forEach((key) => {
 				/**
 				 * @type { PropertyDescriptor }
 				 */
 				// @ts-ignore
-				const propertyDescriptor = Object.getOwnPropertyDescriptor(suitOrCard, key), value = propertyDescriptor.value;
+				const propertyDescriptor = Object.getOwnPropertyDescriptor(suitOrCard, key),
+					value = propertyDescriptor.value;
 				if (Array.isArray(value)) this[key] = value.slice();
 				else Object.defineProperty(this, key, propertyDescriptor);
 			});
@@ -75,25 +72,24 @@ export class VCard {
 				if (noCards) {
 					if (!lib.suits.includes(this.suit)) this.suit = get.suit(this);
 					if (!Object.keys(lib.color).includes(this.color)) this.color = get.color(this);
-					if (typeof this.number != 'number') this.number = get.number(this);
+					if (typeof this.number != "number") this.number = get.number(this);
 					if (!this.nature) this.nature = get.nature(this);
 				}
-			}
-			else if(numberOrCards === 'unsure' && !this.isCard) {
-				if(!this.suit) this.suit = 'unsure';
-				if(!this.color) this.color = 'unsure';
-				if(!this.number) this.number = 'unsure';
+			} else if (numberOrCards === "unsure" && !this.isCard) {
+				if (!this.suit) this.suit = "unsure";
+				if (!this.color) this.color = "unsure";
+				if (!this.number) this.number = "unsure";
 			}
 			const info = get.info(this, false);
 			if (info) {
 				const autoViewAs = info.autoViewAs;
-				if (typeof autoViewAs == 'string') this.name = autoViewAs;
+				if (typeof autoViewAs == "string") this.name = autoViewAs;
 			}
 		}
-		if (typeof suitOrCard == 'string') this.suit = suitOrCard;
-		if (typeof numberOrCards == 'number') this.number = numberOrCards;
-		if (typeof name == 'string') this.name = name;
-		if (typeof nature == 'string') this.nature = nature;
+		if (typeof suitOrCard == "string") this.suit = suitOrCard;
+		if (typeof numberOrCards == "number") this.number = numberOrCards;
+		if (typeof name == "string") this.name = name;
+		if (typeof nature == "string") this.nature = nature;
 		if (!this.storage) this.storage = {};
 		if (!this.cards) this.cards = [];
 	}
@@ -121,11 +117,13 @@ export class VCard {
 	hasNature(nature, player) {
 		const natures = get.natureList(this, player);
 		if (!nature) return natures.length > 0;
-		if (nature == 'linked') return natures.some(n => lib.linked.includes(n));
+		if (nature == "linked") return natures.some((n) => lib.linked.includes(n));
 		return get.is.sameNature(natures, nature);
 	}
-	getCacheKey(){
-		return `[vc:${this.name}+${this.suit?this.suit:'none'}+${this.number===undefined?'none':this.number}${this.nature?'+':''}${this.nature?this.nature:''}]`;
+	getCacheKey() {
+		return `[vc:${this.name}+${this.suit ? this.suit : "none"}+${
+			this.number === undefined ? "none" : this.number
+		}${this.nature ? "+" : ""}${this.nature ? this.nature : ""}]`;
 	}
 	hasGaintag(tag) {
 		return this.gaintag && this.gaintag.includes(tag);

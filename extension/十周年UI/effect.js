@@ -281,6 +281,13 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				bgImage.src = decadeUIPath + 'assets/image/bg_xianding_' + camp + '.png';
 			};
 			
+			// 修复无图角色发动skillAnimation为true的特效不显示的bug
+			// 露头皮肤待适配
+			image.onerror = function () {
+				image.onerror = void 0;
+				image.src = lib.assetURL + 'image/character/default_silhouette_' + player.sex + '.jpg';
+			};
+			
 			// image.src = url.slice(5, -2);
 			if(url.indexOf("url(\"") == 0){
 				image.src = url.slice(5, url.indexOf("\")"));

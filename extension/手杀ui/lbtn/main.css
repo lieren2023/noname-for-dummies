@@ -1,7 +1,7 @@
 .lbtn-controls {
   --width: 50px;
   right: 17.5px;
-  bottom: 72px;
+  bottom: 68px;
   width: var(--width);
   z-index: 1;
   
@@ -14,7 +14,7 @@
   height: 77px;
   position: absolute;
   top: calc(-2.3% - 0px);
-  right: -25.5px;
+  right: -25px;
   background-image: url("./images/button.png");
   background-size: 100% 100%;  
   z-index:1;
@@ -37,8 +37,8 @@
   width: 105px;
   height: 77px;
   position: absolute;
-  bottom: calc(-1% - 0px);
-  right: -27px;
+  bottom: calc(-1.2% - 0px);
+  right: -25px;
   background-image: url("./images/auto.png");
   background-size: 100% 100%;  
   z-index:1;
@@ -57,12 +57,12 @@
   position: relative;
 }
 .lbtn-control {
-  width: 66px;
-  height: 55px;
+  width: 63px;
+  height: 52px;
   background-image: url("./images/btn-bg.png");
-  font-size: 20px;
+  font-size: 18px;
   background-size: 100% 100%;
-  line-height: 56.5px;
+  line-height: 51.5px;
   text-align: center;
   white-space: nowrap;
   color: #F5D78E;
@@ -110,7 +110,7 @@
 
 .control > div.primary {
   --p: calc(var(--h) * 11 / 75);
-  background-image: url("./images/confirm-bg-2-c.png");
+  background-image: none;
 }
 .control > div + div {
   margin-left: 15px;
@@ -130,7 +130,7 @@
 .control > div.disabled:not([data-type="endButton"]) {
   background-size: 100% 100%;
 }
-.control > div > span {
+.control > div.primary > span {
     --sh: calc(var(--h) - 6px);
   display: block;
   font-size: 30px;
@@ -164,7 +164,7 @@ left: -220px;
     black 0 0 2px,
     black 0 0 2px;
   color: white;
-      z-index: 1;
+      /* z-index: 1; */
 }
 
 .handcardNumber > .cardPicture {

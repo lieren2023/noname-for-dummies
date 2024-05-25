@@ -1,4 +1,4 @@
-import * as buildin from "./buildin.js"
+import * as buildin from "./buildin.js";
 
 /**
  * @template {import("./interface.js").NonameHookType} HookType
@@ -9,29 +9,29 @@ export class NonameHook extends Array {
 	/**
 	 * @type {Name}
 	 */
-	#name
+	#name;
 
 	/**
-	 * 
-	 * @param {Name} name 
+	 *
+	 * @param {Name} name
 	 */
 	constructor(name) {
-		super()
-		this.#name = name
+		super();
+		this.#name = name;
 
 		if (name in buildin) {
 			// @ts-ignore
 			for (const item of buildin[name]) {
-				this.push(item)
+				this.push(item);
 			}
 		}
 	}
 
 	static get [Symbol.species]() {
-		return Array
+		return Array;
 	}
 
 	get name() {
-		return this.#name
+		return this.#name;
 	}
 }
