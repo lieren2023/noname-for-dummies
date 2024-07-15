@@ -118,8 +118,8 @@ content:function(config,pack){
 		// yijiang:'一将成名',
 		lib.characterTitle.xiahoumao = "束甲之鸟";
 		lib.characterTitle.chenshi = "裨将可期";
-		lib.characterTitle.sunli = "";
-		lib.characterTitle.feiyao = "";
+		lib.characterTitle.sunli = "百炼公才";
+		lib.characterTitle.feiyao = "后将军";
 		lib.characterTitle.wuanguo = "虎口折腕";
 		lib.characterTitle.hanlong = "冯河易水";
 		lib.characterTitle.yj_qiaozhou = "观星知命";
@@ -203,7 +203,7 @@ content:function(config,pack){
 		lib.characterTitle.linghuyu = "";
 		lib.characterTitle.yj_simafu = "";
 		lib.characterTitle.yj_xuangongzhu = "";
-		lib.characterTitle.xukun = "";
+		lib.characterTitle.xukun = "平虏击逆";
 		// sp:'璀璨星河',
 		lib.characterTitle.hansui = "雄踞北疆";
 		lib.characterTitle.fanjiangzhangda = "你死我亡";
@@ -216,7 +216,7 @@ content:function(config,pack){
 		lib.characterTitle.ol_sb_guanyu = "威震华夏";
 		lib.characterTitle.ol_sb_taishici = "矢志全忠孝";
 		lib.characterTitle.ol_sb_yuanshao = "席卷八荒";
-		lib.characterTitle.ol_sb_pangtong = "";
+		lib.characterTitle.ol_sb_pangtong = "定鼎巴蜀";
 		// yingbian:'文德武备',
 		lib.characterTitle.chengjichengcui = "袒忿半瓦";
 		lib.characterTitle.wangxiang = "沂川跃鲤";
@@ -277,6 +277,9 @@ content:function(config,pack){
 		lib.characterTitle.liuyao = "宗英外镇";
 		lib.characterTitle.liuyan = "裂土之宗";
 		// huicui:'群英荟萃',
+		lib.characterTitle.yue_zhugeguo = "";
+		lib.characterTitle.yue_zoushi = "";
+		lib.characterTitle.yue_miheng = "";
 		lib.characterTitle.yue_daqiao = "玉桐姊韵";
 		lib.characterTitle.yue_xiaoqiao = "绿绮嫒媛";
 		lib.characterTitle.yue_caiyong = "焦尾识音";
@@ -287,8 +290,16 @@ content:function(config,pack){
 		lib.characterTitle.liuyong = "甘陵王";
 		lib.characterTitle.zhangxuan = "玉宇嫁蔷";
 		// xianding:'限定专属',
+		lib.characterTitle.dc_sb_zhangxiu = "凌枪破宛";
+		lib.characterTitle.dc_sb_guanping = "百战烈烈";
+		lib.characterTitle.dc_sb_caoang = "两全忠孝";
+		lib.characterTitle.dc_sb_dianwei = "狂战怒莽";
+		lib.characterTitle.dc_caoshuang = "托孤傲臣";
+		lib.characterTitle.dc_simashi = "唯几成务";
+		lib.characterTitle.dc_wangling = "风节格尚";
+		lib.characterTitle.dc_jiangji = "策论万机";
 		lib.characterTitle.dc_sb_zhugejin = "清雅德纯";
-		lib.characterTitle.dc_sb_jiaxu = "";
+		lib.characterTitle.dc_sb_jiaxu = "晦谋独善";
 		lib.characterTitle.sp_zhenji = "善言贤女";
 		lib.characterTitle.wu_guanyu = "义武千秋";
 		lib.characterTitle.dc_sb_simayi = "韬谋韫势";
@@ -303,6 +314,7 @@ content:function(config,pack){
 		lib.characterTitle.xushao = "识人读心";
 		lib.characterTitle.zhangchangpu = "矜严明训";
 		// extra:'神将',
+		lib.characterTitle.xin_simayi = "";
 		lib.characterTitle.dc_shen_huatuo = "灵魂的医者";
 		lib.characterTitle.shen_xuzhu = "嗜战的熊罴";
 		lib.characterTitle.shen_lusu = "兴吴之邓禹";
@@ -389,6 +401,7 @@ content:function(config,pack){
 		lib.characterTitle.sb_menghuo = lib.characterTitle.menghuo;
 		lib.characterTitle.sb_yl_luzhi = lib.characterTitle.yl_luzhi;
 		lib.characterTitle.sb_xiaoqiao = lib.characterTitle.xiaoqiao;
+		lib.characterTitle.sb_luxun = "";
 		// tw:'外服武将',
 		lib.characterTitle.tw_yanliang = "何惧华雄";
 		lib.characterTitle.tw_wenchou = "有去无回";
@@ -487,7 +500,7 @@ content:function(config,pack){
 		lib.characterTitle.gz_jun_liubei = "龙横蜀汉";
 		lib.characterTitle.gz_jun_zhangjiao = "时代的先驱";
 		lib.characterTitle.gz_jun_sunquan = "虎踞江东";
-		lib.characterTitle.gz_jun_caocao = "凤舞九天";
+		lib.characterTitle.gz_jun_caocao = "凤舞九霄";
 		
 	}
 	
@@ -4208,10 +4221,31 @@ content:function(config,pack){
 		}
 	}
 	
+	// 新增lib.notShowSkillNamePinyin，用ID识别不显示技能拼音的技能和衍生技能
+	lib.notShowSkillNamePinyin=[
+		"byzyzhenwangpeiyin","byzyshenglipeiyin",//阵亡、胜利
+		"boss_zhiwang_planetarian",//注意事项
+		"boss_xhuanren","boss_newhuanren",//关卡说明
+		"wuziliangjiangdao",//五子良将纛
+		"wuhujiangdaqi",//五虎将大旗
+		"yuanjiangfenghuotu",//缘江烽火图
+		"huangjintianbingfu",//黄巾天兵符
+		"qiaosi_map",//大键角色图/水转百戏图
+		"wuling_wuqinxi",//五禽戏
+		"twhuajing_jian","twhuajing_dao","twhuajing_fu","twhuajing_qiang","twhuajing_ji","twhuajing_gong",//特殊处理：玉真子的剑、刀、斧、枪、戟、弓
+		// 卡牌（临时处理）
+		"liulongcanjia",//六龙骖驾
+		"feilongduofeng",//飞龙夺凤
+		"dinglanyemingzhu",//定澜夜明珠
+		"taipingyaoshu",//太平要术
+		"ruyijingubang",//如意金箍棒
+		"cheliji_sichengliangyu","cheliji_tiejixuanyu","cheliji_feilunzhanyu",//四乘粮舆、铁蒺玄舆、飞轮战舆
+		"mapodoufu",//麻婆豆腐
+		"hsbaowu_cangbaotu","hsbaowu_huangjinyuanhou",//藏宝图、黄金猿猴
+		"wy_meirenji","wy_xiaolicangdao",//美人计、笑里藏刀
+	];
 	// 资料卡修改
 	if(config.byzy_zlkxg && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable'])) {
-		lib.notshowSkillNamePinyin=['阵亡','胜利','注意事项','关卡说明','五子良将纛','五虎将大旗','缘江烽火图','黄巾天兵符','大键角色图','水转百戏图','太平要术','五禽戏','麻婆豆腐'];
-		
 		if (ui.css.characterbutton)
 			ui.css.characterbutton.remove();
 		// 添加样式
@@ -4348,8 +4382,10 @@ content:function(config,pack){
 						}
 					}
 					else if(Array.isArray(audioinfo)){
-						audioname=audioinfo[0];
-						audioinfo=audioinfo[1];
+						if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
+							audioname=audioinfo[0];
+							audioinfo=audioinfo[1];
+						}
 					}
 					if(typeof audioinfo=='number'){
 						if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
@@ -4377,6 +4413,227 @@ content:function(config,pack){
 					}
 				}
 			}
+		};
+		
+		// 旧版台词函数（暂时先用）
+		/**
+		 * 根据skill中的audio,audioname,audioname2和player来获取音频地址列表
+		 * @typedef {[string,number]|string|number|boolean} audioInfo
+		 * @typedef {{audio: audioInfo, audioname?:string[], audioname2?:{[playerName: string]: audioInfo}}} skillInfo
+		 * @param { string } skill  技能名
+		 * @param { Player | Object | string } [player]  角色/角色名
+		 * @param { skillInfo | audioInfo } [skillInfo]  预设的skillInfo/audioInfo(转为skillInfo)，覆盖lib.skill[skill]
+		 * @param { boolean | undefined } [useRawAudio]
+		 * @returns { string[] }  语音地址列表
+		 * @example
+		 * ```js
+		 * const info=lib.skill['skillname'];
+		 * info.audio=undefined //默认值[true,2]
+		 * info.audio=false // 不播放语音
+		 * info.audio=true // [skill/skillname.mp3]
+		 * info.audio=3 // [skill/skillname1.mp3,skill/skillname2.mp3,skill/skillname3.mp3]（项数为数字大小）
+		 * info.audio="(ext:extName|db:extension-extName)(/anyPath):true|number(:format)" //间接路径
+		 * // 同上，只是将目录改为(ext:extName|db:extension-extName)(/anyPath)，且可以指定格式(默认mp3)
+		 * info.audio="(ext:extName|db:extension-extName/)(anyPath/)filename(.format)" //直接路径
+		 * //path和format至少有一个，否则会识别为引用技能
+		 * //起始位置为audio/(若无anyPath则为audio/skill/)，若没有format默认mp3
+		 * info.audio="otherSkillname" //引用技能
+		 * //引用一个其他技能的语音，若lib.skill["otherSkillname"]不存在则读取"otherSkillname"的audio为默认值[true,2]
+		 * info.audio=["otherSkillname", number] //带fixedNum的引用技能
+		 * //同样引用一个其他技能的语音，若lib.skill["otherSkillname"]不存在则读取"otherSkillname"的audio为number
+		 * //若"otherSkillname"的语音数超过number，则只取前number个
+		 * info.audio=[true,2,"otherSkillname1",["otherSkillname2",2]] //任意元素拼接
+		 * //数组里可以放任何以上的格式，结果为分析完的结果合并
+		 *
+		 * info.audioname=['player1','player2']
+		 * //audioname里可以放任意角色名。
+		 * //如果其中包含发动技能的角色名"player"，且info.audio不是直接路径"(anyPath/)filename(.format)"的形式
+		 * //则在"skill"和number中插入"_player"，形如
+		 *
+		 * info.audioname2={'player1':audioInfo1,'player2':audioInfo2}
+		 * //audioname2是一个对象，其中key为角色名，value的类型和info.audio一样
+		 * //如果key中包含发动技能的角色名player，则直接改用info.audioname2[player]来播放语音
+		 * ```
+		 */
+		game.parseSkillAudio=function(skill, player, skillInfo) {
+			return game.parseSkillTextMap(skill, player, skillInfo).map(data => data.file);
+		};
+		/**
+		 * 根据skill中的audio,audioname,audioname2和player来获取技能台词列表
+		 * @param { string } skill  技能名
+		 * @param { Player | Object | string } [player]  角色/角色名
+		 * @param { skillInfo | audioInfo } [skillInfo]  预设的skillInfo/audioInfo(转为skillInfo)，覆盖lib.skill[skill]
+		 * @returns { string[] }  语音地址列表
+		 */
+		game.parseSkillText=function(skill, player, skillInfo) {
+			return game.parseSkillTextMap(skill, player, skillInfo).map(data => data.text).filter(Boolean);
+		};
+		/**
+		 * 根据skill中的audio,audioname,audioname2和player来获取技能台词列表及其对应的源文件名
+		 * @param { string } skill  技能名
+		 * @param { Player | Object | string } [player]  角色/角色名
+		 * @param { skillInfo | audioInfo } [skillInfo]  预设的skillInfo/audioInfo(转为skillInfo)，覆盖lib.skill[skill]
+		 * @returns { any[] }  语音地址列表
+		 */
+		game.parseSkillTextMap=function(skill, player, skillInfo) {
+			if (typeof player === "string") player = { name: player };
+			else if (typeof player !== "object" || player === null) player = {};
+
+			if (skillInfo && (typeof skillInfo !== "object" || Array.isArray(skillInfo))) skillInfo = { audio: skillInfo };
+
+			const checkSkill = (skill, history) => {
+				if (!lib.skill[skill]) return false;
+				if (!history.includes(skill)) return true;
+				if (history[0] === skill) return false;
+				//deadlock
+				throw new RangeError(`parseSkillTextMap: ${skill} in ${history} forms a deadlock`);
+			};
+
+			// 临时修改（by 棘手怀念摧毁）
+			const getName = (filter) => {
+				const name = (player.tempname || []).find((i) => filter(i));
+				return (
+					name ||
+					[player.name, player.name1, player.name2].reduce((result, name) => {
+						if (result) return result;
+						if (!name) return result;
+						if (filter(name)) return name;
+						let tempname = (get.character(name, 4) || []).find((tag) => tag.startsWith("tempname:"));
+						if (!tempname) return result;
+						tempname = tempname
+							.split(":")
+							.slice(1)
+							.find((i) => filter(i));
+						return tempname || result;
+					}, void 0)
+				);
+			};
+
+			const getTextMap = (path, name, ext) => ({
+				name,
+				file: `${path}${name}${ext}`,
+				text: lib.translate[`#${name}`],
+			});
+
+			function getAudioList(skill, options, skillInfo) {
+				const info = skillInfo || lib.skill[skill];
+				if (!info) {
+					console.error(new ReferenceError(`parseSkillAudio: Cannot find ${skill} in lib.skill`));
+					return parseAudio(skill, options, [true, 2]);
+				}
+
+				const { audioname, history } = options;
+				history.unshift(skill);
+				let audioInfo = info.audio;
+				if (Array.isArray(info.audioname)) audioname.addArray(info.audioname);
+				if (info.audioname2) audioInfo = info.audioname2[getName(i => info.audioname2[i])] || audioInfo;
+
+				return parseAudio(skill, options, audioInfo);
+			}
+
+			function parseAudio(skill, options, audioInfo) {
+				const audioname = options.audioname.slice();
+				const history = options.history.slice();
+				options = { audioname, history };
+				if (Array.isArray(audioInfo)) {
+					if (audioInfo.length === 2 && typeof audioInfo[0] === "string" && typeof audioInfo[1] === "number") {
+						const [name, number] = audioInfo;
+						if (checkSkill(name, history)) return getAudioList(name, options).slice(0, number);
+						return parseAudio(name, options, number);
+					}
+
+					const map = {};
+					audioInfo.forEach((i) => {
+						parseAudio(skill, options, i).forEach(data => map[data.name] = data);
+					});
+					return Object.values(map);
+				}
+
+				if (!["string", "number", "boolean"].includes(typeof audioInfo)) return parseAudio(skill, options, [true, 2]);
+				if (audioInfo === false) return [];
+				if (typeof audioInfo === "string") {
+					if (["data:", "blob:"].some(prefix => audioInfo.startsWith(prefix))) return [getTextMap("", audioInfo, "")];
+					if(checkSkill(audioInfo, history)) return getAudioList(audioInfo, options);
+				}
+				audioInfo = String(audioInfo);
+				const list = audioInfo.match(/(?:(.*):|^)(true|\d+)(?::(.*)|$)/); // [path, number|true, ext]
+				if (!list) {
+					let path = "", ext = "";
+					if (!/^db:|^ext:|\//.test(audioInfo)) path = "skill/";
+					if (!/\.\w+$/.test(audioInfo)) ext = ".mp3";
+					if (path && ext) return parseAudio(audioInfo, options, [true, 2]);
+					//@TODO
+					console.warn(`${skill}中“${audioInfo}”的地址写法暂时没有完全支持台词系统。`);
+					return [getTextMap(path, audioInfo, ext)];
+				}
+
+				let [, path = "skill", audioNum, ext = "mp3"] = list;
+				let _audioname = getName(i => audioname.includes(i));
+				_audioname = _audioname ? `_${_audioname}` : "";
+
+				if (audioNum === "true") return [getTextMap(`${path}/`, `${skill}${_audioname}`, `.${ext}`)];
+
+				const audioList = [];
+				audioNum = parseInt(audioNum);
+				for (let i = 1; i <= audioNum; i++) {
+					audioList.push(getTextMap(`${path}/`, `${skill}${_audioname}${i}`, `.${ext}`));
+				}
+				return audioList;
+			}
+
+			return getAudioList(skill, { audioname: [], history: [] }, skillInfo);
+		};
+		/**
+		 * 获取角色死亡时能播放的所有阵亡语音
+		 * @param { string | Player } player  角色名
+		 * @returns { any[] }  语音地址列表
+		 */
+		game.parseDieTextMap=function(player){
+			let name, rawName;
+			if (typeof player === "string") {
+				name = player;
+				rawName = name;
+			}
+			else if (get.itemtype(player) === "player") {
+				// @ts-ignore
+				name = player.skin.name || player.name;
+				rawName = player.name;
+			}
+			
+			// 临时修改（by 棘手怀念摧毁）
+			const datas = [];
+			let dieAudios = [];
+			if (lib.character[name] && lib.character[name][4] && lib.character[name][4].some(tag => tag.startsWith('die_audio'))) {
+				var tag = lib.character[name][4].find(tag => tag.startsWith('die_audio'));
+				dieAudios = tag.split(':').slice(1);
+			}
+			
+			if(dieAudios && dieAudios.length > 0){
+				dieAudios.forEach(item => {
+					let key, file;
+					if(item.startsWith("ext:")){
+						key = item.slice(4).split("/")[1];
+						file = item;
+					}
+					else {
+						key = item;
+						file = `die/${item}.mp3`;
+					}
+					const data = {key, file}
+					if(lib.translate[`#${key}:die`]) data.text = lib.translate[`#${key}:die`];
+					datas.push(data);
+				});
+			}
+			else {
+				const data = {
+					key: name,
+					file: `die/${name}.mp3`,
+					isDefault: true,
+				}
+				if(lib.translate[`#${name}:die`]) data.text = lib.translate[`#${name}:die`];
+				datas.push(data);
+			}
+			return datas;
 		};
 		
 		// 修改game.js的函数charactercard:function(name,sourcenode,noedit,resume,avatar){
@@ -4781,7 +5038,7 @@ content:function(config,pack){
 						// 技能台词Map
 						const skillAudioMap = new Map();
 						nameinfo[3].forEach(skill => {
-							const voiceMap = game.parseSkillText(skill, name, null, true);
+							const voiceMap = game.parseSkillText(skill, name);
 							if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
 						});
 						// 衍生技能台词Map
@@ -4795,7 +5052,7 @@ content:function(config,pack){
 								}
 								for(var i=0; i<derivation.length; i++) {
 									if (derivation[i].indexOf('_faq') != -1) continue;
-									const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+									const derivationVoiceMap = game.parseSkillText(derivation[i], name);
 									if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
 								}
 							}
@@ -4973,7 +5230,7 @@ content:function(config,pack){
 					// 技能台词Map
 					const skillAudioMap = new Map();
 					nameInfo[3].forEach(skill => {
-						const voiceMap = game.parseSkillText(skill, name, null, true);
+						const voiceMap = game.parseSkillText(skill, name);
 						if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
 					});
 					// 衍生技能台词Map
@@ -4987,7 +5244,7 @@ content:function(config,pack){
 							}
 							for(var i=0; i<derivation.length; i++) {
 								if (derivation[i].indexOf('_faq') != -1) continue;
-								const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+								const derivationVoiceMap = game.parseSkillText(derivation[i], name);
 								if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
 							}
 						}
@@ -5074,7 +5331,7 @@ content:function(config,pack){
 					const link=this.link,skillName=get.translation(link);
 					skillNameSpan.innerHTML=skillName;
 					const showSkillNamePinyin=lib.config.show_skillnamepinyin;
-					if(showSkillNamePinyin!='doNotShow'&&!lib.notshowSkillNamePinyin.contains(skillName)){
+					if(showSkillNamePinyin!='doNotShow'&&!lib.notShowSkillNamePinyin.contains(link)){
 						const ruby=document.createElement('ruby');
 						ruby.appendChild(skillNameSpan);
 						const leftParenthesisRP=document.createElement('rp');
@@ -5110,7 +5367,7 @@ content:function(config,pack){
 							derivationNameSpanStyle.fontWeight='bold';
 							const derivationName=get.translation(derivation);
 							derivationNameSpan.innerHTML=derivationName;
-							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationName)){
+							if(showSkillNamePinyin!='doNotShow'&&derivationName.length<=5&&derivation.indexOf('_faq')==-1&&!lib.notShowSkillNamePinyin.contains(derivation)){
 								const ruby=document.createElement('ruby');
 								ruby.appendChild(derivationNameSpan);
 								const leftParenthesisRP=document.createElement('rp');
@@ -5202,8 +5459,10 @@ content:function(config,pack){
 							}
 						}
 						else if(Array.isArray(audioinfo)){
-							audioname=audioinfo[0];
-							audioinfo=audioinfo[1];
+							if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
+								audioname=audioinfo[0];
+								audioinfo=audioinfo[1];
+							}
 						}
 						if(typeof audioinfo=='number'){
 							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
@@ -5284,7 +5543,7 @@ content:function(config,pack){
 					// 技能台词Map
 					const skillAudioMap = new Map();
 					nameinfo[3].forEach(skill => {
-						const voiceMap = game.parseSkillText(skill, name, null, true);
+						const voiceMap = game.parseSkillText(skill, name);
 						if(voiceMap.length) skillAudioMap.set(skill, voiceMap);
 					});
 					// 衍生技能台词Map
@@ -5298,7 +5557,7 @@ content:function(config,pack){
 							}
 							for(var i=0; i<derivation.length; i++) {
 								if (derivation[i].indexOf('_faq') != -1) continue;
-								const derivationVoiceMap = game.parseSkillText(derivation[i], name, null, true);
+								const derivationVoiceMap = game.parseSkillText(derivation[i], name);
 								if(derivationVoiceMap.length) derivationSkillAudioMap.set(derivation[i], derivationVoiceMap);
 							}
 						}
@@ -5393,7 +5652,7 @@ content:function(config,pack){
 					this.classList.add('active');
 					var skillname=get.translation(this.link);
 					var skilltranslationinfo=get.skillInfoTranslation(this.link);
-					if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&!lib.notshowSkillNamePinyin.contains(skillname)){
+					if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&!lib.notShowSkillNamePinyin.contains(this.link)){
 						var skillpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?this.link:get.pinyin(skillname);
 						// intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+skillname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+skillpinyin+']'+'</span>'+'  '+skilltranslationinfo;
 						intro2.innerHTML =
@@ -5424,7 +5683,7 @@ content:function(config,pack){
 						for(var i=0;i<derivation.length;i++){
 							var derivationname=get.translation(derivation[i]);
 							var derivationtranslationinfo=get.skillInfoTranslation(derivation[i]);
-							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1&&!lib.notshowSkillNamePinyin.contains(derivationname)){
+							if((lib.config.show_skillnamepinyin=='showPinyin2'||lib.config.show_skillnamepinyin=='showCodeIdentifier2')&&derivationname.length<=5&&derivation[i].indexOf('_faq')==-1&&!lib.notShowSkillNamePinyin.contains(derivation[i])){
 								var derivationpinyin=lib.config.show_skillnamepinyin=='showCodeIdentifier2'?derivation[i]:get.pinyin(derivationname);
 								// intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+derivationname+'</span>'+'<span style="font-size:14px;font-family:SimHei,STHeiti,sans-serif">'+'['+derivationpinyin+']'+'</span>'+'  '+derivationtranslationinfo;
 								intro2.innerHTML +=
@@ -5511,8 +5770,10 @@ content:function(config,pack){
 							}
 						}
 						else if(Array.isArray(audioinfo)){
-							audioname=audioinfo[0];
-							audioinfo=audioinfo[1];
+							if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
+								audioname=audioinfo[0];
+								audioinfo=audioinfo[1];
+							}
 						}
 						if(typeof audioinfo=='number'){
 							if(Array.isArray(info.audioname)&&info.audioname.contains(playername)) audioname=audioname+'_'+playername;
@@ -5784,9 +6045,9 @@ content:function(config,pack){
 					lib.translate["byzyzhenwangpeiyin"]=diestr;
 					
 					// 显示拼音（注解）
-					// if(lib.notshowSkillNamePinyin.contains(diestr)) lib.notshowSkillNamePinyin.remove(diestr);
+					// if(lib.notShowSkillNamePinyin.contains("byzyzhenwangpeiyin")) lib.notShowSkillNamePinyin.remove("byzyzhenwangpeiyin");
 					// 不显示拼音（注解）
-					// if(!lib.notshowSkillNamePinyin.contains(diestr)) lib.notshowSkillNamePinyin.push(diestr);
+					// if(!lib.notShowSkillNamePinyin.contains("byzyzhenwangpeiyin")) lib.notShowSkillNamePinyin.push("byzyzhenwangpeiyin");
 					
 					lib.translate["byzyzhenwangpeiyin_info"]=strinfo;
 				}
@@ -5804,9 +6065,9 @@ content:function(config,pack){
 					lib.translate["byzyshenglipeiyin"]=winstr;
 					
 					// 显示拼音（注解）
-					// if(lib.notshowSkillNamePinyin.contains(winstr)) lib.notshowSkillNamePinyin.remove(winstr);
+					// if(lib.notShowSkillNamePinyin.contains("byzyshenglipeiyin")) lib.notShowSkillNamePinyin.remove("byzyshenglipeiyin");
 					// 不显示拼音（注解）
-					// if(!lib.notshowSkillNamePinyin.contains(winstr)) lib.notshowSkillNamePinyin.push(winstr);
+					// if(!lib.notShowSkillNamePinyin.contains("byzyshenglipeiyin")) lib.notShowSkillNamePinyin.push("byzyshenglipeiyin");
 					
 					lib.translate["byzyshenglipeiyin_info"]=strinfo_1;
 				}
@@ -6153,6 +6414,17 @@ content:function(config,pack){
 							break;
 						}
 						case 'gainCardtrick':{
+							var cards=[];
+							for(var i=0;i<num;i++){
+								var card2=get.cardPile(function(card){
+								return get.type(card, "trick")=='trick'&&(!cards.includes(card));
+								});
+								target.gain(card2);
+								cards.push(card2);
+							}
+							break;
+						}
+						case 'gainCardnormaltrick':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
@@ -6765,8 +7037,13 @@ content:function(config,pack){
 		select.add(option);
 		
 		option=document.createElement('option');
-		option.text="从牌堆&弃牌堆获得普通锦囊牌";
+		option.text="从牌堆&弃牌堆获得锦囊牌";
 		option.value="gainCardtrick";
+		select.add(option);
+		
+		option=document.createElement('option');
+		option.text="从牌堆&弃牌堆获得普通锦囊牌";
+		option.value="gainCardnormaltrick";
 		select.add(option);
 		
 		option=document.createElement('option');
@@ -11277,7 +11554,7 @@ config:{
 				'<br>※ 卡牌引文补充<br>- 默认开启，开启后在手机端长按/电脑端右击武将头像后的卡牌信息查看界面显示卡牌引文（缓更中）'+
 				'<br>'+
 				'<br>▷ 自由选将增强'+
-				'<br>※ 自由选将-搜索功能<br>- 武将搜索代码摘抄自扩展ol（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可）<br>- 默认开启，自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）；移动代码以解决自由选将搜索功能存在关闭扩展后不消失的问题；新增确定按钮以修复部分手机可能存在回车无法使用的bug'+
+				'<br>※ 自由选将-搜索功能<br>- 武将搜索代码摘抄自扩展ol（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可）<br>- 默认开启，新增一个自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）；移动代码以解决自由选将搜索功能存在关闭扩展后不消失的问题；新增确定按钮以修复部分手机可能存在回车无法使用的bug'+
 				'<br>'+
 				'<br>※ 自由选将-筛选按钮扩充<br>- 默认开启，扩充按钮：男性、女性、双性，可根据性别筛选（统计）武将；主公（可筛选主公武将）；护甲（可筛选带护甲的武将）、不同体力上限筛选，实现更加自由灵活地禁选将'+
 				'<br>'+
@@ -12513,7 +12790,7 @@ config:{
 	
 	zyxjssgn: {
 		name: "自由选将-搜索功能",
-		intro: "搬运自扩展ol，自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）。",
+		intro: "搬运自扩展ol，新增一个自由选将搜索框合并武将搜索功能，输入任意关键词即可搜索（无需细分搜索类别）。",
 		init: true,
 	},
 	
@@ -12696,8 +12973,8 @@ config:{
 				'<br>- 封印模式：除“我”（玩家）外，场上其他角色非锁定技失效'+
 				'<br>- 全封印模式：场上所有角色非锁定技失效'+
 				'<br>- 解除封印模式：恢复场上所有角色的非锁定技'+
-				'<br>- 白板模式：除“我”（玩家）外，场上其他角色全变成白板（带有Charlotte标签的技能无法被清除）'+
-				'<br>- 全白板模式：场上所有角色全变成白板（带有Charlotte标签的技能无法被清除）'+
+				'<br>- 白板模式：除“我”（玩家）外，场上其他角色全变成白板（带有Charlotte标签、持恒技标签的技能不失效）'+
+				'<br>- 全白板模式：场上所有角色全变成白板（带有Charlotte标签、持恒技标签的技能不失效）'+
 				'<br>- 解除白板模式：恢复场上所有角色技能'+
 				'<br>- 潜行模式：“我”（玩家）不能成为其他角色的卡牌的目标（锁定技）'+
 				'<br>- 解除潜行模式：场上所有角色可以成为其他角色的卡牌的目标'+
@@ -13078,7 +13355,7 @@ config:{
 				gameplayers1.init("zhangqiying");
 				gameplayers2.init("zhoufei");
 				gameplayers3.init("zhugeguo");
-				gameplayers4.init("huaman");
+				gameplayers4.init("sp_huaman");
 				gameplayers5.init("sunluban");
 				gameplayers6.init("wanniangongzhu");
 				gameplayers7.init("sunshangxiang");
@@ -13121,16 +13398,16 @@ config:{
 					}
 				}
 				
-				// 暂时先这么写吧，后续会加曹金玉caojinyu 4、张星彩zhangxingcai 7、羊徽瑜yanghuiyu 4、吴苋wuxian 6、杨婉yangwan 7，改随机生成、同名武将解锁
+				// 暂时先这么写吧，后续会加曹金玉caojinyu 4、张星彩zhangxingcai 7、羊徽瑜yanghuiyu 4、吴苋wuxian 6、杨婉yangwan 8、曹节caojie 7，用map？，改随机生成、同名武将解锁
 				var name0="guanyinping",num0=10;
 				gameplayers0.node.avatar.setBackgroundImage("image/skin/" + name0 + "/" + num0 + ".jpg");
 				var name1="zhangqiying",num1=11;
 				gameplayers1.node.avatar.setBackgroundImage("image/skin/" + name1 + "/" + num1 + ".jpg");
-				var name2="zhoufei",num2=7;
+				var name2="zhoufei",num2=8;
 				gameplayers2.node.avatar.setBackgroundImage("image/skin/" + name2 + "/" + num2 + ".jpg");
-				var name3="zhugeguo",num3=7;
+				var name3="zhugeguo",num3=8;
 				gameplayers3.node.avatar.setBackgroundImage("image/skin/" + name3 + "/" + num3 + ".jpg");
-				var name4="huaman",num4=8;
+				var name4="sp_huaman",num4=3;
 				gameplayers4.node.avatar.setBackgroundImage("image/skin/" + name4 + "/" + num4 + ".jpg");
 				var name5="sunluban",num5=10;
 				gameplayers5.node.avatar.setBackgroundImage("image/skin/" + name5 + "/" + num5 + ".jpg");
@@ -13355,7 +13632,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 神将势力没随机选？自由选将没随机选？重新选将，选势力[0]改随机
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
-// 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能（加到控制台）；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序等
+// 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；第叁幻界-幻界工具；换牌功能（加到控制台）；牌库增添-自定义牌堆；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本等
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -13393,10 +13670,12 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 2-17人教程待完善；多人场布局优化；多人场牌堆扩充（参考蒸蒸日上扩展）
 // 双内奸失效？添加双内奸开关？开民后2-17人自动失效？
 // card.nature修改？，包括④教程及说明.txt
-// 控制台新增将体力回复至功能、国战模式暗置武将功能、控制台获得杀闪桃伤害类锦囊牌等具体分类
+// 控制台新增将体力回复至功能；国战模式暗置武将功能；控制台获得基本牌-杀闪桃酒、锦囊牌-伤害类等具体分类
 // 露头皮肤效果图、其他选项先关露头皮肤？
-// 发动技能显示台词开关
 // 双击武将切换双形态？
 // 特殊处理武将（张郃、神赵云、神关羽等）的资料卡试听技能配音
-// 标准、一将成名、OL专属、限定专属、谋攻篇、江山如故等武将称号待补充
-// lib.notshowSkillNamePinyin改用ID识别，注意小游戏整合扩展更新（玉真子的剑、刀、斧、枪、戟、弓等）
+// 标准、一将成名、群英荟萃、神将、谋攻篇、江山如故等武将称号待补充
+// 处理〖妙剑·改〗〖绝情·改〗等技能？：lib.notShowSkillNamePinyin、台词显示
+// 绘制效果图bug fix：改async函数，await game.asyncDelay()？
+// 阵亡配音待适配写法"die:yujin.mp3"（例：于禁）、旧版台词函数适配"die:xxx"写法；还要改noname/library/element/content.js的die: function () {函数？
+// 同人模式/复刻模式等游戏模式在谋攻篇报错修复

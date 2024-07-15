@@ -1,3 +1,4 @@
+/// <reference lib="WebWorker" />
 /**
  * @type { ServiceWorkerGlobalScope } 提供ServiceWorker的代码提示
  */

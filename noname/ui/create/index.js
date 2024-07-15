@@ -6,7 +6,7 @@ import { _status } from "../../status/index.js";
 import { menu } from "./menu/index.js";
 import { cardPackMenu } from "./menu/pages/cardPackMenu.js";
 import { characterPackMenu } from "./menu/pages/characterPackMenu.js";
-import { extensionMenu } from "./menu/pages/exetensionMenu.js";
+import { extensionMenu } from "./menu/pages/extensionMenu.js";
 import { optionsMenu } from "./menu/pages/optionsMenu.js";
 import { otherMenu } from "./menu/pages/otherMenu.js";
 import { startMenu } from "./menu/pages/startMenu.js";
@@ -2776,7 +2776,7 @@ export class Create {
 		// }
 
 		ui.sortCard = ui.create.system("整理手牌", function () {
-			if (!game.me) return;
+			if (!game.me || game.me.hasSkillTag("noSortCard")) return;
 			var hs = game.me.getCards("h");
 			if (!hs.length) return;
 			game.addVideo("lose", game.me, [get.cardsInfo(hs), [], [], []]);

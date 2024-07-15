@@ -2703,7 +2703,7 @@ export const Content = {
 		if (get.itemtype(targets) === "player") {
 			targets = [targets];
 		}
-		if (info.popup != false && !info.direct) {
+		if (info.popup != false && !info.direct && !("skill_popup" in result && !Boolean(result["skill_popup"]))) {
 			let popup_info = event.skill;
 			if (typeof info.popup === "string") popup_info = [event.skill, info.popup];
 			if (info.logLine === false) player.logSkill(popup_info, false, info.line);
@@ -3120,7 +3120,7 @@ export const Content = {
 		game.syncState();
 		game.addVideo("phaseChange", player);
 		if (game.phaseNumber == 1) {
-			delete player._start_cards;
+			// delete player._start_cards;
 			if (lib.configOL.observe) {
 				lib.configOL.observeReady = true;
 				game.send("server", "config", lib.configOL);
@@ -3651,7 +3651,7 @@ export const Content = {
 					info.chooseControl ? result : result.links,
 					player
 				);
-				lib.skill[event.buttoned + "_backup"].sourceSkill = event.buttoned;
+				lib.skill[event.buttoned + "_backup"].sourceSkill = lib.skill[event.buttoned].sourceSkill ? lib.skill[event.buttoned].sourceSkill : event.buttoned;
 				if (game.online) {
 					event._sendskill = [event.buttoned + "_backup", lib.skill[event.buttoned + "_backup"]];
 				} else {
@@ -3863,7 +3863,7 @@ export const Content = {
 					info.chooseControl ? result : result.links,
 					player
 				);
-				lib.skill[event.buttoned + "_backup"].sourceSkill = event.buttoned;
+				lib.skill[event.buttoned + "_backup"].sourceSkill = lib.skill[event.buttoned].sourceSkill ? lib.skill[event.buttoned].sourceSkill : event.buttoned;
 				if (game.online) {
 					event._sendskill = [event.buttoned + "_backup", lib.skill[event.buttoned + "_backup"]];
 				} else {
@@ -5857,6 +5857,7 @@ export const Content = {
 							} else if (!event.dialog.noforcebutton) {
 								event.dialog.classList.add("forcebutton-auto");
 							}
+							directh = false;
 						} else {
 							event.dialog.add([hs, "blank"]);
 						}
@@ -6051,6 +6052,7 @@ export const Content = {
 							} else if (!event.dialog.noforcebutton) {
 								event.dialog.classList.add("forcebutton-auto");
 							}
+							directh = false;
 						} else {
 							event.dialog.add([hs, "blank"]);
 						}
@@ -6268,6 +6270,7 @@ export const Content = {
 							} else if (!event.dialog.noforcebutton) {
 								event.dialog.classList.add("forcebutton-auto");
 							}
+							directh = false;
 						} else {
 							event.dialog.add([hs, "blank"]);
 						}

@@ -177,6 +177,8 @@ game.import("character", function () {
 			zhanghuan: "张奂（104-181年），字然明，又名张焕。敦煌渊泉今甘肃省瓜州县）人，后以功移籍弘农郡（今河南灵宝），书法家张芝的父亲。中国东汉经学家、军事家、文学家，“凉州三明”之一。早年师从太尉朱宠，研习《欧阳尚书》，自行删减《牟氏章句》。汉桓帝时，举贤良出身，对策第一，授议郎，历任安定都尉、武威太守、度辽将军、护匈奴中郎将等职。多次赢得对外战争，招抚外族，促进边境和平，功勋卓著。汉灵帝即位，迁大司农，受到宦官集团利用，讨伐大将军窦武。事后，上疏为窦武等人申冤。累迁太常卿，辞官归乡，授课著书，不再出仕。光和四年（181年），张奂去世，时年七十八。",
 			chenfan: "陈蕃（？-168年），字仲举。汝南平舆（今河南省平舆北）人。东汉时期名臣，与窦武、刘淑合称“三君”。陈蕃年少时有大志，举孝廉，授郎中。因母去世，辞官居丧。后由太尉李固荐举为乐安太守。因得罪大将军梁冀，由太守降为县令。为了零陵桂阳的流民山匪得罪皇帝身边的人，被外放为豫章太守。后升任大鸿胪。延熹六年（163年），陈蕃被征为尚书仆射，转太中大夫。延熹八年（165年），陈藩代杨秉为太尉，次年，被免官。永康元年（167年），汉桓帝去世，窦皇后临朝，以陈蕃为太傅，管理尚书事宜。次年，汉灵帝即位，陈藩与大将军窦武谋诛宦官，事泄，宦官曹节劫持汉灵帝与窦太后，诛杀窦武，又率宫中卫士包围了陈蕃，陈蕃率学士80人抵抗，被害，年七十余。",
 			zhangju: "张举（生卒年不详），渔阳人，与张纯同郡，是东汉末年起义军将领，曾在汉朝担任泰山太守。中平四年（187年），张举受张纯挑唆，联合乌桓起兵攻打郡县，部众到达了十多万；张举自称天子，张纯自称弥天将军安定王，声称自己将取代汉朝。刘虞担任幽州牧后，用怀柔之策说服乌桓罢兵，并悬赏求购张举、张纯；两人逃出塞外，后来张纯被门客王政所杀，张举则下落不明。",
+			caojiewangfu: "曹节（？―181年），字汉丰，南阳育阳（今河南省南阳市宛城区瓦店镇）人。东汉宦官。因事入宫，累迁西园骑。汉顺帝时期，迁小黄门。汉桓帝继位，迁中常侍，加任奉车都尉。拥戴汉灵帝有功，册封长安乡侯。联合长乐五官史朱瑀等矫诏诛杀窦武、陈蕃等人，升任长乐卫尉，进封育阳县侯。建宁二年（169年），加位特进、大长秋。权倾朝野，诬害勃海王刘悝，累迁尚书令。光和四年（181年），曹节去世，获赠车骑将军。<br>王甫（？—179年），东汉时期宦官。前十常侍之一。灵帝初为长乐食监，受中常侍曹节等矫诏为黄门令，将兵诛杀大将军窦武等人,因迁中常侍。后与节诬奏勃海王刘悝谋反，封冠军侯。由此操纵朝政，父兄子弟皆为公卿列校、牧守令长，布满天下。光和二年 (179)，与养子永乐少府萌、沛相吉并为司隶校尉阳球收捕，磔尸于城门。",
+			songhuanghou: "孝灵宋皇后（？―178年），宋氏，名不详，世称“宋孝灵”，扶风平陵人，汉章帝刘炟妃子宋贵人堂曾孙女，执金吾宋酆之女。建宁三年（170年），宋氏入选掖庭，封为贵人。建宁四年（171年），汉灵帝立宋氏为皇后。宋皇后无宠，却正位中宫，后宫得宠的姬妾们便共同谮恶宋皇后，诬陷宋皇后行祝诅之事。汉灵帝听信其言，于光和元年（178年）策收宋氏的皇后玺绶。宋皇后自行前往暴室狱，忧死，其父、兄弟皆伏诛。各个常侍、小黄门在宫中的，都怜悯宋氏无辜，一同筹钱安葬宋皇后及宋酆父子于皋门亭宋氏旧茔。",
 		},
 		characterTitle: {},
 		perfectPair: {},
@@ -572,13 +574,19 @@ game.import("character", function () {
 						}
 					} else {
 						event.result = await player
-							.chooseTarget(get.prompt("jsrgruzong"), "令任意名角色将手牌数摸至与你相同", (card, player, target) => {
-								return target.countCards("h") < player.countCards("h");
-							})
+							.chooseTarget(
+								get.prompt("jsrgruzong"),
+								"令任意名角色将手牌数摸至与你相同",
+								(card, player, target) => {
+									return target.countCards("h") < player.countCards("h");
+								},
+								[1, Infinity]
+							)
 							.set("ai", target => {
 								const player = get.player();
 								return (get.attitude(player, target) * Math.sqrt(player.countCards("h") - target.countCards("h"))) / (target.hasSkillTag("nogain") ? 1 : 10);
-							});
+							})
+							.forResult();
 					}
 				},
 				async content(event, trigger, player) {
@@ -587,7 +595,7 @@ game.import("character", function () {
 						if (num > 0) await player.draw(num);
 					} else {
 						const num = player.countCards("h");
-						game.asyncDraw(event.targets.sortBySeat(), target => {
+						await game.asyncDraw(event.targets.sortBySeat(), target => {
 							return Math.min(5, num - target.countCards("h"));
 						});
 					}
@@ -778,6 +786,7 @@ game.import("character", function () {
 			},
 			jsrgyangge: {
 				global: "jsrgyangge_mizhao",
+				derivation: "mizhao",
 				subSkill: {
 					mizhao: {
 						//直接继承mizhao
@@ -814,11 +823,59 @@ game.import("character", function () {
 					player.addTempSkill("jsrgguanshi_effect");
 				},
 				position: "hs",
-				//这个AI难写，交给157了！
-				check() {
-					return -1;
+				selectTargetAi(card) {
+					let cache = _status.event.getTempCache("jsrgguanshi", "targets");
+					if (Array.isArray(cache)) return cache.length;
+					let player = _status.event.player,
+						targets = [],
+						shas = player.mayHaveSha(player, "respond", player.getCards("h", i => {
+							return card === i;
+						}));
+					game.countPlayer(tar => {
+						if (player === tar) return;
+						let eff = get.effect(tar, get.autoViewAs({ name: "juedou" }, [card]), player, player);
+						if (eff <= 0) return;
+						if (get.attitude(player, tar) > 0) targets.push([tar, eff, 0]);
+						else targets.push([tar, eff, tar.mayHaveSha(player, "respond", null, "count")]);
+					});
+					targets.sort((a, b) => {
+						if (!a[2]) return -1;
+						if (!b[2]) return 1;
+						return b[1] / b[2] - a[1] / a[2];
+					});
+					for (let i = 0; i < targets.length; i++) {
+						if (targets[i][2] > shas) {
+							targets = targets.slice(0, i);
+							break;
+						}
+						else shas -= targets[i][2];
+					}
+					_status.event.putTempCache("jsrgguanshi", "targets", targets);
+					return targets.length;
 				},
-				ai: {},
+				check(card) {
+					let num = lib.skill.jsrgguanshi.selectTargetAi(card);
+					if (!num) return -1;
+					if (num === 1) return 4 - get.value(card);
+					return num + 5 - get.value(card);
+				},
+				ai: {
+					order: 9,
+					result: {
+						player(player, target) {
+							let tars = _status.event.getTempCache("jsrgguanshi", "targets");
+							if (!tars) return lib.card.juedou.ai.result.player(player, target);
+						},
+						target(player, target) {
+							let tars = _status.event.getTempCache("jsrgguanshi", "targets");
+							if (!tars) return lib.card.juedou.ai.result.target(player, target);
+							for (let tar of tars) {
+								if (tar[0] === target) return tar[1] / get.attitude(player, target);
+							}
+							return 0;
+						}
+					}
+				},
 				subSkill: {
 					effect: {
 						trigger: {
@@ -928,6 +985,7 @@ game.import("character", function () {
 					);
 				},
 				async content(event, trigger, player) {
+					player.awakenSkill("jsrgjiebing");
 					await player.gainMaxHp(2);
 					await player.recover(2);
 					await player.addSkills("jsrgbaowei");
@@ -988,8 +1046,11 @@ game.import("character", function () {
 			jsrgsaojian: {
 				enable: "phaseUse",
 				usable: 1,
+				filter(event, player) {
+					return game.hasPlayer(current => current != player && current.countCards("h") > 0);
+				},
 				filterTarget(card, player, target) {
-					return target.countCards("h") > 0;
+					return target != player && target.countCards("h") > 0;
 				},
 				async content(event, trigger, player) {
 					const target = event.target;
@@ -1227,7 +1288,7 @@ game.import("character", function () {
 					sources.sortBySeat();
 					player.line(sources, "thunder");
 					for (let source of sources) {
-						if (!source.isIn() || !target.isIn()) break;
+						if (!source.isIn() || !target.isIn()) continue;
 						target.damage(source, "thunder");
 					}
 				},
@@ -2143,6 +2204,9 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "jsrgjinfa"
+				},
 			},
 			jsrgxuanfeng: {
 				audio: 2,
@@ -2175,6 +2239,7 @@ game.import("character", function () {
 				},
 				ai: {
 					order: 2,
+					combo: "jsrgjinfa"
 				},
 			},
 			//陆逊
@@ -3347,6 +3412,9 @@ game.import("character", function () {
 						}
 					}
 					player.logSkill("jsrgbazheng", dissident);
+				},
+				ai: {
+					combo: "jsrgyaoyan"
 				},
 			},
 			//刘永
@@ -9073,7 +9141,7 @@ game.import("character", function () {
 						})
 						.set("max", trigger.target.countDiscardableCards(player, "he"))
 						.set("goon", get.attitude(player, trigger.target) < 0)
-						.set("logSkill", ["jsrgjuelie_discard", trigger.target]);
+						.set("logSkill", ["jsrgjuelie", trigger.target]);
 					"step 1";
 					if (result.bool) {
 						var num = result.cards.length;
@@ -9100,7 +9168,6 @@ game.import("character", function () {
 					}
 					*/
 				},
-				shaRelated: true,
 				ai: {
 					unequip_ai: true,
 					skillTagFilter: function (player, tag, arg) {
@@ -10503,7 +10570,6 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { player: "useCardToTargeted" },
 				forced: true,
-				shaRelated: true,
 				filter: function (event, player) {
 					return event.isFirstTarget && event.card.name == "sha" && player.hasEmptySlot(1);
 				},
@@ -10544,7 +10610,7 @@ game.import("character", function () {
 						)
 							return 0.01 * num;
 					},
-					aiUseful: () => {
+					aiUseful: function () {
 						return lib.skill.jsrgzhenqiao.mod.aiValue.apply(this, arguments);
 					},
 				},
@@ -10642,6 +10708,9 @@ game.import("character", function () {
 						player.logSkill("jsrgfayi", target);
 						target.damage();
 					}
+				},
+				ai: {
+					combo: "jsrgshelun"
 				},
 			},
 			jsrgtushe: {
@@ -11777,9 +11846,9 @@ game.import("character", function () {
 			jsrg_caojiewangfu: "衰曹节王甫",
 			jsrg_caojiewangfu_prefix: "衰",
 			jsrgzonghai: "纵害",
-			jsrgzonghai_info: "每轮限一次。当有其他角色进入濒死状态时，你可以令其选择至多两名角色。未被选择的角色不能于此次濒死结算中使用牌，且此次濒死状态结算结束后，你对其选择的角色各造成1点伤害。",
+			jsrgzonghai_info: "每轮限一次。当有其他角色进入濒死状态时，你可以令其选择至多两名角色。未被选择的角色不能于此次濒死结算中使用牌，且此次濒死状态结算结束后，你对其选择的角色各造成１点伤害。",
 			jsrgjueyin: "绝禋",
-			jsrgjueyin_info: "当你于一回合内首次收到伤害后，你可以摸三张牌，然后本回合内所有角色受到的伤害+1。",
+			jsrgjueyin_info: "当你于一回合内首次受到伤害后，你可以摸三张牌，然后本回合内所有角色受到的伤害+1。",
 			jsrg_songhuanghou: "衰宋皇后",
 			jsrg_songhuanghou_prefix: "衰",
 			jsrgzhongzen: "众谮",

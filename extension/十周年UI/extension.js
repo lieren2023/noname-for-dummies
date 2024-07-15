@@ -35,7 +35,7 @@ content:function(config, pack){
 		'<div style="margin:10px">无名杀简介</div><ul style="margin-top:0"><li>无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>'+
 		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：苏婆玛丽奥<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
 		'<li>无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等<br>'+
-		'<li>主要交流平台——微信公众号：无名杀扩展交流、无名杀；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群和QQ频道（略）；无名杀官网（略）等<br>'+
+		'<li>主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等<br>'+
 		'<li>最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span></ul>'+
 		'<div style="margin:10px">关于无名杀官方</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/libccy/noname">点击前往Github仓库</a><br><li>无名杀基于GPLv3开源协议。<br><a href="https://www.gnu.org/licenses/gpl-3.0.html">点击查看GPLv3协议</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为玩家自发组织，与无名杀官方无关！'+
 		'<li>【无名杀】属于个人开发软件且【完全免费】，如非法倒卖用于牟利将承担法律责任，开发团队将追究到底！';
@@ -765,7 +765,16 @@ content:function(config, pack){
 						event.maxHp=player.maxHp;
 						// player.reinit(player.name1,to,4);
 						player.reinitjun(player.name1,to,4/2);
-						if(lib.skill[to]) game.trySkillAudio(to,player);
+						
+						// 修改君主亮将配音播放
+						var map = {
+							gz_jun_liubei: "shouyue",
+							gz_jun_zhangjiao: "hongfa",
+							gz_jun_sunquan: "jiahe",
+							gz_jun_caocao: "jianan"
+						};
+						game.trySkillAudio(map[to],player);
+						
 						player.showCharacter(0);
 						var group=lib.character[to][1];
 						var yelist=game.filterPlayer(function(current){
@@ -1492,7 +1501,9 @@ content:function(config, pack){
 			content: function () {
 				var name = event.triggername;
 				if (name == 'hideCharacterEnd') {
-					if (player!=game.me) {
+					if (trigger.player!=game.me) {
+						var gzyinni = trigger.player.getElementsByClassName("gzyinni");
+						var gzyinni1 = trigger.player.getElementsByClassName("gzyinni1");
 						// 样式开始
 						var ynsrc;
 						// 有素材就继续补全
@@ -1555,8 +1566,14 @@ content:function(config, pack){
 						}
 						// 样式结束
 						
-						player.appendChild(gzyn);
-						player.appendChild(gzyn1);
+						if (gzyinni[0]) {
+							gzyinni[0].parentNode.removeChild(gzyinni[0]);
+						}
+						if (gzyinni1[0]) {
+							gzyinni1[0].parentNode.removeChild(gzyinni1[0]);
+						}
+						trigger.player.appendChild(gzyn);
+						trigger.player.appendChild(gzyn1);
 					}
 				} else if (name == 'showCharacterEnd') {
 					var gzyinni = trigger.player.getElementsByClassName("gzyinni");
@@ -7552,10 +7569,17 @@ content:function(config, pack){
 					continue;
 				}
 				if(Array.isArray(audioinfo)){
-					audioname=audioinfo[0];
-					if(!fixednum) fixednum=audioinfo[1];//数组会取第一个指定语音数
-					audioinfo=lib.skill[audioname].audio;
-					continue;
+					if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
+						audioname=audioinfo[0];
+						if(!fixednum) fixednum=audioinfo[1];//数组会取第一个指定语音数
+						audioinfo=lib.skill[audioname].audio;
+						continue;
+					}
+					// 适配写法audio: ["yuanjiangfenghuotu3.mp3", "yuanjiangfenghuotu4.mp3"],
+					else {
+						game.playAudio('skill', audioinfo.randomGet().slice(0, -4)); // 去掉'.mp3'或'.ogg'
+						return;
+					}
 				}
 				break;
 			}
@@ -7975,11 +7999,6 @@ content:function(config, pack){
 		if(lib.skill.residi2 != undefined){
 			lib.skill.residi2.marktext = "司";
 		}
-		// 神司马懿忍标记修改
-		if(lib.skill.renjie != undefined){
-			// lib.skill.renjie.mark = true;
-			lib.skill.renjie.marktext = "忍";
-		}
 		// 兀突骨燃标记修改
 		if(lib.skill.ranshang != undefined){
 			// lib.skill.ranshang.mark = true;
@@ -8131,6 +8150,7 @@ content:function(config, pack){
 		// 裴元绍没欲标记修改
 		if(lib.skill.dcmoyu != undefined){
 			lib.skill.dcmoyu.subSkill.ban.marktext = "没欲";
+			lib.skill.dcmoyu.subSkill.add.marktext = "没欲";
 		}
 		// 朱建平相面标记修改
 		if(lib.skill.olddcxiangmian != undefined){
@@ -8535,6 +8555,10 @@ content:function(config, pack){
 		if(lib.skill.zhuSkill_fancheng1 != undefined){
 			lib.skill.zhuSkill_fancheng1.marktext = "樊城";
 		}
+		// 同心标记修改
+		if(lib.skill.beOfOneHeart != undefined){
+			lib.skill.beOfOneHeart.marktext = "同心";
+		}
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
@@ -8559,6 +8583,8 @@ content:function(config, pack){
 		lib.translate.gzyimie_bg = "夷灭";
 		// （国战）晋羊祜卫戎标记修改
 		lib.translate.fakeweirong_bg = "卫戎";
+		// （国战）朱然胆守标记修改
+		lib.translate.fakedanshou_bg = "胆守";
 		// 军师、大将、贼首标记修改
 		lib.translate.identity_junshi_bg = "军师";
 		lib.translate.identity_dajiang_bg = "大将";
@@ -9125,7 +9151,8 @@ content:function(config, pack){
 		lib.translate["#zhengfu2"]="Will you be here at ten o'clock tomorrow?";
 		lib.translate["#zhengfu3"]="I'd rather have some tea, if you don't mind.";
 		lib.translate["#kaisa:die"]="Let's talk about something else.";
-		
+		// 屈原离骚
+		lib.translate["#dclisao1"]="朝饮木兰之坠露兮，夕餐秋菊之落英。";
 	});
 	
 	// 手牌上限显示，搬运自假装无敌扩展，已征得清瑶的“徒弟”的修改许可
@@ -13826,6 +13853,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				// 国战隐匿美化，修复重新选将后的显示问题
 				if(lib.config.mode=='guozhan'){
 					if (this!=game.me) {
+						var gzyinni = this.getElementsByClassName("gzyinni");
+						var gzyinni1 = this.getElementsByClassName("gzyinni1");
 						// 样式搬运自上方lib.skill._gzyinni = {，注意同步更新
 						// 样式开始
 						var ynsrc;
@@ -13889,6 +13918,12 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						}
 						// 样式结束
 						
+						if (gzyinni[0]) {
+							this.removeChild(gzyinni[0]);
+						}
+						if (gzyinni1[0]) {
+							this.removeChild(gzyinni1[0]);
+						}
 						this.appendChild(gzyn);
 						this.appendChild(gzyn1);
 					}
@@ -17256,44 +17291,45 @@ precontent:function(){
 		// 字体加载优化
 		ui.css.fontsheet=lib.init.sheet();
 		const fontSheet=ui.css.fontsheet.sheet,suitsFont=lib.config.suits_font;
+		const fontFormat = lib.config.font_format === undefined ? "woff2" : lib.config.font_format;
 		// 花色、前缀
-		if(suitsFont) fontSheet.insertRule(`@font-face {font-family: 'Suits'; src: url('${lib.assetURL}font/suits.ttf');}`,0);
-		fontSheet.insertRule(`@font-face {font-family: 'NonameSuits'; src: url('${lib.assetURL}font/suits.ttf');}`,0);
-		fontSheet.insertRule(`@font-face {font-family: 'MotoyaLMaru'; src: url('${lib.assetURL}font/motoyamaru.ttf');}`,0)
+		if(suitsFont) fontSheet.insertRule(`@font-face {font-family: 'Suits'; src: url('${lib.assetURL}font/suits.${fontFormat}');}`,0);
+		fontSheet.insertRule(`@font-face {font-family: 'NonameSuits'; src: url('${lib.assetURL}font/suits.${fontFormat}');}`,0);
+		fontSheet.insertRule(`@font-face {font-family: 'MotoyaLMaru'; src: url('${lib.assetURL}font/motoyamaru.${fontFormat}');}`,0)
 		// 合并font.css
 		// 你也可以自行修改下面local里的字体，但得确保你已经安装该字体；
 		// 以下的名称参照github.com/libccy/noname/tree/master/font列表；
 		// 如果你安装完以下字体后需要重启无名杀APP；
 		if (lib.config['extension_十周年UI_zitijiazai']=='local') {
 			/*手杀*/
-			fontSheet.insertRule(`@font-face {font-family: 'shousha';src: local('方正隶变_GBK'), url('${lib.assetURL}font/shousha.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'shousha';src: local('方正隶变_GBK'), url('${lib.assetURL}font/shousha.${fontFormat}');}`,0);
 			/*黄草*/
-			fontSheet.insertRule(`@font-face {font-family: 'huangcao';src: local('方正黄草_GBK'), url('${lib.assetURL}font/huangcao.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'huangcao';src: local('方正黄草_GBK'), url('${lib.assetURL}font/huangcao.${fontFormat}');}`,0);
 			/*小篆*/
-			fontSheet.insertRule(`@font-face {font-family: 'xiaozhuan';src: local('方正小篆体'), url('${lib.assetURL}font/xiaozhuan.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xiaozhuan';src: local('方正小篆体'), url('${lib.assetURL}font/xiaozhuan.${fontFormat}');}`,0);
 			/*行楷*/
-			fontSheet.insertRule(`@font-face {font-family: 'xingkai';src: local('方正行楷_GBK'), url('${lib.assetURL}font/xingkai.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xingkai';src: local('方正行楷_GBK'), url('${lib.assetURL}font/xingkai.${fontFormat}');}`,0);
 			/*新魏*/
-			fontSheet.insertRule(`@font-face {font-family: 'xinwei';src: local('华文新魏_GBK'), url('${lib.assetURL}font/xinwei.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xinwei';src: local('华文新魏_GBK'), url('${lib.assetURL}font/xinwei.${fontFormat}');}`,0);
 			/*楷体*/
-			fontSheet.insertRule(`@font-face {font-family: 'yuanli';src: local('方正北魏楷书_GBK'), url('${lib.assetURL}font/yuanli.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'yuanli';src: local('方正北魏楷书_GBK'), url('${lib.assetURL}font/yuanli.${fontFormat}');}`,0);
 			/*用于主动技的字体*/
-			fontSheet.insertRule(`@font-face {font-family: 'HYZLSJ';src: local('汉仪中隶书简'), url('${lib.assetURL}font/HYZLSJ.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'HYZLSJ';src: local('汉仪中隶书简'), url('${lib.assetURL}font/HYZLSJ.${fontFormat}');}`,0);
 		}else{
 			/*手杀*/
-			fontSheet.insertRule(`@font-face {font-family: 'shousha';src: url('${lib.assetURL}font/shousha.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'shousha';src: url('${lib.assetURL}font/shousha.${fontFormat}');}`,0);
 			/*黄草*/
-			fontSheet.insertRule(`@font-face {font-family: 'huangcao';src: url('${lib.assetURL}font/huangcao.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'huangcao';src: url('${lib.assetURL}font/huangcao.${fontFormat}');}`,0);
 			/*小篆*/
-			fontSheet.insertRule(`@font-face {font-family: 'xiaozhuan';src: url('${lib.assetURL}font/xiaozhuan.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xiaozhuan';src: url('${lib.assetURL}font/xiaozhuan.${fontFormat}');}`,0);
 			/*行楷*/
-			fontSheet.insertRule(`@font-face {font-family: 'xingkai';src: url('${lib.assetURL}font/xingkai.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xingkai';src: url('${lib.assetURL}font/xingkai.${fontFormat}');}`,0);
 			/*新魏*/
-			fontSheet.insertRule(`@font-face {font-family: 'xinwei';src: url('${lib.assetURL}font/xinwei.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'xinwei';src: url('${lib.assetURL}font/xinwei.${fontFormat}');}`,0);
 			/*楷体*/
-			fontSheet.insertRule(`@font-face {font-family: 'yuanli';src: url('${lib.assetURL}font/yuanli.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'yuanli';src: url('${lib.assetURL}font/yuanli.${fontFormat}');}`,0);
 			/*用于主动技的字体*/
-			fontSheet.insertRule(`@font-face {font-family: 'HYZLSJ';src: url('${lib.assetURL}font/HYZLSJ.ttf');}`,0);
+			fontSheet.insertRule(`@font-face {font-family: 'HYZLSJ';src: url('${lib.assetURL}font/HYZLSJ.${fontFormat}');}`,0);
 		}
 		
 		decadeModule.init = function () {

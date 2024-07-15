@@ -714,7 +714,7 @@ table {
 }
 .touchinfo.right {
 	left: auto;
-	right: 0;
+	right: 14px;
 	text-align: right;
 }
 #window.touchinfohidden > .touchinfo {

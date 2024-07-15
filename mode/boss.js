@@ -1412,7 +1412,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"shen",
 					"1/8",
 					["boss_jiang", "boss_hunzi", "boss_hunyou", "boss_taoni"],
-					["qun", "boss", "bossallowed", "InitFilter:noZhuHp:noZhuSkill"],
+					["qun", "boss", "bossallowed", "InitFilter:noZhuHp:noZhuSkill", "die_audio:sunce"],
 					"wu",
 				],
 
@@ -7164,7 +7164,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					content: function (storage, player) {
 						var str = "扣减" + (7 - player.storage.xiangxing_count) + "点体力后失去下一枚星；";
 						str +=
-							"防上禳星伤害条件：" +
+							"防止禳星伤害条件：" +
 							lib.translate["xiangxing" + player.storage.xiangxing + "_info"];
 						return str;
 					},
@@ -7177,10 +7177,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return player.countCards("h") == 0;
 					},
 					x6: function (player, event) {
-						return event.hasNature("fire");
+						if(event.hasNature) return event.hasNature("fire");
 					},
 					x5: function (player, event) {
-						return event.hasNature("thunder");
+						if(event.hasNature) return event.hasNature("thunder");
 					},
 					x4: function (player, event) {
 						return event.name == "loseHp";
@@ -9647,6 +9647,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			reyingzi_sunce: { audio: 2 },
+			yinghun_sunce: { audio: 2 },
 			boss_jiang: {
 				audio: "jiang",
 				trigger: {
@@ -9697,6 +9699,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				group: ["boss_jiang_use"],
 				subSkill: {
 					use: {
+						audio: "jiang",
 						trigger: {
 							global: ["useCard"],
 						},
@@ -9904,7 +9907,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			boss_yaoshou_info: "锁定技，你与其他角色计算-2。",
 			boss_duqu: "毒躯",
 			boss_duqu_info:
-				"锁定技，你受到伤害时，伤害来源获得1枚“蛇毒”标记；你自身不会拥有“蛇毒”标记；你的“桃”均视为“杀”。“蛇毒”标记：锁定技，拥有“蛇毒”标记的角色回合开始时，需要选择弃置X张牌或者失去X点体力，然后弃置一枚“蛇毒”标记。X为其拥有的“蛇毒”标记个数。",
+				"锁定技，你受到伤害时，伤害来源获得1枚“蛇毒”标记；你自身不会拥有“蛇毒”标记；你的【桃】均视为【杀】。“蛇毒”标记：锁定技，拥有“蛇毒”标记的角色回合开始时，需要选择弃置X张牌或者失去X点体力，然后弃置一枚“蛇毒”标记。X为其拥有的“蛇毒”标记个数。",
 			boss_shedu: "蛇毒",
 			boss_jiushou: "九首",
 			boss_jiushou_info:
@@ -9915,10 +9918,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				"体力值首次减少至一半或更少时激活此技能。锁定技，除你之外的其他角色使用“桃”或“酒”时，获得1枚“蛇毒”标记。",
 			boss_bingxian: "兵燹",
 			boss_bingxian_info:
-				"锁定技，其他角色的回合结束时，若其回合内没有使用杀，则视为你对其使用一张“杀”。",
+				"锁定技，其他角色的回合结束时，若其回合内没有使用【杀】，则视为你对其使用一张【杀】。",
 			boss_juyuan: "巨猿",
 			boss_juyuan_info:
-				"锁定技，你的体力上限+5，你的出牌阶段内，若你的体力少于上一次你的回合结束时的体力，则你本回合使用“杀”可额外指定1个目标。",
+				"锁定技，你的体力上限+5，你的出牌阶段内，若你的体力少于上一次你的回合结束时的体力，则你本回合使用【杀】可额外指定1个目标。",
 			boss_xushi_switch: "蓄势",
 			boss_xushi: "蓄势",
 			boss_xushi_info:
@@ -10370,7 +10373,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			boss_qinguangwang_ab: "秦广王",
 			boss_qinguangwang: "秦广王·蒋子文",
 			boss_panguan: "判官",
-			boss_panguan_info: "	锁定技，你不能成为延时类锦囊的目标。",
+			boss_panguan_info: "锁定技，你不能成为延时类锦囊的目标。",
 			boss_juhun: "拘魂",
 			boss_juhun_info: "锁定技，结束阶段，你令随机一名其他角色的武将牌翻面或横置。",
 			boss_wangxiang: "望乡",
@@ -10379,6 +10382,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			boss_chujiangwang: "楚江王·厉温",
 			boss_bingfeng: "冰封",
 			boss_bingfeng_info: "锁定技，你死亡时，若杀死你的角色武将牌是正面朝上， 你令其翻面。",
+			boss_songdiwang_ab: "宋帝王",
 			boss_songdiwang: "宋帝王·余懃",
 			boss_heisheng: "黑绳",
 			boss_heisheng_info: "锁定技，你死亡时，横置所有场上角色。",
@@ -10511,7 +10515,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				"觉醒技，准备阶段，若你的体力值为1，你减1点体力上限，失去技能〖魂佑〗并获得技能〖英姿〗和〖英魂〗。",
 			boss_jiang: "激昂",
 			boss_jiang_info:
-				"①锁定技，〖激昂〗不会无效。<br>②每当你使用或打出红色牌时，你可以摸一张牌。若你是因响应其他角色使用或打出的牌，则你获得对方使用或打出的牌。<br>③当有其他角色使用或打出红色牌指定你为目标或响应你后，你可以摸一张牌并获得这些牌。",
+				"①锁定技，〖激昂〗不会无效。②每当你使用或打出红色牌时，你可以摸一张牌。若你是因响应其他角色使用或打出的牌，则你获得对方使用或打出的牌。③当有其他角色使用或打出红色牌指定你为目标或响应你后，你可以摸一张牌并获得这些牌。",
 			boss_hunyou: "魂佑",
 			boss_hunyou_info: "锁定技，你的体力值变化和体力上限变化无效。",
 			boss_taoni: "讨逆",

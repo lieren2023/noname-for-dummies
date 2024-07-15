@@ -3572,8 +3572,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						current.showTimer(time);
 						if (current.isOnline()) {
 							current.send(send, camouflaged, event.videoId, true);
-							current.wait();
-							if (current.identity == "nei") event.withOL = true;
+							if (current.identity == "nei") {
+								current.wait();
+								event.withOL = true;
+							}
 							return;
 						}
 						var me = game.me;
@@ -3584,6 +3586,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							else
 								event._result = {
 									bool: true,
+									_noHidingTimer: true,
 								};
 							return;
 						}
@@ -3592,7 +3595,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (!aiTargets.length) return;
 					aiTargets.randomSort();
 					new Promise((resolve) =>
-						setTimeout(resolve, Math.ceil(5000 + 5000 * Math.random()))
+						setTimeout(resolve, Math.ceil(3000 + 5000 * Math.random()))
 					).then(() => {
 						var interval = setInterval(() => {
 							aiTargets.shift();

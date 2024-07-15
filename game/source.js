@@ -58,7 +58,7 @@ window.noname_source_list = [
 	"noname/ui/create/menu/index.js",
 	"noname/ui/create/menu/pages/cardPackMenu.js",
 	"noname/ui/create/menu/pages/characterPackMenu.js",
-	"noname/ui/create/menu/pages/exetensionMenu.js",
+	"noname/ui/create/menu/pages/extensionMenu.js",
 	"noname/ui/create/menu/pages/optionsMenu.js",
 	"noname/ui/create/menu/pages/otherMenu.js",
 	"noname/ui/create/menu/pages/startMenu.js",

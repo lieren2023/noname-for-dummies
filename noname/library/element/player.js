@@ -1537,18 +1537,20 @@ export class Player extends HTMLDivElement {
 	$changeZhuanhuanji(skill) {
 		var mark = this.marks[skill];
 		if (mark) {
-			// @ts-ignore
-			if (mark.firstChild.reversed) {
-				// @ts-ignore
-				mark.firstChild.reversed = false;
-				// @ts-ignore
-				mark.firstChild.style.transform = "none";
-			} else {
-				// @ts-ignore
-				mark.firstChild.reversed = true;
-				// @ts-ignore
-				mark.firstChild.style.transform = "rotate(180deg)";
+			if (lib.skill[skill].$zhuanhuanji) {
+				lib.skill[skill].$zhuanhuanji(skill, this);
+				return;
 			}
+			const zhuanhuanLimit = get.zhuanhuanItemNum(skill, this);
+			// @ts-ignore
+			if (typeof mark.firstChild.reversed != "number") {
+				// @ts-ignore
+				mark.firstChild.reversed = 0;
+			}
+			// @ts-ignore
+			mark.firstChild.reversed += 360 / zhuanhuanLimit;
+			// @ts-ignore
+			mark.firstChild.style.transform = "rotate(" + parseFloat(mark.firstChild.reversed) + "deg)";
 		}
 	}
 	/**
@@ -4675,6 +4677,7 @@ export class Player extends HTMLDivElement {
 				next.func = arguments[i];
 			}
 		}
+		return next;
 	}
 	discoverCard(list) {
 		var next = game.createEvent("discoverCard");
@@ -9370,9 +9373,7 @@ export class Player extends HTMLDivElement {
 	 */
 	hasSkillTag(tag, hidden, arg, globalskill) {
 		var skills = this.getSkills(hidden);
-		if (globalskill) {
-			skills.addArray(lib.skill.global);
-		}
+		if (globalskill !== false) skills.addArray(lib.skill.global);
 		game.expandSkills(skills);
 		for (var i = 0; i < skills.length; i++) {
 			var info = lib.skill[skills[i]];

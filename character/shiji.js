@@ -1245,6 +1245,7 @@ game.import("character", function () {
 				audio: 2,
 				enable: "phaseUse",
 				usable: 1,
+				changeSeat: true,
 				limited: true,
 				skillAnimation: true,
 				animationColor: "orange",
@@ -2675,7 +2676,7 @@ game.import("character", function () {
 					var num1 = player.countCards("h"),
 						num2 = player.storage.fengjie2.hp;
 					if (num1 > num2) player.chooseToDiscard("h", true, num1 - num2);
-					else player.drawTo(Math.min(num1 + 4, num2));
+					else player.drawTo(Math.min(4, num2));
 				},
 			},
 			//陈武董袭
@@ -3852,20 +3853,15 @@ game.import("character", function () {
 				forced: true,
 				logTarget: "source",
 				filter: function (event, player) {
-					return (
-						event.source &&
-						event.source.isIn() &&
-						player.hasMark("xinlirang") &&
-						event.source.countCards("he") > 0
-					);
+					return event.source && event.source.isIn() && player.hasMark("xinlirang") && event.source.countCards("hej") > 0;
 				},
 				content: function () {
 					"step 0";
 					trigger.source
-						.chooseToDiscard("he", true)
+						.discardPlayerCard(trigger.source, "hej", true)
 						.set("color", get.attitude(trigger.source, player) > 0 ? "red" : "black")
 						.set("ai", function (card) {
-							return (get.color(card) == _status.event.color ? 4 : 0) - get.value(card);
+							return (get.color(card.link) == _status.event.color ? 4 : 0) - get.value(card.link);
 						});
 					"step 1";
 					if (result.bool && result.cards && result.cards.length) {
@@ -4649,6 +4645,9 @@ game.import("character", function () {
 				content: function () {
 					game.cardsGotoSpecial(get.cards(), "toRenku");
 				},
+				ai: {
+					combo: "spsongshu"
+				},
 			},
 			spsongshu: {
 				audio: 2,
@@ -4699,6 +4698,9 @@ game.import("character", function () {
 						intro: { content: "不能对其他角色使用牌" },
 					},
 				},
+				ai: {
+					combo: "gebo"
+				},
 			},
 			//张机
 			jishi: {
@@ -4735,6 +4737,9 @@ game.import("character", function () {
 							player.draw();
 						},
 					},
+				},
+				ai: {
+					combo: "binglun"
 				},
 			},
 			xinliaoyi: {
@@ -4977,6 +4982,7 @@ game.import("character", function () {
 					},
 				},
 				ai: {
+					combo: "jishi",
 					order: 2,
 					result: {
 						player: 1,
@@ -5822,6 +5828,64 @@ game.import("character", function () {
 				onremove: true,
 				intro: { content: "已对$发动过此技能" },
 			},
+			yuanqing: {
+				audio: 2,
+				trigger: { player: "phaseUseEnd" },
+				forced: true,
+				filter: function (event, player) {
+					return player.hasHistory("useCard", function (evt) {
+						return evt.getParent("phaseUse") == event;
+					});
+				},
+				content: function () {
+					var map = {},
+						cards = [];
+					player.getHistory("useCard", function (evt) {
+						if (evt.getParent("phaseUse") == trigger) {
+							var type = get.type2(evt.card, false);
+							if (!map[type]) map[type] = [];
+						}
+					});
+					for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
+						var card = ui.discardPile.childNodes[i],
+							type = get.type2(card, false);
+						if (map[type]) map[type].push(card);
+					}
+					for (var i in map) {
+						if (map[i].length) cards.push(map[i].randomGet());
+					}
+					if (cards.length) {
+						player.$gain2(cards, false);
+						game.cardsGotoSpecial(cards, "toRenku");
+						game.log(player, "将", cards, "置入了仁库");
+						game.delayx();
+					}
+				},
+				init: function (player) {
+					player.storage.renku = true;
+				},
+			},
+			shuchen: {
+				audio: 2,
+				init: function (player) {
+					player.storage.renku = true;
+				},
+				trigger: { global: "dying" },
+				forced: true,
+				filter: function (event, player) {
+					return _status.renku.length > 3;
+				},
+				logTarget: "player",
+				content: function () {
+					player.gain(_status.renku, "gain2", "fromRenku");
+					_status.renku.length = 0;
+					game.updateRenku();
+					trigger.player.recover();
+				},
+				ai: {
+					combo: "yuanqing"
+				},
+			},
 			hxrenshi: {
 				audio: 2,
 				enable: "phaseUse",
@@ -6283,7 +6347,7 @@ game.import("character", function () {
 					return player.storage.xunyi2;
 				},
 				content: function () {
-					(player == trigger.source ? player.storage.xunyi2 : player).draw();
+					(player == trigger.source ? player.storage.xunyi2 : player).draw(trigger.num);
 				},
 				group: "xunyi3",
 				mark: true,
@@ -6296,17 +6360,13 @@ game.import("character", function () {
 				charlotte: true,
 				filter: function (event, player) {
 					var list = [player, player.storage.xunyi2];
-					return (
-						list.includes(event.player) &&
-						!list.includes(event.source) &&
-						(player == event.player ? player.storage.xunyi2 : player).countCards("he") > 0
-					);
+					return event.num && list.includes(event.player) && !list.includes(event.source) && (player == event.player ? player.storage.xunyi2 : player).countCards("he") > 0;
 				},
 				logTarget: function (event, player) {
 					return player.storage.xunyi2;
 				},
 				content: function () {
-					(player == trigger.player ? player.storage.xunyi2 : player).chooseToDiscard("he", true);
+					(player == trigger.player ? player.storage.xunyi2 : player).chooseToDiscard("he", trigger.num, true);
 				},
 			},
 			//狗剩
@@ -7989,6 +8049,7 @@ game.import("character", function () {
 			sp_jiangqing: ["sp_jiangqing", "tw_jiangqing", "jiangqing"],
 			kongrong: ["dc_kongrong", "sp_kongrong", "jsrg_kongrong", "kongrong"],
 			dc_mifuren: ["dc_mifuren", "sp_mifuren"],
+			sp_jiangwan: ["ol_jiangwan", "sp_jiangwan"],
 		},
 		translate: {
 			liuba_prefix: "手杀",
@@ -8053,8 +8114,7 @@ game.import("character", function () {
 			mjchenshi: "陈势",
 			mjchenshi_player: "陈势",
 			mjchenshi_target: "陈势",
-			mjchenshi_info:
-				"当有角色使用【兵临城下】指定第一个目标后，其可交给你一张牌，并将牌堆的顶三张牌中所有不为【杀】的牌置入弃牌堆；当有角色成为【兵临城下】的目标后，其可交给你一张牌，然后将牌堆顶三张牌中所有的【杀】置入弃牌堆。",
+			mjchenshi_info: "当有角色使用【兵临城下】指定第一个目标后，其可交给你一张牌，并将牌堆顶三张牌中所有不为【杀】的牌置入弃牌堆；当有角色成为【兵临城下】的目标后，其可交给你一张牌，然后将牌堆顶三张牌中所有的【杀】置入弃牌堆。",
 			mjmouzhi: "谋识",
 			mjmouzhi_info:
 				"锁定技，当你受到伤害时，若伤害渠道对应的牌和你上次受到的伤害花色相同，则你防止此伤害。",
@@ -8119,13 +8179,11 @@ game.import("character", function () {
 			heji_info:
 				"当有角色使用的【决斗】或红色【杀】结算完成后，若此牌对应的目标数为1，则你可以对相同的目标使用一张【杀】或【决斗】（无距离和次数限制）。若你以此法使用的牌不为转化牌，则你从牌堆中随机获得一张红色牌。",
 			liubing: "流兵",
-			liubing_info:
-				"锁定技。①你于出牌阶段使用的第一张非虚拟【杀】的花色视为♦。②其他角色于其出牌阶段内使用的非转化黑色杀结算结束后，若此【杀】未造成伤害，则你获得之。",
+			liubing_info: "锁定技。①你于出牌阶段使用的第一张非虚拟【杀】的花色视为♦。②其他角色于其出牌阶段内使用的非转化黑色【杀】结算结束后，若此【杀】未造成伤害，则你获得之。",
 			sp_mifuren: "手杀糜夫人",
 			spcunsi: "存嗣",
 			spcunsi2: "存嗣",
-			spcunsi_info:
-				"出牌阶段限一次，你可将武将牌翻至背面并选择一名其他角色。其从牌堆或弃牌堆中获得一张【杀】，且下一张杀的伤害值基数+1。",
+			spcunsi_info: "出牌阶段限一次，你可将武将牌翻至背面并选择一名其他角色。其从牌堆或弃牌堆中获得一张【杀】，且下一张【杀】的伤害值基数+1。",
 			spguixiu: "闺秀",
 			spguixiu_info:
 				"锁定技，当你受到伤害后，若你的武将牌背面朝上，则你将武将牌翻至正面。当你的武将牌从背面翻至正面时，你摸一张牌。",
@@ -8139,8 +8197,7 @@ game.import("character", function () {
 			xinlirang_info:
 				"①其他角色的摸牌阶段开始时，若你没有“谦”标记，则你可以获得一枚“谦”标记。若如此做，其额定摸牌数+2，且本回合的弃牌阶段开始时，你可以获得其弃置的至多两张牌。②摸牌阶段开始时，若你有“谦”标记，则你跳过此摸牌阶段并移除“谦”标记。",
 			xinmingshi: "名仕",
-			xinmingshi_info:
-				"锁定技，当你受到伤害后，若你有“谦”标记，则伤害来源弃置一张牌。若此牌为：黑色：你获得之。红色，你回复1点体力。",
+			xinmingshi_info: "锁定技，当你受到伤害后，若你有“谦”标记，则伤害来源弃置其区域内的一张牌。若此牌为：黑色：你获得之。红色，你回复1点体力。",
 			sp_xinpi: "手杀辛毗",
 			spyinju: "引裾",
 			spyinju2: "引裾",
@@ -8152,8 +8209,7 @@ game.import("character", function () {
 			reduoji: "夺冀",
 			reduoji_info:
 				"出牌阶段限一次，你可将一张牌置于其他角色的武将牌上，称为“冀”。当有装备牌因使用而进入一名角色的装备区后，若该角色有“冀”且其为使用者，则你获得此装备牌，其移去一个“冀”并摸一张牌。一名其他角色的回合结束后，若其有“冀”，则你获得其的所有“冀”。",
-			wangling: "手杀王淩",
-			wangling_prefix: "手杀",
+			wangling: "王淩",
 			mouli: "谋立",
 			mouli_info:
 				"出牌阶段限一次，你可以将一张手牌交给一名其他角色，其获得如下效果直到你的下回合开始：其可以将黑色牌当做【杀】，红色牌当做【闪】使用。其第一次触发“使用【杀】/【闪】结算完成后”的时机时，你摸三张牌。",
@@ -8175,8 +8231,7 @@ game.import("character", function () {
 			xunyi: "殉义",
 			xunyi2: "殉义",
 			xunyi3: "殉义",
-			xunyi_info:
-				"游戏开始时，或当上一个拥有“殉义”效果的角色死亡后，你可以选择一名角色获得如下效果：当其/你对二者之外的角色造成伤害后，你/其摸一张牌；当其/你受到二者之外的角色造成的伤害后，你/其弃置一张牌。",
+			xunyi_info: "游戏开始时，或当上一个拥有“殉义”效果的角色死亡后，你可以选择一名角色获得如下效果：当其/你对二者之外的角色造成1点伤害后，你/其摸一张牌；当其/你受到二者之外的角色造成的1点伤害后，你/其弃置一张牌。",
 			zhouchu: "手杀周处",
 			xianghai: "乡害",
 			xianghai_info: "锁定技，其他角色的手牌上限-1。你手牌区的装备牌均视为【酒】。",
@@ -8308,12 +8363,10 @@ game.import("character", function () {
 				"出牌阶段限一次，你可以选择一名体力值不大于你的角色。若其：未横置，其横置；已横置，你获得其一张牌。",
 			yuanhuan: "袁涣",
 			qingjue: "请决",
-			qingjue_info:
-				"每轮限一次。当有其他角色A使用牌指定另一名体力值小于A且不处于濒死状态的其他角色B为目标时，你可以摸一张牌，然后与A拼点。若你赢，你取消此目标。若你没赢，你将此牌的目标改为自己。",
+			qingjue_info: "每轮限一次。当有其他角色A使用牌指定另一名体力值小于A且不处于濒死状态的其他角色B为唯一目标时，你可以摸一张牌，然后与A拼点。若你赢，你取消此目标。若你没赢，你将此牌的目标改为自己。",
 			fengjie: "奉节",
 			fengjie2: "奉节",
-			fengjie_info:
-				"锁定技，准备阶段开始时，你选择一名其他角色并获得如下效果直到你下回合开始：一名角色的结束阶段开始时，你将手牌摸至（至多摸四张）或弃置至与其体力值相等。",
+			fengjie_info: "锁定技，准备阶段开始时，你选择一名其他角色并获得如下效果直到你下回合开始：一名角色的结束阶段开始时，你将手牌摸至（至多摸至四张）或弃置至与其体力值相等。",
 			sp_zongyu: "手杀宗预",
 			zhibian: "直辩",
 			zhibian_info:
@@ -8365,7 +8418,8 @@ game.import("character", function () {
 			spyanjiao: "严教",
 			spyanjiao_info:
 				"出牌阶段限一次。你可以将手牌中一种花色的所有牌交给一名其他角色，对其造成1点伤害。然后你于自己的下回合开始时摸等量的牌。",
-			sp_jiangwan: "蒋琬",
+			sp_jiangwan: "手杀蒋琬",
+			sp_jiangwan_prefix: "手杀",
 			spzhenting: "镇庭",
 			spzhenting_info:
 				"每回合限一次。当你攻击范围内的角色成为【杀】或延时锦囊的目标时，若你不是此牌的使用者且不是此牌的目标，则你可以将此目标改为自己。然后你选择一项：①弃置使用者的一张手牌。②摸一张牌。",

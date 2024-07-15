@@ -662,7 +662,8 @@ if (document.getElementById("jindutiao")) {
 			firstDo: true,
 			priority: Infinity,
 			filter: function (event, player) {
-				return player==game.me&&(lib.config.ssuispzdpx=='shunxu1'||lib.config.ssuispzdpx=='shunxu2'||lib.config.ssuispzdpx=='shunxu3'||lib.config.ssuispzdpx=='shunxu4'||lib.config.ssuispzdpx=='shunxu5'||lib.config.ssuispzdpx=='shunxu6')
+				// 适配新版本体
+				return player==game.me&&!player.hasSkillTag("noSortCard")&&(lib.config.ssuispzdpx=='shunxu1'||lib.config.ssuispzdpx=='shunxu2'||lib.config.ssuispzdpx=='shunxu3'||lib.config.ssuispzdpx=='shunxu4'||lib.config.ssuispzdpx=='shunxu5'||lib.config.ssuispzdpx=='shunxu6')
 			},
 			content: function () {
 				var compare = {

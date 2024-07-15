@@ -40,9 +40,14 @@ game.import("character", function () {
 		skill: {
 			//族钟繇
 			clanchengqi: {
+				getUsed: player =>
+					player
+						.getHistory("useCard", evt => ["basic", "trick"].includes(get.type(evt.card, null, false)))
+						.map(evt => get.name(evt.card))
+						.toUniqued(),
 				hiddenCard(player, name) {
 					if (get.type(name) != "basic" && get.type(name) != "trick") return false;
-					if (player.getStorage("clanchengqi_effect").includes(name)) return false;
+					if (get.info("clanchengqi").getUsed(player).includes(name)) return false;
 					return player.countCards("hs") > 1 && lib.inpile.includes(name);
 				},
 				audio: 2,
@@ -53,9 +58,15 @@ game.import("character", function () {
 						.inpileVCardList(info => {
 							const name = info[2];
 							if (get.type(name) != "basic" && get.type(name) != "trick") return false;
-							return !player.getStorage("clanchengqi_effect").includes(name);
+							return !(event.clanchengqi || []).includes(name);
 						})
 						.some(card => event.filterCard({ name: card[2], nature: card[3] }, player, event));
+				},
+				onChooseToUse(event) {
+					if (!game.online && !event.clanchengqi) {
+						const player = event.player;
+						event.set("clanchengqi", get.info("clanchengqi").getUsed(player));
+					}
 				},
 				chooseButton: {
 					dialog(event, player) {
@@ -63,7 +74,7 @@ game.import("character", function () {
 							.inpileVCardList(info => {
 								const name = info[2];
 								if (get.type(name) != "basic" && get.type(name) != "trick") return false;
-								return !player.getStorage("clanchengqi_effect").includes(name);
+								return !(event.clanchengqi || []).includes(name);
 							})
 							.filter(card => event.filterCard({ name: card[2], nature: card[3] }, player, event));
 						return ui.create.dialog("承启", [list, "vcard"]);
@@ -112,7 +123,6 @@ game.import("character", function () {
 							position: "hs",
 							precontent() {
 								player.addTempSkill("clanchengqi_effect");
-								player.markAuto("clanchengqi_effect", [event.result.card.name]);
 							},
 						};
 					},
@@ -127,7 +137,7 @@ game.import("character", function () {
 								.inpileVCardList(info => {
 									const name = info[2];
 									if (get.type(name) != "basic" && get.type(name) != "trick") return false;
-									return !player.getStorage("clanchengqi_effect").includes(name);
+									return !get.info("clanchengqi").getUsed(player).includes(name);
 								})
 								.map(card => {
 									return { name: card[2], nature: card[3] };
@@ -152,7 +162,6 @@ game.import("character", function () {
 					backup: { audio: "clanchengqi" },
 					effect: {
 						charlotte: true,
-						onremove: true,
 						trigger: { player: "useCard" },
 						filter(event, player) {
 							return (
@@ -862,10 +871,12 @@ game.import("character", function () {
 							var target = event.targets.shift();
 							event.target = target;
 							var list = [];
+							const nameFilter = trigger.card.name == "sha"
+								? name => get.type(name) == "trick"
+								: name => name == "sha";
 							for (var name of lib.inpile) {
 								if (name != "sha" && get.type(name) != "trick") continue;
-								if (trigger.card.name == "sha" && get.type(name) != "trick") continue;
-								if (name == "sha" && get.type(trigger.card) != "trick") continue;
+								if (!nameFilter(name)) continue;
 								if (!player.canUse(get.autoViewAs({ name: name }, []), target)) continue;
 								list.push([get.translation(get.type(name)), "", name]);
 							}
@@ -1456,6 +1467,7 @@ game.import("character", function () {
 					delete event.result.skill;
 				},
 				ai: {
+					combo: "clanzhongliu",
 					order(item, player) {
 						player = player || _status.event.player;
 						var storage = _status.event.player.storage.clanjiexuan;
@@ -2443,7 +2455,7 @@ game.import("character", function () {
 						event.loser.chooseUseTarget(true, card, false);
 					} else event.goto(5);
 					"step 4";
-					if (cards.filter(i => get.position(i, true) == "d" && event.loser.hasUseTarget(i)).length) event.goto(3);
+					if (cards.filter(i => get.position(i, true) == "d" && event.loser.hasUseTarget(i)).length) event.goto(2);
 					"step 5";
 					if (get.distance(player, target) != event.distance[0] || get.distance(target, player) != event.distance[1]) {
 						player.restoreSkill("clanxumin");
@@ -3772,7 +3784,7 @@ game.import("character", function () {
 			clan_zhongyao: "族钟繇",
 			clan_zhongyao_prefix: "族",
 			clanchengqi: "承启",
-			clanchengqi_info: "你可以将至少两张手牌当作本回合未以此法转换过的基本牌或普通锦囊牌使用，且你以此法转化的牌名字数须不大于以此法转化的所有实体牌牌名字数之和，若你以此法转化的牌名字数等于以此法转化的所有实体牌牌名字数之和，则你使用此牌时可以令一名角色摸一张牌。",
+			clanchengqi_info: "你可以将至少两张手牌当作本回合未使用过的基本牌或普通锦囊牌使用，且你以此法转化的牌名字数须不大于以此法转化的所有实体牌牌名字数之和，若你以此法转化的牌名字数等于以此法转化的所有实体牌牌名字数之和，则你使用此牌时可以令一名角色摸一张牌。",
 			clanjieli: "诫厉",
 			clanjieli_info: "结束阶段，你可以选择一名角色，你观看其手牌中牌名字数最多的牌和牌堆顶的X张牌，然后你可以交换其中的任意张牌（X为你本回合使用过的牌中的牌名字数最大值）。",
 

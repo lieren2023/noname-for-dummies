@@ -2258,7 +2258,7 @@ game.import("character", function () {
 				},
 				async content(event, trigger, player) {
 					player.addTempSkill("kiyu_rexianyu_round", "roundStart");
-					const tabito = targets[0];
+					const tabito = event.targets[0];
 					tabito.storage.kiyu_rexianyu_lastrun = event.cost_data.list;
 					tabito.storage.amamiya_kiyu = player;
 					tabito.addTempSkill("kiyu_rexianyu_lastrun", {
@@ -2818,6 +2818,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//藏里见
 			satomi_luodao: {
 				trigger: { player: "useCardToPlayered" },
 				logTarget: "target",
@@ -2900,6 +2901,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//苍井绘梨花
 			erika_shisong: {
 				trigger: { player: "useCard" },
 				forced: true,
@@ -3068,6 +3070,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//李映夏
 			liyingxia_sanli: {
 				trigger: { target: "useCardToTargeted" },
 				forced: true,
@@ -3207,6 +3210,7 @@ game.import("character", function () {
 				},
 				derivation: ["bazhen", "rejizhi", "reguanxing", "youlong"],
 			},
+			//雾岛佳乃
 			kano_liezhen: {
 				trigger: { player: "phaseJieshuBegin" },
 				filter(event, player) {
@@ -3327,6 +3331,7 @@ game.import("character", function () {
 					player.storage.renku = true;
 				},
 			},
+			//藤川米亚
 			mia_shihui: {
 				trigger: { player: "phaseDrawBegin1" },
 				forced: true,
@@ -4606,6 +4611,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//井上晶
 			asara_shelu: {
 				enable: "phaseUse",
 				usable: 1,
@@ -4665,6 +4671,7 @@ game.import("character", function () {
 					combo: "asara_shelu"
 				},
 			},
+			//国崎往人
 			yukito_kongwu: {
 				enable: "phaseUse",
 				usable: 1,
@@ -4889,6 +4896,8 @@ game.import("character", function () {
 				},
 			},
 			yukito_yaxiang: {
+				unique: true,
+				forceunique: true,
 				enable: "chooseToUse",
 				limited: true,
 				filter(event, player) {
@@ -5106,6 +5115,7 @@ game.import("character", function () {
 					event.getParent("arrangeTrigger").finish();
 				},
 			},
+			//凤千早
 			chihaya_liewu: {
 				derivation: "chihaya_huairou",
 				mod: {
@@ -5443,6 +5453,7 @@ game.import("character", function () {
 			},
 			chihaya_youfeng_true: { charlotte: true },
 			chihaya_youfeng_false: { charlotte: true },
+			//七濑留美
 			rumi_shuwu: {
 				mod: {
 					cardUsable(card) {
@@ -5555,6 +5566,7 @@ game.import("character", function () {
 				},
 				onremove: true,
 			},
+			//凤咲夜
 			sakuya_junbu: {
 				mod: {
 					targetInRange(card, player) {
@@ -5646,6 +5658,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//铃木央人
 			hiroto_huyu: {
 				trigger: { global: "phaseUseEnd" },
 				noHidden: true,
@@ -5790,6 +5803,7 @@ game.import("character", function () {
 					player.changeSkills(["hiroto_zonglve"], ["hiroto_huyu"]);
 				},
 			},
+			//水织静久
 			shizuku_sizhi: {
 				audio: 2,
 				enable: "phaseUse",
@@ -5995,6 +6009,7 @@ game.import("character", function () {
 					if (cards.length) await target.gain(cards, "gain2");
 				},
 			},
+			//鸣濑白羽
 			shiroha_yuzhao: {
 				trigger: {
 					global: "phaseBefore",
@@ -6211,6 +6226,7 @@ game.import("character", function () {
 				},
 				derivation: ["umi_chaofan", "ao_xishi", "tsumugi_mugyu", "kamome_jieban"],
 			},
+			//高城丈士朗
 			jojiro_shensu: {
 				group: ["jojiro_shensu1", "jojiro_shensu2", "jojiro_shensu4"],
 				charlotte: true,
@@ -6329,6 +6345,7 @@ game.import("character", function () {
 					else player.draw(num);
 				},
 			},
+			//神户小鸟
 			kotori_yumo: {
 				trigger: {
 					global: "phaseBefore",
@@ -6339,6 +6356,7 @@ game.import("character", function () {
 				filter(event, player) {
 					return event.name != "phase" || game.phaseNumber == 0;
 				},
+				derivation: ["kotori_skill_wei", "kotori_skill_shu", "kotori_skill_wu", "kotori_skill_qun", "kotori_skill_jin", "kotori_skill_key"],
 				content() {
 					var list = ["wei", "shu", "wu", "qun", "jin"];
 					for (var i of list) {
@@ -6753,9 +6771,11 @@ game.import("character", function () {
 							return player.getUseValue({ name: "kaihua" });
 						},
 					},
+					combo: "kotori_yumo",
 				},
 			},
-			kotori_huazhan2: { onremove: true },
+			kotori_huazhan2: { onremove: true, charlotte: true },
+			//三谷良一
 			ryoichi_baoyi: {
 				trigger: {
 					player: "loseAfter",
@@ -6846,7 +6866,11 @@ game.import("character", function () {
 					"step 2";
 					event.cards = result.cards;
 				},
+				ai: {
+					halfneg: true
+				},
 			},
+			//乙坂有宇
 			yuu_lveduo: {
 				mod: {
 					cardEnabled(card, player) {
@@ -6964,6 +6988,7 @@ game.import("character", function () {
 				},
 			},
 			yuu_lveduo4: { charlotte: true },
+			//松下五段
 			godan_yuanyi: {
 				trigger: { player: "phaseBegin" },
 				forced: true,
@@ -6993,7 +7018,12 @@ game.import("character", function () {
 					player.draw(3);
 					player.removeSkills("godan_feiqu");
 				},
+				ai: {
+					combo: "godan_feiqu",
+					halfneg: true
+				},
 			},
+			//游佐
 			abyusa_jueqing: {
 				audio: 2,
 				trigger: { source: "damageBegin2" },
@@ -7059,6 +7089,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//水濑秋子
 			akiko_dongcha: {
 				trigger: { global: "phaseBefore" },
 				forced: true,
@@ -7099,6 +7130,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//美坂香里
 			kaori_siyuan: {
 				enable: "phaseUse",
 				filter(event, player) {
@@ -7168,6 +7200,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//美坂栞
 			shiori_huijuan: {
 				trigger: { global: "phaseJieshuBegin" },
 				locked: true,
@@ -7259,6 +7292,7 @@ game.import("character", function () {
 					if (!result.bool) player.skip("phaseUse");
 				},
 			},
+			//野村美希
 			miki_shenqiang: {
 				trigger: {
 					global: "phaseBefore",
@@ -8264,6 +8298,7 @@ game.import("character", function () {
 					player.removeGaintag("shiorimiyuki_tingxian");
 				},
 			},
+			//中津静流
 			shizuru_nianli: {
 				enable: "chooseToUse",
 				charlotte: true,
@@ -8516,6 +8551,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//岬镜子
 			kyoko_juwu: {
 				trigger: {
 					global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter", "equipAfter"],
@@ -8715,6 +8751,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//音无结弦（3v3）
 			yuzuru_bujin: {
 				global: "yuzuru_bujin2",
 				trigger: { global: "phaseDrawBegin" },
@@ -8743,6 +8780,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//西园美鱼
 			mio_tuifu: {
 				trigger: { global: "damageBegin1" },
 				forced: true,
@@ -8757,6 +8795,7 @@ game.import("character", function () {
 				trigger: { player: "phaseZhunbeiBegin" },
 				limited: true,
 				unique: true,
+				forceunique: true,
 				charlotte: true,
 				skillAnimation: true,
 				animationColor: "water",
@@ -8764,6 +8803,7 @@ game.import("character", function () {
 					return player.isDamaged();
 				},
 				check(event, player) {
+					if (![player.name1, player.name2].includes("key_mio")) return false;
 					return player.hp <= 1 || player.getDamagedHp() > 1;
 				},
 				content() {
@@ -8776,6 +8816,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//西园美鸟
 			midori_nonghuan: {
 				enable: "phaseUse",
 				charlotte: true,
@@ -8836,12 +8877,14 @@ game.import("character", function () {
 				limited: true,
 				charlotte: true,
 				unique: true,
+				forceunique: true,
 				skillAnimation: true,
 				animationColor: "water",
 				filter(event, player) {
 					return player.isDamaged();
 				},
 				check(event, player) {
+					if (![player.name1, player.name2].includes("key_midori")) return false;
 					return player.hp <= 1 || player.getDamagedHp() > 1;
 				},
 				content() {
@@ -8854,6 +8897,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//立华奏
 			kanade_mapo: {
 				audio: 2,
 				derivation: "mapodoufu",
@@ -8957,6 +9001,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//音无结弦
 			yuzuru_wuxin: {
 				trigger: { player: "phaseJieshuBegin" },
 				async cost(event, trigger, player) {
@@ -9159,6 +9204,7 @@ game.import("character", function () {
 					if (player.hp < 2) player.recover(2 - player.hp);
 				},
 			},
+			//空门苍
 			ao_xishi: {
 				trigger: {
 					player: ["useCard", "respond"],
@@ -9317,6 +9363,7 @@ game.import("character", function () {
 				},
 				ai: { order: 1, result: { player: 1 } },
 			},
+			//直井文人
 			ayato_jianshen: {
 				mod: {
 					cardnature(card, player) {
@@ -9446,6 +9493,7 @@ game.import("character", function () {
 				},
 				ai: { order: 10, result: { target: -1 } },
 			},
+			//古河渚
 			nagisa_tiandu: {
 				trigger: { player: "judgeEnd" },
 				charlotte: true,
@@ -9566,6 +9614,7 @@ game.import("character", function () {
 				},
 				ai: { expose: 0.2 },
 			},
+			//冈崎朋也
 			tomoya_shangxian: {
 				trigger: { player: "phaseUseBegin" },
 				mark: true,
@@ -9666,6 +9715,7 @@ game.import("character", function () {
 				},
 				ai: { expose: 0.2 },
 			},
+			//野田
 			noda_fengcheng: {
 				audio: 2,
 				trigger: {
@@ -9717,6 +9767,7 @@ game.import("character", function () {
 					event.giver.give(result.cards, event.gainner);
 				},
 			},
+			//日向秀树
 			hinata_qiulve: {
 				audio: 2,
 				enable: ["chooseToUse", "chooseToRespond"],
@@ -9812,6 +9863,7 @@ game.import("character", function () {
 						player.draw();
 				},
 			},
+			//高桥久子
 			hisako_yinbao: {
 				audio: 2,
 				trigger: { player: ["damageEnd", "recoverAfter"] },
@@ -9861,6 +9913,7 @@ game.import("character", function () {
 				},
 				ai: { luckyStar: true },
 			},
+			//直枝理树
 			riki_spwenji: {
 				audio: 2,
 				trigger: { player: "phaseUseBegin" },
@@ -9917,6 +9970,16 @@ game.import("character", function () {
 				},
 			},
 			riki_nvzhuang: {
+				init(player) {
+					if (get.character(player.name1, 3).includes("riki_nvzhuang")) {
+						player.storage.riki_nvzhuang = player.sex;
+						if (player.sex === "male") player.sex = "double";
+						else player.sex = "female";
+					}
+				},
+				onremove(player) {
+					if (player.storage.riki_nvzhuang) player.sex = player.storage.riki_nvzhuang;
+				},
 				trigger: { player: "phaseJieshuBegin" },
 				forced: true,
 				content() {
@@ -10000,6 +10063,7 @@ game.import("character", function () {
 				},
 				ai: { expose: 0.2 },
 			},
+			//来谷唯湖
 			yuiko_fenglun: {
 				enable: "phaseUse",
 				usable: 1,
@@ -10066,6 +10130,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//多鲁基
 			doruji_feiqu: {
 				trigger: {
 					player: "useCard",
@@ -10080,6 +10145,7 @@ game.import("character", function () {
 					else trigger.directHit.add(player);
 				},
 				ai: {
+					halfneg: true,
 					directHit_ai: true,
 					skillTagFilter(player, tag, arg) {
 						return arg.card.name == "sha";
@@ -10098,6 +10164,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//千里朱音
 			akane_jugu: {
 				audio: 2,
 				mod: {
@@ -10250,6 +10317,7 @@ game.import("character", function () {
 				},
 			},
 			akane_yifu3: { charlotte: true },
+			//笹濑川佐佐美
 			sasami_miaobian: {
 				derivation: ["sasami_gongqing", "sasami_funan", "sasami_baoqiu"],
 				init2(player) {
@@ -10340,6 +10408,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//枣铃
 			rin_baoqiu: {
 				mod: {
 					attackRange(rin, ball) {
@@ -10385,6 +10454,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//春原阳平&春原芽衣
 			sunohara_chengshuang: {
 				trigger: {
 					global: "phaseBefore",
@@ -10539,6 +10609,7 @@ game.import("character", function () {
 					target.draw(num);
 				},
 			},
+			//椎名
 			shiina_qingshen: {
 				audio: 1,
 				trigger: {
@@ -10631,7 +10702,6 @@ game.import("character", function () {
 			},
 			shiina_retieji: {
 				audio: 1,
-				shaRelated: true,
 				trigger: { player: "useCardToPlayered" },
 				check(event, player) {
 					return get.attitude(player, event.target) < 0;
@@ -10674,6 +10744,7 @@ game.import("character", function () {
 					}
 				},
 			},
+			//稻荷
 			inari_baiwei: {
 				enable: ["chooseToUse", "chooseToRespond"],
 				hiddenCard(player, name) {
@@ -10802,6 +10873,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//朱鹭户沙耶
 			saya_powei: {
 				audio: 2,
 				trigger: { player: "phaseAfter" },
@@ -10955,6 +11027,7 @@ game.import("character", function () {
 					if (result.bool) player.draw();
 				},
 			},
+			//三枝叶留佳&二木佳奈多
 			haruka_shuangche: {
 				audio: 2,
 				enable: "phaseUse",
@@ -11072,6 +11145,7 @@ game.import("character", function () {
 				},
 			},
 			haruka_kanata: { charlotte: true },
+			//紬文德斯
 			tsumugi_mugyu: {
 				audio: 5,
 				trigger: { target: "useCardToTargeted" },
@@ -11141,8 +11215,8 @@ game.import("character", function () {
 					game.delay();
 				},
 			},
+			//由依
 			yui_jiang: {
-				shaRelated: true,
 				audio: 2,
 				audioname: ["sp_lvmeng", "re_sunben", "re_sunce"],
 				trigger: {
@@ -11294,6 +11368,7 @@ game.import("character", function () {
 					game.asyncDraw(targets);
 				},
 			},
+			//吉野晴彦
 			yoshino_jueyi: {
 				trigger: { player: "phaseUseBegin" },
 				async cost(event, trigger, player) {
@@ -11337,6 +11412,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//宫泽谦吾
 			kengo_weishang: {
 				locked: false,
 				mod: {
@@ -11451,6 +11527,7 @@ game.import("character", function () {
 				},
 			},
 			kengo_guidui2: { onremove: true },
+			//岩泽雅美
 			iwasawa_yinhang: {
 				trigger: { player: "changeHp" },
 				locked: true,
@@ -11603,6 +11680,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//井之原真人
 			masato_baoquan: {
 				trigger: { source: "damageBefore" },
 				forced: true,
@@ -11635,6 +11713,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//西森柚咲&黑羽美砂
 			yusa_yanyi: {
 				enable: "phaseUse",
 				usable: 1,
@@ -11701,6 +11780,9 @@ game.import("character", function () {
 				},
 				content() {
 					player.turnOver();
+				},
+				ai: {
+					combo: "yusa_yanyi",
 				},
 			},
 			misa_yusa: {
@@ -11796,6 +11878,7 @@ game.import("character", function () {
 					return !event.player.isTurnedOver() || get.attitude(player, event.player) > 0;
 				},
 			},
+			//宫泽有纪宁
 			yukine_wenzhou: {
 				trigger: { global: "phaseUseBegin" },
 				filter(event, player) {
@@ -11902,6 +11985,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//神北小毬
 			komari_tiankou: {
 				trigger: {
 					player: "useCard2",
@@ -12013,6 +12097,7 @@ game.import("character", function () {
 					player.recover();
 				},
 			},
+			//鹰原羽未
 			umi_chaofan: {
 				enable: "phaseUse",
 				usable: 1,
@@ -12082,9 +12167,15 @@ game.import("character", function () {
 				},
 			},
 			umi_qihuan: {
+				unique: true,
+				forceunique: true,
 				enable: "chooseToUse",
 				filter(summer, umi) {
-					return summer.type == "dying" && umi.isDying();
+					return (
+						summer.type == "dying" &&
+						umi.isDying() &&
+						[umi.name1, umi.name2].includes("key_umi")
+					);
 				},
 				limited: true,
 				skillAnimation: true,
@@ -12164,6 +12255,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			//神尾晴子
 			haruko_haofang: {
 				mod: {
 					cardname(card, player, name) {
@@ -12353,7 +12445,11 @@ game.import("character", function () {
 					await trigger.player.changeGroup(player.group);
 					await trigger.player.draw();
 				},
+				ai: {
+					combo: "yuri_xingdong",
+				},
 			},
+			//枣恭介
 			nk_shekong: {
 				enable: "phaseUse",
 				usable: 1,
@@ -12457,6 +12553,7 @@ game.import("character", function () {
 					} else trigger.directresult = get.bottomCards()[0];
 				},
 			},
+			//此花露西娅
 			lucia_duqu: {
 				trigger: {
 					player: ["damage", "loseHpBefore", "useCardBefore"],
@@ -12678,7 +12775,7 @@ game.import("character", function () {
 			key_mia: "藤川米娅",
 			key_kano: "雾岛佳乃",
 			db_key_liyingxia: "李映夏",
-			key_erika: "苍井绘梨花",
+			key_erika: "苍井绘里香",
 			key_satomi: "藏里见",
 			key_iriya: "喵呜·喵呼",
 			key_iriya_ab: "喵呜喵呼",
@@ -13095,8 +13192,7 @@ game.import("character", function () {
 			hiroto_zonglve_info:
 				"锁定技，你的手牌上限+3。出牌阶段限一次，你可以将一张手牌背面朝下放置，并展示一名其他角色的一张手牌。若这两张牌：颜色相同，你对其造成1点伤害并弃置其展示的牌。颜色不同，你获得该角色区域内的两张牌。",
 			hiroto_tuolao: "脱牢",
-			hiroto_tuolao_info:
-				"觉醒技，回合结束后，若此回合不是你的第一个回合且你本轮内未因〖虎驭〗失去过牌，则你摸三张牌，失去〖虎驭〗并获得〖纵略〗。",
+			hiroto_tuolao_info: "觉醒技，回合结束后，若此回合不是你的第一个回合且你此回合未因〖虎驭〗失去过牌，则你摸三张牌，失去〖虎驭〗并获得〖纵略〗。",
 			sakuya_junbu: "均步",
 			sakuya_junbu_info:
 				"锁定技，若你已废除的装备栏数量：≥1，你使用牌无距离限制。≥2，你使用牌无次数限制。≥3，你使用牌时可以多指定一个目标。≥4，你使用的牌不可被响应。≥5，你使用牌造成伤害时失去1点体力，令此伤害+1。",

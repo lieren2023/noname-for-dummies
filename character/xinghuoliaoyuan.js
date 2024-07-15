@@ -1891,7 +1891,7 @@ game.import("character", function () {
 			sp_taishici: ["sp_taishici", "re_sp_taishici"],
 			mazhong: ["mazhong", "re_mazhong"],
 			wenpin: ["wenpin", "re_wenpin"],
-			liuyan: ["liuyan", "jsrg_liuyan", "ol_liuyan"],
+			liuyan: ["liuyan", "jsrg_liuyan", "junk_liuyan"],
 		},
 		translate: {
 			xinghuoliaoyuan: "星火燎原",

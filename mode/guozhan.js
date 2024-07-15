@@ -867,9 +867,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				gz_sp_dongzhuo: ["male", "qun", 4, ["hengzheng", "fakebaoling"]],
 				gz_zhangren: ["male", "qun", 4, ["chuanxin", "fengshi"]],
 
-				gz_jun_liubei: ["male", "shu", 4, ["zhangwu", "jizhao", "shouyue", "wuhujiangdaqi"]],
-				gz_jun_zhangjiao: ["male", "qun", 4, ["wuxin", "hongfa", "wendao", "huangjintianbingfu"]],
-				gz_jun_sunquan: ["male", "wu", 4, ["jiahe", "lianzi", "jubao", "yuanjiangfenghuotu"]],
+				gz_jun_liubei: ["male", "shu", 4, ["zhangwu", "jizhao", "shouyue"]],
+				gz_jun_zhangjiao: ["male", "qun", 4, ["wuxin", "hongfa", "wendao"]],
+				gz_jun_sunquan: ["male", "wu", 4, ["jiahe", "lianzi", "jubao"]],
 
 				gz_liqueguosi: ["male", "qun", 4, ["gzxiongsuan"]],
 				gz_zuoci: ["male", "qun", 3, ["fakeyigui", "fakejihun"], ["gzskin"]],
@@ -898,14 +898,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				gz_dc_yanghu: ["male", "wei", 3, ["gzdeshao", "gzmingfa"]],
 
 				gz_cuimao: ["male", "wei", 3, ["gzzhengbi", "gzfengying"], []],
-				gz_yujin: ["male", "wei", 4, ["gzjieyue"], ["gzskin"]],
+				gz_yujin: ["male", "wei", 4, ["gzjieyue"], ["gzskin", "die_audio:yujin"]],
 				gz_wangping: ["male", "shu", 4, ["jianglue"], ["gzskin"]],
-				gz_fazheng: ["male", "shu", 3, ["gzxuanhuo", "gzenyuan"], ["gzskin"]],
+				gz_fazheng: ["male", "shu", 3, ["gzxuanhuo", "gzenyuan"], ["gzskin", "die_audio:xin_fazheng"]],
 				gz_wuguotai: ["female", "wu", 3, ["gzbuyi", "ganlu"], ["gzskin"]],
 				gz_lukang: ["male", "wu", 4, ["fakejueyan", "fakekeshou"], ["gzskin"]],
 				gz_yuanshu: ["male", "qun", 4, ["gzweidi", "gzyongsi"], ["gzskin"]],
 				gz_zhangxiu: ["male", "qun", 4, ["gzfudi", "gzcongjian"], ["gzskin"]],
-				gz_jun_caocao: ["male", "wei", 4, ["jianan", "huibian", "gzzongyu", "wuziliangjiangdao"], []],
+				gz_jun_caocao: ["male", "wei", 4, ["jianan", "huibian", "gzzongyu"], []],
 
 				gz_jin_zhangchunhua: ["female", "jin", 3, ["gzhuishi", "fakeqingleng"]],
 				gz_jin_simayi: ["male", "jin", 3, ["fakequanbian", "smyyingshi", "fakezhouting"]],
@@ -966,6 +966,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			//官盗2023
 			fakexiaoguo: {
 				audio: "xiaoguo",
+				audioname2: { gz_jun_caocao: "jianan_xiaoguo" },
 				trigger: { global: "phaseZhunbeiBegin" },
 				filter(event, player) {
 					return (
@@ -1068,7 +1069,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					global: {
 						audio: "duoshi",
 						forceaudio: true,
-						enable: "chooseToUse",
+						enable: "phaseUse",
 						filter(event, player) {
 							const info = get.info("fakeduoshi").subSkill.global;
 							return (
@@ -1909,7 +1910,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			fakejizhi: {
 				audio: "rejizhi",
-				audioname: ["lukang"],
+				audioname2: { gz_lukang: "rejizhi_lukang" },
 				inherit: "jizhi",
 			},
 			fakequanji: {
@@ -2227,7 +2228,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (num != 4)
 						return (
 							goon &&
-							[event.player, event.source].some((target) => groups.includes(target.identity))
+							groups.includes(event.source.identity)
 						);
 					return !goon && groups.includes(event.source.identity);
 				},
@@ -2237,7 +2238,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					return event.source == player ? event.player : event.source;
 				},
 				async content(event, trigger, player) {
-					trigger[parseInt(name.slice("damageBegin".length)) == 4 ? "decrease" : "increase"]("num");
+					trigger[parseInt(event.triggername.slice("damageBegin".length)) == 4 ? "decrease" : "increase"]("num");
 				},
 				ai: {
 					combo: "fakeshilu",
@@ -6718,7 +6719,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				mod: {
 					maxHandcard: function (player, num) {
 						if (!player.hasEmptySlot(2)) return;
-						if (player.hasSkill("huangjintianbingfu")) {
+						// if (player.hasSkill("hongfa")) {
+						// 村规
+						if (player.hasSkill("hongfa", null, null, false)) {
 							num += player.getExpansions("huangjintianbingfu").length;
 						}
 						return (
@@ -8165,7 +8168,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					event.target = target;
 					player.awakenSkill("gzshigong");
 					var list = lib.character[player.name2][3].filter(function (skill) {
-						return get.skillCategoriesOf(skill).length == 0;
+						return get.skillCategoriesOf(skill, player).length == 0;
 					});
 					if (!list.length) {
 						event._result = { control: "cancel2" };
@@ -9812,6 +9815,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			//黄忠
 			gzliegong: {
 				audio: "liegong",
+				audioname2: { gz_jun_liubei: "shouyue_liegong" },
 				locked: false,
 				mod: {
 					targetInRange: function (card, player, target) {
@@ -9823,7 +9827,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 				},
 				trigger: { player: "useCardToPlayered" },
-				shaRelated: true,
 				filter: function (event, player) {
 					return event.card.name == "sha" && player.hp <= event.target.hp;
 				},
@@ -9877,7 +9880,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			gzkuangfu: {
 				audio: "kuangfu",
 				trigger: { player: "useCardToPlayered" },
-				shaRelated: true,
 				preHidden: true,
 				logTarget: "target",
 				filter: function (event, player) {
@@ -9928,9 +9930,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			//吕布
 			gzwushuang: {
-				shaRelated: true,
 				audio: "wushuang",
-				audioname: ["re_lvbu", "shen_lvbu", "lvlingqi"],
+				audioname2: { gz_lvlingqi: "wushuang_lvlingqi" },
 				forced: true,
 				locked: true,
 				group: ["wushuang1", "wushuang2"],
@@ -10073,6 +10074,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				derivation: "gzwushuang",
 			},
+			wushuang_lvlingqi: { audio: 2 },
 			//荀谌
 			gzfenglve: {
 				audio: "refenglve",
@@ -15630,19 +15632,21 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			jianan: {
-				audio: 2,
+				audio: true,
 				unique: true,
 				forceunique: true,
-				group: "wuziliangjiangdao",
-				derivation: "wuziliangjiangdao",
+				derivation: ["wuziliangjiangdao", "new_retuxi", "qiaobian", "fakexiaoguo", "gzjieyue", "new_duanliang"],
 				lordSkill: true,
-				global: "g_jianan",
+				global: ["wuziliangjiangdao", "g_jianan"],
+				init(player) {
+					player.markSkill("wuziliangjiangdao");
+				},
 			},
 			g_jianan: {
 				trigger: {
 					player: ["phaseZhunbeiBegin", "phaseBefore", "dieBegin"],
 				},
-				audio: "jianan",
+				audio: "wuziliangjiangdao",
 				forceaudio: true,
 				filter: function (event, player, name) {
 					if (name != "phaseZhunbeiBegin") return get.is.jun(player) && player.identity == "wei";
@@ -15663,7 +15667,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					}
 					var skills = ["new_retuxi", "qiaobian", "fakexiaoguo", "gzjieyue", "new_duanliang"];
 					game.countPlayer(function (current) {
-						if (current == player) return;
 						if (current.hasSkill("new_retuxi")) skills.remove("new_retuxi");
 						if (current.hasSkill("qiaobian")) skills.remove("qiaobian");
 						if (current.hasSkill("fakexiaoguo")) skills.remove("fakexiaoguo");
@@ -15765,11 +15768,32 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					player.addTempSkill(link, "jiananUpdate");
 					player.addTempSkill("jianan_eff", "jiananUpdate");
 					game.log(player, "获得了技能", "#g【" + get.translation(result.control) + "】");
+					
+					// 语音修复
+					var map = {
+						new_retuxi: "jianan_tuxi",
+						qiaobian: "jianan_qiaobian",
+						fakexiaoguo: "jianan_xiaoguo",
+						gzjieyue: "jianan_jieyue",
+						new_duanliang: "jianan_duanliang"
+					};
+					var mapSkills = map[link];
+					game.broadcastAll(function () {
+						var info = lib.skill[link];
+						if (!info.audioname2) info.audioname2 = {};
+						info.audioname2[player.name1] = mapSkills;
+						info.audioname2[player.name2] = mapSkills;
+					}, link);
 				},
 			},
 			jianan_eff: {
 				ai: { nomingzhi: true },
 			},
+			jianan_tuxi: { audio: true },
+			jianan_qiaobian: { audio: true },
+			jianan_xiaoguo: { audio: true },
+			jianan_jieyue: { audio: true },
+			jianan_duanliang: { audio: true },
 			huibian: {
 				enable: "phaseUse",
 				audio: 2,
@@ -15814,9 +15838,11 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			gzzongyu: {
 				audio: 2,
+				derivation: "liulongcanjia",
 				unique: true,
 				forceunique: true,
-				group: ["gzzongyu_others", "gzzongyu_player"],
+				group: "gzzongyu_others",
+				global: "gzzongyu_player",
 				ai: {
 					threaten: 1.2,
 				},
@@ -15864,9 +15890,13 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 					player: {
 						audio: "gzzongyu",
+						forceaudio: true,
 						trigger: { player: "equipAfter" },
 						forced: true,
 						filter: function (event, player) {
+							// if (!player.hasSkill("gzzongyu")) return false;
+							// 村规
+							if (!player.hasSkill("gzzongyu", null, null, false)) return false;
 							if (!["equip3", "equip4"].includes(get.subtype(event.card))) return false;
 							for (var i = 0; i < ui.discardPile.childElementCount; i++) {
 								if (ui.discardPile.childNodes[i].name == "liulongcanjia") return true;
@@ -15904,6 +15934,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			wuziliangjiangdao: {
+				audio: 2,
 				nopop: true,
 				unique: true,
 				forceunique: true,
@@ -16308,6 +16339,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 				},
 				audio: ["jieyue", 2],
+				audioname2: { gz_jun_caocao: "jianan_jieyue" },
 			},
 
 			jianglue: {
@@ -16456,11 +16488,11 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			gzxuanhuo: {
-				audio: "rexuanhuo",
+				audio: "xinxuanhuo",
 				global: "gzxuanhuo_others",
 				derivation: [
-					"fz_new_rewusheng",
-					"fz_gzpaoxiao",
+					"fz_wusheng",
+					"fz_new_paoxiao",
 					"fz_new_longdan",
 					"fz_new_tieji",
 					"fz_liegong",
@@ -16479,7 +16511,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				subSkill: {
 					others: {
-						audio: "rexuanhuo",
+						audio: "xinxuanhuo",
 						forceaudio: true,
 						enable: "phaseUse",
 						usable: 1,
@@ -16530,7 +16562,15 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								.set("prompt", "选择并获得一项技能直到回合结束");
 							"step 1";
 							player.popup(result.control);
-							player.addTempSkill("fz_" + result.control);
+							var map = {
+								new_rewusheng: "fz_wusheng",
+								gzpaoxiao: "fz_new_paoxiao",
+								new_longdan: "fz_new_longdan",
+								new_tieji: "fz_new_tieji",
+								liegong: "fz_liegong",
+								xinkuanggu: "fz_xinkuanggu"
+							};
+							player.addTempSkill(map[result.control]);
 							game.log(player, "获得了技能", "#g【" + get.translation(result.control) + "】");
 							game.delay();
 						},
@@ -16545,7 +16585,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				// audio:['xuanhuo',2],
 			},
-			fz_gzpaoxiao: {
+			fz_new_paoxiao: {
 				audio: true,
 				inherit: "gzpaoxiao",
 			},
@@ -16553,7 +16593,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				audio: true,
 				inherit: "new_tieji",
 			},
-			fz_new_rewusheng: {
+			fz_wusheng: {
 				audio: true,
 				inherit: "new_rewusheng",
 			},
@@ -16726,7 +16766,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			gzenyuan: {
 				locked: true,
-				audio: "reenyuan",
+				audio: "xinenyuan",
 				group: ["gzenyuan_gain", "gzenyuan_damage"],
 				preHidden: true,
 				ai: {
@@ -16741,7 +16781,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				subSkill: {
 					gain: {
-						audio: "reenyuan",
+						audio: "xinenyuan",
 						trigger: { target: "useCardToTargeted" },
 						forced: true,
 						filter: function (event, player) {
@@ -16753,7 +16793,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						},
 					},
 					damage: {
-						audio: "reenyuan",
+						audio: "xinenyuan",
 						trigger: { player: "damageEnd" },
 						forced: true,
 						filter: function (event, player) {
@@ -16847,6 +16887,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				locked: false,
 				audio: "duanliang1",
+				audioname2: { gz_jun_caocao: "jianan_duanliang" },
 				enable: "chooseToUse",
 				filterCard: function (card) {
 					if (get.type(card) != "basic" && get.type(card) != "equip") return false;
@@ -17037,6 +17078,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				position: "he",
 				filterTarget: function (card, player, target) {
+					if (target == player) return false;
 					return !target.isUnseen(2);
 				},
 				check: function (card) {
@@ -17268,6 +17310,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			new_longdan: {
+				audio: "longdan_sha",
+				audioname2: { gz_jun_liubei: "shouyue_longdan" },
 				group: [
 					"new_longdan_sha",
 					"new_longdan_shan",
@@ -17279,10 +17323,12 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					shanafter: {
 						sub: true,
 						audio: "longdan_sha",
+						audioname2: { gz_jun_liubei: "shouyue_longdan" },
 						trigger: {
 							player: "useCard",
 						},
-						//priority:1,
+						// 暗改（by 棘手怀念摧毁）
+						priority:1,
 						filter: function (event, player) {
 							return event.skill == "new_longdan_shan" && event.getParent(2).name == "sha";
 						},
@@ -17314,6 +17360,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					shamiss: {
 						sub: true,
 						audio: "longdan_sha",
+						audioname2: { gz_jun_liubei: "shouyue_longdan" },
 						trigger: {
 							player: "shaMiss",
 						},
@@ -17346,6 +17393,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							player: ["useCard", "respond"],
 						},
 						audio: "longdan_sha",
+						audioname2: { gz_jun_liubei: "shouyue_longdan" },
 						forced: true,
 						locked: false,
 						filter: function (event, player) {
@@ -17360,6 +17408,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 					sha: {
 						audio: "longdan_sha",
+						audioname2: { gz_jun_liubei: "shouyue_longdan" },
 						enable: ["chooseToUse", "chooseToRespond"],
 						filterCard: {
 							name: "shan",
@@ -17393,6 +17442,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 					shan: {
 						audio: "longdan_sha",
+						audioname2: { gz_jun_liubei: "shouyue_longdan" },
 						enable: ["chooseToRespond", "chooseToUse"],
 						filterCard: {
 							name: "sha",
@@ -17425,6 +17475,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			gzpaoxiao: {
 				audio: "paoxiao",
+				audioname2: { gz_jun_liubei: "shouyue_paoxiao" },
 				trigger: {
 					player: "useCard",
 				},
@@ -17930,6 +17981,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			new_tieji: {
 				audio: "retieji",
+				audioname2: { gz_jun_liubei: "shouyue_tieji" },
 				trigger: {
 					player: "useCardToPlayered",
 				},
@@ -18818,6 +18870,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				enable: "phaseUse",
 				usable: 1,
 				audio: 2,
+				derivation: "gzzhiheng",
 				filterCard: true,
 				check: function (card) {
 					if (get.type(card) == "equip") return 0;
@@ -18889,6 +18942,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				trigger: { player: "phaseJieshuBegin" },
 				audio: 2,
+				derivation: "dinglanyemingzhu",
 				forced: true,
 				unique: true,
 				filter: function (event, player) {
@@ -18925,14 +18979,20 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			jiahe: {
+				audio: true,
 				unique: true,
 				forceunique: true,
 				lordSkill: true,
-				locked: false,
-				audio: 2,
-				derivation: "yuanjiangfenghuotu",
 				mark: true,
-				global: ["jiahe_put", "jiahe_skill"],
+				derivation: ["yuanjiangfenghuotu", "jiahe_reyingzi", "jiahe_haoshi", "jiahe_shelie", "jiahe_duoshi"],
+				global: ["yuanjiangfenghuotu", "jiahe_damage", "jiahe_put", "jiahe_skill"],
+				init(player) {
+					player.markSkill("yuanjiangfenghuotu");
+				},
+			},
+			jiahe_damage: {
+				audio: ["yuanjiangfenghuotu3.mp3", "yuanjiangfenghuotu4.mp3"],
+				forceaudio: true,
 				ai: {
 					threaten: 2,
 				},
@@ -18961,7 +19021,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			jiahe_put: {
 				enable: "phaseUse",
-				audio: 2,
+				audio: ["yuanjiangfenghuotu", 2],
 				forceaudio: true,
 				filter: function (event, player) {
 					var zhu = get.zhu(player, "jiahe");
@@ -19054,10 +19114,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					event.num = zhu.getExpansions("yuanjiangfenghuotu").length;
 					"step 1";
 					var list = [];
-					if (event.num >= 1 && !player.hasSkill("jiahe_reyingzi")) list.push("reyingzi");
-					if (event.num >= 2 && !player.hasSkill("jiahe_haoshi")) list.push("haoshi");
-					if (event.num >= 3 && !player.hasSkill("jiahe_shelie")) list.push("shelie");
-					if (event.num >= 4 && !player.hasSkill("jiahe_duoshi")) list.push("fakeduoshi");
+					if (event.num >= 1 && !(player.hasSkill("reyingzi") || player.hasSkill("jiahe_reyingzi"))) list.push("reyingzi");
+					if (event.num >= 2 && !(player.hasSkill("haoshi") || player.hasSkill("jiahe_haoshi"))) list.push("haoshi");
+					if (event.num >= 3 && !(player.hasSkill("shelie") || player.hasSkill("jiahe_shelie"))) list.push("shelie");
+					if (event.num >= 4 && !player.hasSkill("fakeduoshi")) list.push("fakeduoshi");
 					if (!list.length) {
 						event.finish();
 						return;
@@ -19099,8 +19159,30 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						});
 					"step 2";
 					if (result.control != "cancel2") {
-						var skill = (result.control != "fakeduoshi" ? "jiahe_" : "") + result.control;
-						player.addTempSkills(skill);
+						var map = {
+							reyingzi: "jiahe_reyingzi",
+							haoshi: "jiahe_haoshi",
+							shelie: "jiahe_shelie",
+							fakeduoshi: "fakeduoshi"
+						};
+						var skills = map[result.control];
+						player.addTempSkills(skills);
+						
+						// 语音修复
+						if (skills == "fakeduoshi") {
+							var mapSkills = "jiahe_duoshi";
+							game.broadcastAll(function () {
+								var info = lib.skill[skills];
+								if (!info.audioname2) info.audioname2 = {};
+								info.audioname2[player.name1] = mapSkills;
+								info.audioname2[player.name2] = mapSkills;
+								var subSkillInfo = info.subSkill.global;
+								if (!subSkillInfo.audioname2) subSkillInfo.audioname2 = {};
+								subSkillInfo.audioname2[player.name1] = mapSkills;
+								subSkillInfo.audioname2[player.name2] = mapSkills;
+							}, skills);
+						}
+						
 						if (!event.done) player.logSkill("jiahe_put");
 						// game.log(player,'获得了技能','【'+get.translation(skill)+'】');
 						if (event.num >= 5 && !event.done) {
@@ -19111,18 +19193,23 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			jiahe_reyingzi: {
+				audio: 2,
 				inherit: "reyingzi",
 			},
 			jiahe_haoshi: {
+				audio: 2,
 				inherit: "haoshi",
 			},
 			jiahe_shelie: {
+				audio: 2,
 				inherit: "shelie",
 			},
 			jiahe_duoshi: {
-				inherit: "duoshi",
+				audio: 2,
+				inherit: "fakeduoshi",
 			},
 			yuanjiangfenghuotu: {
+				audio: 4,
 				unique: true,
 				forceunique: true,
 				nopop: true,
@@ -19140,7 +19227,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							dialog.addSmall(content);
 						}
 						dialog.addText(
-							'<ul style="margin-top:5px;padding-left:22px;"><li>每名吴势力角色的出牌阶段限一次，该角色可以将一张装备牌置于“缘江烽火图”上，称之为“烽火”。<li>根据“烽火”的数量，所有吴势力角色可于其准备阶段选择并获得其中一个技能直到回合结束：一张以上~英姿；两张以上~好施；三张以上~涉猎；四张以上~度势；五张以上~可额外选择一项。<li>锁定技，当你受到【杀】或锦囊牌造成的伤害后，你将一张“烽火”置入弃牌堆。',
+							'<ul style="margin-top:5px;padding-left:22px;"><li>每名吴势力角色的出牌阶段限一次，该角色可以将一张装备牌置于“缘江烽火图”上，称之为“烽火”。<li>根据“烽火”的数量，所有吴势力角色可于其准备阶段选择并获得其中一个技能直到回合结束：一张及以上~英姿；两张及以上~好施；三张及以上~涉猎；四张及以上~度势；五张及以上~可额外选择一项。<li>锁定技，当你受到【杀】或锦囊牌造成的伤害后，你将一张“烽火”置入弃牌堆。',
 							false
 						);
 					},
@@ -19149,7 +19236,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			gzqice: {
 				enable: "phaseUse",
 				usable: 1,
-				audio: "qice_backup",
+				audio: "qice",
 				filter: function (event, player) {
 					var hs = player.getCards("h");
 					if (!hs.length) return false;
@@ -19233,7 +19320,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					backup: function (links, player) {
 						return {
 							filterCard: true,
-							audio: "qice_backup",
+							audio: "qice",
 							selectCard: -1,
 							position: "h",
 							selectTarget: function () {
@@ -19775,7 +19862,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hongfa_respond: {
-				audio: "huangjintianbingfu",
+				audio: ["huangjintianbingfu", 2],
 				forceaudio: true,
 				trigger: { player: "chooseToRespondBegin" },
 				direct: true,
@@ -19813,7 +19900,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hongfa_use: {
-				audio: "huangjintianbingfu",
+				audio: ["huangjintianbingfu", 2],
 				forceaudio: true,
 				enable: "chooseToUse",
 				filter: function (event, player) {
@@ -19873,13 +19960,17 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hongfa: {
-				audio: 2,
+				audio: 3,
+				locked: false,
 				derivation: "huangjintianbingfu",
 				unique: true,
 				forceunique: true,
 				lordSkill: true,
 				trigger: { player: "phaseZhunbeiBegin" },
 				forced: true,
+				init(player) {
+					player.markSkill("huangjintianbingfu");
+				},
 				filter: function (event, player) {
 					return (
 						player.getExpansions("huangjintianbingfu").length == 0 && get.population("qun") > 0
@@ -19893,10 +19984,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					threaten: 2,
 				},
 				group: "hongfa_hp",
-				global: ["hongfa_use", "hongfa_respond"],
+				global: ["huangjintianbingfu", "hongfa_use", "hongfa_respond"],
 				subSkill: {
 					hp: {
-						audio: true,
+						audio: "huangjintianbingfu3.mp3",
 						trigger: { player: "loseHpBefore" },
 						filter: function (event, player) {
 							return player.getExpansions("huangjintianbingfu").length > 0;
@@ -19914,7 +20005,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								});
 							"step 1";
 							if (result.bool) {
-								player.logSkill("huangjintianbingfu");
+								player.logSkill("hongfa_hp");
 								player.loseToDiscardpile(result.links);
 								trigger.cancel();
 							}
@@ -19924,6 +20015,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			wendao: {
 				audio: 2,
+				derivation: "taipingyaoshu",
 				unique: true,
 				forceunique: true,
 				enable: "phaseUse",
@@ -19984,7 +20076,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			huangjintianbingfu: {
-				audio: 2,
+				audio: 3,
 				unique: true,
 				forceunique: true,
 				nopop: true,
@@ -20002,7 +20094,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							dialog.addSmall(content);
 						}
 						dialog.addText(
-							'<ul style="margin-top:5px;padding-left:22px;"><li>当你计算群势力角色数时，每一张“天兵”均可视为一名群势力角色。<li>每当你失去体力时，你可改为将一张“天兵”置入弃牌堆。<li>与你势力相同的角色可将一张“天兵”当【杀】使用或打出。',
+							'<ul style="margin-top:5px;padding-left:22px;"><li>锁定技，当你计算群势力角色数时，每一张“天兵”均可视为一名群势力角色。<li>每当你失去体力时，你可改为将一张“天兵”置入弃牌堆。<li>与你势力相同的角色可将一张“天兵”当【杀】使用或打出。',
 							false
 						);
 					},
@@ -20017,7 +20109,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				content: function () {
 					"step 0";
 					var num = get.population("qun");
-					if (player.hasSkill("huangjintianbingfu")) {
+					// if (player.hasSkill("hongfa")) {
+					// 村规
+					if (player.hasSkill("hongfa", null, null, false)) {
 						num += player.getExpansions("huangjintianbingfu").length;
 					}
 					var cards = get.cards(num);
@@ -20043,6 +20137,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 			zhangwu: {
 				audio: 2,
+				derivation: "feilongduofeng",
 				unique: true,
 				forceunique: true,
 				ai: {
@@ -20165,13 +20260,22 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			shouyue: {
+				audio: true,
 				unique: true,
 				forceunique: true,
-				group: "wuhujiangdaqi",
-				derivation: "wuhujiangdaqi",
+				global: "wuhujiangdaqi",
+				derivation: ["wuhujiangdaqi", "new_rewusheng", "gzpaoxiao", "new_longdan", "new_tieji", "gzliegong"],
 				mark: true,
 				lordSkill: true,
+				init(player) {
+					player.markSkill("wuhujiangdaqi");
+				},
 			},
+			shouyue_wusheng: { audio: 2 },
+			shouyue_paoxiao: { audio: 2 },
+			shouyue_longdan: { audio: 2 },
+			shouyue_tieji: { audio: 2 },
+			shouyue_liegong: { audio: 2 },
 			wuhujiangdaqi: {
 				unique: true,
 				forceunique: true,
@@ -20179,7 +20283,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				mark: true,
 				intro: {
 					content:
-						'@<div style="margin-top:-5px"><div class="skill">【武圣】</div><div class="skillinfo">将“红色牌”改为“任意牌”</div><div class="skill">【咆哮】</div><div class="skillinfo">增加描述“你使用的【杀】无视其他角色的防具”</div><div class="skill">【龙胆】</div><div class="skillinfo">增加描述“你每发动一次‘龙胆’便摸一张牌”</div><div class="skill">【烈弓】</div><div class="skillinfo">增加描述“你的攻击范围+1”</div><div class="skill">【铁骑】</div><div class="skillinfo">将“一张明置的武将牌”改为“所有明置的武将牌”</div></div>',
+						'@<div style="margin-top:-5px"><div class="skill">【武圣】</div><div class="skillinfo">将“红色牌”改为“任意牌”</div><div class="skill">【咆哮】</div><div class="skillinfo">增加描述“你使用的【杀】无视其他角色的防具”</div><div class="skill">【龙胆】</div><div class="skillinfo">增加描述“你每发动一次‘龙胆’便摸一张牌”</div><div class="skill">【铁骑】</div><div class="skillinfo">将“一张明置的武将牌”改为“所有明置的武将牌”</div><div class="skill">【烈弓】</div><div class="skillinfo">增加描述“你的攻击范围+1”</div></div>',
 				},
 			},
 			jizhao: {
@@ -21330,7 +21434,16 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						var to = event.junzhu_name;
 						event.maxHp = player.maxHp;
 						player.reinit(player.name1, to, 4);
-						if (lib.skill[to]) game.trySkillAudio(to, player);
+						
+						// 修改君主亮将配音播放
+						var map = {
+							gz_jun_liubei: "shouyue",
+							gz_jun_zhangjiao: "hongfa",
+							gz_jun_sunquan: "jiahe",
+							gz_jun_caocao: "jianan"
+						};
+						game.trySkillAudio(map[to],player);
+						
 						player.showCharacter(0);
 						var group = lib.character[to][1];
 						var yelist = game.filterPlayer(function (current) {
@@ -21550,10 +21663,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-			gz_jun_liubei: { audio: true },
-			gz_jun_caocao: { audio: true },
-			gz_jun_sunquan: { audio: true },
-			gz_jun_zhangjiao: { audio: true },
 			_zhenfazhaohuan: {
 				enable: "phaseUse",
 				usable: 1,
@@ -23278,13 +23387,13 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			gz_jun_caocao: "君曹操",
 			gz_jun_caocao_prefix: "君",
 			jianan: "建安",
-			jianan_info: "君主技，只要此武将处于明置状态，你便拥有“五子良将纛”。",
+			jianan_info: "君主技，只要此武将牌处于明置状态，你便拥有“五子良将纛”。",
 			g_jianan: "五子良将纛",
 			wuziliangjiangdao: "五子良将纛",
 			wuziliangjiangdao_ab: "将纛",
 			wuziliangjiangdao_bg: "纛",
 			wuziliangjiangdao_info:
-				"魏势力角色的准备阶段，其可以弃置一张牌。若如此做，其选择一张暗置的武将牌（若没有，则选择一张暗置），然后获得下列技能中的一项（其他角色已有的技能无法选择）且不能明置选择的武将牌直到你的下个回合开始：〖突袭〗，〖巧变〗，〖骁果〗，〖节钺〗，〖断粮〗。",
+				"魏势力角色的准备阶段，其可以弃置一张牌。若如此做，其选择一张暗置的武将牌（若没有，则选择一张暗置），然后获得下列技能中的一项（场上所有角色已有的技能无法选择）且不能明置选择的武将牌直到你的下个回合开始：〖突袭〗，〖巧变〗，〖骁果〗，〖节钺〗，〖断粮〗。",
 			huibian: "挥鞭",
 			huibian_info:
 				"出牌阶段限一次，你可以选择一名魏势力角色和另一名已受伤的魏势力角色。若如此做，你对前者造成1点伤害，然后其摸两张牌，然后后者回复1点体力。",
@@ -23445,12 +23554,13 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				"锁定技，你装备区里的宝物牌不能被其他角色获得。结束阶段，若场上或弃牌堆有【定澜夜明珠】，则你摸一张牌，然后获得装备区里有【定澜夜明珠】角色的一张牌。",
 			jiahe: "嘉禾",
 			jiahe_info: "君主技，只要此武将牌处于明置状态，你便拥有“缘江烽火图”。",
+			jiahe_damage: "缘江烽火图",
 			jiahe_put: "烽火",
 			jiahe_put_info: "出牌阶段限一次，你可以将一张装备牌置于“缘江烽火图”上，称之为“烽火”。",
 			jiahe_skill: "缘江烽火图",
 			yuanjiangfenghuotu: "缘江烽火图",
 			yuanjiangfenghuotu_info:
-				"每名吴势力角色的出牌阶段限一次，该角色可以将一张装备牌置于“缘江烽火图”上，称之为“烽火”。<br>根据“烽火”的数量，所有吴势力角色可于其准备阶段选择并获得其中一个技能直到回合结束：一张以上：〖英姿〗；两张以上：〖好施〗；三张以上：〖涉猎〗；四张以上：〖度势〗；五张以上：可额外选择一项。<br>锁定技，当你受到【杀】或锦囊牌造成的伤害后，你将一张“烽火”置入弃牌堆。",
+				"①每名吴势力角色的出牌阶段限一次，该角色可以将一张装备牌置于“缘江烽火图”上，称之为“烽火”。②根据“烽火”的数量，所有吴势力角色可于其准备阶段选择并获得其中一个技能直到回合结束：一张及以上：〖英姿〗；两张及以上：〖好施〗；三张及以上：〖涉猎〗；四张及以上：〖度势〗；五张及以上：可额外选择一项。③锁定技，当你受到【杀】或锦囊牌造成的伤害后，你将一张“烽火”置入弃牌堆。",
 			yuanjiangfenghuotu_ab: "江图",
 			yuanjiangfenghuotu_bg: "图",
 			wuxin: "悟心",
@@ -23459,8 +23569,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			hongfa: "弘法",
 			hongfa_use: "天兵",
 			hongfa_respond: "天兵",
+			hongfa_hp: "黄巾天兵符",
 			hongfa_info:
-				"君主技，锁定技，此武将牌明置时，你获得“黄巾天兵符”；准备阶段，若没有“天兵”，你将牌堆顶的X张牌置于“黄巾天兵符”上，称为“天兵”（X为群势力角色的数量）。",
+				"君主技。①只要此武将牌处于明置状态，你便拥有“黄巾天兵符”。②准备阶段，若没有“天兵”，你将牌堆顶的X张牌置于“黄巾天兵符”上，称为“天兵”（X为群势力角色的数量）。",
 			wendao: "问道",
 			wendao_info:
 				"出牌阶段限一次，你可以弃置一张不为【太平要术】的红色牌，然后获得弃牌堆或场上的一张【太平要术】。",
@@ -23468,12 +23579,12 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			huangjintianbingfu_ab: "兵符",
 			huangjintianbingfu_bg: "符",
 			huangjintianbingfu_info:
-				"锁定技，当你计算群势力角色数时，每一张“天兵”均可视为一名群势力角色。<br>当你失去体力时，你可改为将一张“天兵”置入弃牌堆。<br>与你势力相同的角色可将一张“天兵”当作【杀】使用或打出。",
+				"①锁定技，当你计算群势力角色数时，每一张“天兵”均可视为一名群势力角色。②当你失去体力时，你可改为将一张“天兵”置入弃牌堆。③与你势力相同的角色可将一张“天兵”当作【杀】使用或打出。",
 			wuhujiangdaqi: "五虎将大旗",
 			wuhujiangdaqi_ab: "将旗",
 			wuhujiangdaqi_bg: "旗",
 			wuhujiangdaqi_info:
-				"存活的蜀势力角色的技能按以下规则改动：<br><strong>武圣</strong>：将“红色牌”改为“任意牌”<br><strong>咆哮</strong>：增加描述“你使用的【杀】无视其他角色的防具”<br><strong>龙胆</strong>：增加描述“你发动〖龙胆〗使用或打出牌时摸一张牌”<br><strong>烈弓</strong>：增加描述“你的攻击范围+1”<br><strong>铁骑</strong>：将“一张明置的武将牌”改为“所有明置的武将牌”",
+				"存活的蜀势力角色的技能按以下规则改动：<br><strong>武圣</strong>：将“红色牌”改为“任意牌”<br><strong>咆哮</strong>：增加描述“你使用的【杀】无视其他角色的防具”<br><strong>龙胆</strong>：增加描述“你发动〖龙胆〗使用或打出牌时摸一张牌”<br><strong>铁骑</strong>：将“一张明置的武将牌”改为“所有明置的武将牌”<br><strong>烈弓</strong>：增加描述“你的攻击范围+1”",
 			zhangwu: "章武",
 			zhangwu_info:
 				"锁定技。当【飞龙夺凤】进入弃牌堆或其他角色的装备区后，你获得之。当你不因使用而失去【飞龙夺风】时，你展示此牌，将此牌置于牌堆底并摸两张牌。",

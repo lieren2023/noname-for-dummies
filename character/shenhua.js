@@ -70,7 +70,7 @@ game.import("character", function () {
 		character: {
 			re_huangzhong: ["male", "shu", 4, ["xinliegong"]],
 			old_zhoutai: ["male", "wu", 4, ["gzbuqu"]],
-			old_caoren: ["male", "wei", 4, ["jushou"]],
+			old_caoren: ["male", "wei", 4, ["jushou"], ["die_audio:new_caoren"]],
 			re_xuhuang: ["male", "wei", 4, ["duanliang", "jiezi"]],
 			re_pangde: ["male", "qun", 4, ["mashu", "jianchu"]],
 			re_xiahouyuan: ["male", "wei", 4, ["xinshensu"]],
@@ -1463,6 +1463,7 @@ game.import("character", function () {
 				},
 				derivation: "rejizhi",
 			},
+			rejizhi_lukang: { audio: 1 },
 			drlt_jueyan1: {
 				mod: {
 					cardUsable(card, player, num) {
@@ -3337,7 +3338,6 @@ game.import("character", function () {
 				},
 			},
 			jianchu: {
-				shaRelated: true,
 				audio: 2,
 				audioname: ["re_pangde"],
 				trigger: { player: "useCardToPlayered" },
@@ -3863,7 +3863,6 @@ game.import("character", function () {
 				group: "kuanggu_check",
 			},
 			xinliegong: {
-				shaRelated: true,
 				mod: {
 					aiOrder(player, card, num) {
 						if (num > 0 && (card.name === "sha" || get.tag(card, "draw"))) return num + 6;
@@ -4173,6 +4172,7 @@ game.import("character", function () {
 			},
 			qiaobian: {
 				audio: 2,
+				audioname2: { gz_jun_caocao: "jianan_qiaobian" },
 				trigger: {
 					player: ["phaseJudgeBefore", "phaseDrawBefore", "phaseUseBefore", "phaseDiscardBefore"],
 				},
@@ -4501,7 +4501,6 @@ game.import("character", function () {
 				},
 			},
 			jiang: {
-				shaRelated: true,
 				audio: 2,
 				preHidden: true,
 				audioname: ["sp_lvmeng", "re_sunben", "re_sunce"],
@@ -5078,7 +5077,7 @@ game.import("character", function () {
 						)
 							continue;
 						let skills = lib.character[name][3].filter((skill) => {
-							const categories = get.skillCategoriesOf(skill);
+							const categories = get.skillCategoriesOf(skill, player);
 							return !categories.some((type) => lib.skill.rehuashen.bannedType.includes(type));
 						});
 						if (skills.length) {
@@ -5484,7 +5483,6 @@ game.import("character", function () {
 				},
 			},
 			lieren: {
-				shaRelated: true,
 				audio: 2,
 				audioname: ["boss_lvbu3", "ol_zhurong"],
 				trigger: { source: "damageSource" },
@@ -5526,6 +5524,9 @@ game.import("character", function () {
 			},
 			fangzhu: {
 				audio: 2,
+				audioname2: {
+					xin_simayi: "jilue_fangzhu",
+				},
 				trigger: { player: "damageEnd" },
 				direct: true,
 				preHidden: true,
@@ -5900,6 +5901,7 @@ game.import("character", function () {
 				audioname2: {
 					re_sunyi: "gzyinghun_re_sunyi",
 					tw_ol_sunjian: "yinghun_ol_sunjian",
+					boss_sunce: "yinghun_sunce"
 				},
 				mod: {
 					aiOrder(player, card, num) {
@@ -6320,7 +6322,7 @@ game.import("character", function () {
 				locked: true,
 				audio: 2,
 				audioname: ["boss_lvbu3"],
-				audioname2: { shen_simayi: "jilue_wansha" },
+				audioname2: { shen_simayi: "jilue_wansha", xin_simayi: "jilue_wansha" },
 				global: "wansha2",
 				trigger: { global: "dying" },
 				priority: 15,
@@ -7124,7 +7126,6 @@ game.import("character", function () {
 				zhuSkill: true,
 			},
 			mengjin: {
-				shaRelated: true,
 				audio: 2,
 				trigger: { player: "shaMiss" },
 				//priority:-1,
@@ -7501,7 +7502,6 @@ game.import("character", function () {
 				},
 			},
 			liegong: {
-				shaRelated: true,
 				audio: 2,
 				audioname: ["re_huangzhong"],
 				trigger: { player: "useCardToPlayered" },
@@ -8652,16 +8652,10 @@ game.import("character", function () {
 							var type = get.type(i);
 							if (type == "basic" || type == "trick") list.push([type, "", i]);
 							if (i == "sha") {
-								if (event.type != "phase")
-									if (
-										!event.filterCard(
-											get.autoViewAs({ name: i, nature: j }, "unsure"),
-											player,
-											event
-										)
-									)
-										continue;
-								for (var j of lib.inpile_nature) list.push(["基本", "", "sha", j]);
+								for (const j of lib.inpile_nature) {
+									if (event.type != "phase") if (!event.filterCard(get.autoViewAs({ name: i, nature: j }, "unsure"), player, event)) continue;
+									list.push(["基本", "", "sha", j]);
+								}
 							}
 						}
 						return ui.create.dialog("蛊惑", [list, "vcard"]);
@@ -9003,13 +8997,13 @@ game.import("character", function () {
 			caoren: ["caoren", "old_caoren", "sb_caoren", "new_caoren", "star_caoren"],
 			sp_caoren: ["sp_caoren", "jsp_caoren"],
 			xiahouyuan: ["re_xiahouyuan", "ol_xiahouyuan", "xiahouyuan"],
-			huangzhong: ["re_huangzhong", "ol_huangzhong", "sb_huangzhong", "huangzhong", "jsrg_huangzhong"],
-			weiyan: ["re_weiyan", "ol_weiyan", "weiyan"],
+			huangzhong: ["re_huangzhong", "ol_huangzhong", "sb_huangzhong", "huangzhong", "jsrg_huangzhong", "yj_huangzhong", "wuhujiang"],
+			weiyan: ["re_weiyan", "ol_weiyan", "weiyan", "huan_weiyan"],
 			zhoutai: ["zhoutai", "xin_zhoutai", "old_zhoutai"],
 			xiaoqiao: ["xiaoqiao", "ol_xiaoqiao", "re_xiaoqiao", "sb_xiaoqiao", "old_xiaoqiao"],
 			yuji: ["xin_yuji", "re_yuji", "yuji"],
 			zhangjiao: ["sp_zhangjiao", "re_zhangjiao", "sb_zhangjiao", "jsrg_zhangjiao", "zhangjiao"],
-			dianwei: ["dianwei", "ol_dianwei", "re_dianwei"],
+			dianwei: ["dianwei", "ol_dianwei", "re_dianwei", "dc_sb_dianwei"],
 			xunyu: ["xunyu", "ol_xunyu", "re_xunyu", "sb_xunyu"],
 			sp_zhugeliang: ["sp_zhugeliang", "ol_sp_zhugeliang", "re_sp_zhugeliang", "sb_sp_zhugeliang"],
 			pangtong: ["pangtong", "ol_pangtong", "re_pangtong", "ol_sb_pangtong", "sb_pangtong"],
@@ -9027,24 +9021,17 @@ game.import("character", function () {
 			yanwen: ["yanwen", "ol_yanwen", "re_yanwen"],
 			caopi: ["caopi", "re_caopi", "ps_caopi", "sb_caopi"],
 			xuhuang: ["re_xuhuang", "ol_xuhuang", "sb_xuhuang", "xuhuang"],
-			menghuo: ["menghuo", "re_menghuo", "sb_menghuo", "tw_menghuo"],
+			menghuo: ["menghuo", "re_menghuo", "sb_menghuo"],
 			zhurong: ["zhurong", "ol_zhurong", "re_zhurong", "sb_zhurong"],
-			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian"],
-			jiaxu: ["jiaxu", "re_jiaxu", "ns_jiaxu", "ps_jiaxu"],
+			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian", "star_sunjian"],
+			jiaxu: ["jiaxu", "re_jiaxu", "ns_jiaxu", "ps_jiaxu", "dc_sb_jiaxu"],
 			dongzhuo: ["dongzhuo", "ol_dongzhuo", "re_dongzhuo", "star_dongzhuo", "jsrg_dongzhuo", "sp_dongzhuo", "yj_dongzhuo"],
 			dengai: ["dengai", "ol_dengai", "re_dengai"],
-			sp_ol_zhanghe: ["sp_ol_zhanghe", "yj_zhanghe", "sp_zhanghe", "jsrg_zhanghe"],
-			jiangwei: [
-				"jiangwei",
-				"ol_jiangwei",
-				"re_jiangwei",
-				"ol_sb_jiangwei",
-				"sb_jiangwei",
-				"jsrg_jiangwei",
-			],
+			sp_ol_zhanghe: ["sp_ol_zhanghe", "yj_zhanghe", "sp_zhanghe", "jsrg_zhanghe", "huan_zhanghe"],
+			jiangwei: ["jiangwei", "ol_jiangwei", "re_jiangwei", "ol_sb_jiangwei", "sb_jiangwei", "jsrg_jiangwei", "huan_jiangwei"],
 			liushan: ["liushan", "ol_liushan", "re_liushan"],
 			sunce: ["sunce", "re_sunce", "re_sunben", "sb_sunce", "dc_sunce"],
-			zhangzhang: ["zhangzhang", "ol_zhangzhang", "re_zhangzhang"],
+			zhangzhang: ["zhangzhang", "ol_zhangzhang", "re_zhangzhang", "tw_zhangzhao", "tw_zhanghong", "star_zhangzhao"],
 			zuoci: ["zuoci", "re_zuoci"],
 			caiwenji: ["caiwenji", "ol_caiwenji", "re_caiwenji"],
 			xuyou: ["xuyou", "sp_xuyou", "jsrg_xuyou", "yj_xuyou", "junk_xuyou"],
@@ -9057,7 +9044,7 @@ game.import("character", function () {
 			],
 			chendao: ["chendao", "ns_chendao", "old_chendao"],
 			zhugezhan: ["zhugezhan", "old_zhugezhan"],
-			ol_lusu: ["re_lusu", "ol_lusu", "dc_sb_lusu"],
+			ol_lusu: ["re_lusu", "ol_lusu", "dc_sb_lusu", "xia_lusu"],
 			zhanghe: ["zhanghe", "re_zhanghe", "sb_zhanghe"],
 			yl_luzhi: ["yl_luzhi", "jsrg_yl_luzhi", "sb_yl_luzhi", "tw_yl_luzhi"],
 			sunliang: ["sunliang", "xin_sunliang"],

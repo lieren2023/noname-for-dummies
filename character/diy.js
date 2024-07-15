@@ -127,6 +127,7 @@ game.import("character", function () {
 				["qun", "die_audio:shen_zhangjiao"],
 			],
 			junk_guanyu: ["male", "shu", 4, ["olsbfumeng", "olsbguidao"]],
+			junk_liuyan: ["male", "qun", "4/6", ["olpianan", "olyinji", "olkuisi"]],
 		},
 		characterFilter: {
 			ns_duangui(mode) {
@@ -213,20 +214,7 @@ game.import("character", function () {
 				],
 				diy_default: ["diy_yuji", "diy_caiwenji", "diy_lukang", "diy_zhenji", "old_majun"],
 				diy_noname: ["noname"],
-				diy_trashbin: [
-					"junk_guanyu",
-					"junk_zhangjiao",
-					"old_jiakui",
-					"ol_guohuai",
-					"junk_zhangrang",
-					"old_bulianshi",
-					"ol_maliang",
-					"junk_liubei",
-					"junk_huangyueying",
-					"junk_lidian",
-					"junk_duanwei",
-					"junk_xuyou",
-				],
+				diy_trashbin: ["junk_guanyu", "junk_zhangjiao", "old_jiakui", "ol_guohuai", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan"],
 			},
 		},
 		characterIntro: {
@@ -1233,6 +1221,7 @@ game.import("character", function () {
 			},
 			noname_duocai2: { charlotte: true },
 			nsbizhao: {
+				unique: true,
 				trigger: { player: "showCharacterAfter" },
 				forced: true,
 				hiddenSkill: true,
@@ -1586,6 +1575,9 @@ game.import("character", function () {
 						}).length > 1
 					)
 						player.storage.nsfuzhou_draw = true;
+				},
+				ai: {
+					combo: "nsfuzhou",
 				},
 				derivation: ["nsfuzhou_damage", "nsfuzhou_draw"],
 			},
@@ -4049,18 +4041,13 @@ game.import("character", function () {
 					var check = function (list) {
 						for (var i = 0; i < list.length; i++) {
 							var info = lib.skill[list[i]];
-							if (info && info.shaRelated) return true;
+							if (!info) continue;
+							if (info.shaRelated) return true;
 							if (info && info.trigger) {
 								for (var j in info.trigger) {
 									var cond = info.trigger[j];
 									if (typeof cond == "string") {
 										cond = [cond];
-									}
-									if (j == "player" || j == "global") {
-										if (cond.indexOf("shaBefore") != -1) return true;
-										if (cond.indexOf("shaBegin") != -1) return true;
-										if (cond.indexOf("shaEnd") != -1) return true;
-										if (cond.indexOf("shaAfter") != -1) return true;
 									}
 									if (j == "source" || j == "global") {
 										if (cond.indexOf("damageBefore") != -1) return true;
@@ -4073,6 +4060,8 @@ game.import("character", function () {
 									}
 								}
 							}
+							if (info.shaRelated === false) return false;
+							if (get.skillInfoTranslation(list[i], player).includes("【杀】")) return true;
 						}
 						return false;
 					};
@@ -4524,6 +4513,7 @@ game.import("character", function () {
 				},
 			},
 			nschangshi: {
+				mode: ["identity"],
 				enable: "phaseUse",
 				usable: 1,
 				filter(event, player) {
@@ -4539,17 +4529,24 @@ game.import("character", function () {
 				multitarget: true,
 				selectTarget: 2,
 				content() {
-					var tmp = targets[0].hp;
-					targets[0].hp = targets[1].hp;
-					targets[1].hp = tmp;
-					targets[0].update();
-					targets[1].update();
-					if (Math.abs(targets[0].hp - targets[1].hp) == 1) {
-						player.loseHp();
-					}
-					//else{
-					//player.die();
-					//}
+					game.broadcastAll(
+						function (player, targets) {
+							player.showIdentity();
+							var tmp = targets[0].hp;
+							targets[0].hp = targets[1].hp;
+							targets[1].hp = tmp;
+							targets[0].update();
+							targets[1].update();
+							if (Math.abs(targets[0].hp - targets[1].hp) == 1) {
+								player.loseHp();
+							}
+							//else{
+							//player.die();
+							//}
+						},
+						player,
+						targets
+					);
 				},
 				ai: {
 					order: 10,
@@ -4573,6 +4570,7 @@ game.import("character", function () {
 				},
 			},
 			nsjianning: {
+				mode: ["identity"],
 				enable: "phaseUse",
 				usable: 1,
 				filter(event, player) {
@@ -4583,6 +4581,11 @@ game.import("character", function () {
 				},
 				content() {
 					"step 0";
+					if (!player.identityShown) {
+						game.broadcastAll(function (player) {
+							player.showIdentity();
+						}, player);
+					}
 					player.swapHandcards(target);
 					"step 1";
 					target.damage();
@@ -4612,6 +4615,7 @@ game.import("character", function () {
 				},
 			},
 			nscuanquan: {
+				mode: ["identity"],
 				init(player) {
 					player.storage.nscuanquan = 0;
 				},
@@ -4622,12 +4626,7 @@ game.import("character", function () {
 				animationColor: "thunder",
 				trigger: { player: "damageAfter" },
 				filter(event, player) {
-					return (
-						player.identity == "zhong" &&
-						player.storage.nscuanquan == 3 &&
-						game.zhu &&
-						game.zhu.isZhu
-					);
+					return player.identity == "zhong" && player.storage.nscuanquan == 3 && game.zhu && game.zhu.isZhu;
 				},
 				group: "nscuanquan_count",
 				subSkill: {
@@ -4644,16 +4643,19 @@ game.import("character", function () {
 				},
 				content() {
 					player.awakenSkill("nscuanquan");
-					var tmp = player.maxHp;
-					player.identity = "zhu";
-					player.maxHp = game.zhu.hp;
-					player.showIdentity();
-					player.update();
-					game.zhu.identity = "zhong";
-					game.zhu.maxHp = tmp;
-					game.zhu.showIdentity();
-					game.zhu.update();
-					game.zhu = player;
+					game.broadcastAll(function (player) {
+						var tmp = player.maxHp;
+						player.identity = "zhu";
+						player.maxHp = game.zhu.hp;
+						player.showIdentity();
+						player.update();
+						game.zhu.identity = "zhong";
+						game.zhu.maxHp = tmp;
+						game.zhu.showIdentity();
+						game.zhu.update();
+						game.zhu = player;
+					}, player);
+					event.trigger("zhuUpdate");
 				},
 			},
 			nstianji: {
@@ -4928,6 +4930,9 @@ game.import("character", function () {
 					},
 				},
 				group: "nsshijun_hp",
+				ai: {
+					halfneg: true,
+				},
 			},
 			nszhaoxin: {
 				mark: true,
@@ -4948,6 +4953,9 @@ game.import("character", function () {
 							return "无手牌";
 						}
 					},
+				},
+				ai: {
+					neg: true,
 				},
 			},
 			nsxiuxin: {
@@ -5998,6 +6006,19 @@ game.import("character", function () {
 				subSkill: {
 					used: {},
 				},
+				ai: {
+					effect: {
+						target(card, player, target) {
+							if (get.tag(card, "save")) {
+								if (_status.currentPhase == player) return 0;
+								if (target.maxHp > 1 && player != target) return 0;
+							}
+							if (get.tag(card, "recover")) {
+								if (_status.currentPhase == player) return 0;
+							}
+						},
+					},
+				}
 			},
 			nsshishou: {
 				trigger: { player: "loseEnd" },
@@ -6029,17 +6050,7 @@ game.import("character", function () {
 					},
 				},
 				ai: {
-					effect: {
-						target(card, player, target) {
-							if (get.tag(card, "save")) {
-								if (_status.currentPhase == player) return 0;
-								if (target.maxHp > 1 && player != target) return 0;
-							}
-							if (get.tag(card, "recover")) {
-								if (_status.currentPhase == player) return 0;
-							}
-						},
-					},
+					neg: true,
 				},
 			},
 			nsduijue: {
@@ -6106,12 +6117,16 @@ game.import("character", function () {
 				},
 			},
 			nsshuangxiong: {
+				unique: true,
 				trigger: { player: "juedouBegin", target: "juedouBegin" },
 				check(event, player) {
 					return player.isTurnedOver();
 				},
 				content() {
 					player.turnOver();
+				},
+				ai: {
+					combo: "nsduijue"
 				},
 			},
 			nsguanyong: {
@@ -6254,10 +6269,6 @@ game.import("character", function () {
 				},
 				direct: true,
 				priority: -0.1,
-				ai: {
-					maixie: true,
-					maixie_hp: true,
-				},
 				content() {
 					"step 0";
 					event.num = trigger.num;
@@ -6339,7 +6350,9 @@ game.import("character", function () {
 					}
 				},
 				ai: {
-					combo: "nshuanxian"
+					maixie: true,
+					maixie_hp: true,
+					combo: "nshuanxian",
 				},
 			},
 			nsshoudao: {
@@ -6938,6 +6951,9 @@ game.import("character", function () {
 					"step 2";
 					trigger.cancel();
 				},
+				ai: {
+					combo: "jugong",
+				},
 			},
 			nsxinsheng: {
 				trigger: { source: "damageEnd" },
@@ -7501,6 +7517,7 @@ game.import("character", function () {
 				},
 				ai: {
 					expose: 0.2,
+					combo: "zhucheng",
 				},
 			},
 			zhucheng: {
@@ -8031,16 +8048,31 @@ game.import("character", function () {
 				inherit: "jianxiong",
 			},
 			diyjianxiong: {
-				mode: ["identity"],
+				mode: ["identity", "guozhan"],
 				trigger: { global: "dieBefore" },
 				forced: true,
 				filter(event, player) {
-					return event.player != game.zhu && _status.currentPhase == player;
+					if (_status.currentPhase !== player) return false;
+					if (get.mode() === "identity") return event.player != game.zhu;
+					return get.mode() === "guozhan" && event.player.isFriendOf(player);
 				},
 				content() {
-					trigger.player.identity = "fan";
-					trigger.player.setIdentity("fan");
-					trigger.player.identityShown = true;
+					game.broadcastAll(
+						function (target, group) {
+							if (get.mode() === "identity") {
+								target.identity = group;
+								target.setIdentity(group);
+								target.identityShown = true;
+							} else {
+								target.trueIdentity = lib.group
+									.slice(0)
+									.filter(i => group !== i)
+									.randomGet();
+							}
+						},
+						trigger.player,
+						get.mode() === "identity" ? "fan" : player.getGuozhanGroup()
+					);
 				},
 			},
 			nsshuaiyan: {
@@ -8691,6 +8723,7 @@ game.import("character", function () {
 			diy_huangzhong: "黄汉升",
 			diy_xuhuang: "徐公明",
 			diy_dianwei: "新典韦",
+			diy_dianwei_prefix: "新",
 			diy_weiyan: "魏文长",
 			xicai: "惜才",
 			diyjianxiong: "奸雄",
@@ -9077,8 +9110,7 @@ game.import("character", function () {
 				"出牌阶段限一次，你可以失去1点体力并选择一名其他角色，弃置该角色的一张牌。若此牌：为基本牌，你可以令一至X名角色各摸一张牌；不为基本牌，于此回合内：你的进攻距离+X，且你使用【杀】的额外目标数上限+X。（X为你已损失的体力值）",
 			zhucheng: "筑城",
 			zhucheng2: "筑城",
-			zhucheng_info:
-				"①结束阶段开始时，若没有“筑”，你可以将牌堆顶的X张牌置于你的武将牌上〔称为“筑”〕（X为你已损失的体力值与1中的较大值），否则你可以获取所有“筑”。②当你成为【杀】的目标时，若有“筑”，你可以令此杀的使用者弃置X张牌（X为“筑”的数量），否则杀对你无效。",
+			zhucheng_info: "①结束阶段开始时，若没有“筑”，你可以将牌堆顶的X张牌置于你的武将牌上〔称为“筑”〕（X为你已损失的体力值与1中的较大值），否则你可以获取所有“筑”。②当你成为【杀】的目标时，若有“筑”，你可以令此【杀】的使用者弃置X张牌（X为“筑”的数量），否则此【杀】对你无效。",
 			duoqi: "夺气",
 			duoqi_info:
 				"当一名角色于除你之外的角色的出牌阶段内因弃置而失去牌后，你可以移去一张“筑”，并结束此出牌阶段。",
@@ -9262,6 +9294,8 @@ game.import("character", function () {
 				"准备阶段，若“黄”数大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得任意张点数之和为36的牌（若牌堆没有点数和为36的组合则获得牌堆顶点数和刚好超过36的牌组）。",
 			junk_guanyu: "旧谋关羽",
 			junk_guanyu_prefix: "旧谋",
+			junk_liuyan: "OL刘焉",
+			junk_liuyan_prefix: "OL",
 
 			diy_tieba: "吧友设计",
 			diy_xushi: "玩点论杀·虚实篇",

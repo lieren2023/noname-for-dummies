@@ -1920,7 +1920,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					let name=_status.characterlist[i];
 					if(name.indexOf('zuoci')!=-1||name.indexOf('key_')==0||name.indexOf('sp_key_')==0||lib.skill.rehuashen.banned.includes(name)||player.storage.huashen.owned[name]) continue;
 					let skills=lib.character[name][3].filter(skill=>{
-						const categories=get.skillCategoriesOf(skill);
+						const categories = get.skillCategoriesOf(skill, player);
 						return !categories.some(type=>lib.skill.rehuashen.bannedType.includes(type));
 					})
 					if(skills.length){
@@ -2459,6 +2459,9 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				player.loseMaxHp();
 				player.gain(player.getExpansions('chuyuan'),'gain2','fromStorage');
 			},
+			ai: {
+				combo: "chuyuan",
+			},
 		},
 		tianxing:{
 			audio:2,
@@ -2487,6 +2490,9 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				});
 				'step 2'
 				player.addSkills(result.control);
+			},
+			ai: {
+				combo: "chuyuan",
 			},
 		},
 		
@@ -3572,7 +3578,6 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					else player.draw(2);
 				}
 			},
-			shaRelated: true,
 			ai: {
 				ignoreSkill: true,
 				skillTagFilter: function (player, tag, arg) {
@@ -3581,14 +3586,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					}
 					if (!arg || arg.isLink || !arg.card || arg.card.name != "sha") return false;
 					if (!arg.target || get.attitude(player, arg.target) >= 0) return false;
-					if (
-						!arg.skill ||
-						!lib.skill[arg.skill] ||
-						lib.skill[arg.skill].charlotte ||
-						get.is.locked(arg.skill) ||
-						!arg.target.getSkills(true, false).includes(arg.skill)
-					)
-						return false;
+					if (!arg.skill || !lib.skill[arg.skill] || lib.skill[arg.skill].charlotte || lib.skill[arg.skill].persevereSkill || get.is.locked(arg.skill) || !arg.target.getSkills(true, false).includes(arg.skill)) return false;
 				},
 				directHit_ai: true,
 			},
@@ -3806,6 +3804,114 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				}
 			}
 		},
+		
+		// 归心（junkguixin）技能显示排序
+		//魏武帝
+		junkguixin: {
+			forbid: ["guozhan"],
+			init: function () {
+				if (!_status.junkguixin) {
+					_status.junkguixin = [];
+					if (!_status.characterlist) {
+						lib.skill.pingjian.initList();
+					}
+					for (const name of _status.characterlist) {
+						if (!lib.character[name][3]) continue;
+						_status.junkguixin.addArray(
+							lib.character[name][3].filter((skill) => {
+								var info = get.info(skill);
+								return info && info.zhuSkill && (!info.ai || !info.ai.combo);
+							})
+						);
+					}
+				}
+			},
+			unique: true,
+			audio: "guixin",
+			trigger: { player: "phaseEnd" },
+			direct: true,
+			content: function () {
+				"step 0";
+				var controls = ["获得技能", "修改势力", "cancel2"];
+				if (!_status.junkguixin.some((skill) => !player.hasSkill(skill, null, false, false)))
+					controls.shift();
+				player
+					.chooseControl(controls)
+					.set("prompt", get.prompt2("junkguixin"))
+					.set("ai", () => (_status.event.controls.length == 3 ? "获得技能" : "cancel2"));
+				"step 1";
+				if (result.control != "cancel2") {
+					var next = game.createEvent("junkguixinx");
+					next.player = player;
+					next.setContent(lib.skill.junkguixin["content_" + result.control]);
+				}
+			},
+			content_获得技能: function () {
+				"step 0";
+				var list = _status.junkguixin
+					.slice()
+					.filter((skill) => !player.hasSkill(skill, null, false, false));
+				if (!list.length) {
+					event.finish();
+					return;
+				}
+				// 排序（按技能名翻译的拼音）
+				list.sort(function (a, b) {
+					var aa = get.pinyin(get.translation(a)),
+						bb = get.pinyin(get.translation(b));
+					if (aa > bb) return 1;
+					if (aa < bb) return -1;
+					return 0;
+				});
+				list = list.map((skill) => {
+					return [
+						skill,
+						'<div class="popup text" style="width:calc(100% - 10px);display:inline-block"><div class="skill">【' +
+							get.translation(skill) +
+							"】</div><div>" +
+							lib.translate[skill + "_info"] +
+							"</div></div>",
+					];
+				});
+				player
+					.chooseButton(["归心：选择获得一个主公技", [list, "textbutton"]], true)
+					.set("ai", (button) => 1 + Math.random());
+				"step 1";
+				if (result.bool) {
+					player.logSkill("junkguixin");
+					player.addSkills(result.links[0]);
+				}
+			},
+			content_修改势力: function () {
+				"step 0";
+				player
+					.chooseTarget(
+						"请选择【归心】的目标",
+						"更改一名其他角色的势力",
+						lib.filter.notMe,
+						true
+					)
+					.set("ai", (target) => 1 + Math.random());
+				"step 1";
+				if (result.bool) {
+					var target = result.targets[0];
+					event.target = target;
+					player.logSkill("junkguixin", target);
+					var list = lib.group.slice();
+					list.removeArray(["shen", target.group]);
+					player
+						.chooseControl(list)
+						.set("prompt", "请选择" + get.translation(target) + "变更的势力")
+						.set("ai", () => _status.event.controls.randomGet());
+				} else event.finish();
+				"step 2";
+				if (result.control) {
+					player.popup(get.translation(result.control + "2"));
+					target.changeGroup(result.control);
+				}
+			},
+		},
+		
 		
 	};
 	

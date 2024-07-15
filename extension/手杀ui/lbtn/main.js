@@ -370,7 +370,8 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
 	    },
       
       paixu: function() {
-        if (!game.me) return;
+		// 适配新版本体
+        if (!game.me || game.me.hasSkillTag("noSortCard")) return;
         var cards = game.me.getCards('h').reverse();
         if (!cards.length) return;
 

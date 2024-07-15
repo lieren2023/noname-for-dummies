@@ -2343,6 +2343,9 @@ game.import("character", function () {
 						if (player.getEquips(5).length) return distance - 1;
 					},
 				},
+				ai: {
+					combo: "chexuan"
+				},
 			},
 			cheliji_sichengliangyu: {
 				trigger: { global: "phaseJieshuBegin" },

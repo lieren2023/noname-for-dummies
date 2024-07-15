@@ -5,7 +5,7 @@ import { game } from "../game/index.js";
 import { _status } from "../status/index.js";
 import { ui } from "../ui/index.js";
 import { gnc } from "../gnc/index.js";
-import { userAgent, nonameInitialized } from "../util/index.js";
+import { userAgent, nonameInitialized, AsyncFunction } from "../util/index.js";
 import * as config from "../util/config.js";
 import { promiseErrorHandlerMap } from "../util/browser.js";
 import { importCardPack, importCharacterPack, importExtension, importMode } from "./import.js";
@@ -1104,7 +1104,9 @@ async function setOnError() {
 		game.print(str);
 		if (promiseErrorHandler.onErrorFinish) promiseErrorHandler.onErrorFinish();
 		// @ts-ignore
-		if (!lib.config.errstop) {
+		if (!lib.config.errstop && _status && _status.event) {
+			if (_status.event.content instanceof AsyncFunction ||
+				Array.isArray(_status.event.contents)) return;
 			_status.withError = true;
 			game.loop();
 		}

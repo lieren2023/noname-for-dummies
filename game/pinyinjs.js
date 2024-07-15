@@ -8,6 +8,8 @@ var pinyin_dict_polyphone = {
 	// START
 	// 名词
 	"用间": " jiàn",
+	"少阴": "shào ",
+	"少阳": "shào ",
 	
 	// 武将名
 	"乐进": "yuè ",
@@ -41,6 +43,7 @@ var pinyin_dict_polyphone = {
 	
 	"凯撒": " sà",
 	
+	"尉迟": "yù ",
 	"乐无异": "yuè ",
 	"端蒙": " méng",
 	"妹喜": "mò ",
@@ -63,6 +66,8 @@ var pinyin_dict_polyphone = {
 	"卡玛": "kǎ ",
 	"梼杌": "táo ",
 	"亚煞极": " shà ",
+	"枣祗任峻": "  rén ",
+	"加尔鲁什": "   shí",
 	
 	"库特莉亚芙卡": "     kǎ",
 	"露娜": "lù ",
@@ -127,6 +132,7 @@ var pinyin_dict_polyphone = {
 	"辟境": "pì ",
 	"斗阵": "dòu ",
 	"斗缠": "dòu ",
+	"覆斗": " dòu",
 	"冯河": "píng ",
 	"势吓": " hè",
 	"虚吓": " hè",
@@ -154,6 +160,8 @@ var pinyin_dict_polyphone = {
 	"膴仕": "wǔ ",
 	"骜肆": "ào ",
 	"犷骜": " ào",
+	"媵予": " yǔ",
+	"天予": " yǔ",
 	
 	"蒙斥": "méng ",
 	
@@ -161,7 +169,7 @@ var pinyin_dict_polyphone = {
 	"血凰": "xuè ",
 	"血戮": "xuè ",
 	"血刃": "xuè ",
-	"血契": "xuè ",
+	"血契": "xuè qì",
 	"血逐": "xuè ",
 	"血咒": "xuè ",
 	"血殇": "xuè ",
@@ -172,7 +180,7 @@ var pinyin_dict_polyphone = {
 	"劫行": " xíng",
 	"割发": " fà",
 	"落梅": "luò ",
-	"落石": "luò ",
+	"落石": "luò shí",
 	"落刀": "luò ",
 	"星落": " luò",
 	"奈落": " luò",
@@ -186,6 +194,8 @@ var pinyin_dict_polyphone = {
 	"冥煞": " shà",
 	"虎煞": " shà",
 	"煞魂": "shà ",
+	
+	"四乘粮舆": " shèng  ",
 	// END
 	// 增补
 	"撒贝宁": "sà  ",

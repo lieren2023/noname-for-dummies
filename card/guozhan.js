@@ -1831,7 +1831,9 @@ game.import("card", function () {
 				mod: {
 					maxHandcard: function (player, num) {
 						if (get.mode() == "guozhan") {
-							if (player.hasSkill("huangjintianbingfu")) {
+							// if (player.hasSkill("hongfa")) {
+							// 村规
+							if (player.hasSkill("hongfa", null, null, false)) {
 								num += player.getExpansions("huangjintianbingfu").length;
 							}
 							return (

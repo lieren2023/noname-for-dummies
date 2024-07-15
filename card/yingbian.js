@@ -61,7 +61,7 @@ game.import("card", function () {
 						var base = 0;
 						if (get.cardtag(card, "yingbian_all")) {
 							if (
-								targets.filter(function (current) {
+								targets.some(function (current) {
 									var att = get.attitude(player, current);
 									if (att <= 0)
 										return (
@@ -74,7 +74,7 @@ game.import("card", function () {
 											return get.position(card) == "j" || get.value(card, current) <= 0;
 										}) > 1
 									);
-								}).length
+								})
 							)
 								base += 6;
 						}
@@ -138,13 +138,11 @@ game.import("card", function () {
 									? -1.5
 									: 1.5;
 							var js = target.getCards("j");
-							if (js.length) {
-								var jj = js[0].viewAs ? { name: js[0].viewAs } : js[0];
-								if (js.length == 1 && get.effect(target, jj, target, player) >= 0) {
-									return -1.5;
-								}
-								return 3;
-							}
+							if (js.length && js.some(i => {
+								let cardj = i.viewAs ? { name: i.viewAs } : i;
+								if (cardj.name == "xumou_jsrg") return false;
+								return get.effect(target, cardj, target, player) < 0;
+							})) return 3;
 							return -1.5;
 						},
 						player: function (player, target) {
@@ -159,13 +157,11 @@ game.import("card", function () {
 							}
 							if (get.attitude(player, target) > 1) {
 								var js = target.getCards("j");
-								if (js.length) {
-									var jj = js[0].viewAs ? { name: js[0].viewAs } : js[0];
-									if (js.length == 1 && get.effect(target, jj, target, player) >= 0) {
-										return 0;
-									}
-									return 1;
-								}
+								if (js.length && js.some(i => {
+									let cardj = i.viewAs ? { name: i.viewAs } : i;
+									if (cardj.name == "xumou_jsrg") return false;
+									return get.effect(target, cardj, target, player) < 0;
+								})) return 1;
 								return 0;
 							}
 							return 1;
