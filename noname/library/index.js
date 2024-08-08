@@ -38,7 +38,7 @@ export class Library {
 	updateURLS = updateURLs;
 	updateURL = updateURLs.github;
 	mirrorURL = updateURLs.coding;
-	hallURL = "47.99.105.222";
+	hallURL = "";
 	assetURL = assetURL;
 	userAgent = userAgent;
 	characterDefaultPicturePath = characterDefaultPicturePath;
@@ -103,6 +103,11 @@ export class Library {
 	onresize = [];
 	onphase = [];
 	onwash = [];
+	onround = [
+		function roundSkillCheck(event) {
+			return !event.skill;
+		},
+	];
 	onover = [];
 	ondb = [];
 	ondb2 = [];
@@ -1129,7 +1134,7 @@ export class Library {
 							delete window.game;
 							delete window.ui;
 							delete window.get;
-							delete window.ai;
+							delete window.nonameAI;
 							delete window.lib;
 							delete window._status;
 						}
@@ -8683,7 +8688,7 @@ export class Library {
 			window.game = game;
 			window.ui = ui;
 			window.get = get;
-			window.ai = ai;
+			window.nonameAI = ai;
 			window.lib = lib;
 			window._status = _status;
 		},
@@ -10368,7 +10373,7 @@ export class Library {
 						player == target))
 			)
 				return false;
-			return get.type(card, false) != "equip" || target.canEquip(card, true);
+			return get.type(card, null, target) != "equip" || target.canEquip(card, true);
 		},
 		/**
 		 * Check if the card is recastable
@@ -12032,6 +12037,27 @@ export class Library {
 				trigger.player.loseMaxHp(trigger.num).source = player;
 			},
 		},
+		_doublegroup_choice: {
+			trigger: {
+				global: "gameStart",
+				player: "enterGame",
+			},
+			firstDo: true,
+			forced: true,
+			popup: false,
+			priority: 25,
+			charlotte: true,
+			filter: function (event, player) {
+				return get.mode() != "guozhan" && get.is.double(player.name1) && !player._groupChosen;
+			},
+			content: function () {
+				"step 0";
+				player._groupChosen = true;
+				player.chooseControl(get.is.double(player.name1, true)).set("prompt", "请选择你的势力");
+				"step 1";
+				player.changeGroup(result.control);
+			},
+		},
 		aozhan: {
 			charlotte: true,
 			mod: {
@@ -12610,7 +12636,11 @@ export class Library {
 							}
 							return 1;
 						},
-						ai2: get.effect_use,
+						ai2: function (target) {
+							let effect_use = get.effect_use(target);
+							if (effect_use <= 0) return effect_use;
+							return get.effect(target);
+						},
 						type: "dying",
 						targetRequired: true,
 						dying: event.dying,
@@ -14501,6 +14531,36 @@ export class Library {
 			},
 		],
 		[
+			"玄",
+			{
+				color: "#000000",
+				nature: "metalmm",
+			},
+		],
+		[
+			"荆",
+			{
+				color: "#00ff00",
+				nature: "firemm",
+			},
+		],
+		[
+			"荆神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("荆")}${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"魂",
+			{
+				color: "#ffff99",
+				nature: "firemm",
+			},
+		],
+		[
 			"幻",
 			{
 				color: "#ffff99",
@@ -14511,13 +14571,43 @@ export class Library {
 			"标",
 			{
 				color: "#912cee",
-				nature: "purple",
+				nature: "metalmm",
+			},
+		],
+		[
+			"牢",
+			{
+				color: "#EEEE00",
+				nature: "black",
+			},
+		],
+		[
+			"牢神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("牢")}${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"鼎",
+			{
+				color: "#ffccff",
+				nature: "black",
 			},
 		],
 		[
 			"少阴",
 			{
 				color: "#fffc2c",
+				nature: "metalmm",
+			},
+		],
+		[
+			"太阴",
+			{
+				color: "#f3652d",
 				nature: "metalmm",
 			},
 		],

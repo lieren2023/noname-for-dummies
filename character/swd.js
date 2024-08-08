@@ -64,7 +64,7 @@ game.import("character", function () {
 			// swd_wushi:['male','wei',3,['zhoufu','yingbin','xuying']],
 			// swd_lanmoshen:['female','wei',3,['bingjian','lieren']],
 			swd_huanglei: ["male", "qun", 3, ["jilve", "gongshen", "gaizao"]],
-			// swd_libai:['female','qun',3,['miaobi','zhexian']],
+			// swd_libai:['male','qun',3,['miaobi','zhexian']],
 			swd_kendi: ["male", "qun", 3, ["zhanxing", "kbolan"]],
 			// swd_lijing:['male','qun',4,['tianyi','zhuhai']],
 			swd_lilian: ["female", "qun", 3, ["swd_wuxie", "lqingcheng"]],
@@ -2319,18 +2319,14 @@ game.import("character", function () {
 				},
 			},
 			bingfeng2: {
+				mark: true,
+				marktext: "封",
+				intro: {
+					content: "不能使用或打出手牌"
+				},
 				mod: {
-					cardEnabled: function () {
-						return false;
-					},
-					cardUsable: function () {
-						return false;
-					},
-					cardRespondable: function () {
-						return false;
-					},
-					cardSavable: function () {
-						return false;
+					cardEnabled2: function (card) {
+						if (get.position(card) == "h") return false;
 					},
 				},
 				trigger: { player: "turnOverAfter" },
@@ -5160,22 +5156,17 @@ game.import("character", function () {
 				},
 			},
 			shejie2: {
-				unique: true,
+				mark: true,
+				marktext: "界",
+				intro: {
+					content: "不能使用或打出手牌直到下一回合开始"
+				},
 				trigger: { player: "phaseBegin" },
 				forced: true,
 				priority: 10,
 				mod: {
-					cardEnabled: function () {
-						return false;
-					},
-					cardUsable: function () {
-						return false;
-					},
-					cardRespondable: function () {
-						return false;
-					},
-					cardSavable: function () {
-						return false;
+					cardEnabled2: function (card) {
+						if (get.position(card) == "h") return false;
 					},
 				},
 				content: function () {
@@ -8536,9 +8527,10 @@ game.import("character", function () {
 				},
 				ai: {
 					effect: {
-						target: function (card, player, target, current) {
-							if (card.name == "sha" && get.color(card) == "red") {
-								return [1, -2];
+						player: function (card, player, target, current) {
+							if (get.tag(card, "damage") && !player.hasSkill("xiaomoyu2")) {
+								if (player.isDamaged()) return [1, 1.6];
+								return [1, 0.8];
 							}
 						},
 					},
@@ -9037,11 +9029,50 @@ game.import("character", function () {
 					}
 				},
 			},
+			swd_xiuluo: {
+				trigger: { player: "phaseZhunbeiBegin" },
+				filter: function (event, player) {
+					return player.countCards("j") > 0;
+				},
+				direct: true,
+				content: function () {
+					var next = player.discardPlayerCard(
+						player,
+						2,
+						"hj",
+						"是否一张手牌来弃置一张花色相同的判定牌？"
+					);
+					next.filterButton = function (button) {
+						var card = button.link;
+						if (!lib.filter.cardDiscardable(card, player)) return false;
+						if (ui.selected.buttons.length == 0) return true;
+						if (get.position(ui.selected.buttons[0].link) == "h") {
+							if (get.position(card) != "j") return false;
+						}
+						if (get.position(ui.selected.buttons[0].link) == "j") {
+							if (get.position(card) != "h") return false;
+						}
+						return get.suit(card) == get.suit(ui.selected.buttons[0].link);
+					};
+					next.ai = function (button) {
+						var card = button.link;
+						if (get.position(card) == "h") {
+							return 11 - get.value(card);
+						}
+						if (card.name == "lebu") return 5;
+						if (card.name == "bingliang") return 4;
+						if (card.name == "guiyoujie") return 3;
+						return 2;
+					};
+					next.logSkill = "swd_xiuluo";
+				},
+			},
 			mohua2: {
 				unique: true,
 				trigger: { player: "dying" },
 				priority: 10,
 				forced: true,
+				derivation: ["moyan", "miedao", "jifeng", "swd_xiuluo"],
 				content: function () {
 					"step 0";
 					player.removeSkill("miles_xueyi");
@@ -9098,6 +9129,7 @@ game.import("character", function () {
 				priority: 10,
 				forced: true,
 				mode: ["identity"],
+				derivation: ["wuying", "xiehun", "jumo"],
 				content: function () {
 					"step 0";
 					var skills = ["wuying", "xiehun", "jumo"];
@@ -10483,7 +10515,7 @@ game.import("character", function () {
 			yudun_info: "锁定技，你无法使用锦囊牌；你可以将两张锦囊牌当作一张不计入出杀次数的【杀】使用。",
 			bingfeng: "冰封",
 			bingfeng2: "冰封",
-			bingfeng2_info: "不能使用或打出手牌。",
+			// bingfeng2_info: "不能使用或打出手牌。",
 			bingfeng_info:
 				"限定技，出牌阶段，你可以指定至多三个目标与其一同翻面，且处于翻面状态时不能使用或打出手牌；若如此做，你失去技能玄咒并减少1点体力上限。",
 			guozao: "聒噪",
@@ -10649,7 +10681,7 @@ game.import("character", function () {
 			shejie: "设界",
 			shejie2: "设界",
 			shejie_info: "每当你受到一次伤害，可以令伤害来源不能使用或打出其手牌，直到其下一回合开始。",
-			shejie2_info: "不能使用或打出手牌，直到下一回合开始。",
+			// shejie2_info: "不能使用或打出手牌，直到下一回合开始。",
 			yinyue: "引月",
 			yinyue_info:
 				"每当有一名角色回复一次体力，你可以令其摸一张牌，若该角色不是你且你的手牌数不大于该角色，你也摸一张牌。",
@@ -10881,7 +10913,7 @@ game.import("character", function () {
 				"准备阶段，若你的体力值小于上回合结束时的体力值，你可以将场上所有牌还原到你上一回合结束时的位置。",
 			kunlunjing_info_alter:
 				"准备阶段，若你的体力值小于上回合结束时的体力值，你可以将场上所有牌还原到你上一回合结束时的位置，然后失去1点体力。",
-			swd_xiuluo_info: "准备阶段，你可以弃一张手牌来弃置你判断区里的一张延时类锦囊（必须花色相同）。",
+			swd_xiuluo_info: "准备阶段，你可以弃一张手牌来弃置你判定区里的一张延时类锦囊（必须花色相同）。",
 			xianyin_info: "出牌阶段，你可以令所有判定区内有牌的角色弃置判定区内的牌，然后交给你一张手牌。",
 			qiaoxie_info:
 				"每当你装备一张牌，可摸一张牌；每当你失去一张装备牌（不含替换），你可以弃置其他角色的一张牌。",

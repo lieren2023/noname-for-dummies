@@ -1791,6 +1791,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						var list = get.characterSurname(i);
 						for (var j of list) {
 							var surname = j[0];
+							if (!surname) {
+								continue;
+							}
 							if (!map[surname]) {
 								map[surname] = [];
 							}

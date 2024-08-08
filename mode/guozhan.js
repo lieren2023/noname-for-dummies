@@ -850,7 +850,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				gz_panfeng: ["male", "qun", 4, ["gzkuangfu"], ["gzskin"]],
 				gz_zoushi: ["female", "qun", 3, ["huoshui", "new_qingcheng"]],
 
-				gz_dengai: ["male", "wei", 4, ["tuntian", "ziliang", "gzjixi"], ["gzskin", "die_audio"]],
+				gz_dengai: ["male", "wei", 4, ["tuntian", "ziliang", "gzjixi"], ["gzskin"]],
 				gz_caohong: ["male", "wei", 4, ["fakehuyuan", "heyi"], ["gzskin"]],
 				gz_jiangfei: ["male", "shu", 3, ["shengxi", "gzshoucheng"]],
 				gz_jiangwei: ["male", "shu", 4, ["tiaoxin", "yizhi", "tianfu"], ["gzskin"]],
@@ -4498,11 +4498,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (gains.length) await player.gain(gains, "gain2");
 					if (
 						game.getGlobalHistory("everything", (evt) => {
-							return (
-								evt.name == "die" &&
-								evt.getParent(6).name == "fakezhouting" &&
-								evt.getParent(6).player == player
-							);
+							return evt.name == "die" && evt.getParent(6) == event && evt.getParent(6).player == player;
 						}).length
 					)
 						player.restoreSkill("fakezhouting");
@@ -4705,7 +4701,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				subSkill: {
 					backup: {
-						filterCard: true,
+						filterCard(card) {
+							return get.itemtype(card) == "card";
+						},
 						check(card) {
 							return 7.5 - get.value(card);
 						},
@@ -9397,7 +9395,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							if (
 								list.includes("trick") &&
 								source.countCards("h", function (card) {
-									return get.type(card, source) == "trick" && source.hasValueTarget(card);
+									return get.type(card, null, source) == "trick" && source.hasValueTarget(card);
 								}) > 1
 							)
 								return "trick";
@@ -11775,7 +11773,13 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 				},
 				ai: {
-					order: 4,
+					order: (item, player) => {
+						if (game.hasPlayer(cur => {
+							if (player === cur || get.attitude(player, cur) <= 0) return false;
+							return Math.min(5, target.maxHp) - cur.countCards("h") > 2;
+						})) return get.order({ name: "nanman" }, player) - 0.1;
+						return 10;
+					},
 					result: {
 						target: function (player, target) {
 							if (get.attitude(player, target) > 0)
@@ -13764,13 +13768,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				ai: {
 					threaten: 3,
 					effect: {
-						target: function (card, player, target, current) {
-							if (
-								lib.skill.gzxingzhao.getNum() > 3 &&
-								get.type(card) == "equip" &&
-								!get.cardtag(card, "gifts")
-							)
-								return [1, 3];
+						target_use: function (card, player, target, current) {
+							if (lib.skill.gzxingzhao.getNum() > 3 && get.type(card) == "equip" && !get.cardtag(card, "gifts")) return [1, 2];
 						},
 					},
 					reverseEquip: true,
@@ -16272,8 +16271,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								if (get.attitude(player, target) > 0) return 11 - get.value(card);
 								return 7 - get.value(card);
 							},
-							ai2: function (card, player, target) {
-								var att = get.attitude(player, target);
+							ai2: function (target) {
+								var att = get.attitude(get.event().player, target);
 								if (att < 0) return -att;
 								return 1;
 							},
@@ -16532,16 +16531,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						position: "h",
 						filterCard: true,
 						check: function (card) {
-							var player = _status.event.player;
-							if (player.hasSkill("gzpaoxiao", true) || player.getEquip("zhuge")) return 0;
-							if (
-								player.countCards("h", function (cardx) {
+							let player = _status.event.player,
+								shas = player.countCards("h", cardx => {
 									return cardx != card && cardx.name == "sha" && player.hasUseTarget(cardx);
-								}) <
-								player.getCardUsable("sha") + 1
-							)
-								return 0;
-							return 7 - get.value(card);
+								}),
+								count = player.getCardUsable("sha"),
+								val = (get.name(card) == "sha" ? 2 : 1) * get.value(card);
+							if (!shas || count - shas > 1) return (player.needsToDiscard() ? 7 : 1) - val;
+							return 7 - val;
 						},
 						content: function () {
 							"step 0";
@@ -16556,9 +16553,18 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							player
 								.chooseControl(list)
 								.set("ai", function () {
-									if (list.includes("gzpaoxiao")) return "gzpaoxiao";
-									return list.randomGet();
+									let res = get.event().res;
+									if (list.includes(res)) return res;
+									return 0;
 								})
+								.set("res", function () {
+									let shas = player.mayHaveSha(player, "use", null, "count"),
+										count = player.getCardUsable("sha");
+									if (shas > count) return "gzpaoxiao";
+									if (shas < count) return "new_rewusheng";
+									if (!shas) return "xinkuanggu";
+									return ["new_longdan", "new_tieji", "liegong"].randomGet(); //脑子不够用了
+								}())
 								.set("prompt", "选择并获得一项技能直到回合结束");
 							"step 1";
 							player.popup(result.control);
@@ -22988,6 +22994,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								game.players[i].identity = "unknown";
 								game.players[i].node.name.show();
 								game.players[i].node.name2.show();
+								for (var j = 0; j < game.players[i].hiddenSkills.length; j++) {
+									game.players[i].addSkillTrigger(game.players[i].hiddenSkills[j], true);
+								}
 							}
 							setTimeout(function () {
 								ui.arena.classList.remove("choose-character");
@@ -23909,8 +23918,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				"①当你受到伤害后，或与你势力不同的角色脱离濒死状态后，你可以将剩余武将牌堆的一张牌称为“魂”置于武将牌上。②准备阶段，你可以将至多两张“魂”置入剩余武将牌堆，然后将剩余武将牌堆的等量张牌称为“魂”置于武将牌上。",
 			fakejueyan: "决堰",
 			fakejizhi: "集智",
-			fakejueyan_info:
-				"主将技。①此武将牌计算体力上限时减少半个阴阳鱼。②准备阶段，你可以选择一个区域并于本回合的结束阶段弃置此区域的所有牌，然后你于本回合获得以下对应效果：⒈判定区：跳过判定阶段，获得〖集智〗直到回合结束；⒉装备区：摸三张牌，本回合手牌上限+3；⒊本回合使用【杀】的额定次数+3。",
+			fakejueyan_info: "主将技。①此武将牌计算体力上限时减少半个阴阳鱼。②准备阶段，你可以选择一个区域并于本回合的结束阶段弃置此区域的所有牌，然后你于本回合获得以下对应效果：⒈判定区：跳过判定阶段，获得〖集智〗直到回合结束；⒉装备区：摸三张牌，本回合手牌上限+3；⒊手牌区：本回合使用【杀】的额定次数+3。",
 			fakequanji: "权计",
 			fakequanji_info:
 				"①每回合每项各限一次，当你造成或受到伤害后，你可以摸X张牌，然后将等量的牌称为“权”置于武将牌上。②你的手牌上限+X（X为你武将牌上的“权”数）。",
@@ -24773,6 +24781,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					for (var i = 0; i < _status.characterlist.length; i++) {
 						var goon = false,
 							group2 = lib.character[_status.characterlist[i]][1];
+						if (game.hasPlayer2(current => get.nameList(current).includes(_status.characterlist[i]))) continue;
 						if (group == "ye") {
 							if (group2 != "ye") goon = true;
 						} else {
@@ -24827,6 +24836,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					event.tochange = [];
 					for (var i = 0; i < _status.characterlist.length; i++) {
 						if (_status.characterlist[i].indexOf("gz_jun_") == 0) continue;
+						if (game.hasPlayer2(current => get.nameList(current).includes(_status.characterlist[i]))) continue;
 						var goon = false,
 							group2 = lib.character[_status.characterlist[i]][1];
 						if (group == "ye") {

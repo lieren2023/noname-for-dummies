@@ -192,9 +192,21 @@ ui.click.menubut = function() {
             }
           });
         }
-
-        if (ui.skills2 && ui.skills2.skills.length) {
-          var skills = ui.skills2.skills;
+		
+		// 新增lib.noGlobalSkillBtn，用于临时修复无按钮发动技能（无global的global技能），例如古剑奇谭食物牌（鲈鱼羹、蜜汁藕）
+		if (
+			(ui.skills2 && ui.skills2.skills.length)
+			|| (ui.skills && ui.skills.skills.length && lib.noGlobalSkillBtn.some(item => ui.skills.skills.includes(item)))
+		) {
+			var skills = (ui.skills2 && ui.skills2.skills.length) ? ui.skills2.skills : [];
+			if (ui.skills && ui.skills.skills.length){
+				for (var j = 0; j < lib.noGlobalSkillBtn.length; j++) {
+					if (ui.skills.skills.includes(lib.noGlobalSkillBtn[j])) skills.push(lib.noGlobalSkillBtn[j]);
+				}
+			}
+		
+        // if (ui.skills2 && ui.skills2.skills.length) {
+          // var skills = ui.skills2.skills;
           confirm.skills2 = [];
           for (var i = 0; i < skills.length; i++) {
             var item = document.createElement('div');

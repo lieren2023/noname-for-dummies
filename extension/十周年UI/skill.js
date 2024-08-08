@@ -2327,7 +2327,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			trigger:{player:'useCardAfter'},
 			direct:true,
 			filter:function(event,player){
-				return get.type(event.card,false)!='delay'&&game.hasPlayer(function(current){
+				return get.type(event.card, null, false)!='delay'&&game.hasPlayer(function(current){
 					return player!=current&&(!player.storage.discretesidi||!player.storage.discretesidi.contains(current));
 				});
 			},
@@ -2387,7 +2387,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					filter:function(event,player){
 						if(!player.storage.discretesidi||!player.storage.discretesidi.contains(event.player)) return false;
 						if(event.name=='die') return true;
-						if(get.type(event.card,false)!='delay'){
+						if(get.type(event.card, null, false)!='delay'){
 							var index=player.storage.discretesidi.indexOf(event.player);
 							return index!=-1&&(player.storage.discretesidi2[index]!=event.target||event.targets.length!=1);
 						}
@@ -2404,7 +2404,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					forced:true,
 					locked:false,
 					filter:function(event,player){
-						if(get.type(event.card,false)=='delay'||!player.storage.discretesidi||event.targets.length!=1) return false;
+						if(get.type(event.card, null, false)=='delay'||!player.storage.discretesidi||event.targets.length!=1) return false;
 						var index=player.storage.discretesidi.indexOf(event.player);
 						return index!=-1&&player.storage.discretesidi2[index]==event.target;
 					},
@@ -2508,38 +2508,40 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			},
 			trigger:{global:'dieAfter'},
 			filter(event,player){
-				if(lib.skill.jxlianpo.getMax().length<=1) return false;
+				if (lib.skill.jxlianpo.getMax(event.player).length <= 1) return false;
 				return event.source&&event.source.isIn();
 			},
 			forced:true,
 			logTarget:'source',
-			getMax:()=>{
+			getMax: (dead) => {
+				let curs = game.players.slice(0);
+				if (get.itemtype(dead) === "player" && !curs.includes(dead)) curs.push(dead);
 				const map={
-					zhu:game.countPlayer(current=>{
+					zhu: curs.filter(current => {
 						const identity=current.identity;
 						let num=0;
 						if(identity=='zhu'||identity=='zhong'||identity=='mingzhong') num++;
 						num+=current.countMark('jxlianpo_mark_zhong');
 						return num;
-					}),
-					fan:game.countPlayer(current=>{
+					}).length,
+					fan: curs.filter(current => {
 						let num=0;
 						if(current.identity=='fan') num++;
 						num+=current.countMark('jxlianpo_mark_fan');
 						return num;
-					}),
-					nei:game.countPlayer(current=>{
+					}).length,
+					nei: curs.filter(current => {
 						let num=0;
 						if(current.identity=='nei') num++;
 						num+=current.countMark('jxlianpo_mark_nei');
 						return num;
-					}),
-					commoner:game.countPlayer(current=>{
+					}).length,
+					commoner: curs.filter(current => {
 						let num=0;
 						if(current.identity=='commoner') num++;
 						num+=current.countMark('jxlianpo_mark_commoner');
 						return num;
-					}),
+					}).length,
 				};
 				let population=0,identities=[];
 				for(let i in map){
@@ -3803,6 +3805,121 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					}
 				}
 			}
+		},
+		
+		// 谋黄盖苦肉适配护甲上限修改
+		sbkurou: {
+			audio: 2,
+			trigger: { player: "phaseUseBegin" },
+			direct: true,
+			group: "sbkurou_gain",
+			content: function () {
+				"step 0";
+				player.chooseCardTarget({
+					prompt: get.prompt("sbkurou"),
+					prompt2:
+						"交给其他角色一张牌，若此牌为【桃】或【酒】，你失去2点体力，否则你失去1点体力",
+					filterCard: true,
+					position: "he",
+					filterTarget: lib.filter.notMe,
+					ai1: function (card) {
+						if ((player.hp <= 1 && !player.canSave(player)) || player.hujia >= 5) return 0;
+						if (
+							get.value(card, player) > 6 &&
+							!game.hasPlayer((current) => {
+								return (
+									current != player &&
+									get.attitude(current, player) > 0 &&
+									!current.hasSkillTag("nogain")
+								);
+							})
+						)
+							return 0;
+						if (
+							player.hp >= 2 &&
+							(card.name == "tao" ||
+								(card.name == "jiu" &&
+									player.countCards("hs", (cardx) => {
+										return cardx != card && get.tag(cardx, "save");
+									}))) &&
+							player.hujia <= 1
+						)
+							return 10;
+						if (player.hp <= 1 && !player.canSave(player)) return 0;
+						return 1 / Math.max(0.1, get.value(card));
+					},
+					ai2: function (target) {
+						var player = _status.event.player,
+							att = get.attitude(player, target);
+						if (ui.selected.cards.length) {
+							var val = get.value(ui.selected.cards[0]);
+							att *= val >= 0 ? 1 : -1;
+						}
+						if (target.hasSkillTag("nogain")) att /= 9;
+						return 15 + att;
+					},
+				});
+				"step 1";
+				if (result.bool) {
+					var target = result.targets[0],
+						card = result.cards[0];
+					player.logSkill("sbkurou", target);
+					if (get.mode() !== "identity" || player.identity !== "nei") player.addExpose(0.15);
+					player.give(card, target);
+					player.loseHp(["tao", "jiu"].includes(get.name(card, target)) ? 2 : 1);
+				}
+			},
+			ai: {
+				nokeep: true,
+				skillTagFilter: function (player, tag, arg) {
+					if (tag === "nokeep")
+						return (
+							(!arg || (arg.card && get.name(arg.card) === "tao")) &&
+							player.hp <= 0 &&
+							player.isPhaseUsing()
+						);
+				},
+			},
+			subSkill: {
+				gain: {
+					audio: "sbkurou",
+					trigger: { player: "loseHpEnd" },
+					forced: true,
+					locked: false,
+					filter: function (event, player) {
+						// 修改
+						var hujiashangxian = lib.config['extension_十周年UI_hujiashangxian'];
+						var limit = 5;
+						if(hujiashangxian != undefined) limit = Number(hujiashangxian);
+						return player.isIn() && player.hujia < limit;
+						// return player.isIn() && player.hujia < 5;
+					},
+					content: function () {
+						"step 0";
+						event.count = trigger.num;
+						"step 1";
+						player.changeHujia(2, null, true);
+						"step 2";
+						if (--event.count > 0) {
+							player.logSkill("sbkurou_gain");
+							event.goto(1);
+						}
+					},
+					ai: {
+						maihp: true,
+						effect: function (card, player, target) {
+							if (get.tag(card, "damage")) {
+								if (player.hasSkillTag("jueqing", false, target)) return [1, 1];
+								return 1.2;
+							}
+							if (get.tag(card, "loseHp")) {
+								if (target.hp <= 1 || target.hujia >= 5) return;
+								return [1, 1];
+							}
+						},
+					},
+				},
+			},
 		},
 		
 		// 归心（junkguixin）技能显示排序

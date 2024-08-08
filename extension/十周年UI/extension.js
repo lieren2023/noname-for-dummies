@@ -33,7 +33,7 @@ content:function(config, pack){
 	// 其他-帮助-关于游戏内容添加提示
 	lib.help['关于游戏']=
 		'<div style="margin:10px">无名杀简介</div><ul style="margin-top:0"><li>无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>'+
-		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：苏婆玛丽奥<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
+		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：诗笺<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
 		'<li>无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等<br>'+
 		'<li>主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等<br>'+
 		'<li>最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span></ul>'+
@@ -7551,7 +7551,7 @@ content:function(config, pack){
 			// 修复全能搜索播放语音出现弹窗的bug
 			if(player){
 				var name = (player.skin && player.skin.name) ? player.skin.name : player.name;
-				var name1 = (player.skin && player.skin.name1) ? player.skin.name1 : player.name1;
+				var name1 = player.name1;
 				var name2 = (player.skin && player.skin.name2) ? player.skin.name2 : player.name2;
 			}
 			
@@ -7897,12 +7897,8 @@ content:function(config, pack){
 			lib.skill.sbkanpo.marktext = "看破";
 		}
 		// 神诸葛亮狂风、大雾标记修改
-		if(lib.skill.kuangfeng2 != undefined){
-			lib.skill.kuangfeng2.marktext = "狂风";
-		}
-		if(lib.skill.dawu2 != undefined){
-			lib.skill.dawu2.marktext = "大雾";
-		}
+		lib.translate.kuangfeng2_bg = "狂风";
+		lib.translate.dawu2_bg = "大雾";
 		// 夏侯杰裂、壮胆标记修改
 		if(lib.skill.liedan != undefined){
 			lib.skill.liedan.marktext = "裂";
@@ -7985,12 +7981,10 @@ content:function(config, pack){
 		if(lib.skill.yechou2 != undefined){
 			lib.skill.yechou2.marktext = "业仇";
 		}
-		// OL张宝、张宝咒标记修改
-		if(lib.skill.rezhoufu2 != undefined){
-			lib.skill.rezhoufu2.marktext = "咒";
-		}
-		if(lib.skill.xinzhoufu2 != undefined){
-			lib.skill.xinzhoufu2.marktext = "咒";
+		// 承许贡表召标记修改
+		if(lib.skill.jsrgbiaozhao != undefined){
+			lib.skill.jsrgbiaozhao.subSkill.A.marktext = "表召";
+			lib.skill.jsrgbiaozhao.subSkill.B.marktext = "表召";
 		}
 		// 界曹真司标记修改
 		if(lib.skill.residi != undefined){
@@ -8031,6 +8025,10 @@ content:function(config, pack){
 		// 龙关羽超绝标记修改
 		if(lib.skill.dragchaojue != undefined){
 			lib.skill.dragchaojue.subSkill.buff.marktext = "超绝";
+		}
+		// 庞会夙仇标记修改
+		if(lib.skill.dcsuchou != undefined){
+			lib.skill.dcsuchou.subSkill.effect.marktext = "夙仇";
 		}
 		// 手杀吴懿奔袭标记修改
 		if(lib.skill.sbbenxi != undefined){
@@ -8094,6 +8092,14 @@ content:function(config, pack){
 		// 郤正文灿标记修改
 		if(lib.skill.dcwencan != undefined){
 			lib.skill.dcwencan.subSkill.paoxiao.marktext = "文灿";
+		}
+		// 太阴关兴武佑标记修改
+		if(lib.skill.stdwuyou != undefined){
+			lib.skill.stdwuyou.subSkill.effect.marktext = "武佑";
+		}
+		// 太阴岑昏极奢标记修改
+		if(lib.skill.stdjishe != undefined){
+			lib.skill.stdjishe.subSkill.limit.marktext = "极奢";
 		}
 		// 神孙策平定标记修改
 		if(lib.skill.yingba != undefined){
@@ -8337,9 +8343,14 @@ content:function(config, pack){
 				if (!lib.skill[skill]) {
 					lib.skill[skill] = {
 						charlotte: true,
+						onremove: true,
 						mark: true,
 						marktext: "铭戒",
-						intro: { content: "已被$指定为【铭戒】目标" },
+						intro: {
+							markcount: () => 0,
+							content: storage => "已被" + get.translation(storage[0]) + "指定为【铭戒】目标",
+						},
+						group: "clanmingjie_clear",
 					};
 					lib.translate[skill] = "铭戒";
 					lib.translate[skill + "_bg"] = "铭戒";
@@ -8559,6 +8570,9 @@ content:function(config, pack){
 		if(lib.skill.beOfOneHeart != undefined){
 			lib.skill.beOfOneHeart.marktext = "同心";
 		}
+		// OL张宝、张宝咒标记修改
+		lib.translate.rezhoufu_judge_bg = "咒";
+		lib.translate.xinzhoufu2_bg = "咒";
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
@@ -13685,8 +13699,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				var cards = get.cards(num);
 				game.addCardKnower(cards, player);
 				var guanxing = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length);
-				if (this.getParent() && this.getParent().name && get.translation(this.getParent().name) != this.getParent().name) {
-					guanxing.caption = '【' + get.translation(this.getParent().name) + '】';
+				if (event.getParent() && event.getParent().name && get.translation(event.getParent().name) != event.getParent().name) {
+					guanxing.caption = '【' + get.translation(event.getParent().name) + '】';
 				} else {
 					guanxing.caption = "请按顺序排列牌。";
 				}
@@ -16445,7 +16459,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					
 					case 'guozhan':
 						if (identity == 'unknown') {
-							identity = player.wontYe() ? lib.character[player.name1][1] : 'ye';
+							identity = player.wontYe() ? (player.trueIdentity || lib.character[player.name1][1]) : 'ye';
 						}
 						
 						if (get.is.jun(player)) identity += 'jun';
@@ -16516,7 +16530,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 						
 					case 'guozhan':
 						if (identity == 'unknown') {
-							identity = player.wontYe() ? lib.character[player.name1][1] : 'ye';
+							identity = player.wontYe() ? (player.trueIdentity || lib.character[player.name1][1]) : 'ye';
 						}
 						
 						if (get.is.jun(player)) {

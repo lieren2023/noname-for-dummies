@@ -3336,6 +3336,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				filterCard: true,
 				position: "he",
+				derivation: ["yushou_misha", "yushou_huofu", "yushou_leiouke"],
 				check(card) {
 					var player = _status.event.player;
 					var num = 0;
@@ -4195,6 +4196,7 @@ game.import("character", function () {
 				unique: true,
 				trigger: { player: "phaseBegin" },
 				forced: true,
+				derivation: "nuyan2",
 				skillAnimation: true,
 				animationColor: "fire",
 				filter(event, player) {
@@ -4413,6 +4415,13 @@ game.import("character", function () {
 				filter(event, player) {
 					return !player.countCards("h", { type: "hsdusu" });
 				},
+				derivation: [
+					"hsdusu_xueji",
+					"hsdusu_huangxuecao",
+					"hsdusu_kuyecao",
+					"hsdusu_shinancao",
+					"hsdusu_huoyanhua",
+				],
 				content() {
 					var list = [
 						"hsdusu_xueji",
@@ -4438,6 +4447,13 @@ game.import("character", function () {
 			oldduxin: {
 				trigger: { player: ["phaseBegin", "phaseEnd"] },
 				frequent: true,
+				derivation: [
+					"hsdusu_xueji",
+					"hsdusu_huangxuecao",
+					"hsdusu_kuyecao",
+					"hsdusu_shinancao",
+					"hsdusu_huoyanhua",
+				],
 				content() {
 					var list = [
 						"hsdusu_xueji",
@@ -6447,6 +6463,13 @@ game.import("character", function () {
 			bimeng: {
 				trigger: { player: "phaseEnd" },
 				frequent: true,
+				derivation: [
+					"hsmengjing_feicuiyoulong",
+					"hsmengjing_huanxiaojiemei",
+					"hsmengjing_suxing",
+					"hsmengjing_mengye",
+					"hsmengjing_mengjing",
+				],
 				content() {
 					var list = [
 						"hsmengjing_feicuiyoulong",
@@ -8336,7 +8359,7 @@ game.import("character", function () {
 					expose: 0.3,
 					effect: {
 						target(card, player, target) {
-							if (get.tag(card, "loseCard") && target.countCards("he")) {
+							if (get.tag(card, "discard") && target.countCards("he")) {
 								return 0.7;
 							}
 						},
@@ -9636,7 +9659,12 @@ game.import("character", function () {
 				ai: {
 					order: 9.5,
 					result: {
-						player: 1,
+						player: (player, target) => {
+							return lib.card.shunshou.ai.result.player(player, target) - 3 / game.countPlayer();
+						},
+						target: (player, target) => {
+							return lib.card.shunshou.ai.result.target(player, target);
+						}
 					},
 					tag: {
 						multitarget: 1,

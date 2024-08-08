@@ -1627,7 +1627,7 @@ game.import("character", function () {
 						intro: { content: "本回合不能使用或打出手牌" },
 						mod: {
 							cardEnabled2(card) {
-								return false;
+								if (get.position(card) == "h") return false;
 							},
 						},
 					},
@@ -2395,11 +2395,7 @@ game.import("character", function () {
 					if (event.type != "discard") return false;
 					var cards = event.getd();
 					for (var i of cards) {
-						if (
-							get.position(i, true) == "d" &&
-							get.color(i, false) == "black" &&
-							get.type(i, null, true) == "basic"
-						) {
+						if (get.position(i, true) == "d" && get.color(i, false) == "black" && get.type(i) == "basic") {
 							var card = get.autoViewAs({ name: "bingliang" }, [i]);
 							if (
 								game.hasPlayer(function (current) {
@@ -2415,12 +2411,7 @@ game.import("character", function () {
 					"step 0";
 					if (!event.cards) event.cards = [];
 					var cards = trigger.getd().filter(function (i) {
-						if (
-							!event.cards.includes(i) &&
-							get.position(i, true) == "d" &&
-							get.color(i, false) == "black" &&
-							get.type(i, null, true) == "basic"
-						) {
+						if (!event.cards.includes(i) && get.position(i, true) == "d" && get.color(i, false) == "black" && get.type(i) == "basic") {
 							var card = get.autoViewAs({ name: "bingliang" }, [i]);
 							if (
 								game.hasPlayer(function (current) {
@@ -6499,10 +6490,7 @@ game.import("character", function () {
 				filter(event, player) {
 					if (event.player == player) return false;
 					if (event.name == "recover") return player.isDamaged();
-					return (
-						get.type(event.card, false) == "equip" &&
-						event.cards.some((i) => get.position(i, true) == "o" && player.canEquip(i, true))
-					);
+					return get.type(event.card, null, false) == "equip" && event.cards.some(i => get.position(i, true) == "o" && player.canEquip(i, true));
 				},
 				limited: true,
 				skillAnimation: true,
@@ -6541,7 +6529,7 @@ game.import("character", function () {
 						trigger: { player: ["recoverAfter", "useCardAfter"] },
 						filter(event, player) {
 							if (event.getParent().name == "dddjiexing") return false;
-							if (event.name == "useCard") return get.type(event.card, false) == "equip";
+							if (event.name == "useCard") return get.type(event.card, null, false) == "equip";
 							return true;
 						},
 						forced: true,

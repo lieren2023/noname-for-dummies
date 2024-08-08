@@ -8,6 +8,9 @@ game.import('extension', function(lib, game, ui, get, ai, _status) {
   return {
     name: "手杀ui",
     content: function(config, pack) {
+		// 新增lib.noGlobalSkillBtn，用于临时修复无按钮发动技能（无global的global技能），例如古剑奇谭食物牌（鲈鱼羹、蜜汁藕）
+		lib.noGlobalSkillBtn=["luyugeng", "mizhilianou_use"];
+		
 		// 初始启动页设置
 		if (!lib.config["extension_手杀ui_splash_styleinit"]) {
 			if(lib.device){

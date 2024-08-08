@@ -35,6 +35,7 @@ game.import("character", function () {
 			xin_sunquan: ["male", "wu", 3, ["dchuiwan", "dchuanli"]],
 			wuhujiang: ["male", "shu", 4, ["olhuyi"], ["die_audio:wuhujiang:wuhujiang2:wuhujiang3:wuhujiang4:wuhujiang5"]],
 			dc_noname: ["male", "qun", 3, ["dcchushan"]],
+			xunyuxunyou: ["male", "wei", 3, ["zhinang", "gouzhu"]],
 		},
 		characterFilter: {
 			old_lingju(mode) {
@@ -56,11 +57,150 @@ game.import("character", function () {
 				collab_duanwu_2024: ["quyuan"],
 				collab_liuyi_2024: ["xin_sunquan"],
 				collab_decade: ["libai", "xiaoyuehankehan", "zhutiexiong", "wu_zhutiexiong"],
-				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_wuyi", "dc_noname"],
+				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_wuyi", "dc_noname", "xunyuxunyou"],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//荀彧荀攸
+			zhinang: {
+				getMap() {
+					if (!_status.zhinang_map) {
+						_status.zhinang_map = {
+							name: {},
+							info: {},
+						};
+						let list;
+						if (_status.connectMode) {
+							list = get.charactersOL();
+						} else {
+							list = get.gainableCharacters();
+						}
+						list.forEach(name => {
+							if (name !== "xunyuxunyou") {
+								const skills = get.character(name, 3);
+								skills.forEach(skill => {
+									const info = get.info(skill);
+									if (!info || (info.ai && info.ai.combo)) return;
+									if (skill in _status.zhinang_map) return;
+									if (get.translation(skill).includes("谋")) _status.zhinang_map.name[skill] = name;
+									const voices = game.parseSkillText(skill, name);
+									if (voices.some(data => data.includes("谋"))) {
+										_status.zhinang_map.info[skill] = name;
+									}
+								});
+							}
+						});
+					}
+					return _status.zhinang_map;
+				},
+				trigger: {
+					player: "useCardAfter",
+				},
+				filter(event, player) {
+					return ["trick", "equip"].includes(get.type2(event.card));
+				},
+				frequent: true,
+				async content(event, trigger, player) {
+					const map = lib.skill.zhinang.getMap(),
+						type = get.type2(trigger.card) == "equip" ? "name" : "info",
+						list = Object.keys(map[type]);
+					if (list.length > 0) {
+						const skill = list.randomGet(),
+							voiceMap = game.parseSkillTextMap(skill, map[type][skill]);
+						if (type == "info") {
+							findaudio: for (let data of voiceMap) {
+								if (!data.text) continue;
+								if (data.text.includes("谋")) {
+									player.chat(data.text);
+									game.broadcastAll(file => game.playAudio(file), data.file);
+									break findaudio;
+								}
+							}
+						}
+						else player.flashAvatar("zhinang", map[type][skill])
+						player.popup(skill);
+						await player.addSkills(skill);
+					}
+				},
+			},
+			gouzhu: {
+				trigger: {
+					player: ["useSkillAfter", "logSkill"],
+				},
+				filter(event, player) {
+					if (["global", "equip"].includes(event.type)) return false;
+					let skill = event.sourceSkill || event.skill;
+					if (!skill || skill == "gouzhu") return false;
+					let info = get.info(skill);
+					while (true) {
+						if (!info || info.charlotte || info.equipSkill) return false;
+						if (info && !info.sourceSkill) break;
+						skill = info.sourceSkill;
+						info = get.info(skill);
+					}
+					let list = get.skillCategoriesOf(skill, player);
+					return list.length && list.some(item => item in lib.skill.gouzhu.effectMap);
+				},
+				frequent: true,
+				effectMap: {
+					"锁定技": async function () {
+						let player = _status.event.player;
+						if (player.isDamaged()) await player.recover();
+					},
+					"觉醒技": async function () {
+						let player = _status.event.player;
+						let card = get.cardPile(card => get.type(card) == "basic");
+						if (card) await player.gain(card, "gain2");
+					},
+					"限定技": async function () {
+						let player = _status.event.player;
+						let target = game.filterPlayer(current => current != player).randomGet();
+						if (target) {
+							player.line(target, "green");
+							await target.damage(player);
+						}
+					},
+					"转换技": async function () {
+						let player = _status.event.player;
+						player.addMark("gouzhu", 1, false);
+						game.log(player, '手牌上限+1');
+						await game.asyncDelay();
+					},
+					"主公技": async function () {
+						let player = _status.event.player;
+						await player.gainMaxHp();
+					},
+				},
+				mod: {
+					maxHandcard: function (player, num) {
+						return num + player.countMark("gouzhu");
+					},
+				},
+				intro: {
+					content: "手牌上限+#",
+				},
+				locked: false,
+				onremove: true,
+				async content(event, trigger, player) {
+					let skill = trigger.sourceSkill || trigger.skill,
+						info = get.info(skill);
+					while (true) {
+						if (info && !info.sourceSkill) break;
+						skill = info.sourceSkill;
+						info = get.info(skill);
+					}
+					let list = get.skillCategoriesOf(skill, player);
+					for (const item of list) {
+						if (item in lib.skill.gouzhu.effectMap) {
+							const next = game.createEvent("gouzhu_effect", false);
+							next.player = player;
+							next.setContent(lib.skill.gouzhu.effectMap[item]);
+							await next;
+						}
+					}
+				},
+			},
 			//五虎将
 			//是的孩子们，我们意念合一
 			olhuyi: {
@@ -100,9 +240,7 @@ game.import("character", function () {
 							.filter(skill => {
 								const translation = get.skillInfoTranslation(skill, player);
 								if (!translation) return false;
-								// 暂时先不用新函数
-								// const info = get.plainText(translation);
-								const info = translation;
+								const info = get.plainText(translation);
 								const reg = `【${get.translation(name)}】`;
 								if (name == "sha") {
 									for (let nature of lib.inpile_nature) {
@@ -274,7 +412,7 @@ game.import("character", function () {
 						newname = "无名";
 						player.chat("终究还是落得藉藉无名……");
 					}
-					// 先用旧版代码
+					// 暂时先用旧版代码
 					game.broadcastAll(
 						(player, name) => {
 							if (player.name == "dc_noname" || player.name1 == "dc_noname") player.node.name.innerHTML = name;
@@ -283,7 +421,7 @@ game.import("character", function () {
 						player,
 						newname
 					);
-					// 新版代码暂未修改
+					// 新版代码暂未跟进
 					// game.broadcastAll(
 						// (player, name, list) => {
 							// if (player.name == "dc_noname" || player.name1 == "dc_noname") player.node.name.innerHTML = name;
@@ -1296,8 +1434,8 @@ game.import("character", function () {
 					maixie_hp: true,
 					effect: {
 						target(card, player, target) {
-							if (player.hasSkillTag("jueqing", false, target)) return [1, -1];
 							if (get.tag(card, "damage") && player != target) {
+								if (player.hasSkillTag("jueqing", false, target)) return [1, -1];
 								var cards = card.cards,
 									evt = _status.event;
 								if (
@@ -1309,14 +1447,9 @@ game.import("character", function () {
 								if (target.hp <= 1) return;
 								if (get.itemtype(cards) != "cards") return;
 								for (var i of cards) {
-									if (get.name(i, target) == "tao")
-										return [1, 5 + player.countMark("dcjianxiong") / 2];
+									if (get.name(i, target) == "tao") return [1, 2.5 + player.countMark("dcjianxiong") / 2];
 								}
-								if (
-									get.value(cards, target) >=
-									7 - player.countMark("dcjianxiong") / 2 + target.getDamagedHp()
-								)
-									return [1, 3 + player.countMark("dcjianxiong") / 2];
+								if (get.value(cards, target) >= 7 - player.countMark("dcjianxiong") / 2 + target.getDamagedHp()) return [1, 1.5 + player.countMark("dcjianxiong") / 2];
 								return [1, 0.6 + player.countMark("dcjianxiong") / 2];
 							}
 						},
@@ -3001,6 +3134,7 @@ game.import("character", function () {
 		},
 		characterIntro: {
 			dc_noname: " ",
+			xunyuxunyou: "请分别查看「荀彧」和「荀攸」的武将介绍。",
 			wuhujiang: "请分别查看「关羽」、「张飞」、「赵云」、「马超」和「黄忠」的武将介绍。",
 			quyuan: "屈原（约前340年～前278年），芈姓（一作嬭姓），屈氏，名平，字原，又自云名正则，字灵均，出生于楚国丹阳秭归（今湖北省宜昌市），战国时期楚国诗人、政治家。楚武王熊通之子屈瑕的后代（一说屈氏的来源是西周前期的楚国人屈紃）。屈原少年时受过良好的教育，博闻强识，志向远大。早年受楚怀王信任，任左徒、三闾大夫，兼管内政外交大事。提倡“美政”，主张对内举贤任能，修明法度，对外力主联齐抗秦。因遭贵族排挤诽谤，被先后流放至汉北和沅湘流域。前278年，楚国郢都被秦军攻破后，自沉于汨罗江，以身殉楚国。屈原是中国历史上一位伟大的爱国诗人，中国浪漫主义文学的奠基人，“楚辞”的创立者和代表作家，开辟了“香草美人”的传统，被誉为“楚辞之祖”，楚国有名的辞赋家宋玉、唐勒、景差都受到屈原的影响。屈原作品的出现，标志着中国诗歌进入了一个由大雅歌唱到浪漫独创的新时代，其主要作品有《离骚》《九歌》《九章》《天问》等。以屈原作品为主体的《楚辞》是中国浪漫主义文学的源头之一，对后世诗歌产生了深远影响。成为中国文学史上的璀璨明珠，“逸响伟辞，卓绝一世”。“路漫漫其修远兮，吾将上下而求索”，屈原的“求索”精神，成为后世仁人志士所信奉和追求的一种高尚精神。",
 			sunwukong:
@@ -3052,8 +3186,8 @@ game.import("character", function () {
 				);
 			},
 			dcbenxi(player) {
-				if(player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阳：你获得上次所念出的台词对应的技能；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
-				return "转换技，锁定技。当你失去手牌后，<span class='bluetext'>阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。</span>阳：你获得上次所念出的台词对应的技能；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
+				if(player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
+				return "转换技，锁定技。当你失去手牌后，<span class='bluetext'>阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。</span>阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
 			},
 		},
 		translate: {
@@ -3177,7 +3311,7 @@ game.import("character", function () {
 			dc_wuyi: "经典吴懿",
 			dc_wuyi_prefix: "经典",
 			dcbenxi: "奔袭",
-			dcbenxi_info: "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。阳：你获得上次所念出的台词对应的技能；若你已拥有该技能，则改为对其他角色各造成1点伤害。",
+			dcbenxi_info: "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。",
 			quyuan: "屈原",
 			dcqiusuo: "求索",
 			dcqiusuo_info: "当你造成或受到伤害后，你可以从牌堆或弃牌堆中获得一张【铁索连环】。",
@@ -3196,6 +3330,11 @@ game.import("character", function () {
 			wuhujiang_prefix: "魂",
 			olhuyi: "虎翼",
 			olhuyi_info: "①游戏开始时，你从随机三个五虎将技能中选择一个获得。②当你使用或打出一张基本牌后，若你因此技能获得的技能数小于5，你随机获得一个技能描述中包含此牌名的五虎将技能。③回合结束时，你可以失去一个以此法获得的技能。",
+			xunyuxunyou: "荀彧荀攸",
+			zhinang: "智囊",
+			zhinang_info: "当你使用锦囊牌后，你可以获得一个技能台词包含“谋”的技能；当你使用装备牌后，你可以获得一个技能名包含“谋”的技能。",
+			gouzhu: "苟渚",
+			gouzhu_info: "你发动技能后，若此技能为：锁定技，回复1点体力；觉醒技，获得一张基本牌；限定技，对随机一名其他角色造成1点伤害；转换技，手牌上限+1；主公技，增加1点体力上限。",
 
 			collab_olympic: "OL·伦敦奥运会",
 			collab_tongque: "OL·铜雀台",
@@ -3426,6 +3565,24 @@ game.import("character", function () {
 			// diy
 			
 			// extra
+			"#wansha_new_simayi1": "连诛其族，剪其党羽，以夷后患！",
+			"#wansha_new_simayi2": "绝汝生死，断汝轮回！",
+			"#lianpo_new_simayi1": "能战当战，不能战当死尔！",
+			"#lianpo_new_simayi2": "连下诸城以筑京观，足永平辽东之患。",
+			"#reguicai_new_simayi1": "天地造化，不过老夫一念之间！",
+			"#reguicai_new_simayi2": "风雨雷电，皆由老夫决之！",
+			"#jilin1": "戢鳞潜翼，蓄志待时！",
+			"#jilin2": "老臣一心为国，还望陛下明鉴。",
+			"#jilin3": "年老意荒，无力朝事。",
+			"#jilin4": "坐观潮起潮落，笑谈云卷云舒。",
+			"#jilin5": "数载春去秋来，静看大江东流！",
+			"#yingyou1": "吞吴克蜀，老臣毕生之志也！",
+			"#yingyou2": "臣当总领西事，不负陛下所托！",
+			"#yingyou3": "积谷屯田，以为灭贼之要！",
+			"#yingyou4": "轻骑神速，八日足解新城之叛！",
+			"#yingtian1": "太白袭月知何故，天狼掩日欲吞天！",
+			"#yingtian2": "藏锋四十载，终昭吾亮剑之时！",
+			"#new_simayi:die": "洛水滔滔，难诉吾一生坎坷……",
 			"#jingyu1": "人身疾苦，与我无异。",
 			"#jingyu2": "医以济世，其术贵在精诚。",
 			"#lvxin1": "医病非难，难在医人之心。",
@@ -3650,6 +3807,11 @@ game.import("character", function () {
 			"#olfangquan_shen_caopi1": "此等小事，你们处理即可。",
 			
 			// huicui
+			"#dcyunzheng1": "佳人弄青丝，柔荑奏鸣筝。",
+			"#dcyunzheng2": "玉柱冷寒雪，清商怨羽声。",
+			"#dchuoxin1": "闻君精通音律，与我合奏一曲如何？",
+			"#dchuoxin2": "知君有心意，此筝寄我情。",
+			"#yue_zoushi:die": "雁归衡阳，良人当还……",
 			"#dcduanti1": "流水不腐，户枢不蠹。",
 			"#dcduanti2": "五禽锻体，百病不侵。",
 			"#dcshicao1": "掌中非药，乃活人之根本。",
@@ -3712,7 +3874,8 @@ game.import("character", function () {
 			"#kuaiqi:die": "泉下万事休，人间雪满头……",
 			"#dccaisi1": "扶耒耜，植桑陌，习诗书，以传家。",
 			"#dccaisi2": "惟楚有才，于庞门为盛。",
-			"#dczhuoli1": "良子千万，当擢才而用。",
+			"#dczhuoli1": "良梓千万，当擢才而用。",
+			"#dczhuoli2": "任人唯才，不妨寒门入上品。",
 			"#pangshanmin:die": "九品中正后，庙堂无寒门……",
 			"#dcbeini1": "臣等忠心耿耿，陛下何故谋反？",
 			"#dcbeini2": "公等养汝，正拟今日，复何疑？",
@@ -4117,10 +4280,30 @@ game.import("character", function () {
 			"#yue_miheng:die": "映日荷花今犹在，不见当年采荷人……",
 			
 			// jsrg
-			"#jsrg_zoushi:die": "年老色衰了吗？",
-			"#jsrg_zhangren:die": "本将军败于诸葛，无憾！",
-			"#jsrg_huangzhong:die": "不得不服老啦~",
-			"#jsrg_liuhong:die": "权利的滋味，让人沉沦……",
+			"#jsrgzhenglve1": "臣奉陛下之命，以伐乱臣。",
+			"#jsrgzhenglve2": "陛下且安坐宫中，待臣之捷报。",
+			"#jsrgzhenglve3": "齐桓之功，唯霸可彰王道。",
+			"#jsrgzhenglve4": "晋公亦霸，然亦躬奉周王。",
+			"#jsrghuilie1": "奉辞伐罪，旌麾南指，欲请将军会猎于吴。",
+			"#jsrghuilie2": "宝雕弓，金鈚箭，臣乞为陛下猎天下之不臣。",
+			"#jsrgpingrong1": "兵贵神速，勿失此讨贼良机。",
+			"#jsrgpingrong2": "以战平戎，以武止戈。",
+			"#jsrgpingrong3": "治世匡以仁德，乱世当用重典。",
+			"#jsrg_caocao:die": "本欲征西讨贼，为国效命，奈何天命……唉……",
+			"#jsrgjishan1": "刀兵在我，而百姓何辜耶？",
+			"#jsrgjishan2": "备宁愿一死，只求百姓得安。",
+			"#jsrgjishan3": "民若得安，则天下安矣！",
+			"#jsrgjishan4": "勿以恶小而为之，勿以善小而不为。",
+			"#jsrgzhenqiao1": "剑出鞘命，引得龙吟海内！",
+			"#jsrgzhenqiao2": "鲲鹏之志，志在天下苍生！",
+			"#jsrg_liubei:die": "楼桑羽葆，黄粱一梦……",
+			"#jsrgpingtao1": "今当夷汝三族，县示四海。",
+			"#jsrgpingtao2": "歃血为盟，誓诛此国贼。",
+			"#jsrgjuelie1": "传令所部兵马，定绝董贼后路。",
+			"#jsrgjuelie2": "董贼势败在即，诸公何故不前。",
+			"#jsrgjuelie3": "火势刻不容缓，全军速速进发。",
+			"#jsrgjuelie4": "洛阳已在眼下，莫让董贼轻逃。",
+			"#jsrg_sunjian:die": "若违此誓，某必为万箭穿心！",
 			
 			// key
 			"#yuri_xingdong1": "では、オペレーション・スターーート！！",
@@ -4181,6 +4364,19 @@ game.import("character", function () {
 			"#key_saya:die": "砰——",
 			
 			// mobile
+			"#qiaomeng_xin_gongsunzan1": "夺汝兵刃战马，尔等必败无疑。",
+			"#qiaomeng_xin_gongsunzan2": "摧敌似折枯，荡寇如反掌。",
+			"#mbbifeng1": "众士暂避其锋，万不可冲撞圣驾。",
+			"#mbbifeng2": "陛下今日所为，实令臣民失望。",
+			"#mbbifeng3": "事已至此，当速禀南阙之急。",
+			"#mbsuwang1": "居上处事，当极绥怀之仁。",
+			"#mbsuwang2": "国治吏和，百姓自存怀化之心。",
+			"#mb_simazhou:die": "臣所求唯葬伏太妃陵次，分国封四子而已……",
+			"#mbbeiming1": "孛星起于吴楚，吾等应举刀兵！",
+			"#mbbeiming2": "尽点淮南兵马，以讨司马逆臣！",
+			"#mbchoumang1": "司马氏之罪，尽洛水亦难清！",
+			"#mbchoumang2": "汝司马氏世受魏恩，今安敢如此！",
+			"#mb_wenqin:die": "伺君兵败之日，必报此仇于九泉！",
 			"#mbpanxiang1": "殿下当以国事为重，奈何效匹夫之孝乎？",
 			"#mbpanxiang2": "诸君当早拜嗣君，以镇海内，而但哭邪？",
 			"#mbpanxiang3": "身负托孤之重，但坐谈清论，此亦可乎？",
@@ -4954,15 +5150,26 @@ game.import("character", function () {
 			"#olsbhetao1": "合诸侯之群力，扶大汉之将倾。",
 			"#olsbhetao2": "猛虎啸于山野，群士执戈相待。",
 			"#olsbhetao3": "合兵讨贼，其利断金！",
+			"#olsbhetao_ol_sb_yuanshao_shadow1": "众将一心，战无不胜！",
+			"#olsbhetao_ol_sb_yuanshao_shadow2": "秣马厉兵，今乃报国之时！",
+			"#olsbhetao_ol_sb_yuanshao_shadow3": "齐心协力，缔三造大汉之举！",
 			"#olsbshenli1": "沧海之水难覆，将倾之厦难扶。",
 			"#olsbshenli2": "诸君心怀苟且，安能并力西向？",
 			"#olsbshenli3": "联军离心，各逐其利。",
+			"#olsbshenli_ol_sb_yuanshao_shadow1": "什么国恩大义，不过蔽履而已！",
+			"#olsbshenli_ol_sb_yuanshao_shadow2": "本盟主的话，你是听还是不听？",
+			"#olsbshenli_ol_sb_yuanshao_shadow3": "尔等皆为墙头草，随风而摆。",
 			"#olsbyufeng1": "梦神人授剑，怀神兵济世。",
 			"#olsbyufeng2": "哼！我剑也未尝不利！",
+			"#olsbyufeng_ol_sb_yuanshao_shadow1": "士者，怎可徒手而战！",
 			"#olsbshishou1": "今执牛耳，当为天下之先。",
 			"#olsbshishou2": "士者不徒手而战，况其首乎。",
 			"#olsbshishou3": "吾居群士之首，可配剑履否？",
+			"#olsbshishou_ol_sb_yuanshao_shadow1": "剑来！",
+			"#olsbshishou_ol_sb_yuanshao_shadow2": "今秉七尺之躯，不负三尺之剑！",
+			"#olsbshishou_ol_sb_yuanshao_shadow3": "拔剑四顾，诸位识得我袁本初？",
 			"#ol_sb_yuanshao:die": "众人合而无力，徒负大义也……",
+			"#ol_sb_yuanshao_shadow:die": "袁氏凋零，皆我一人之罪……",
 			"#ol_yufan:die": "唉，主公不能容我啊！",
 			"#ol_jianyong:die": "此景竟无言以对……",
 			
@@ -5059,8 +5266,8 @@ game.import("character", function () {
 			"#re_zhuhuan:die": "憾老死病榻，恨未马革裹尸……",
 			"#qiangxi_ol_dianwei1": "典韦来也，谁敢一战。",
 			"#qiangxi_ol_dianwei2": "双戟青罡，百死无生！",
-			"#olningwu1": "古之恶来，今之典韦！",
-			"#olningwu2": "宁为刀俎，不为鱼肉。",
+			"#olninge1": "古之恶来，今之典韦！",
+			"#olninge2": "宁为刀俎，不为鱼肉。",
 			"#ol_dianwei:die": "为将者，怎可徒手而亡？",
 			"#rejixu1": "辨坚识钝，可解充栋之牛！",
 			"#rejixu2": "以锐欺虚，可击泰山之踵！",
@@ -5303,6 +5510,8 @@ game.import("character", function () {
 			"#ol_pangtong:die": "骥飞羽落，坡道归尘……",
 			"#rewurong1": "策略以入算，果烈以立威！",
 			"#rewurong2": "诈与和亲，不攻可得！",
+			"#reshizhi1": "护汉成勋业，矢志报国恩。",
+			"#reshizhi2": "怀精忠之志，坦赤诚之心。",
 			"#re_zhangyi:die": "挥师未捷，杀身以报！",
 			"#xinganlu1": "纳采问名，而后交换文定。",
 			"#xinganlu2": "兵戈相向，何如化戈为帛？",
@@ -5417,7 +5626,7 @@ game.import("character", function () {
 			"#xiaoji_re_sunshangxiang2": "我会的武器，可多着呢。",
 			"#rejieyin1": "得遇夫君，妾身福分。",
 			"#rejieyin2": "随夫嫁娶，宜室宜家。",
-			"#re_sunshangxiang:die": "就这样……结束了吗？",
+			"#re_sunshangxiang:die": "哎呀，这次弓箭射歪了……",
 			"#reluoshen1": "屏翳收风，川后静波。",
 			"#reluoshen2": "冯夷鸣鼓，女娲清歌。",
 			"#reqingguo1": "肩若削成，腰如约素。",
@@ -5725,8 +5934,14 @@ game.import("character", function () {
 			"#sbfenwei2": "袭军挫阵，奋江东之威！",
 			"#sb_ganning:die": "蛮将休得猖狂！呃啊！",
 			"#sbtieji1": "厉马秣兵，只待今日！",
+			"#sbtieji2": "敌军防备空虚，出击直取敌营！",
+			"#sbtieji3": "敌军早有防备，先行扰阵疲敌！",
+			"#sbtieji4": "全军速撤回营，以期再觅良机！",
 			"#sb_machao:die": "父兄妻儿具丧，吾有何面目活于世间……",
 			"#sbduanliang1": "常读兵法，终有良策也！",
+			"#sbduanliang2": "烧敌粮草，救主于危急！",
+			"#sbduanliang3": "敌现混乱之机，我军可长驱直入！",
+			"#sbduanliang4": "敌即识破吾计，则断不可行矣。",
 			"#sbshipo1": "已向尔等陈明利害，奉劝尔等早日归降！",
 			"#sbshipo2": "此时归降或可封赏，即至城破必斩无赦！",
 			"#sb_xuhuang:die": "为主效劳，何畏生死……",
@@ -6319,6 +6534,13 @@ game.import("character", function () {
 			"#spmiewu2": "吾军势如破竹，江东六郡唾手可得。",
 			
 			// sp
+			"#olyongzu1": "既拜我为父，咱家当视汝为骨肉。",
+			"#olyongzu2": "天地君亲师，此五者最须尊崇。",
+			"#rejianxiong_caoteng": "躬行禁闱，不敢争一时之气。",
+			"#tianming_caoteng": "天命在彼，事莫强为。",
+			"#olqingliu1": "谁说这宦官，皆是大奸大恶之人？",
+			"#olqingliu2": "咱家要让这天下人知道，宦亦有贤。",
+			"#caoteng:die": "种暠害我，望陛下明鉴……",
 			"#olziruo1": "泰山虽崩于前，我亦风清云淡。",
 			"#olziruo2": "诸君勿忧，一切尽在掌握。",
 			"#olxvfa1": "常言道，积善之家必有余庆。",
@@ -6608,6 +6830,8 @@ game.import("character", function () {
 			"#tianyu:die": "命数之沙，已尽矣……",
 			"#olfengji1": "取舍有道，待机而赢。",
 			"#olfengji2": "此退彼进，月亏待盈。",
+			"#olxuanhui1": "今日，怕是要辜负温侯美意了。",
+			"#olxuanhui2": "前盖以惑敌，今图穷而匕现。",
 			"#ol_chendeng:die": "可无命，不可无脍……",
 			"#jixian1": "全军出击，速攻敌城。",
 			"#jixian2": "勿以我为念，攻城！",
@@ -7103,8 +7327,8 @@ game.import("character", function () {
 			"#yadan:die": "多谢丞相不杀之恩……",
 			
 			// sp2
-			"#mpqianlin1": "吾性至俭，不能自奉，何况遗人？",
-			"#mpqianlin2": "以财自污，则免清高之祸。",
+			"#mpjianlin1": "吾性至俭，不能自奉，何况遗人？",
+			"#mpjianlin2": "以财自污，则免清高之祸。",
 			"#mpsixiao1": "风木之悲，痛彻肺腑。",
 			"#mpsixiao2": "外容毁悴，内心神伤。",
 			"#mp_wangrong:die": "自阮、嵇云亡，为世所羁，实有所叹……",
@@ -7634,9 +7858,9 @@ game.import("character", function () {
 			"#biyue1": "失礼了~",
 			"#biyue2": "羡慕吧~",
 			"#diaochan:die": "父亲大人，对不起……",
-			"#yaowu1": "好大一股杀气啊！",
-			"#yaowu2": "好大一股酒气啊！",
-			"#huaxiong:die": "皮厚不挡刀啊……",
+			"#yaowu1": "大人有大量，不和你计较！",
+			"#yaowu2": "哼，先让你尝点甜头！",
+			"#huaxiong:die": "这，怎么可能……",
 			"#yicong1": "冲啊！",
 			"#yicong2": "众将听令，排好阵势，御敌！",
 			"#gongsunzan:die": "我军将败，我已无颜苟活于世……",
@@ -7652,6 +7876,34 @@ game.import("character", function () {
 			"#re_yuanshu:die": "把玉玺，还给我……",
 			
 			// tw
+			"#twbeiding1": "众将同心扶汉，北伐或可功成。",
+			"#twbeiding2": "虽失天时地利，亦有三分胜机。",
+			"#twjielv1": "竭一国之材，尽万人之力。",
+			"#twjielv2": "穷心尽力，亮必以血补天。",
+			"#twhunyou1": "扶汉兴刘，夙夜沥血，忽入草堂梦中。",
+			"#twhunyou2": "一整山河，以明己志，昔日言犹记否？",
+			"#huan_zhugeliang:die": "先帝遗志未竟，吾怎可终于半途……",
+			"#twbeidingx1": "内外不懈如斯，长安不可日下。",
+			"#twbeidingx2": "先帝英灵冥鉴，此番定成夙愿。",
+			"#twjielvx1": "出箕谷，饮河洛，所至长安。",
+			"#twjielvx2": "破司马，废伪政，誓还帝都。",
+			"#twhuanji1": "以计中之计，调雍凉戴甲，天下备鞍。",
+			"#twhuanji2": "借计代兵，以一隅抗九州。",
+			"#twchanggui1": "隆中鱼水，永安星落，数载恍然隔世。",
+			"#twchanggui2": "铁马冰河，金台临望，倏醒方叹无功。",
+			"#huan_zhugeliang_shadow:die": "一人之愿，终难逆天命……",
+			"#twjiezhan1": "血尽鳞碎，不改匡汉之志！",
+			"#twjiezhan2": "龙胆虎威，百险千难誓相随！",
+			"#twlongjin1": "龙烬沙场，以全大汉之荣光！",
+			"#twlongjin2": "长坂龙魂犹在，吟哮万里长安！",
+			"#longdan_sha_huan_zhaoyun1": "进退有度，百战无伤！",
+			"#longdan_sha_huan_zhaoyun2": "龙魂缠身，虎威犹在！",
+			"#chongzhen_huan_zhaoyun1": "众将士，且随老夫再战一场！",
+			"#chongzhen_huan_zhaoyun2": "出入千军万马，经年横站八方！",
+			"#huan_zhaoyun:die": "转战一生，终得见兴汉之日……",
+			"#twkuiduan1": "蜀军大败，吾等岂能失此战机！",
+			"#twkuiduan2": "求胜心切，竟轻中贼计！",
+			"#huan_zhanghe:die": "老卒迟暮，恨，不能再报于国……",
 			"#xunde1": "陛下所托，臣必尽心尽力！",
 			"#xunde2": "纵吾荏弱难持，亦不推诿君命！",
 			"#chenjie1": "臣心怀二心，不可事君也。",
@@ -7985,7 +8237,7 @@ game.import("character", function () {
 			"#tw_yanxiang:die": "若遇明主，或可青史留名……",
 			"#tw_fanchou:die": "唉，稚然疑心，甚重……",
 			"#liuli_daxiaoqiao1": "不懂得怜香惜玉么~",
-			"#liuli_daxiaoqiao2": "交给你了。",
+			"#liuli_daxiaoqiao2": "呵呵，交给你啦~",
 			"#twfeifu1": "此亦久矣，其能复几！",
 			"#twfeifu2": "以侯归第？终败于其！",
 			"#twzhian1": "此等蝼蚁不除，必溃千丈之堤！",
@@ -7994,6 +8246,35 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+			"#dcshizha1": "不好，江东鼠辈欲乘东风来袭！ ",
+			"#dcshizha2": "江上起东风，恐战局生变。",
+			"#dcgaojian1": "江东不乏能人，主公不可小觑。",
+			"#dcgaojian2": "狮子搏兔，亦须尽其全力。",
+			"#dc_sb_chengyu:die": "乌鹊南飞，何枝可依啊……",
+			"#dcsbkangyong1": "此猛士之血，其与醇酒孰烈乎？",
+			"#dcsbkangyong2": "歃血为誓，城在则人在。",
+			"#dcsbkuangzhan1": "平生不修礼乐，唯擅杀人放火。",
+			"#dcsbkuangzhan2": "宛城乃曹公掌中之物，谁敢染指。",
+			"#dc_sb_dianwei:die": "主公无恙，韦虽死犹生……",
+			"#dcsbsushen1": "谋先于行则昌，行先于谋则亡。",
+			"#dcsbsushen2": "天行五色，雪覆林间睡狐，独我执白。",
+			"#dcsbsushen_dc_sb_jiaxu_shadow1": "我有三窟之筹谋，不蹈背水之维谷。",
+			"#dcsbsushen_dc_sb_jiaxu_shadow2": "已积千里跬步，欲履万里河山。",
+			"#dcsbfumou1": "恩仇付浊酒，荡平劫波，且做英雄吼。",
+			"#dcsbfumou2": "人无恒敌，亦无恒友，唯有恒利。",
+			"#dcsbfumou_dc_sb_jiaxu_shadow1": "不周之柱已折，这世间当起一阵风，落一场雨。",
+			"#dcsbfumou_dc_sb_jiaxu_shadow2": "善谋者，不与善战者争功。",
+			"#dcsbrushi1": "孤立川上，观逝者如东去之流水。",
+			"#dcsbrushi2": "九州如画，怎可空老人间？",
+			"#dcsbrushi_dc_sb_jiaxu_shadow1": "曾寄青鸟凌云志，归来城头看王旗。",
+			"#dcsbrushi_dc_sb_jiaxu_shadow2": "烽火照长安，淯水洗枯骨，今日对弈何人？",
+			"#dc_sb_jiaxu:die": "辛者抱薪，妄燃烽火以戏诸侯……",
+			"#dc_sb_jiaxu_shadow:die": "未见青山草木，枯骨徒付浊流……",
+			"#dcsbfuxi1": "可因势而附，亦可因势而袭。",
+			"#dcsbfuxi2": "仗剑在手，或亮之，或藏之。",
+			"#dcsbhaoyi1": "今缴丧敌之炙，且宴麾下袍泽。",
+			"#dcsbhaoyi2": "龙骧枯荣一体，岂曰同袍无衣。",
+			"#dc_sb_zhangxiu:die": "曹贼欺我太甚！",
 			"#dctongdao1": "安定宫无一丈之长，恐难七步成诗。",
 			"#dctongdao2": "故峻恶，皓恶甚于峻。",
 			"#dccilv1": "妾一介女流，安知社稷之虑。",
@@ -8033,9 +8314,14 @@ game.import("character", function () {
 			"#caofang:die": "匹夫无罪，怀璧其罪……",
 			"#dcsbquanmou1": "洛水为誓，皇天为证，吾意不在刀兵。",
 			"#dcsbquanmou2": "以谋代战，攻形不以力，攻心不以勇。",
+			"#dcsbquanmou_dc_sb_simayi_shadow1": "鸿门之宴虽歇，会稽之胆尚悬，孤岂姬、项之辈！",
+			"#dcsbquanmou_dc_sb_simayi_shadow2": "昔藏青锋于沧海，今潮落，可现兵！",
 			"#dcsbpingliao1": "烽烟起大荒，戎军远役，问不臣者谁？",
 			"#dcsbpingliao2": "挥斥千军之贲，长驱万里之远。",
+			"#dcsbpingliao_dc_sb_simayi_shadow1": "率土之滨皆为王城，辽土亦居普天之下。",
+			"#dcsbpingliao_dc_sb_simayi_shadow2": "青云远上，寒风试刃，北雁当寄红绫。",
 			"#dc_sb_simayi:die": "以权谋而立者，必失大义于千秋……",
+			"#dc_sb_simayi_shadow:die": "人立中流，非己力可向，实大势所迫……",
 			"#duanxie1": "区区绳索就想挡住吾等去路？！",
 			"#duanxie2": "以身索敌，何惧同伤！",
 			"#fenming1": "东吴男儿，岂是贪生怕死之辈？",
@@ -8070,9 +8356,14 @@ game.import("character", function () {
 			"#caoxian:die": "恨生枭雄府，恨嫁君王家……",
 			"#dcsbronghuo1": "火莲绽江矶，炎映三千弱水。",
 			"#dcsbronghuo2": "奇志吞樯橹，潮平百万寇贼。",
+			"#dcsbronghuo_dc_sb_zhouyu_shadow1": "江东多锦绣，离火起曹贼毕，九州同忾。",
+			"#dcsbronghuo_dc_sb_zhouyu_shadow2": "星火乘风，风助火势，其必成燎原之姿。",
 			"#dcsbyingmou1": "行计以险，纵略以奇，敌虽百万亦戏之如犬豕。",
 			"#dcsbyingmou2": "若生铸剑为犁之心，须有纵钺止戈之力。",
+			"#dcsbyingmou_dc_sb_zhouyu_shadow1": "既遇知己之明主，当福祸共之，荣辱共之。",
+			"#dcsbyingmou_dc_sb_zhouyu_shadow2": "将者，贵在知敌虚实，而后避实而击虚。",
 			"#dc_sb_zhouyu:die": "人生之艰难，犹如不息之长河……",
+			"#dc_sb_zhouyu_shadow:die": "大业未成，奈何身付黄泉……",
 			"#dcsbmingshi1": "联刘以抗曹，此可行之大势。",
 			"#dcsbmingshi2": "强敌在北，唯协力可御之。",
 			"#dcsbmingshi_dc_sb_lusu_shadow1": "今天下春秋已定，君不见南北沟壑乎？",
@@ -8082,6 +8373,7 @@ game.import("character", function () {
 			"#dcsbmengmou_dc_sb_lusu_shadow1": "合左抑右，定两家之盟。",
 			"#dcsbmengmou_dc_sb_lusu_shadow2": "求同存异，邀英雄问鼎。",
 			"#dc_sb_lusu:die": "虎可为之用，亦可为之伤……",
+			"#dc_sb_lusu_shadow:die": "青龙已巢，以何驱之？",
 			"#dcqiongying1": "冰心碎玉壶，光转琼英灿。",
 			"#dcqiongying2": "玉心玲珑意，撷英倚西楼。",
 			"#dcnuanhui1": "暖阳映雪，可照八九之风光。",
@@ -8436,6 +8728,7 @@ game.import("character", function () {
 			"#busuan1": "喜仰视星辰，夜不肯寐。",
 			"#busuan2": "今日一卦，便知命数。",
 			"#mingjie1": "戒律循规，不可妄贪。",
+			"#mingjie2": "王道文明，何忧不平。",
 			"#guanlu:die": "怀我好英，心非草木……",
 			"#gxlianhua1": "草木精炼，万物化丹。",
 			"#gxlianhua2": "白日青山，飞升化仙。",
@@ -8532,9 +8825,13 @@ game.import("character", function () {
 			"#xinfu_zhanji2": "功曹之恩，吾必有展骥之机。",
 			
 			// yijiang
+			"#zhenfeng1": "河西诸贼作乱，吾当驱万里之远。",
+			"#zhenfeng2": "可折诸葛之锋而御者，独我其谁。",
+			"#feiyao:die": "姜维，你果然是蜀军内应！",
 			// 击、逆、泰、每，懂？
 			"#fazhu1": "击风雨于共济，逆流亦溯千帆。",
 			"#fazhu2": "泰山轻于大义，每思志士、何惧临渊。",
+			"#fazhu3": "大江潮起，伐苇成舟，载江南春风。",
 			"#xukun:die": "何处射来的流矢？",
 			"#kangli1": "地界纷争皋陶难断，然图藏天府，坐上可明。",
 			"#kangli2": "正至歉岁，难征百姓于役，望陛下明鉴。",
@@ -8794,8 +9091,10 @@ game.import("character", function () {
 			"#qinwang11": "国有危难，哪位将军请战？",
 			"#qinwang12": "大厦倾危，谁堪栋梁！",
 			"#liuchen:die": "无言对百姓，有愧，见先祖……",
-			"#wurong1": "兵不血刃，亦可先声夺人。",
-			"#wurong2": "从则安之，犯则诛之。",
+			"#wurong1": "兵不血刃，亦可先声夺人！",
+			"#wurong2": "从，则安之；犯，则诛之。",
+			"#shizhi1": "捐躯赴难，视死如归。",
+			"#shizhi2": "矢志于国，至死不渝。",
 			"#zhangyi:die": "大丈夫当战死沙场，马革裹尸而还……",
 			"#yanzhu1": "大局已定，你还是放弃吧。",
 			"#yanzhu2": "不诛此权臣，朕，何以治天下？",
@@ -9249,13 +9548,13 @@ game.import("character", function () {
 			"#qingcheng1": "我和你们真是投缘啊。",
 			"#qingcheng2": "哼，眼睛都直了呀。",
 			"#gz_zoushi:die": "年老色衰了吗？",
-			"#tuntian_gz_dengai1": "击鼓于此，以致四方。",
+			"#tuntian_gz_dengai1": "积谷于此，以制四方。",
 			"#tuntian_gz_dengai2": "留得良田在，何愁不破敌？",
 			"#ziliang1": "吃饱了，才有力气为国效力。",
 			"#ziliang2": "兵，断不可无粮啊。",
 			"#jixi_gz_dengai1": "哪里走！！",
 			"#jixi_gz_dengai2": "谁占到先机，谁就胜了。",
-			"#gz_dengai:die": "吾破蜀克敌，竟葬于奸贼之手！",
+			"#gz_dengai:die": "君不知臣，臣不知君，罢了……罢了……",
 			"#gz_caohong:die": "福兮祸所伏……",
 			"#gz_jiangfei:die": "墨守成规，终为其害啊……",
 			"#tiaoxin_gz_jiangwei1": "小小娃娃，乳臭未干。",

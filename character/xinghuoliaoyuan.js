@@ -1049,9 +1049,8 @@ game.import("character", function () {
 						event.finish();
 					}
 					"step 2";
-					var next = trigger.player.phaseUse();
-					event.next.remove(next);
-					trigger.getParent("phase").next.push(next);
+					var evt=trigger.getParent("phase",true);
+					if(evt) evt.phaseList.splice(evt.num, 0, "phaseUse|xinfu_guanwei");
 				},
 				ai: {
 					expose: 0.5,
@@ -1798,12 +1797,7 @@ game.import("character", function () {
 						if (player.countCards("j") && player.inRange(target)) return true;
 					},
 					aiOrder(player, card, num) {
-						if (
-							get.type(card, "delay") &&
-							player.canUse(card, player) &&
-							player.canAddJudge(card)
-						)
-							return 15;
+						if (get.type(card, null, player) == "trick" && player.canUse(card, player) && player.canAddJudge(card)) return 15;
 					},
 				},
 				locked: false,
@@ -1867,12 +1861,7 @@ game.import("character", function () {
 					},
 					effect: {
 						target(card, player, target) {
-							if (
-								target.isPhaseUsing() &&
-								typeof card === "object" &&
-								get.type(card, target) === "delay" &&
-								!target.countCards("j")
-							) {
+							if (target.isPhaseUsing() && typeof card === "object" && get.type(card, null, target) === "delay" && !target.countCards("j")) {
 								let shas =
 									target.getCards("hs", (i) => {
 										if (card === i || (card.cards && card.cards.includes(i)))

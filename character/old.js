@@ -6,6 +6,7 @@ game.import("character", function () {
 		characterSort: {
 			old: {
 				old_standard: ["ol_yuanshu"],
+				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
 				old_shenhua: [
 					"old_shen_zhaoyun",
 					"old_caocao",
@@ -23,7 +24,6 @@ game.import("character", function () {
 					"new_caoren",
 					"old_chendao",
 				],
-				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
 				old_yijiang1: [
 					"masu",
 					"xushu",

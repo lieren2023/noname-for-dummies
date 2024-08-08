@@ -2885,9 +2885,16 @@ game.import("character", function () {
 					player.draw(2);
 				},
 				ai: {
+					noh: true,
+					skillTagFilter(player, tag, arg) {
+						if (tag === "noh") return player.countCards("h") === 1;
+					},
 					effect: {
-						target: function (card) {
-							if (card.name == "guohe" || card.name == "liuxinghuoyu") return 0.5;
+						player_use(card, player, target) {
+							if (player.countCards("h") === 1) return [1, 0.8];
+						},
+						target(card, player, target) {
+							if (get.tag(card, "loseCard") && target.countCards("h") === 1) return 0.5;
 						},
 					},
 				},

@@ -1386,7 +1386,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						game.players[i].identityShown = false;
 					}
 
-					game.zhu.isZhu = game.zhu.identity == "zhu";
 					game.me.setIdentity();
 					game.me.node.identity.classList.remove("guessing");
 
@@ -1399,7 +1398,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								}
 								zhu.identity = zhuid;
 								if (zhuid == "zhu") zhu.isZhu = true;
-								me.setIdentity(identity);
 								me.node.identity.classList.remove("guessing");
 								ui.arena.classList.add("choose-character");
 							},
@@ -2089,10 +2087,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					else {
 						if (!stratagemMode) {
 							game.zhu.setIdentity();
+							game.zhu.isZhu = game.zhu.identity == "zhu";
 							game.zhu.identityShown = true;
 							game.zhu.node.identity.classList.remove("guessing");
 						}
-						game.zhu.isZhu = game.zhu.identity == "zhu";
 						game.me.setIdentity();
 						game.me.node.identity.classList.remove("guessing");
 					}

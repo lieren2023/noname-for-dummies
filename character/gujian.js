@@ -668,6 +668,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				unique: true,
+				derivation: "tongtian",
 				skillAnimation: true,
 				content() {
 					player.awakenSkill("xunjian");

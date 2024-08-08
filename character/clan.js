@@ -330,6 +330,66 @@ game.import("character", function () {
 						}
 					},
 				},
+				group: "clantanque_mark",
+				init(player) {
+					var history = player.getAllHistory("useCard");
+					if (history.length) {
+						var trigger = history[history.length - 1];
+						if (typeof get.number(trigger.card, player) != "number") return;
+						player.storage.clantanque_mark = trigger.card;
+						player.markSkill("clantanque_mark");
+						game.broadcastAll(
+							function (player, number) {
+								if (player.marks.clantanque_mark) player.marks.clantanque_mark.firstChild.innerHTML = get.translation(number);
+							},
+							player,
+							get.number(trigger.card, player)
+						);
+					}
+				},
+				onremove(player) {
+					player.unmarkSkill("clantanque_mark");
+					delete player.storage.clantanque_mark;
+				},
+				subSkill: {
+					mark: {
+						charlotte: true,
+						trigger: { player: "useCard1" },
+						forced: true,
+						popup: false,
+						firstDo: true,
+						content() {
+							if (typeof get.number(trigger.card, player) != "number") player.unmarkSkill("clantanque_mark");
+							else {
+								player.storage.clantanque_mark = trigger.card;
+								player.markSkill("clantanque_mark");
+								game.broadcastAll(
+									function (player, number) {
+										if (player.marks.clantanque_mark) player.marks.clantanque_mark.firstChild.innerHTML = get.translation(number);
+									},
+									player,
+									get.number(trigger.card, player)
+								);
+							}
+						},
+						intro: {
+							markcount(card, player) {
+								var num = get.number(card, player);
+								var list = [1, 11, 12, 13];
+								if (list.includes(num)) return ["A", "J", "Q", "K"][list.indexOf(num)];
+								return parseFloat(num);
+							},
+							content(card, player) {
+								var num = get.number(card, player);
+								var str = "<li>上一张牌的点数：";
+								var list = [1, 11, 12, 13];
+								if (list.includes(num)) str += ["A(1)", "J(11)", "Q(12)", "K(13)"][list.indexOf(num)];
+								else str += parseFloat(num);
+								return str;
+							},
+						},
+					},
+				},
 			},
 			clanshengmo: {
 				audio: 2,
@@ -809,7 +869,7 @@ game.import("character", function () {
 					result: {
 						target(player, target) {
 							var cards = player.getCards("hs", card => {
-								if (get.name(card, player) != "sha" && get.type(card, player) != "trick") return false;
+								if (get.name(card, player) != "sha" && get.type(card, null, player) != "trick") return false;
 								return player.hasValueTarget(card);
 							});
 							if (cards.some(card => player.canUse(card, target) && get.effect(target, card, player, player) > 0)) {
@@ -871,9 +931,7 @@ game.import("character", function () {
 							var target = event.targets.shift();
 							event.target = target;
 							var list = [];
-							const nameFilter = trigger.card.name == "sha"
-								? name => get.type(name) == "trick"
-								: name => name == "sha";
+							const nameFilter = trigger.card.name == "sha" ? name => get.type(name) == "trick" : name => name == "sha";
 							for (var name of lib.inpile) {
 								if (name != "sha" && get.type(name) != "trick") continue;
 								if (!nameFilter(name)) continue;
@@ -1036,7 +1094,7 @@ game.import("character", function () {
 					if (player.getHistory("useSkill", evt => evt.skill == "clanhuanghan").length > 1 && player.hasSkill("clanbaozu", null, false, false) && player.awakenedSkills.includes("clanbaozu")) {
 						player.restoreSkill("clanbaozu");
 						player.popup("保族");
-						game.log(player, "恢复了技能", "#【保族】");
+						game.log(player, "恢复了技能", "#g【保族】");
 					}
 				},
 				ai: {
@@ -1045,7 +1103,7 @@ game.import("character", function () {
 						target(card, player, target) {
 							if (!get.tag(card, "damage") || player.hasSkillTag("jueqing", false, target)) return;
 							let num = get.cardNameLength(card) - target.getDamagedHp();
-							if (num > 0) return [1, num + 0.1];
+							if (num > 0) return [1, 0.8 * num + 0.1];
 						},
 					},
 				},
@@ -1206,6 +1264,11 @@ game.import("character", function () {
 					aiOrder(player, card, num) {
 						if (player.isPhaseUsing() && get.type(card) == "equip" && get.equipValue(card, player) > 0) return num + 3;
 					},
+					cardUsable(card) {
+						// 临时修改（by 棘手怀念摧毁）
+						// if (card.storage?.clanfuxun) return Infinity;
+						if (card.storage && card.storage.clanfuxun) return Infinity;
+					},
 				},
 				locked: false,
 				audio: 2,
@@ -1301,6 +1364,7 @@ game.import("character", function () {
 						var card = {
 							name: result.links[0][2],
 							nature: result.links[0][3],
+							storage: { clanfuxun: true },
 						};
 						game.broadcastAll(function (card) {
 							lib.skill.clanfuxun_backup.viewAs = card;
@@ -1484,9 +1548,14 @@ game.import("character", function () {
 					if (!lib.skill[skill]) {
 						lib.skill[skill] = {
 							charlotte: true,
+							onremove: true,
 							mark: true,
 							marktext: "戒",
-							intro: { content: "已被$指定为【铭戒】目标" },
+							intro: {
+								markcount: () => 0,
+								content: storage => "已被" + get.translation(storage[0]) + "指定为【铭戒】目标",
+							},
+							group: "clanmingjie_clear",
 						};
 						lib.translate[skill] = "铭戒";
 						lib.translate[skill + "_bg"] = "戒";
@@ -1499,17 +1568,22 @@ game.import("character", function () {
 				enable: "phaseUse",
 				limited: true,
 				filterTarget(card, player, target) {
-					return !target.hasSkill("clanmingjie_" + player.playerid);
+					return !Object.keys(target.storage).some(skill => {
+						return skill.startsWith("clanmingjiex_" + player.playerid + "_") && target.storage[skill] === 1 + (_status.currentPhase === target);
+					});
 				},
 				skillAnimation: true,
 				animationColor: "thunder",
 				content() {
 					player.awakenSkill("clanmingjie");
 					player.addSkill("clanmingjie_effect");
-					var skill = "clanmingjie_" + player.playerid;
+					let skill;
+					do {
+						skill = "clanmingjiex_" + player.playerid + "_" + Math.random().toString(36).slice(-8);
+					} while (lib.skill[skill] != null);
 					game.broadcastAll(lib.skill.clanmingjie.initSkill, skill);
-					target.addTempSkill(skill, { player: "phaseAfter" });
-					target.storage[skill] = player;
+					target.addSkill(skill);
+					target.storage[skill] = _status.currentPhase === target ? 2 : 1;
 				},
 				ai: {
 					order: 10,
@@ -1555,7 +1629,7 @@ game.import("character", function () {
 							if (info.allowMultiple == false) return false;
 							if (event.targets && !info.multitarget) {
 								return game.filterPlayer().some(current => {
-									if (!current.hasSkill("clanmingjie_" + player.playerid)) return false;
+									if (!Object.keys(current.storage).some(skill => skill.startsWith("clanmingjiex_" + player.playerid + "_"))) return false;
 									return !event.targets.includes(current) && lib.filter.targetEnabled2(card, player, current) && lib.filter.targetInRange(card, player, current);
 								});
 							}
@@ -1570,7 +1644,7 @@ game.import("character", function () {
 									"令任意【铭戒】目标角色成为" + get.translation(trigger.card) + "的目标",
 									function (card, player, target) {
 										var trigger = _status.event.getTrigger();
-										if (trigger.targets.includes(target) || !target.isIn() || !target.hasSkill("clanmingjie_" + player.playerid)) return false;
+										if (trigger.targets.includes(target) || !Object.keys(target.storage).some(skill => skill.startsWith("clanmingjiex_" + player.playerid + "_"))) return false;
 										return lib.filter.targetEnabled2(trigger.card, player, target) && lib.filter.targetInRange(trigger.card, player, target);
 									},
 									[1, Infinity]
@@ -1590,30 +1664,31 @@ game.import("character", function () {
 						},
 						group: "clanmingjie_targeted",
 					},
+					clear: {
+						charlotte: true,
+						trigger: { player: "phaseAfter" },
+						filter(event, player) {
+							return Object.keys(player.storage).some(i => i.startsWith("clanmingjiex_"));
+						},
+						forced: true,
+						popup: false,
+						firstDo: true,
+						content() {
+							const storages = Object.keys(player.storage).filter(i => i.startsWith("clanmingjiex_"));
+							for (const skill of storages) {
+								player.storage[skill]--;
+								if (!player.storage[skill]) player.removeSkill(skill);
+							}
+						},
+					},
 					targeted: {
 						charlotte: true,
 						trigger: { global: "phaseEnd" },
 						filter(event, player) {
-							var cards = player.getStorage("clanmingjie_record").slice();
-							cards = cards.filterInD("d");
-							if (!cards.length) return false;
-							var history = player.getHistory("useSkill", evt => evt.skill == "clanmingjie");
-							if (history.length) {
-								var targets = history.reduce((list, evt) => list.addArray(evt.targets), []);
-								if (event.player != player && targets.includes(event.player)) return true;
-							}
-							if (player.actionHistory.length >= 2) {
-								for (var i = player.actionHistory.length - 2; i >= 0; i--) {
-									if (!player.actionHistory[i].isMe) continue;
-									var history2 = player.actionHistory[i].useSkill.filter(evt => evt.skill == "clanmingjie");
-									if (history2.length) {
-										var targets2 = history2.reduce((list, evt) => list.addArray(evt.targets), []);
-										if (targets2.includes(event.player)) return true;
-									}
-									break;
-								}
-							}
-							return false;
+							if (!Object.keys(event.player.storage).some(skill => {
+								return skill.startsWith("clanmingjiex_" + player.playerid + "_") && event.player.storage[skill] == 1;
+							})) return false;
+							return player.getStorage("clanmingjie_record").someInD("d");
 						},
 						forced: true,
 						popup: false,
@@ -1651,25 +1726,28 @@ game.import("character", function () {
 					record: {
 						charlotte: true,
 						trigger: {
-							global: ["shaMiss", "eventNeutralized", "useCard1", "phaseAfter"],
+							global: ["useCard", "respond", "useCard1", "phaseAfter"],
 						},
-						filter(event, player) {
-							if (event.name == "useCard") {
-								return get.suit(event.card) == "spade";
-							}
+						filter(event, player, name) {
+							if (name == "useCard1") return get.suit(event.card) == "spade";
 							if (event.name == "phase") return true;
-							if (event.type != "card") return false;
-							return true;
+							if (!Array.isArray(event.respondTo)) return false;
+							return get.type(event.respondTo[1]) != "trick" || ["caochuan", "wuxie"].includes(event.card.name);
 						},
 						silent: true,
 						forced: true,
 						content() {
-							"step 0";
 							if (trigger.name == "phase") {
 								delete player.storage.clanmingjie_record;
-								return;
+							} else {
+								player.markAuto(
+									"clanmingjie_record",
+									game.getGlobalHistory("everything", evt => {
+										if (event.triggername == "useCard1") return evt == trigger;
+										return evt.name == "useCard" && evt.card == trigger.respondTo[1];
+									})[0].cards
+								);
 							}
-							player.markAuto("clanmingjie_record", trigger.cards);
 						},
 					},
 				},
@@ -2741,7 +2819,8 @@ game.import("character", function () {
 					if (result.bool) {
 						var cards = result.cards;
 						target.give(cards, player);
-						game.delayx();
+						if (!cards.length) event.finish();
+						else game.delayx();
 					} else event.finish();
 					"step 3";
 					if (trigger.cards.filterInD().length) target.gain(trigger.cards.filterInD(), "gain2", "bySelf");
@@ -3549,7 +3628,7 @@ game.import("character", function () {
 				filter(event, player) {
 					if (event.phaseList[event.num].startsWith("phaseUse")) return false;
 					var num1 = player.getHandcardLimit() - 1,
-						num2 = event.num;
+						num2 = event.num - player.getHistory("skipped").length;
 					return num1 == num2;
 				},
 				content() {
@@ -3742,7 +3821,7 @@ game.import("character", function () {
 			clanjiexuan: "解悬",
 			clanjiexuan_info: "限定技，转换技。阴：你可以将一张红色牌当【顺手牵羊】使用；阳：你可以将一张黑色牌当【过河拆桥】使用。",
 			clanmingjie: "铭戒",
-			clanmingjie_info: "限定技。出牌阶段，你可以选择一名角色，然后你获得此下效果：①你使用牌时你可以指定其为额外目标直到其下个回合结束。②其下个回合结束时（若该角色为你则改为你的下下个回合结束时），你可以使用本回合使用过的黑桃牌和被抵消过的牌。",
+			clanmingjie_info: "限定技。出牌阶段，你可以选择一名角色，然后你获得此下效果：①你使用牌时你可以指定其为额外目标直到其下个回合结束。②其下个回合结束时，你可以使用本回合使用过的黑桃牌和被抵消过的牌。",
 			clan_wanghun: "族王浑",
 			clanfuxun: "抚循",
 			clanfuxun_info: "出牌阶段限一次。你可以获得或交给一名其他角色一张手牌，然后若其手牌数与你相等且于此阶段仅以此法获得或失去过牌，你可以将一张牌当任意基本牌使用。",
@@ -3772,7 +3851,7 @@ game.import("character", function () {
 			clan_wangguang: "族王广",
 			clan_wangguang_prefix: "族",
 			clanlilun: "离论",
-			clanlilun_info: "出牌阶段限一次，你可以重铸两张手牌（不能是你本回合以此法重铸过的牌名的牌），然后使用其中的一张牌。",
+			clanlilun_info: "出牌阶段限一次，你可以重铸两张牌名相同的手牌（不能是你本回合以此法重铸过的牌名的牌），然后使用其中的一张牌。",
 			clanjianji: "见机",
 			clanjianji_info: "限定技，一名角色的结束阶段，若其上下家均未于本回合：使用过牌，则你可以与其各摸一张牌；成为过牌的目标，则你可以视为使用一张【杀】。",
 			clan_wangmingshan: "族王明山",

@@ -83,7 +83,7 @@ game.import("character", function () {
 			},
 		},
 		characterSubstitute: {
-			sb_sp_zhugeliang: [],
+			sb_sp_zhugeliang: [["sb_zhugeliang", []]],
 		},
 		skill: {
 			//韩当
@@ -237,15 +237,15 @@ game.import("character", function () {
 					const targets = game.filterPlayer(current => {
 						return current.inRange(target);
 					});
-					const count = Math.min(2, targets.length);
-					if (!count) {
+					const count = targets.length+2;
+					if (count<=2) {
 						target.chat("没人打得到我喔！");
 						return;
 					}
 					const controls = ["选项一", "选项二", "背水！"];
 					const control = await target
 						.chooseControl(controls)
-						.set("choiceList", [`令所有攻击范围内含有你的角色依次弃置一张牌（${get.translation(targets)}）`, `你摸等同于攻击范围内含有你的角色数的牌（${get.cnNumber(count)}张牌）`, `背水！令${get.translation(player)}的〖解烦〗失效直到其杀死一名角色，然后你依次执行上述所有选项`])
+						.set("choiceList", [`令所有攻击范围内含有你的角色依次弃置两张牌（${get.translation(targets)}）`, `你摸等同于攻击范围内含有你的角色数+2的牌（${get.cnNumber(count)}张牌）`, `背水！令${get.translation(player)}的〖解烦〗失效直到其杀死一名角色，然后你依次执行上述所有选项`])
 						.set("ai", () => {
 							return get.event("choice");
 						})
@@ -285,6 +285,7 @@ game.import("character", function () {
 					if (control !== "选项二") {
 						for (const current of targets) {
 							target.line(current, "thunder");
+							await current.chooseToDiscard("解烦：请弃置一张牌", "he", true);
 							await current.chooseToDiscard("解烦：请弃置一张牌", "he", true);
 						}
 					}
@@ -328,7 +329,7 @@ game.import("character", function () {
 						result = await player
 							.chooseControl(numbers, "cancel2")
 							.set("prompt", get.prompt("sbyicong"))
-							.set("prompt2", "你可以消耗任意点蓄力值并选择一项：⒈你于本轮内至其他角色的距离-X，令系统选择牌堆中的一张【杀】；⒉其他角色于本轮内至你的距离+X，令系统选择牌堆中的一张【闪】（X为你消耗的蓄力值）。然后若你的“扈”数小于4，你将系统选择的牌置于武将牌上，称为“扈”。")
+							.set("prompt2", "你可以消耗任意点蓄力值并选择一项：⒈你于本轮内至其他角色的距离-1，令系统选择牌堆中的X张【杀】；⒉其他角色于本轮内至你的距离+1，令系统选择牌堆中的X张【闪】（X为你消耗的蓄力值）。然后若你的“扈”数小于4，你将系统选择的牌置于武将牌上，称为“扈”。")
 							.set("ai", () => {
 								return get.event("choice");
 							})
@@ -358,19 +359,35 @@ game.import("character", function () {
 							.chooseControl(["选项一", "选项二", "返回"])
 							.set("prompt", "义从：请选择一项")
 							.set("choiceList", [
-								`你于本轮内至其他角色的距离-${num}${
+								`你于本轮内至其他角色的距离-1${
 									player.countCards("s", card => {
 										return card.hasGaintag("sbyicong");
 									}) >= 4
 										? ""
-										: "，将牌堆中的一张【杀】置于你的武将牌上，称为“扈”"
+										: `，将牌堆中的${get.cnNumber(
+												Math.min(
+													num,
+													4 -
+														player.countCards("s", card => {
+															return card.hasGaintag("sbyicong");
+														})
+												)
+											)}张【杀】置于你的武将牌上，称为“扈”`
 								}`,
-								`其他角色于本轮内至你的距离+${num}${
+								`其他角色于本轮内至你的距离+1${
 									player.countCards("s", card => {
 										return card.hasGaintag("sbyicong");
 									}) >= 4
 										? ""
-										: "，将牌堆中的一张【闪】置于你的武将牌上，称为“扈”"
+										: `，将牌堆中的${get.cnNumber(
+												Math.min(
+													num,
+													4 -
+														player.countCards("s", card => {
+															return card.hasGaintag("sbyicong");
+														})
+												)
+											)}张【闪】置于你的武将牌上，称为“扈”`
 								}`,
 							])
 							.set("ai", () => {
@@ -400,15 +417,19 @@ game.import("character", function () {
 					const skill = choice === 0 ? "sbyicong_to" : "sbyicong_from";
 					player.removeMark("charge", num);
 					player.addTempSkill(skill, "roundStart");
-					player.addMark(skill, num, false);
-					if (player.countCards("s", card => card.hasGaintag("sbyicong")) < 4) {
+					player.addMark(skill, 1, false);
+					let cards = [];
+					while (cards.length < num && cards.length + player.countCards("s", card => card.hasGaintag("sbyicong")) < 4) {
 						const name = choice === 0 ? "sha" : "shan";
-						const card = get.cardPile2(name);
-						if (card) {
-							game.log(player, "将", card, "置于了武将牌上");
-							await player.loseToSpecial([card], "sbyicong");
-							player.markSkill("sbyicong");
-						}
+						const card = get.cardPile2(card => card.name == name && !cards.includes(card));
+						if (card) cards.push(card);
+						else break;
+					}
+					if (cards.length) {
+						player.$gain2(cards, false);
+						game.log(player, "将", cards, "置于了武将牌上");
+						await player.loseToSpecial(cards, "sbyicong");
+						player.markSkill("sbyicong");
 					}
 				},
 				marktext: "扈",
@@ -458,6 +479,7 @@ game.import("character", function () {
 								return distance - from.countMark("sbyicong_to");
 							},
 						},
+						onremove: true,
 						marktext: "从",
 						intro: {
 							content: "本轮你至其他角色的距离-#",
@@ -470,6 +492,7 @@ game.import("character", function () {
 								return distance + to.countMark("sbyicong_from");
 							},
 						},
+						onremove: true,
 						marktext: "从",
 						intro: {
 							content: "本轮其他角色至你的距离+#",
@@ -491,7 +514,7 @@ game.import("character", function () {
 				},
 				async cost(event, trigger, player) {
 					const list = ["蓄力", "cancel2"];
-					const choiceList = [`弃置${get.translation(trigger.player)}区域里的一张牌，你摸一张牌`, `获得2点蓄力值`];
+					const choiceList = [`弃置${get.translation(trigger.player)}区域里的一张牌，你摸一张牌`, `获得3点蓄力值`];
 					if (trigger.player.isIn() && trigger.player.countDiscardableCards(player, "hej")) {
 						list.unshift("弃牌");
 					} else {
@@ -530,7 +553,7 @@ game.import("character", function () {
 						await player.discardPlayerCard(trigger.player, "hej", true);
 						await player.draw();
 					} else {
-						const num = Math.min(2, 4 - player.countMark("charge"));
+						const num = Math.min(3, 4 - player.countMark("charge"));
 						if (num > 0) player.addMark("charge", num);
 					}
 				},
@@ -788,24 +811,20 @@ game.import("character", function () {
 					const chosen = player
 						.getAllHistory("useSkill", (evt) => evt.skill === "sbganglie")
 						.map((evt) => {
-							return evt.targets;
+							return evt.targets[0];
 						});
 					let targets = player
 						.getAllHistory("damage", (evt) => evt.source && evt.source.isIn())
 						.map((evt) => evt.source)
 						.unique();
-					targets = [...targets, ...targets];
 					targets.removeArray(chosen);
 					event.set("sbganglie_enabledTargets", targets);
 				},
 				filterTarget(card, player, target) {
 					return get.event("sbganglie_enabledTargets").includes(target);
 				},
-				selectTarget: [1, Infinity],
-				multitarget: true,
-				multiline: true,
 				async content(event, trigger, player) {
-					for (const target of event.targets.sortBySeat()) await target.damage(2);
+					await event.targets[0].damage(2);
 				},
 				ai: {
 					order: 6,
@@ -1409,7 +1428,10 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return target.isLinked() + target.isTurnedOver();
+									let res = 0;
+									if (target.isLinked()) res = 0.3;
+									if (target.isTurnedOver()) res += 3.5 * get.threaten(target, player);
+									return res;
 								},
 							},
 						},
@@ -1425,7 +1447,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return get.effect(target, { name: "draw" }, player, player) * (target == player ? 3 : 1);
+									return Math.min(5, Math.max(2, game.dead.length));
 								},
 							},
 						},
@@ -1445,12 +1467,14 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return (
-										1 +
-										Array.from({ length: 13 })
-											.map((_, i) => "equip" + parseFloat(i + 1))
-											.some(i => target.hasDisabledSlot(i))
-									);
+									let res = 0.2;
+									if (target.isHealthy()) res += 0.4;
+									if (
+										Array.from({ length: 5 })
+										.map((_, i) => "equip" + parseFloat(i + 1))
+										.some(i => target.hasDisabledSlot(i))
+									) res += 0.3;
+									return res + get.recoverEffect(target, target, target) / 16;
 								},
 							},
 						},
@@ -1622,7 +1646,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return -target.countCards("hs") - 1;
+									return -(target.countCards("hs") + 2) / 3;
 								},
 							},
 						},
@@ -1639,7 +1663,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return -target.countCards("hs") - 2;
+									return -(target.countCards("hs") + 2) / 2;
 								},
 							},
 						},
@@ -1656,7 +1680,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return -target.countCards("hs") - 1;
+									return -target.countCards("hs") - 2;
 								},
 							},
 						},
@@ -1672,7 +1696,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return -target.getSkills(null, false).filter(i => get.info(i) && !get.info(i).charlotte).length;
+									return -target.getSkills(null, false).filter(i => get.info(i) && !get.info(i).charlotte).length * get.threaten(target, player);
 								},
 							},
 						},
@@ -1685,7 +1709,13 @@ game.import("character", function () {
 						async content(player, target) {
 							target.addTempSkill("sbfangzhu_kill", { player: "phaseEnd" });
 						},
-						ai: {},
+						ai: {
+							result: {
+								target(player, target) {
+									return -(target.countCards("hs") + 2) / target.hp;
+								} 
+							}
+						},
 					},
 					{
 						cost: 3,
@@ -1698,7 +1728,7 @@ game.import("character", function () {
 						ai: {
 							result: {
 								target(player, target) {
-									return target.isTurnedOver() ? 1 : -1;
+									return target.isTurnedOver() ? 3.5 : -3.5;
 								},
 							},
 						},
@@ -2482,12 +2512,7 @@ game.import("character", function () {
 						audio: "sbhuoji2.mp3",
 						trigger: { player: "phaseZhunbeiBegin" },
 						filter: function (event, player) {
-							return (
-								player
-									.getAllHistory("sourceDamage", (evt) => evt.hasNature("fire"))
-									.reduce((num, evt) => num + evt.num, 0) >=
-								game.players.length + game.dead.length
-							);
+							return player.getAllHistory("sourceDamage", evt => evt.hasNature("fire") && evt.player != player).reduce((num, evt) => num + evt.num, 0) >= game.players.length + game.dead.length;
 						},
 						forced: true,
 						locked: false,
@@ -2523,9 +2548,7 @@ game.import("character", function () {
 							player.addTempSkill("sbhuoji_count", {
 								player: ["sbhuoji_achieveBegin", "sbhuoji_failBegin"],
 							});
-							player.storage.sbhuoji_count = player
-								.getAllHistory("sourceDamage", (evt) => evt.hasNature("fire"))
-								.reduce((num, evt) => num + evt.num, 0);
+							player.storage.sbhuoji_count = player.getAllHistory("sourceDamage", evt => evt.hasNature("fire") && evt.player != player).reduce((num, evt) => num + evt.num, 0);
 							player.markSkill("sbhuoji_count");
 						},
 					},
@@ -2872,7 +2895,7 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { player: ["damageBegin3", "damageBegin4"] },
 				filter: function (event, player, name) {
-					if (!player.hasSkill("sbguanxing")) return false;
+					if (!player.hasSkill("sbguanxing") && !player.hasSkill("jdguanxing")) return false;
 					const num = player.countCards("s", (card) => card.hasGaintag("sbguanxing"));
 					if (name == "damageBegin3" && !num) return true;
 					if (name == "damageBegin4" && num) return true;
@@ -4424,9 +4447,8 @@ game.import("character", function () {
 				},
 				ai: {
 					effect: {
-						player: function (card, player, target) {
-							if (player != target && target && target.group == "qun" && card.name != "tao")
-								return [1, 0.1];
+						player_use(card, player, target) {
+							if (player != target && target && target.group == "qun" && player.hasZhuSkill("sbxueyi") && player.countSkill("sbxueyi") < 2) return [1, 0.6];
 						},
 					},
 				},
@@ -5823,7 +5845,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					effect: {
-						audio: "sbxieji",
+						audio: "sbxieji3.mp3",
 						charlotte: true,
 						trigger: { global: "phaseJieshuBegin" },
 						direct: true,
@@ -6518,9 +6540,9 @@ game.import("character", function () {
 								if (target.hp <= 1) return;
 								if (get.itemtype(cards) != "cards") return;
 								for (var i of cards) {
-									if (get.name(i, target) == "tao") return [1, 5];
+									if (get.name(i, target) == "tao") return [1, 4.5];
 								}
-								if (get.value(cards, target) >= 7 + target.getDamagedHp()) return [1, 3];
+								if (get.value(cards, target) >= 7 + target.getDamagedHp()) return [1, 2];
 								return [1, 0.55 + 0.05 * Math.max(0, 1 - target.countMark("sbjianxiong"))];
 							}
 						},
@@ -7096,7 +7118,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					damage: {
-						audio: "sbjushou",
+						audio: "sbjushou2.mp3",
 						trigger: {
 							player: "damageEnd",
 						},
@@ -7119,7 +7141,7 @@ game.import("character", function () {
 								event.finish();
 								return;
 							}
-							player.logSkill("sbjushou");
+							player.logSkill("sbjushou_damage");
 							if (result.control == "翻面") {
 								player.turnOver();
 							} else {
@@ -7146,7 +7168,7 @@ game.import("character", function () {
 						},
 					},
 					draw: {
-						audio: "sbjushou",
+						audio: "sbjushou3.mp3",
 						trigger: { player: "turnOverAfter" },
 						forced: true,
 						locked: false,
@@ -7921,7 +7943,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					fail: {
-						audio: "sbjieyin",
+						audio: "sbjieyin2.mp3",
 						trigger: { global: "dieAfter" },
 						dutySkill: true,
 						forced: true,
@@ -7953,7 +7975,7 @@ game.import("character", function () {
 					},
 					marked: { charlotte: true },
 					init: {
-						audio: "sbjieyin",
+						audio: "sbjieyin1.mp3",
 						trigger: {
 							global: "phaseBefore",
 							player: "enterGame",
@@ -8740,7 +8762,7 @@ game.import("character", function () {
 										!ui.selected.targets.includes(_status.event.sourcex)
 									)
 										return false;
-									return lib.filter.targetEnabled.apply(this, arguments);
+									return lib.filter.filterTarget.apply(this, arguments);
 								})
 								.set("sourcex", player)
 								.set("addCount", false);
@@ -8895,13 +8917,12 @@ game.import("character", function () {
 							});
 						},
 						async cost(event, trigger, player) {
-							const list = player.getStorage("sbqianxun").filter(name => get.type(name) == "trick").map(name => ["锦囊", "", name]);
-							const result = await player.chooseButton([get.prompt("sbqianxun"), "视为使用一张记录的普通锦囊牌", [list, "vcard"]]).set("ai", function (button) {
+							const list = player.getStorage("sbqianxun").map(name => ["锦囊", "", name]);
+							const result = await player.chooseButton([get.prompt("sbqianxun"), "移去一个记录的牌名，若为普通锦囊牌则可以视为使用之", [list, "vcard"]]).set("ai", function (button) {
 								const card = { name: button.link[2], isCard: true };
 								return player.getUseValue(card);
 							}).set("filterButton", function (button) {
-								const card = { name: button.link[2], isCard: true };
-								return player.hasUseTarget(card);
+								return true;
 							}).forResult();
 							event.result = {
 								bool: result.bool,
@@ -8912,7 +8933,7 @@ game.import("character", function () {
 							const name = event.cost_data;
 							player.unmarkAuto("sbqianxun", [name]);
 							const card = { name: name, isCard: true };
-							await player.chooseUseTarget(card, true);
+							if (get.type(card) == "trick" && player.hasUseTarget(card)) await player.chooseUseTarget(card,`是否视为使用【${get.translation(name)}】？`);
 						},
 					},
 					gain: {
@@ -9350,8 +9371,7 @@ game.import("character", function () {
 			sb_sp_zhugeliang: "谋诸葛亮",
 			sb_sp_zhugeliang_prefix: "谋",
 			sbhuoji: "火计",
-			sbhuoji_info:
-				"使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。",
+			sbhuoji_info: "使命技。①使命：出牌阶段限一次。你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已对其他角色造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。",
 			sbkanpo: "看破",
 			sbkanpo_info:
 				"①一轮游戏开始时，你清除〖看破①〗记录的牌名，然后你可以依次记录任意个未于上次发动〖看破①〗记录清除过的非装备牌牌名（对其他角色不可见，每局游戏至多记录4个牌名）。②其他角色使用你〖看破①〗记录过的牌名的牌时，你可以移去一个〖看破①〗中的此牌名的记录令此牌无效，然后你摸一张牌。",
@@ -9404,7 +9424,7 @@ game.import("character", function () {
 			sb_xiahoudun: "谋夏侯惇",
 			sb_xiahoudun_prefix: "谋",
 			sbganglie: "刚烈",
-			sbganglie_info: "出牌阶段限一次。你可以选择任意名本局游戏对你造成过伤害且你以此法选择过其的次数小于2的角色，你对其造成2点伤害。",
+			sbganglie_info: "出牌阶段限一次。你可以选择一名本局游戏对你造成过伤害且你未以此法选择过的角色，你对其造成2点伤害。",
 			sbqingjian: "清俭",
 			sbqingjian_info:
 				"①当有一张牌不因使用而进入弃牌堆后，若你的“清俭”数小于X，你将此牌置于你的武将牌上，称为“清俭”（X为你的体力值-1，且至少为1）。②出牌阶段结束时，你将所有“清俭”分配给任意角色。",
@@ -9421,16 +9441,16 @@ game.import("character", function () {
 			sbgongqi: "弓骑",
 			sbgongqi_info: "①出牌阶段开始时，你可以弃置一张牌，然后本阶段你获得如下效果：当你使用牌时，你令所有其他角色不能使用或打出与你弃置牌颜色不同的手牌响应此牌。②你的攻击范围+4。",
 			sbjiefan: "解烦",
-			sbjiefan_info: "出牌阶段限一次。你可以令一名角色选择一项：⒈令所有攻击范围内含有其的角色依次弃置一张牌；⒉其摸等同于攻击范围内含有其的角色数的牌（至多两张）；⒊背水：此技能失效直到你杀死一名角色，然后依次执行上述所有选项。",
+			sbjiefan_info: "出牌阶段限一次。你可以令一名角色选择一项：⒈令所有攻击范围内含有其的角色依次弃置两张牌；⒉其摸等同于攻击范围内含有其的角色数+2的牌；⒊背水：此技能失效直到你杀死一名角色，然后依次执行上述所有选项。",
 			sb_gongsunzan: "谋公孙瓒",
 			sb_gongsunzan_prefix: "谋",
 			sbyicong: "义从",
-			sbyicong_info: "蓄力技（2/4）。①一轮游戏开始时，你可以消耗任意点蓄力值并选择一项：⒈你于本轮内至其他角色的距离-X，令系统选择牌堆中的一张【杀】；⒉其他角色于本轮内至你的距离+X，令系统选择牌堆中的一张【闪】（X为你消耗的蓄力值）。然后若你的“扈”数小于4，你将系统选择的牌置于武将牌上，称为“扈”。②你可以将“扈”如手牌般使用或打出。",
+			sbyicong_info: "蓄力技（2/4）。①一轮游戏开始时，你可以消耗任意点蓄力值并选择一项：⒈你于本轮内至其他角色的距离-1，令系统选择牌堆中的X张【杀】；⒉其他角色于本轮内至你的距离+1，令系统选择牌堆中的X张【闪】（X为你消耗的蓄力值）。然后若你的“扈”数小于4，你将系统选择的牌置于武将牌上，称为“扈”。②你可以将“扈”如手牌般使用或打出。",
 			sbqiaomeng: "趫猛",
-			sbqiaomeng_info: "当你使用【杀】造成伤害后，若你有〖义从〗，你可以选择一项：⒈弃置受伤角色区域里的一张牌并摸一张牌；⒉获得2点蓄力值。",
+			sbqiaomeng_info: "当你使用【杀】造成伤害后，若你有〖义从〗，你可以选择一项：⒈弃置受伤角色区域里的一张牌并摸一张牌；⒉获得3点蓄力值。",
 			sb_luxun: "谋陆逊",
 			sbqianxun: "谦逊",
-			sbqianxun_info: "当一张锦囊牌对你生效时，若此牌名未记录且你不是使用者，则你记录之，然后可将至多X张牌置于你的武将牌上，此回合结束时获得（X为“谦逊”记录的牌名数且至多为5）。出牌阶段开始时，你可以移去一个记录的普通锦囊牌牌名，视为使用此牌。",
+			sbqianxun_info: "当一张锦囊牌对你生效时，若此牌名未记录且你不是使用者，则你记录之，然后可将至多X张牌置于你的武将牌上，此回合结束时获得（X为“谦逊”记录的牌名数且至多为5）。出牌阶段开始时，你可以移去一个记录的牌名，若为普通锦囊牌则可以视为使用此牌。",
 			sblianying: "连营",
 			sblianying_info: "其他角色的回合结束时，你可以观看牌堆顶的X张牌，然后将这些牌交给任意角色（X为你本回合失去的牌数，至多为5）。",
 

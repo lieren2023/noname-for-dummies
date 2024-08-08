@@ -423,7 +423,7 @@ game.import("character", function () {
 				audio: "wanyi",
 				trigger: { player: "useCardToTargeted" },
 				filter: function (event, player) {
-					return player != event.target && event.targets.length == 1 && (event.card.name == "sha" || get.type(event.card, false) == "trick") && event.target.countCards("he") > 0;
+					return player != event.target && event.targets.length == 1 && (event.card.name == "sha" || get.type(event.card, null, false) == "trick") && event.target.countCards("he") > 0;
 				},
 				locked: false,
 				logTarget: "target",
@@ -993,13 +993,9 @@ game.import("character", function () {
 				trigger: { player: "showCharacterAfter" },
 				hiddenSkill: true,
 				filter: function (event, player) {
-					return (
-						event.toShow.includes("xuangongzhu") &&
-						player != _status.currentPhase &&
-						game.hasPlayer(function (current) {
-							return current.isDamaged();
-						})
-					);
+					// 临时修改（by 棘手怀念摧毁）
+					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("gaoling")) && player != _status.currentPhase && game.hasPlayer(current => current.isDamaged());
+					// return event.toShow?.some(i => get.character(i).skills?.includes("gaoling")) && player != _status.currentPhase && game.hasPlayer(current => current.isDamaged());
 				},
 				direct: true,
 				content: function () {
@@ -1934,7 +1930,9 @@ game.import("character", function () {
 				hiddenSkill: true,
 				filter: function (event, player) {
 					var target = _status.currentPhase;
-					return event.toShow.includes("jin_simayi") && target && target != player && target.countGainableCards(player, "he") > 0;
+					// 临时修改（by 棘手怀念摧毁）
+					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("buchen")) && target && target != player && target.countGainableCards(player, "he") > 0;
+					// return event.toShow?.some(i => get.character(i).skills?.includes("buchen")) && target && target != player && target.countGainableCards(player, "he") > 0;
 				},
 				direct: true,
 				content: function () {
@@ -2584,8 +2582,9 @@ game.import("character", function () {
 				forced: true,
 				filter: function (event, player) {
 					return (
-						event.toShow &&
-						event.toShow.includes("jin_yanghuiyu") &&
+						// 临时修改（by 棘手怀念摧毁）
+						event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("huirong")) &&
+						// event.toShow?.some(i => get.character(i).skills?.includes("huirong")) &&
 						game.hasPlayer(function (target) {
 							var num = target.countCards("h");
 							return num > target.hp || num < Math.min(5, target.hp);
@@ -2956,7 +2955,7 @@ game.import("character", function () {
 				mod: {
 					cardEnabled2: function (card, player) {
 						var stat = player.getStat("skill");
-						if (stat.xinquanbian && stat.xinquanbian >= player.maxHp && get.position(card) == "h" && get.type(card, player) != "equip") return false;
+						if (stat.xinquanbian && stat.xinquanbian >= player.maxHp && get.position(card) == "h" && get.type(card, null, player) != "equip") return false;
 					},
 				},
 			},
@@ -2969,7 +2968,9 @@ game.import("character", function () {
 				},
 				filter: function (event, player) {
 					var target = _status.currentPhase;
-					return target && target != player && target.isAlive();
+					// 临时修改（by 棘手怀念摧毁）
+					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("taoyin"));
+					// return player != target && target && target.isAlive() && event.toShow?.some(i => get.character(i).skills?.includes("taoyin"));
 				},
 				check: function (event, player) {
 					return get.attitude(player, _status.currentPhase) < 0;
@@ -3156,7 +3157,9 @@ game.import("character", function () {
 				forced: true,
 				hiddenSkill: true,
 				filter: function (event, player) {
-					return event.toShow && event.toShow.includes("jin_xiahouhui");
+					// 临时修改（by 棘手怀念摧毁）
+					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("baoqie"));
+					// return event.toShow?.some(i => get.character(i).skills?.includes("baoqie"));
 				},
 				content: function () {
 					"step 0";
@@ -3270,7 +3273,9 @@ game.import("character", function () {
 				hiddenSkill: true,
 				filter: function (event, player) {
 					var target = _status.currentPhase;
-					return player != target && target && target.isAlive() && event.toShow && event.toShow.includes("jin_simazhao");
+					// 临时修改（by 棘手怀念摧毁）
+					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("tuishi"));
+					// return player != target && target && target.isAlive() && event.toShow?.some(i => get.character(i).skills?.includes("tuishi"));
 				},
 				content: function () {
 					player.addTempSkill("tuishi2");
@@ -3532,7 +3537,9 @@ game.import("character", function () {
 					return _status.currentPhase;
 				},
 				filter: function (event, player) {
-					if (!event.toShow || !event.toShow.includes("jin_wangyuanji")) return false;
+					// 临时修改（by 棘手怀念摧毁）
+					if (!(event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("shiren")))) return false;
+					// if (!event.toShow?.some(i => get.character(i).skills?.includes("shiren"))) return false;
 					var target = _status.currentPhase;
 					return target && target != player && target.isAlive() && target.countCards("h") > 0;
 				},
@@ -3758,13 +3765,20 @@ game.import("character", function () {
 				},
 				forced: true,
 				filter: function (event, player) {
-					if (player._xijue) return false;
-					if (get.mode() == "guozhan") return event.name == "showCharacter" && event.toShow && event.toShow.includes("gz_zhanghuyuechen");
+					if (get.mode() == "guozhan")
+						return (
+							game
+								.getAllGlobalHistory("everything", evt => {
+									// 临时修改（by 棘手怀念摧毁）
+									return evt.name == "showCharacter" && evt.toShow && evt.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("xijue"));
+									// return evt.name == "showCharacter" && evt.toShow?.some(i => get.character(i).skills?.includes("xijue"));
+								})
+								.indexOf(event) == 0
+						);
 					return event.name != "showCharacter" && (event.name != "phase" || game.phaseNumber == 0);
 				},
 				content: function () {
 					player.addMark("xijue", 4);
-					player._xijue = true;
 				},
 				intro: {
 					name2: "爵",
@@ -3863,7 +3877,7 @@ game.import("character", function () {
 					}
 					var next = player.chooseToDiscard(`是否弃置一枚“爵”和一张${get.mode() == "guozhan" ? "基本" : "手"}牌，对${get.translation(trigger.player)}发动【骁果】？`, "h", function (card, player) {
 						if (get.mode() != "guozhan") return true;
-						return get.type(card, player) == "basic";
+						return get.type(card, null, player) == "basic";
 					});
 					next.set("ai", function (card) {
 						if (_status.event.nono) return 0;
@@ -3983,7 +3997,9 @@ game.import("character", function () {
 				forced: true,
 				hiddenSkill: true,
 				filter: function (event, player) {
-					return event.toShow.includes("jin_zhangchunhua") && player != _status.currentPhase;
+					// 临时修改（by 棘手怀念摧毁）
+					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("xuanmu")) && player != _status.currentPhase;
+					// return event.toShow?.some(i => get.character(i).skills?.includes("xuanmu")) && player != _status.currentPhase;
 				},
 				content: function () {
 					player.addTempSkill("xuanmu2");
@@ -4076,6 +4092,8 @@ game.import("character", function () {
 			yangyan: ["yangyan", "old_yangyan"],
 			yangzhi: ["yangzhi", "old_yangzhi"],
 			zhongyan: ["zhongyan", "clan_zhongyan"],
+			simazhou: ["simazhou", "mb_simazhou"],
+			jin_xiahouhui: ["jin_xiahouhui", "jd_jin_xiahouhui"],
 		},
 		translate: {
 			jin_zhangchunhua: "晋张春华",

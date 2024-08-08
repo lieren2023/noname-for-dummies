@@ -1139,7 +1139,7 @@ game.import("card", function () {
 				intro: {
 					content: function (storage, player) {
 						return (
-							"出牌阶段限一次，你可以弃置一张基本牌并发现一张牌，持续两回合（剩余" +
+							"出牌阶段限一次，你可以弃置一张基本牌并发现一张牌，持续三回合（剩余" +
 							player.storage.luyugeng_markcount +
 							"回合）"
 						);

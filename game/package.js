@@ -20,6 +20,7 @@ window.noname_package = {
 		collab: "联动卡",
 		offline: "线下武将",
 		jsrg: "江山如故",
+		sixiang: "四象封印",
 		old: "怀旧",
 		diy: "DIY",
 		ddd: "3D精选",

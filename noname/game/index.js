@@ -5184,7 +5184,7 @@ export class Game {
 			delete lib.config.extensionInfo[extensionName];
 			game.saveConfigValue("extensionInfo");
 		}
-		if (!game.download || keepFile) return;
+		if (!game.readFile || keepFile) return;
 		game.promises.removeDir(`extension/${extensionName}`).catch(console.error);
 	}
 	addRecentCharacter() {
@@ -7606,17 +7606,20 @@ export class Game {
 	 * @param { { drawDeck: boolean } } [drawDeck]
 	 * @param { boolean } [bottom]
 	 */
-	async asyncDraw(players, num, drawDeck, bottom) {
-		for (let index = 0; index < players.length; index++) {
-			const value = players[index];
-			let num2 = 1;
-			if (typeof num == "number") num2 = num;
-			else if (Array.isArray(num)) num2 = num[index];
-			else if (typeof num == "function") num2 = num(value);
-			if (drawDeck && drawDeck.drawDeck) await value.draw(num2, false, drawDeck);
-			else if (bottom) await value.draw(num2, "nodelay", "bottom");
-			else await value.draw(num2, "nodelay");
-		}
+	asyncDraw(players, num, drawDeck, bottom) {
+		return Promise.all(
+			players.map((player, index) => {
+				let num2 = 1;
+				if (typeof num === "number") num2 = num;
+				else if (Array.isArray(num)) num2 = num[index];
+				else if (typeof num === "function") num2 = num(player);
+
+				if (drawDeck && drawDeck.drawDeck)
+					return player.draw(num2, false, drawDeck);
+				if (bottom) return player.draw(num2, "nodelay", "bottom");
+				return player.draw(num2, "nodelay");
+			})
+		);
 	}
 	/**
 	 * @param { Player[] } players

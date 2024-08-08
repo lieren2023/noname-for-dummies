@@ -174,7 +174,7 @@ game.import("character", function () {
 				"建兴六年春，汉丞相诸葛亮使赵云、邓芝为先锋，马谡为副将拒箕谷，牵制曹真主力。自率三十万大军攻祁山，三郡叛魏应亮，关中响震。曹叡命张郃拒亮，亮使定军山降将姜维与郃战于街亭，张郃久攻不下。后曹真强攻赵云军，赵云死战，坚守箕谷，马谡、邓芝当场战死忠勇殉国。……既克张郃，曹真溃逃，曹叡弃守长安，迁都邺城。十月，司马懿击退孙权，回援曹真。而后三年，丞相所到之处，无不望风而降，皆箪食壶浆，以迎汉军。尽收豫、徐、兖、并之地，建兴十年春，司马懿父子三人死于诸葛武侯火计，同年，孙权上表称臣，至此四海清平，大汉一统。而后诸葛亮荐蒋琬为丞相，姜维为大将军，自回隆中归隐，后主挽留再三，皆不受。魏延亦辞官相随，侍奉左右。后主时有不决之事，便往隆中拜访相父，均未得面，童子答曰外出云游，遗数锦囊，拆而视之，皆治国之良策也。",
 			jsrg_yuanshao: "太祖圣武皇帝，汝南汝阳人也，姓袁，讳绍,字本初。太祖于黎阳梦有一神授一宝刀，及觉，果在卧所，铭日思召。解之曰：思召，绍字也。 ……灵帝崩，少帝继位。卓议欲废立，太祖拒之，卓案剑吆曰：“竖子敢然！天下之事，岂不在我/我欲为之，谁敢不从！”绍勃然曰：“天下健者，岂惟董乎！”横剑径出。世人方知太祖贤名非以权势取之。实乃英雄气也。初平元年，太祖于勃海起兵，其从弟后将军术等十余位诸侯同时俱起，兴兵讨董。是时，豪杰既多附招，州郡蜂起，莫不以袁氏为名。……太祖既得冀州，尝出猎白登山，见一白鹿口含宝剑而来，获之，剑名中兴。或曰：汉失其鹿，陈逐而获之。建安五年，太祖与曹操战于官渡，曹操欲夜袭乌巢，恰有流星如火,光长十余丈照于曹营，昼有云如坏山，当营而陨, 不及地尺而散，吏士皆以为不详，太祖并兵俱攻大破之，操自军破后，头风病发，六年夏五月死。",
 			yangqiu: "阳球（？-179年），字方正，渔阳泉州（今天津市武清县）人。阳球出身世代豪门，能击剑，习弓马，好申不害、韩非之学。以杀人复仇知名。初举孝谦，补尚书侍郎。后出任高唐令，辟于司徙刘宠府中，举高第。当时九江郡（治阴陵，今安徽定远西北）贼起，三府推举阳球有理奸之才，遂出任九江太守。阳球上任后，设下方略，将凶贼全部歼灭，又收捕郡中奸吏尽杀之。升任平原相，因治事严苦，征诣廷尉，罪当免官。但灵帝以其在九江时有功，任命其为议郎，升任将作大匠，坐事论。不久，任尚书令，奏请罢鸿都文学，书奏不省。光和二年（179年），升任司隶校尉，遂奏收中常侍王甫等人，阳球亲自拷问，五毒备极，王甫父子皆死于杖下。既杀王甫，阳球还欲诛杀曹节等人，使权门屏气，京师震畏。不久，曹节谮毁阳球，使其转任卫尉。其冬，阳球与司徙刘郃等欲诛宦官，反为所诬，遂被收缚洛阳狱，诛死。",
-			zhanghuan: "张奂（104-181年），字然明，又名张焕。敦煌渊泉今甘肃省瓜州县）人，后以功移籍弘农郡（今河南灵宝），书法家张芝的父亲。中国东汉经学家、军事家、文学家，“凉州三明”之一。早年师从太尉朱宠，研习《欧阳尚书》，自行删减《牟氏章句》。汉桓帝时，举贤良出身，对策第一，授议郎，历任安定都尉、武威太守、度辽将军、护匈奴中郎将等职。多次赢得对外战争，招抚外族，促进边境和平，功勋卓著。汉灵帝即位，迁大司农，受到宦官集团利用，讨伐大将军窦武。事后，上疏为窦武等人申冤。累迁太常卿，辞官归乡，授课著书，不再出仕。光和四年（181年），张奂去世，时年七十八。",
+			zhanghuan: "张奂（104-181年），字然明，又名张焕。敦煌渊泉（今甘肃省瓜州县）人，后以功移籍弘农郡（今河南灵宝），书法家张芝的父亲。中国东汉经学家、军事家、文学家，“凉州三明”之一。早年师从太尉朱宠，研习《欧阳尚书》，自行删减《牟氏章句》。汉桓帝时，举贤良出身，对策第一，授议郎，历任安定都尉、武威太守、度辽将军、护匈奴中郎将等职。多次赢得对外战争，招抚外族，促进边境和平，功勋卓著。汉灵帝即位，迁大司农，受到宦官集团利用，讨伐大将军窦武。事后，上疏为窦武等人申冤。累迁太常卿，辞官归乡，授课著书，不再出仕。光和四年（181年），张奂去世，时年七十八。",
 			chenfan: "陈蕃（？-168年），字仲举。汝南平舆（今河南省平舆北）人。东汉时期名臣，与窦武、刘淑合称“三君”。陈蕃年少时有大志，举孝廉，授郎中。因母去世，辞官居丧。后由太尉李固荐举为乐安太守。因得罪大将军梁冀，由太守降为县令。为了零陵桂阳的流民山匪得罪皇帝身边的人，被外放为豫章太守。后升任大鸿胪。延熹六年（163年），陈蕃被征为尚书仆射，转太中大夫。延熹八年（165年），陈藩代杨秉为太尉，次年，被免官。永康元年（167年），汉桓帝去世，窦皇后临朝，以陈蕃为太傅，管理尚书事宜。次年，汉灵帝即位，陈藩与大将军窦武谋诛宦官，事泄，宦官曹节劫持汉灵帝与窦太后，诛杀窦武，又率宫中卫士包围了陈蕃，陈蕃率学士80人抵抗，被害，年七十余。",
 			zhangju: "张举（生卒年不详），渔阳人，与张纯同郡，是东汉末年起义军将领，曾在汉朝担任泰山太守。中平四年（187年），张举受张纯挑唆，联合乌桓起兵攻打郡县，部众到达了十多万；张举自称天子，张纯自称弥天将军安定王，声称自己将取代汉朝。刘虞担任幽州牧后，用怀柔之策说服乌桓罢兵，并悬赏求购张举、张纯；两人逃出塞外，后来张纯被门客王政所杀，张举则下落不明。",
 			caojiewangfu: "曹节（？―181年），字汉丰，南阳育阳（今河南省南阳市宛城区瓦店镇）人。东汉宦官。因事入宫，累迁西园骑。汉顺帝时期，迁小黄门。汉桓帝继位，迁中常侍，加任奉车都尉。拥戴汉灵帝有功，册封长安乡侯。联合长乐五官史朱瑀等矫诏诛杀窦武、陈蕃等人，升任长乐卫尉，进封育阳县侯。建宁二年（169年），加位特进、大长秋。权倾朝野，诬害勃海王刘悝，累迁尚书令。光和四年（181年），曹节去世，获赠车骑将军。<br>王甫（？—179年），东汉时期宦官。前十常侍之一。灵帝初为长乐食监，受中常侍曹节等矫诏为黄门令，将兵诛杀大将军窦武等人,因迁中常侍。后与节诬奏勃海王刘悝谋反，封冠军侯。由此操纵朝政，父兄子弟皆为公卿列校、牧守令长，布满天下。光和二年 (179)，与养子永乐少府萌、沛相吉并为司隶校尉阳球收捕，磔尸于城门。",
@@ -402,7 +402,7 @@ game.import("character", function () {
 				check(event, player) {
 					if (
 						event.targets.reduce((p, c) => {
-							return p + get.effect_use(c, event.card, event.player, player) > 0;
+							return p + get.effect(c, event.card, event.player, player);
 						}, 0) >= 0
 					)
 						return false;
@@ -654,7 +654,6 @@ game.import("character", function () {
 			jsrgyansha: {
 				trigger: { player: "phaseZhunbeiBegin" },
 				async cost(event, trigger, player) {
-					//AI摆了，交给157了
 					event.result = await player
 						.chooseTarget(get.prompt("jsrgyansha"), "你可以选择任意名角色，视为对这些角色使用【五谷丰登】，然后未被选择的角色依次可以将一张装备牌当作【杀】对目标角色使用。", [1, Infinity], (card, player, target) => {
 							return player.canUse({ name: "wugu", isCard: true }, target);
@@ -865,6 +864,7 @@ game.import("character", function () {
 						player(player, target) {
 							let tars = _status.event.getTempCache("jsrgguanshi", "targets");
 							if (!tars) return lib.card.juedou.ai.result.player(player, target);
+							return 0;
 						},
 						target(player, target) {
 							let tars = _status.event.getTempCache("jsrgguanshi", "targets");
@@ -1206,7 +1206,7 @@ game.import("character", function () {
 				async content(event, trigger, player) {
 					const { giver, cards } = event.cost_data;
 					await giver.give(cards, trigger.source);
-					await trigger.cancel();
+					trigger.cancel();
 				},
 				chooseTarget(target, source, current, eventId, eventNum) {
 					const goon = (() => {
@@ -1397,13 +1397,12 @@ game.import("character", function () {
 				},
 				check(event, player) {
 					//理论上是小完杀+卖血
-					//先粗略地写一写，后面等157补
 					return get.attitude(player, event.player) < 0;
 				},
 				async content(event, trigger, player) {
 					const target = trigger.player;
 					const targets = await target
-						.chooseTarget([1, 2], true, "请选择至多两名角色", `${get.translation(player)}对你发动了【纵害】。你可以选择至多两名角色，只有这两名角色可以使用牌拯救你，且当此次濒死结算结束后，这两名角色均会受到来自${get.translation(player)}的1点伤害。`)
+						.chooseTarget([1, 2], true, "请选择至多两名角色", `${get.translation(player)}对你发动了【纵害】。你可以选择至多两名角色，只有他（们）可以使用牌拯救你，且当此次濒死结算结束后，他（们均）会受到来自${get.translation(player)}的1点伤害。`)
 						.set("ai", target => {
 							//自救还要挨一刀，最好的反制方法就是跟对面爆了
 							const evt = get.event(),
@@ -1425,29 +1424,64 @@ game.import("character", function () {
 							target.markAuto("jsrgzonghai_blocker", [id]);
 						}
 					});
-					target
-						.when("dyingAfter")
-						.vars({ id, allPlayers, targets, source: player })
-						.assign({ forceDie: true })
-						.then(() => {
-							allPlayers.forEach(target => {
-								target.unmarkAuto("jsrgzonghai_blocker", [id]);
-								if (!target.getStorage("jsrgzonghai_blocker").length) target.removeSkill("jsrgzonghai_blocker");
-							});
-							if (source.isIn()) {
-								targets.forEach(target => target.damage(source));
-							}
-						});
+					target.addSkill("jsrgzonghai_damage");
+					if (!target.storage.jsrgzonghai_damage) target.storage.jsrgzonghai_damage = [];
+					target.storage.jsrgzonghai_damage.push({
+						id: id,
+						targets: targets,
+						source: player
+					});
 				},
 				subSkill: {
 					blocker: {
 						charlotte: true,
 						onremove: true,
 						mod: {
-							cardSavable: () => false,
-							cardEnabled: () => false,
+							cardSavable: (card, player) => {
+								if (player.getStorage("jsrgzonghai_blocker").includes(get.event().getParent()._jsrgzonghai_id))
+									return false;
+							},
+							cardEnabled: (card, player) => {
+								if (player.getStorage("jsrgzonghai_blocker").includes(get.event().getParent()._jsrgzonghai_id))
+									return false;
+							},
 						},
 					},
+					damage: {
+						trigger: {
+							player: "dyingAfter"
+						},
+						filter(event, player) {
+							let storage = player.getStorage("jsrgzonghai_damage");
+							for (let i of storage) {
+								if (i.id == event._jsrgzonghai_id) return true;
+							}
+							return false;
+						},
+						silent: true,
+						forceDie: true,
+						charlotte: true,
+						async content(event, trigger, player) {
+							let storage;
+							for (let i = 0; i < player.storage.jsrgzonghai_damage.length; i++) {
+								if (player.storage.jsrgzonghai_damage[i].id == trigger._jsrgzonghai_id) {
+									storage = player.storage.jsrgzonghai_damage[i];
+									player.storage.jsrgzonghai_damage.splice(i, 1);
+									break;
+								}
+							}
+							if (!storage) return;
+							game.countPlayer(target => {
+								target.unmarkAuto("jsrgzonghai_blocker", [storage.id]);
+								if (!target.getStorage("jsrgzonghai_blocker").length) target.removeSkill("jsrgzonghai_blocker");
+							});
+							if (storage.source.isIn()) while (storage.targets.length) {
+								let target = storage.targets.shift();
+								if (target.isIn()) await target.damage(storage.source);
+							}
+							if (!player.storage.jsrgzonghai_damage.length) player.removeSkill("jsrgzonghai_damage");
+						}
+					}
 				},
 			},
 			jsrgjueyin: {
@@ -3751,19 +3785,23 @@ game.import("character", function () {
 				ai: {
 					order: 6,
 					result: {
-						target(player, target) {
+						player(player, target) {
 							const targets = game.filterPlayer(
 								(current) => target.inRange(current) && current != player
 							);
 							let eff = 0;
 							for (const targetx of targets) {
-								let effx = get.effect(targetx, { name: "guohe_copy2" }, player, target);
-								if (get.attitude(player, targetx) < 0) effx /= 2;
+								let effx = get.effect(targetx, { name: "guohe_copy2" }, targetx, player);
 								eff += effx;
 							}
-							return eff * (get.attitude(player, target) <= 0 ? 0.75 : 1);
+							return eff;
 						},
 					},
+					target(player, target) {
+						return game.countPlayer(current => {
+							return current !== player && target.inRange(current) && current.countCards("h");
+						}) / 2 * get.effect(target, { name: "draw" }, target, target);
+					}
 				},
 			},
 			//郭照
@@ -8764,6 +8802,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				limited: true,
 				filterTarget: lib.filter.notMe,
+				derivation: ["jsrgfeiyang", "jsrgbahu"],
 				skillAnimation: true,
 				animationColor: "soil",
 				content: function () {
@@ -9119,7 +9158,7 @@ game.import("character", function () {
 				},
 			},
 			jsrgjuelie: {
-				audio: 2,
+				audio: 4,
 				trigger: { player: "useCardToPlayered" },
 				filter: function (event, player) {
 					return player.countCards("he") && event.card.name == "sha";
@@ -9311,7 +9350,7 @@ game.import("character", function () {
 				direct: true,
 				content: function () {
 					"step 0";
-					var goon = get.effect(player, trigger.card, trigger.player, trigger.player) < 1;
+					var goon = get.effect(player, trigger.card, trigger.player, trigger.player) < 2 * get.effect(player, { name: "draw" }, player, trigger.player);
 					if (goon && !event.isMine() && !event.isOnline()) game.delayx();
 					trigger.player
 						.chooseBool(
@@ -10491,7 +10530,7 @@ game.import("character", function () {
 			},
 			//刘备
 			jsrgjishan: {
-				audio: 2,
+				audio: 4,
 				trigger: { global: "damageBegin4" },
 				usable: 1,
 				filter: function (event, player) {
@@ -10891,7 +10930,7 @@ game.import("character", function () {
 			},
 			//404曹操
 			jsrgzhenglve: {
-				audio: 2,
+				audio: 4,
 				trigger: { global: "phaseEnd" },
 				filter: function (event, player) {
 					var zhu = get.zhu(player) || game.findPlayer((current) => current.getSeatNum() == 1);

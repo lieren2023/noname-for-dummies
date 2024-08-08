@@ -7927,7 +7927,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				ai: {
 					effect: {
 						target: function (card, player, target, current) {
-							if (card.name == "lebu" && card.name == "bingliang") return 0.8;
+							if (card.name == "lebu" || card.name == "bingliang") return 0.8;
 						},
 					},
 				},

@@ -281,7 +281,7 @@ export const Content = {
 		player.$give(card, target, false);
 		game.delay(0.5);
 		event.trigger("giftAccept");
-		if (get.type(card, false) == "equip") target.equip(card).log = false;
+		if (get.type(card) == "equip") target.equip(card).log = false;
 		else target.gain(card, player).visible = true;
 		event.trigger("giftAccepted");
 		"step 3";
@@ -2363,6 +2363,8 @@ export const Content = {
 		}
 		player.phase();
 		"step 2";
+		event.trigger("phaseOver");
+		"step 3";
 		if (!game.players.includes(event.player.next)) {
 			event.player = game.findNext(event.player.next);
 		} else {
@@ -3016,7 +3018,7 @@ export const Content = {
 		}
 		//规则集中的“回合开始后①”，更新游戏轮数，触发“一轮游戏开始时”
 		var isRound = false;
-		if (!event.skill) {
+		if (lib.onround.every(i => i(event, player))) {
 			isRound = _status.roundSkipped;
 			if (_status.isRoundFilter) {
 				isRound = _status.isRoundFilter(event, player);
@@ -7743,7 +7745,7 @@ export const Content = {
 	},
 	gain: function () {
 		"step 0";
-		if (event.animate == "give") event.visible = true;
+		if (event.animate == "give" || event.animate == "gain2" || event.animate == "draw2") event.visible = true;
 		if (cards) {
 			var map = {};
 			for (var i of cards) {
@@ -7756,6 +7758,7 @@ export const Content = {
 					if (position == "h") map[id][1].push(i);
 					else map[id][2].push(i);
 				} else if (!event.updatePile && get.position(i) == "c") event.updatePile = true;
+				if (event.visible) i.addKnower("everyone");
 			}
 			event.losing_map = map;
 			for (var i in map) {
@@ -7786,7 +7789,7 @@ export const Content = {
 						if (hs.includes(cards[i])) {
 							cards.splice(i--, 1);
 						} else {
-							cards[i].addKnower(event.visible ? "everyone" : source);
+							cards[i].addKnower(source);
 						}
 					}
 				}

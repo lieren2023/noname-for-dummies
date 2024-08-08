@@ -128,6 +128,7 @@ game.import("character", function () {
 			],
 			junk_guanyu: ["male", "shu", 4, ["olsbfumeng", "olsbguidao"]],
 			junk_liuyan: ["male", "qun", "4/6", ["olpianan", "olyinji", "olkuisi"]],
+			std_pengyang: ["male", "shu", 3, ["stdxiaofan", "stdtuishi"]],
 		},
 		characterFilter: {
 			ns_duangui(mode) {
@@ -214,7 +215,7 @@ game.import("character", function () {
 				],
 				diy_default: ["diy_yuji", "diy_caiwenji", "diy_lukang", "diy_zhenji", "old_majun"],
 				diy_noname: ["noname"],
-				diy_trashbin: ["junk_guanyu", "junk_zhangjiao", "old_jiakui", "ol_guohuai", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan"],
+				diy_trashbin: ["junk_guanyu", "junk_zhangjiao", "old_jiakui", "ol_guohuai", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan", "std_pengyang"],
 			},
 		},
 		characterIntro: {
@@ -601,12 +602,7 @@ game.import("character", function () {
 								if (evt.type != "discard" || evt.getParent("phaseDiscard") != event)
 									return false;
 								for (var i of evt.cards2) {
-									if (
-										get.type(i, false) == "basic" &&
-										get.position(i, true) == "d" &&
-										player.hasUseTarget(i)
-									)
-										return true;
+									if (get.type(i, null, false) == "basic" && get.position(i, true) == "d" && player.hasUseTarget(i)) return true;
 								}
 								return false;
 							});
@@ -618,8 +614,7 @@ game.import("character", function () {
 								if (evt.type != "discard" || evt.getParent("phaseDiscard") != trigger)
 									return false;
 								for (var i of evt.cards2) {
-									if (get.type(i, false) == "basic" && get.position(i, true) == "d")
-										cards.push(i);
+									if (get.type(i, null, false) == "basic" && get.position(i, true) == "d") cards.push(i);
 								}
 								return false;
 							});
@@ -689,7 +684,7 @@ game.import("character", function () {
 					"step 1";
 					if (result.index == 0) {
 						var card = get.cardPile2(function (card) {
-							return get.type(card, false) == "basic";
+							return get.type(card, null, false) == "basic";
 						});
 						if (card) player.gain(card, "gain2");
 						event.finish();
@@ -1103,6 +1098,7 @@ game.import("character", function () {
 				discard: false,
 				lose: false,
 				delay: false,
+				derivation: ["noname_retieji", "noname_jiang"],
 				content() {
 					"step 0";
 					var stat = player.getStat();
@@ -1350,7 +1346,7 @@ game.import("character", function () {
 				delay: false,
 				check(card) {
 					var player = _status.event.player;
-					if (get.type(card, player) == "basic") {
+					if (get.type(card) == "basic") {
 						if (
 							game.hasPlayer(function (current) {
 								return (
@@ -3457,6 +3453,15 @@ game.import("character", function () {
 					trigger.cancel();
 					//event.finish();
 				},
+				ai: {
+					nofire: true,
+					nothunder: true,
+					effect: {
+						target(card, player, target) {
+							if (get.tag(card, "natureDamage")) return "zerotarget";
+						}
+					}
+				}
 			},
 			ns_xiandao: {
 				forced: true,
@@ -4551,20 +4556,36 @@ game.import("character", function () {
 				ai: {
 					order: 10,
 					result: {
-						target(player, target) {
-							if (target == game.zhu) return -1;
-							if (get.attitude(player, target) > 3) {
-								var num = game.zhu.hp - target.hp;
-								if (num == 1) {
-									return 1;
-								}
-								if (num > 1) {
-									if (player.hp == 1) return num;
-									if (target.hp == 1) return num;
-									if (num >= 3) return num;
-								}
-							}
+						player(player, target) {
+							if (
+								ui.selected.targets.length &&
+								Math.abs(target.hp - ui.selected.targets[0].hp) === 1
+							) return get.effect(player, {name: "losehp"}, player, player) / 10;
 							return 0;
+						},
+						target(player, target) {
+							let att = get.attitude(player, target), max;
+							if (!ui.selected.targets.length) {
+								let search = false;
+								game.countPlayer(cur => {
+									if (
+										player === cur ||
+										target === cur ||
+										(cur.hp - target.hp) * (get.attitude(player, cur) - att) >= 0
+									) return false;
+									if (!search) {
+										max = Math.min(cur.hp, target.maxHp) - target.hp;
+										search = true;
+									}
+									else if (att > 0) max = Math.max(max, Math.min(cur.hp, target.maxHp) - target.hp);
+									else max = Math.min(max, Math.min(cur.hp, target.maxHp) - target.hp);
+								});
+								if (target === get.zhu(player)) return 2 * max;
+								return max;
+							}
+							max = Math.min(ui.selected.targets[0].hp, target.maxHp) - target.hp;
+							if (target === get.zhu(player)) return 2 * max;
+							return max;
 						},
 					},
 				},
@@ -8673,6 +8694,78 @@ game.import("character", function () {
 					}
 				},
 			},
+			
+			//牢彭羕
+			stdxiaofan: {
+				audio: "olxiaofan",
+				trigger: {
+					player: "useCardAfter",
+				},
+				forced: true,
+				filter(event, player) {
+					const num = Math.min(3, lib.skill.olxiaofan.getNum(player)),
+						pos = "jeh".slice(0, num);
+					return num > 0 && player.countCards(pos);
+				},
+				async content(event, trigger, player) {
+					const num = Math.min(3, lib.skill.olxiaofan.getNum(player)),
+						pos = "jeh".slice(0, num);
+					let index = 0;
+					while (index < num) {
+						const posi = pos[index];
+						const hs = player.countCards(posi);
+						if (hs > 0) await player.chooseToDiscard(hs, posi, true);
+						index++;
+					}
+				},
+				ai: {
+					effect: {
+						player_use(card, player) {
+							if (get.type(card) == "equip") {
+								return [0, -5];
+							}
+						},
+					},
+					neg: true,
+				},
+			},
+			stdtuishi: {
+				audio: "oltuishi",
+				mod: {
+					wuxieJudgeEnabled: () => false,
+					wuxieEnabled: () => false,
+					cardEnabled: card => {
+						if (card.name == "wuxie") return false;
+					},
+					aiValue: (player, card, val) => {
+						if (card.name == "wuxie") return 0;
+						var num = get.number(card);
+						if ([1, 11, 12, 13].includes(num)) return 0;
+					},
+					aiUseful: (player, card, val) => {
+						if (card.name == "wuxie") return 0;
+						var num = get.number(card);
+						if ([1, 11, 12, 13].includes(num)) return 0;
+					},
+					aiOrder: (player, card, order) => {
+						var num = get.number(card);
+						if ([1, 11, 12, 13].includes(num)) return 0;
+						return order;
+					},
+				},
+				trigger: {
+					player: "useCard",
+				},
+				filter(event, player) {
+					return [1, 11, 12, 13].includes(get.number(event.card));
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					trigger.targets.length = 0;
+					trigger.all_excluded = true;
+					game.log(trigger.card, "被无效了");
+				},
+			},
 		},
 		dynamicTranslate: {
 			nsjiquan(player) {
@@ -9296,6 +9389,13 @@ game.import("character", function () {
 			junk_guanyu_prefix: "旧谋",
 			junk_liuyan: "OL刘焉",
 			junk_liuyan_prefix: "OL",
+			
+			std_pengyang: "牢彭羕",
+			std_pengyang_prefix: "牢",
+			stdxiaofan: "嚣翻",
+			stdxiaofan_info: "锁定技，当你使用牌结算结束后，你弃置你前X个区域内的牌：1.判定区 2.装备区 3.手牌区（X为你本回合使用牌的类型数）。",
+			stdtuishi: "侻失",
+			stdtuishi_info: "锁定技，你不能使用【无懈可击】，你使用的字母牌无效。",
 
 			diy_tieba: "吧友设计",
 			diy_xushi: "玩点论杀·虚实篇",

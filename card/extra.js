@@ -596,6 +596,27 @@ game.import("card", function () {
 					},
 					basic: {
 						equipValue: 5,
+						useful: (card, i) => {
+							let player = get.event().player, num;
+							if (player.isDamaged() && player.hp < 2 && get.recoverEffect(player, player, player) > 0) return -10;
+							num = player.hasSkillTag("filterDamage", null, {
+								card: new lib.element.VCard("sha"),
+								jiu: true
+							}, true) ? 0.6 : 1.2;
+							if (
+								player.canAddJudge("shandian") &&
+								get.effect(player, { name: "shandian" }, player, player) < 0 &&
+								!player.hasSkillTag("rejudge")
+							) {
+								if (game.hasPlayer(cur => cur.hasJudge("shandian"))) num += 2;
+								else num++;
+							}
+							num += game.countPlayer(cur => {
+								if (get.attitude(cur, player) <= 0) return cur.hasSkillTag("damageBonus");
+							});
+							if (player.isDamaged()) num /= player.getDamagedHp();
+							return num;
+						}
 					},
 				},
 			},

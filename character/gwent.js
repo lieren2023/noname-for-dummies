@@ -208,6 +208,7 @@ game.import("character", function () {
 				filter(event, player) {
 					return player.countCards("h") > 0;
 				},
+				derivation: ["sqlongnu", "sqlonghuo"],
 				content() {
 					"step 0";
 					var max = 1;
@@ -1249,6 +1250,7 @@ game.import("character", function () {
 				},
 				unique: true,
 				onremove: true,
+				derivation: "gwzhongmo",
 				group: "gwfutian_discard",
 				subSkill: {
 					discard: {
@@ -1517,6 +1519,7 @@ game.import("character", function () {
 			gwchenshui: {
 				trigger: { player: "damageBefore", source: "damageBefore" },
 				forced: true,
+				derivation: "gwliedi",
 				init(player) {
 					player.storage.gwchenshui = 0;
 				},
@@ -1538,7 +1541,7 @@ game.import("character", function () {
 					trigger.cancel();
 					player.storage.gwchenshui++;
 					player.updateMarks();
-					if (trigger.source != trigger.player && trigger.source.isIn() && trigger.player.isIn()) {
+					if (trigger.source && trigger.source != trigger.player && trigger.source.isIn() && trigger.player.isIn()) {
 						var cards = trigger.player.getCards("he");
 						if (cards.length) {
 							trigger.player.give(cards.randomGet(), trigger.source);
@@ -4884,7 +4887,7 @@ game.import("character", function () {
 			gwchenshui: "沉睡",
 			gwchenshui_bg: "睡",
 			gwchenshui_info:
-				"锁定技，你防止即将造成或受到的伤害，改为令伤害来随机源获得对方一张牌；结束阶段，若你自上次沉睡起累计发动了至少3次沉睡效果，你解除沉睡状态，对所有敌方角色造成1点伤害，然后切换至觉醒状态。",
+				"锁定技，你防止即将造成或受到的伤害，然后令伤害来源随机获得对方一张牌；结束阶段，若你自上次沉睡起累计发动了至少3次沉睡效果，你解除沉睡状态，对所有敌方角色造成1点伤害，然后切换至觉醒状态。",
 			gwliedi: "裂地",
 			gwliedi_info:
 				"锁定技，你造成的伤害+X，X为你到该角色距离的一半，向下取整；结束阶段，若你连续两轮未造成伤害，你切换至沉睡状态。",

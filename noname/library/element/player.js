@@ -895,7 +895,7 @@ export class Player extends HTMLDivElement {
 	 */
 	getGiftAIResultTarget(card, target) {
 		if (!card || target.refuseGifts(card, this)) return 0;
-		if (get.type(card, false) == "equip") return get.effect(target, card, target, target);
+		if (get.type(card, null, target) == "equip") return get.effect(target, card, target, target);
 		if (card.name == "du") return this.hp > target.hp ? -1 : 0;
 		if (target.hasSkillTag("nogain")) return 0;
 		return Math.max(1, get.value(card, this) - get.value(card, target));
@@ -1568,6 +1568,13 @@ export class Player extends HTMLDivElement {
 	}
 	getSeatNum() {
 		if (typeof this.seatNum == "number") return this.seatNum;
+		if (get.mode() === "boss") {
+			return get.distance(
+				game.bossinfo.loopFirst ? game.bossinfo.loopFirst() : game.boss,
+				this,
+				"absolute"
+			) + 1;
+		}
 		return 0;
 	}
 	/**
@@ -1828,13 +1835,17 @@ export class Player extends HTMLDivElement {
 				switch (num) {
 					case 0:
 						player.classList.remove("unseen");
+						player.classList.remove("unseen_show");
 						break;
 					case 1:
 						player.classList.remove("unseen2");
+						player.classList.remove("unseen2_show");
 						break;
 					case 2:
 						player.classList.remove("unseen");
 						player.classList.remove("unseen2");
+						player.classList.remove("unseen_show");
+						player.classList.remove("unseen2_show");
 						break;
 				}
 				if (!player.isUnseen(2)) {
@@ -5077,7 +5088,10 @@ export class Player extends HTMLDivElement {
 				if (next.ai) next.filterButton = arguments[i];
 				else next.ai = arguments[i];
 			} else if (typeof arguments[i] == "object" && arguments[i]) {
-				next.filterButton = get.filter(arguments[i]);
+				var filter = get.filter(arguments[i]);
+				next.filterButton = function(button){
+					return filter(button.link);
+				};
 			} else if (typeof arguments[i] == "string") {
 				next.prompt = arguments[i];
 			}
@@ -5117,7 +5131,10 @@ export class Player extends HTMLDivElement {
 				if (next.ai) next.filterButton = arguments[i];
 				else next.ai = arguments[i];
 			} else if (typeof arguments[i] == "object" && arguments[i]) {
-				next.filterButton = get.filter(arguments[i]);
+				var filter = get.filter(arguments[i]);
+				next.filterButton = function(button){
+					return filter(button.link);
+				};
 			} else if (typeof arguments[i] == "string") {
 				next.prompt = arguments[i];
 			}
@@ -5159,7 +5176,10 @@ export class Player extends HTMLDivElement {
 				if (next.ai) next.filterButton = arguments[i];
 				else next.ai = arguments[i];
 			} else if (typeof arguments[i] == "object" && arguments[i]) {
-				next.filterButton = get.filter(arguments[i]);
+				var filter = get.filter(arguments[i]);
+				next.filterButton = function(button){
+					return filter(button.link);
+				};
 			} else if (typeof arguments[i] == "string") {
 				next.prompt = arguments[i];
 			}

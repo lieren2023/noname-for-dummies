@@ -1059,8 +1059,16 @@ game.import("card", function () {
 						return;
 					}
 					if (event.dialog.buttons.length > 1) {
-						var next = target.chooseButton(true, function (button) {
-							return get.value(button.link, _status.event.player);
+						var next = target.chooseButton(true);
+						next.set("ai", button => {
+							let player = _status.event.player, card = button.link, val = get.value(card, player);
+							if (get.tag(card, "recover")) {
+								val += game.countPlayer(target => {
+									return target.hp < 2 && get.attitude(player, target) > 0 && lib.filter.cardSavable(card, player, target);
+								});
+								if (player.hp <= 2 && game.checkMod(card, player, "unchanged", "cardEnabled2", player)) val *= 2;
+							}
+							return val;
 						});
 						next.set("dialog", event.preResult);
 						next.set("closeDialog", false);
@@ -1166,18 +1174,16 @@ game.import("card", function () {
 					result: {
 						target: function (player, target) {
 							var sorter = _status.currentPhase || player;
+							let opt = 6 + 0.75 * (game.countPlayer() - 2 * get.distance(sorter, target, "absolute"));
 							if (get.is.versus()) {
-								if (target == sorter) return 1.5;
-								return 1;
+								if (target !== sorter && get.attitude(player, player.next) < get.attitude(player, player.previous)) {
+									opt = 6 + 0.75 * (2 * get.distance(sorter, target, "absolute") - game.countPlayer());
+								}
 							}
 							if (player.hasUnknown(2)) {
 								return 0;
 							}
-							return (1 - get.distance(sorter, target, "absolute") / game.countPlayer()) *
-								get.attitude(player, target) >
-								0
-								? 0.5
-								: 0.7;
+							return opt / 6;
 						},
 					},
 					tag: {
@@ -1420,15 +1426,6 @@ game.import("card", function () {
 					result: {
 						player(player, target) {
 							if (player._nanman_temp || player.hasSkillTag("jueqing", false, target)) return 0;
-							player._nanman_temp = true;
-							let eff = get.effect(
-								target,
-								new lib.element.VCard({ name: "nanman" }),
-								player,
-								target
-							);
-							delete player._nanman_temp;
-							if (eff >= 0) return 0;
 							if (
 								target.hp > 2 ||
 								(target.hp > 1 &&
@@ -1438,6 +1435,15 @@ game.import("card", function () {
 									target != game.falseZhu)
 							)
 								return 0;
+							player._nanman_temp = true;
+							let eff = get.effect(
+								target,
+								new lib.element.VCard({ name: "nanman" }),
+								player,
+								target
+							);
+							delete player._nanman_temp;
+							if (eff >= 0) return 0;
 							if (target.hp > 1 && target.hasSkillTag("respondSha", true, "respond", true))
 								return 0;
 							let known = target.getKnownCards(player);
@@ -1714,15 +1720,6 @@ game.import("card", function () {
 						player(player, target) {
 							if (player._wanjian_temp || player.hasSkillTag("jueqing", false, target))
 								return 0;
-							player._wanjian_temp = true;
-							let eff = get.effect(
-								target,
-								new lib.element.VCard({ name: "wanjian" }),
-								player,
-								target
-							);
-							delete player._wanjian_temp;
-							if (eff >= 0) return 0;
 							if (
 								target.hp > 2 ||
 								(target.hp > 1 &&
@@ -1732,6 +1729,15 @@ game.import("card", function () {
 									target != game.falseZhu)
 							)
 								return 0;
+							player._wanjian_temp = true;
+							let eff = get.effect(
+								target,
+								new lib.element.VCard({ name: "wanjian" }),
+								player,
+								target
+							);
+							delete player._wanjian_temp;
+							if (eff >= 0) return 0;
 							if (target.hp > 1 && target.hasSkillTag("respondShan", true, "respond", true))
 								return 0;
 							let known = target.getKnownCards(player);
@@ -2007,13 +2013,13 @@ game.import("card", function () {
 									}),
 									"count"
 								);
-							if (ts < 1 && ts << 3 < Math.pow(player.hp, 2)) return 0;
+							if (ts < 1 && ts * 8 < Math.pow(player.hp, 2)) return 0;
 							if (att > 0) {
 								if (ts < 1) return 0;
 								return -2;
 							}
-							if (ts - ps + Math.exp(0.8 - player.hp) < 1) return -ts;
 							if (pd >= 0) return pd / get.attitude(player, player);
+							if (ts - ps + Math.exp(0.8 - player.hp) < 1) return -ts;
 							return -2 - ts;
 						},
 						target(player, target, card) {
@@ -2049,8 +2055,8 @@ game.import("card", function () {
 								);
 							if (ts < 1) return -1.5;
 							if (att > 0) return -2;
-							if (ts - ps < 1) return -2 - ts;
 							if (pd >= 0) return -1;
+							if (ts - ps < 1) return -2 - ts;
 							return -ts;
 						},
 					},
@@ -3067,7 +3073,18 @@ game.import("card", function () {
 					var target = event.player;
 					var eff = get.damageEffect(target, player, player, event.nature);
 					if (get.attitude(player, target) > 0) {
-						if (eff >= 0) return false;
+						if (
+							eff >= 0 ||
+							event.nature &&
+							target.isLinked() &&
+							game.hasPlayer(cur => {
+								return (
+									cur !== target &&
+									cur.isLinked() &&
+									get.damageEffect(cur, player, player, event.nature) > 0
+								);
+							})
+						) return false;
 						return true;
 					}
 					if (eff <= 0) return true;

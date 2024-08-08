@@ -15,7 +15,7 @@ game.import("character", function () {
 				yijiang_2017: ["xinxianying", "jikang", "wuxian", "qinmi", "xuezong", "xushi", "caiyong", "caojie"],
 				yijiang_2022: ["lukai", "kebineng", "zhugeshang", "liwan", "wuanguo", "hanlong", "yj_sufei", "yj_qiaozhou"],
 				yijiang_2023: ["xiahoumao", "chenshi", "sunli", "feiyao", "linghuyu", "yj_simafu", "yj_xuangongzhu", "xukun"],
-				// yijiang_2024: [],
+				yijiang_2024: ["yj_majun"],
 			},
 		},
 		character: {
@@ -114,9 +114,10 @@ game.import("character", function () {
 			yujin: ["male", "wei", 4, ["rezhenjun"], ["die_audio:ol_yujin"]],
 
 			linghuyu: ["male", "wei", 4, ["xvzhi"]],
-			yj_simafu: ["male", "wei", 3, ["beiyu", "duchi"]],
+			yj_simafu: ["male", "wei", 4, ["beiyu", "duchi"]],
 			yj_xuangongzhu: ["female", "wei", 3, ["yjqimei", "yjzhuiji"]],
 			xukun: ["male", "wu", 4, ["fazhu"]],
+			yj_majun: ["male", "wei", 3, ["yjgongqiao", "yjjingyi"]],
 		},
 		characterIntro: {
 			linghuyu: "令狐愚（？－249年），字公治，太原人。曹魏时期将领， 原名浚。太尉王凌的外甥，弘农太守令狐邵之侄。黄初年间出任和戎护军，后任曹爽府长史、兖州刺史。嘉平年间，与王凌一起密谋废除曹芳，共立楚王曹彪，事未行而病卒。嘉平三年（251年），事泄，王凌服毒自尽，与此事相连者，皆夷三族。王凌及令狐愚被开棺暴尸三日， 亲土埋之。",
@@ -227,6 +228,129 @@ game.import("character", function () {
 		},
 		skill: {
 			//一将2024
+			// 新杀马钧-临时写法 #1607
+			yjgongqiao: {
+				enable: "phaseUse",
+				usable: 1,
+				init(player, skill) {
+					player.addSkill("yjgongqiao_clear");
+					// 临时修改（by 棘手怀念摧毁）
+					if (!lib.config['extension_十周年UI_equipLayout']) ui.arena.dataset.equipLayout = 'on'
+				},
+				filterCard(card, player) {
+					if (get.type(card) == "equip") return player.canEquip(card, true);
+					return player.hasEnabledSlot();
+				},
+				filter(event, player) {
+					return player.countCards("h", card => lib.skill.yjgongqiao.filterCard(card, player));
+				},
+				check(card) {
+					const player = _status.event.player, val = get.value(card);
+					if (!player.countCards("h", cardx => get.type2(cardx) == get.type2(card))) val /= 4;
+					if (get.type2(card) == "trick") return 9 - val;
+					return 6 - val;
+				},
+				discard: false,
+				async content(event, trigger, player) {
+					const card = event.cards[0];
+					player.$give(card, player);
+					if (get.type(card) == "equip") await player.equip(card);
+					else {
+						let list = [];
+						for (let i = 1; i <= 5; i++) {
+							if (player.hasEnabledSlot(i)) list.push(i);
+						}
+						let choices = list.map(i => get.translation(`equip${i}`));
+						const result = await player.chooseControl(choices).set("prompt", `选择要置入${get.translation(card)}的装备栏`).set("ai", function () {
+							const player = _status.event.player;
+							if (!player.getEquips(5).length) return "宝物";
+							const list = [1, 2, 3, 4].filter(i => player.hasEnabledSlot(i) && !player.getEquips(i).length);
+							if (list.length) return get.translation(`equip${list.randomGet()}`);
+							return _status.event.choices.randomGet();
+						}).set("choices", choices).forResult();
+						const subtype = `equip${list[result.index]}`;
+						game.broadcastAll(function (card, subtype) {
+							card.subtype = subtype;
+						}, card, subtype);
+						game.log(player, "将", card, "置入了", `#g${get.translation(subtype)}栏`);
+						await player.equip(card);
+					}
+				},
+				ai: {
+					order: 5,
+					result: {
+						player: 1,
+					},
+				},
+				group: "yjgongqiao_effect",
+				subSkill: {
+					clear: {
+						trigger: {
+							player: "loseAfter",
+							global: ["equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter"],
+						},
+						direct: true,
+						charlotte: true,
+						async content(event, trigger, player) {
+							const evt = trigger.getl(player);
+							if (evt && evt.es) {
+								for (let card of evt.es) {
+									if (card.subtype) {
+										game.broadcastAll(function (card) {
+											delete card.subtype;
+										}, card);
+									}
+								}
+							}
+						},
+					},
+					effect: {
+						trigger: {
+							player: ["useCard", "useCardAfter"],
+						},
+						filter(event, player, name) {
+							if (name == "useCard") return get.type(event.card) == "basic" && player.countCards("e", card => get.type(card) == "basic");
+							if (player.getHistory("useCard", evt => get.type2(evt.card) == get.type2(event.card) && evt != event).length) return false;
+							return player.countCards("e", card => get.type2(card) == "trick");
+						},
+						async content(event, trigger, player) {
+							if (event.triggername == "useCard") trigger.baseDamage++;
+							else await player.draw();
+						},
+						forced: true,
+						locked: false,
+						mod: {
+							maxHandcard(player, num) {
+								if (player.countCards("e", card => get.type(card) == "equip")) return num + 3;
+							},
+						},
+					},
+				},
+			},
+			yjjingyi: {
+				trigger: {
+					player: "equipEnd",
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					const num = player.countCards("e");
+					await player.draw(num);
+					await player.chooseToDiscard("he", 2, true).set('ai', card => {
+						if (get.position(card) == "e" || get.type(card) == "equip") return 1;
+						return 9 - get.value(card);
+					});
+				},
+				ai: {
+					effect: {
+						target(card, player, target, current) {
+							const num = player.countCards("e") - 1;
+							if (get.type(card) == "equip" && !get.cardtag(card, "gifts")) return [1, num];
+						},
+					},
+					threaten: 1.3,
+				},
+			},
+			//一将2023
 			//令狐愚
 			xvzhi: {
 				audio: 2,
@@ -566,7 +690,7 @@ game.import("character", function () {
 			},
 			//徐琨（菜不菜我不知道）
 			fazhu: {
-				audio: 2,
+				audio: 3,
 				trigger: { player: "phaseZhunbeiBegin" },
 				filter(event, player) {
 					return player.hasCard(card => !get.tag(card, "damage") && player.canRecast(card), "hej");
@@ -1205,8 +1329,8 @@ game.import("character", function () {
 				direct: true,
 				content: function () {
 					"step 0";
-					if (player.hasSkill("shiming_round")) {
-						var zhu = game.findPlayer(i => i.getSeatNum() == 1);
+					var zhu = game.findPlayer(i => i.getSeatNum() == 1);
+					if (zhu && player.hasSkill("shiming_round")) {
 						if (
 							game.getGlobalHistory("changeHp", evt => {
 								return evt.player == zhu && evt._dyinged;
@@ -1297,12 +1421,12 @@ game.import("character", function () {
 				group: "cibei_fullyReady",
 				content: function () {
 					"step 0";
-					player.chooseButton(["###" + get.prompt("cibei") + '###<div class="text center">将一张“刺”置入弃牌堆，并将' + get.translation(trigger.cards.filterInD("d")) + "置入“刺”</div>", player.getExpansions("duwang")]).set("filterButton", button => {
+					player.chooseButton(["###" + get.prompt(event.name) + '###<div class="text center">将一张“刺”置入弃牌堆，并将' + get.translation(trigger.cards.filterInD("d")) + "置入“刺”</div>", player.getExpansions("duwang")]).set("filterButton", button => {
 						return button.link.name != "sha";
 					});
 					"step 1";
 					if (result.bool) {
-						player.logSkill("cibei");
+						player.logSkill(event.name);
 						player.loseToDiscardpile(result.links);
 						player.addToExpansion(trigger.cards.filterInD("d"), "gain2").gaintag.add("duwang");
 						if (game.hasPlayer(current => current.countDiscardableCards(player, "hej") > 0))
@@ -1640,10 +1764,10 @@ game.import("character", function () {
 					let att = get.attitude(player, target);
 					if (att === 0) return 0;
 					let getv = function (name, player, arg) {
-						let v = event.getTempCache("sangu", player.id + name);
+						let v = event.getTempCache("sangu", player.playerid + name);
 						if (typeof v === "number") return v;
 						v = player.getUseValue({ name: name, storage: { sangu: true } }, arg);
-						event.putTempCache("sangu", player.id + name, v);
+						event.putTempCache("sangu", player.playerid + name, v);
 						return v;
 					};
 					if (att < 0) {
@@ -1720,10 +1844,10 @@ game.import("character", function () {
 								target = _status.event.getParent().target,
 								trigger = _status.event.getTrigger(),
 								getv = (name, player) => {
-									let v = trigger.getTempCache("sangu", player.id + name);
+									let v = trigger.getTempCache("sangu", player.playerid + name);
 									if (typeof v === "number") return v;
 									v = player.getUseValue({ name: name, storage: { sangu: true } });
-									trigger.putTempCache("sangu", player.id + name, v);
+									trigger.putTempCache("sangu", player.playerid + name, v);
 									return v;
 								};
 							if (get.attitude(player, target) < 0) {
@@ -4911,7 +5035,7 @@ game.import("character", function () {
 							}
 						}
 					}
-					var next = player.chooseToMove("通博：是否交换“书”和手牌？").set("four", four).set("suits2", suits2).set("nofour", nofour);
+					var next = player.chooseToMove("通博：是否交换“书”和手牌？").set("four", four).set("nofour", nofour);
 					next.set("list", [
 						[get.translation(player) + "（你）的“书”", expansions],
 						["你的牌", player.getCards("he")],
@@ -6635,7 +6759,7 @@ game.import("character", function () {
 					dialog: function (event, player) {
 						var list = [];
 						for (var i of lib.inpile) {
-							var type = get.type(i, false);
+							var type = get.type(i, null, false);
 							if (type == "basic" || type == "trick") {
 								var card = {
 									name: i,
@@ -6759,7 +6883,7 @@ game.import("character", function () {
 						target: (card, player, target) => {
 							if (!get.tag(card, "damage")) return;
 							if (target.hp < 2 || player.hasSkillTag("jueqing", false, target)) return 1.5;
-							return [1, 1];
+							return [1, 0.8];
 						},
 					},
 				},
@@ -9199,7 +9323,68 @@ game.import("character", function () {
 				group: ["zhanjue4"],
 				ai: {
 					damage: true,
-					order: 1,
+					order(item, player) {
+						if (player.countCards("h") > 1) return 0.8;
+						return 8;
+					},
+					tag: {
+						respond: 2,
+						respondSha: 2,
+						damage: 1,
+					},
+					result: {
+						player(player, target) {
+							let td = get.damageEffect(target, player, target);
+							if (!td) return 0;
+							let hs = player.getCards("h"), 
+								val = hs.reduce((acc, i) => acc - get.value(i, player), 0) / 6 + 1;
+							if (td > 0) return val;
+							if (player.hasSkillTag(
+								"directHit_ai",
+								true,
+								{
+									target: target,
+									card: get.autoViewAs({ name: "juedou" }, hs),
+								}
+							)) return val;
+							let pd = get.damageEffect(player, target, player),
+								att = get.attitude(player, target);
+							if (att > 0 && get.damageEffect(target, player, player) > pd) return val;
+							let ts = target.mayHaveSha(player, "respond", null, "count");
+							if (ts < 1 && ts * 8 < Math.pow(player.hp, 2)) return val;
+							let damage = pd / get.attitude(player, player),
+								ps = player.mayHaveSha(player, "respond", hs, "count");
+							if (att > 0) {
+								if (ts < 1) return val;
+								return val + damage + 1;
+							}
+							if (pd >= 0) return val + damage + 1;
+							if (ts - ps + Math.exp(0.8 - player.hp) < 1) return val - ts;
+							return val + damage + 1 - ts;
+						},
+						target(player, target) {
+							let td = get.damageEffect(target, player, target) / get.attitude(target, target);
+							if (!td) return 0;
+							let hs = player.getCards("h");
+							if (td > 0 || player.hasSkillTag(
+								"directHit_ai",
+								true,
+								{
+									target: target,
+									card: get.autoViewAs({ name: "juedou" }, hs),
+								}
+							)) return td + 1;
+							let pd = get.damageEffect(player, target, player),
+								att = get.attitude(player, target);
+							if (att > 0) return td + 1;
+							let ts = target.mayHaveSha(player, "respond", null, "count"),
+								ps = player.mayHaveSha(player, "respond", hs, "count");
+							if (ts < 1) return td + 1;
+							if (pd >= 0) return 0;
+							if (ts - ps < 1) return td + 1 - ts;
+							return -ts;
+						},
+					},
 					effect: {
 						player: function (card, player, target) {
 							if (_status.event.skill == "zhanjue") {
@@ -12774,7 +12959,7 @@ game.import("character", function () {
 					next.set("processAI", function (list) {
 						var cards = list[0][1].slice(0),
 							cards2 = cards.filter(function (i) {
-								return get.type(i, false) == "equip";
+								return get.type(i, null, false) == "equip";
 							}),
 							cards3;
 						if (cards2.length) {
@@ -13233,13 +13418,10 @@ game.import("character", function () {
 				},
 			},
 			jueqing: {
+				audio: 2,
+				audioname: ["ol_zhangchunhua"],
 				trigger: { source: "damageBefore" },
 				forced: true,
-				audio: 2,
-				//priority:16,
-				check: function () {
-					return false;
-				},
 				content: function () {
 					trigger.cancel();
 					trigger.player.loseHp(trigger.num);
@@ -13250,6 +13432,7 @@ game.import("character", function () {
 			},
 			shangshi: {
 				audio: 2,
+				audioname: ["ol_zhangchunhua"],
 				trigger: {
 					player: ["loseAfter", "changeHp", "gainMaxHpAfter", "loseMaxHpAfter"],
 					global: ["equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter"],
@@ -15038,17 +15221,17 @@ game.import("character", function () {
 		},
 		characterReplace: {
 			caozhi: ["caozhi", "dc_caozhi", "re_caozhi", "ps_caozhi"],
-			zhangchunhua: ["zhangchunhua", "re_zhangchunhua", "jin_zhangchunhua", "star_zhangchunhua"],
-			yujin: ["yujin", "yujin_yujin", "ol_yujin", "sb_yujin", "xin_yujin", "re_yujin"],
+			zhangchunhua: ["zhangchunhua", "re_zhangchunhua", "ol_zhangchunhua", "jin_zhangchunhua", "star_zhangchunhua"],
+			yujin: ["yujin", "yujin_yujin", "ol_yujin", "sb_yujin", "xin_yujin", "re_yujin", "jd_sb_yujin"],
 			dc_xushu: ["re_xushu", "dc_xushu"],
-			xushu: ["xin_xushu", "xushu"],
-			fazheng: ["xin_fazheng", "ol_fazheng", "re_fazheng", "sb_fazheng", "tw_re_fazheng", "fazheng"],
+			xushu: ["xin_xushu", "xushu", "std_xushu"],
+			fazheng: ["xin_fazheng", "ol_fazheng", "re_fazheng", "sb_fazheng", "tw_re_fazheng", "fazheng", "jd_sb_fazheng"],
 			masu: ["xin_masu", "re_masu", "masu"],
 			xusheng: ["xusheng", "xin_xusheng", "re_xusheng", "old_xusheng"],
 			wuguotai: ["wuguotai", "xin_wuguotai", "re_wuguotai", "ol_wuguotai"],
 			lingtong: ["lingtong", "xin_lingtong", "ol_lingtong", "re_lingtong", "old_lingtong"],
 			gaoshun: ["gaoshun", "xin_gaoshun", "ol_gaoshun", "re_gaoshun", "sb_gaoshun", "old_gaoshun"],
-			zhonghui: ["zhonghui", "xin_zhonghui", "re_zhonghui", "old_zhonghui", "pe_zhonghui", "clan_zhonghui", "yj_zhonghui"],
+			zhonghui: ["zhonghui", "xin_zhonghui", "re_zhonghui", "old_zhonghui", "pe_zhonghui", "clan_zhonghui", "yj_zhonghui", "std_zhonghui"],
 			wangyi: ["wangyi", "ol_wangyi", "re_wangyi", "old_wangyi"],
 			caozhang: ["caozhang", "ol_caozhang", "re_caozhang", "xin_caozhang"],
 			guanzhang: ["guanzhang", "re_guanzhang", "old_guanzhang"],
@@ -15057,16 +15240,16 @@ game.import("character", function () {
 			bulianshi: ["bulianshi", "dc_bulianshi", "re_bulianshi", "old_bulianshi"],
 			handang: ["handang", "xin_handang", "re_handang", "tw_handang", "sb_handang", "old_handang"],
 			chengpu: ["chengpu", "ol_chengpu", "re_chengpu", "xin_chengpu", "tw_chengpu", "ns_chengpu", "std_chengpu"],
-			liubiao: ["liubiao", "xin_liubiao", "re_liubiao", "jsrg_liubiao", "sb_liubiao", "oldre_liubiao", "old_liubiao", "ol_liubiao"],
+			liubiao: ["liubiao", "xin_liubiao", "re_liubiao", "jsrg_liubiao", "sb_liubiao", "oldre_liubiao", "old_liubiao", "ol_liubiao", "std_liubiao"],
 			manchong: ["manchong", "re_manchong"],
-			caochong: ["caochong", "re_caochong", "old_caochong"],
+			caochong: ["caochong", "re_caochong", "old_caochong", "ol_caochong"],
 			guohuai: ["guohuai", "re_guohuai", "xin_guohuai", "tw_guohuai", "ol_guohuai"],
 			jianyong: ["jianyong", "ol_jianyong", "re_jianyong", "xin_jianyong"],
 			panzhangmazhong: ["panzhangmazhong", "re_panzhangmazhong", "xin_panzhangmazhong"],
 			yufan: ["yufan", "ol_yufan", "xin_yufan", "re_yufan"],
 			zhuran: ["zhuran", "re_zhuran", "xin_zhuran", "old_zhuran"],
 			liru: ["xin_liru", "liru", "dc_liru", "re_liru", "yj_liru", "ol_liru"],
-			fuhuanghou: ["fuhuanghou", "re_fuhuanghou", "xin_fuhuanghou", "old_fuhuanghou"],
+			fuhuanghou: ["fuhuanghou", "re_fuhuanghou", "xin_fuhuanghou", "old_fuhuanghou", "std_fuhuanghou"],
 			chenqun: ["chenqun", "dc_chenqun", "re_chenqun", "old_chenqun"],
 			hanhaoshihuan: ["hanhaoshihuan", "re_hanhaoshihuan"],
 			caozhen: ["caozhen", "re_caozhen", "xin_caozhen", "old_caozhen"],
@@ -15083,21 +15266,21 @@ game.import("character", function () {
 			zhangrang: ["zhangrang", "ol_zhangrang", "junk_zhangrang"],
 			jikang: ["jikang", "re_jikang", "dc_jikang"],
 			xinxianying: ["xinxianying", "re_xinxianying", "ol_xinxianying", "sp_xinxianying"],
-			gongsunyuan: ["gongsunyuan", "re_gongsunyuan"],
+			gongsunyuan: ["gongsunyuan", "re_gongsunyuan", "std_gongsunyuan"],
 			zhoucang: ["zhoucang", "re_zhoucang", "xin_zhoucang"],
 			guotufengji: ["guotufengji", "re_guotufengji"],
 			guanping: ["guanping", "re_guanping", "dc_sb_guanping"],
 			caifuren: ["caifuren", "re_caifuren", "xin_caifuren", "ol_caifuren"],
 			guyong: ["guyong", "re_guyong", "xin_guyong", "tw_guyong"],
-			yj_jushou: ["yj_jushou", "re_jushou", "xin_jushou"],
+			yj_jushou: ["yj_jushou", "re_jushou", "xin_jushou", "dc_sb_jushou"],
 			guohuanghou: ["guohuanghou", "re_guohuanghou"],
 			liuchen: ["liuchen", "re_liuchen"],
 			liufeng: ["liufeng", "re_liufeng"],
 			sundeng: ["sundeng", "re_sundeng", "ns_sundeng"],
-			caiyong: ["caiyong", "re_caiyong"],
+			caiyong: ["caiyong", "re_caiyong", "yue_caiyong"],
 			chengong: ["chengong", "re_chengong", "sb_chengong"],
 			xunyou: ["xunyou", "re_xunyou", "clan_xunyou"],
-			xuezong: ["xuezong", "tw_xuezong"],
+			xuezong: ["xuezong", "tw_xuezong", "std_xuezong"],
 			huanghao: ["huanghao", "dc_huanghao", "old_huanghao"],
 			caorui: ["caorui", "re_caorui", "old_caorui"],
 			sunziliufang: ["sunziliufang", "dc_sunziliufang"],
@@ -15108,6 +15291,8 @@ game.import("character", function () {
 			wuxian: ["wuxian", "clan_wuxian"],
 			simafu: ["mb_simafu", "simafu", "yj_simafu"],
 			xuangongzhu: ["yj_xuangongzhu", "xuangongzhu"],
+			kebineng: ["kebineng", "ol_kebineng", "ddd_kebineng"],
+			hanlong: ["hanlong", "jd_hanlong"],
 		},
 		translate: {
 			old_huaxiong: "将华雄",
@@ -15766,6 +15951,11 @@ game.import("character", function () {
 			yjzhuiji_info: "当你死亡时，你可以令一名角色从牌堆和弃牌堆中的随机使用任意装备牌直至其没有空置的装备栏。若如此做，当其失去以此法使用的装备牌后，其废除对应的装备栏。",
 			fazhu: "筏铸",
 			fazhu_info: "准备阶段，你可以重铸你的区域内任意张非伤害牌，然后将以此法获得的牌交给至多等量名角色各一张，这些角色可以依次使用一张无距离限制的【杀】。",
+			yj_majun: "马钧",
+			yjgongqiao: "工巧",
+			yjgongqiao_info: "出牌阶段限一次，你可将一张手牌置入一个装备栏（替换原装备）；若你的装备区内有：基本牌，你使用基本牌数值+1；锦囊牌，你每回合首次使用一种类型的牌后摸一张牌；装备牌，手牌上限+3。",
+			yjjingyi: "精益",
+			yjjingyi_info: "锁定技，有牌进入你的装备区后，你摸X张牌，然后弃置两张牌（X为你装备区里的牌数）。",
 
 			yijiang_2011: "一将成名2011",
 			yijiang_2012: "一将成名2012",
@@ -15774,7 +15964,8 @@ game.import("character", function () {
 			yijiang_2015: "一将成名2015",
 			yijiang_2016: "原创设计2016",
 			yijiang_2017: "原创设计2017",
-			yijiang_2022: "原创设计2022",
+			// 新一将成名
+			yijiang_2022: "一将成名2022",
 			yijiang_2023: "一将成名2023",
 			yijiang_2024: "一将成名2024",
 		},
