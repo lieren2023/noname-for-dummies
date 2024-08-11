@@ -2654,7 +2654,7 @@ game.import("character", function () {
 		},
 		characterReplace: {
 			caocao: ["caocao", "re_caocao", "sb_caocao", "dc_caocao", "jd_sb_caocao"],
-			guojia: ["guojia", "re_guojia", "sb_guojia", "ps1059_guojia", "ps2070_guojia", "huan_guojia", "yj_sb_guojia"],
+			guojia: ["guojia", "re_guojia", "sb_guojia", "ps1059_guojia", "ps2070_guojia", "yj_sb_guojia"],
 			simayi: ["simayi", "re_simayi", "dc_sb_simayi", "jsrg_simayi", "ps_simayi", "ps2068_simayi", "huan_simayi"],
 			jin_simayi: ["jin_simayi", "junk_simayi", "ps_jin_simayi"],
 			zhenji: ["zhenji", "re_zhenji", "sb_zhenji", "yj_zhenji"],

@@ -4377,7 +4377,7 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { player: "dieBefore" },
 				filter: function (event, player) {
-					return player.getStorage("mbdanggu").length && event.getParent().name != "giveup" && player.maxHp > 0;
+					return event.getParent().name != "giveup" && player.maxHp > 0;
 				},
 				derivation: "mbmowang_faq",
 				forced: true,
@@ -4388,12 +4388,15 @@ game.import("character", function () {
 					if (_status.mbmowang_return && _status.mbmowang_return[player.playerid]) {
 						trigger.cancel();
 					} else {
-						player.logSkill("mbmowang");
-						game.broadcastAll(function () {
-							if (lib.config.background_speak) game.playAudio("die", "shichangshiRest");
-						});
-						trigger.setContent(lib.skill.mbmowang.dieContent);
-						trigger.includeOut = true;
+						if(player.getStorage("mbdanggu").length){
+							player.logSkill("mbmowang");
+							game.broadcastAll(function () {
+								if (lib.config.background_speak) game.playAudio("die", "shichangshiRest");
+							});
+							trigger.setContent(lib.skill.mbmowang.dieContent);
+							trigger.includeOut = true;
+						}
+						else player.changeSkin("mbmowang", "shichangshi_dead");
 					}
 				},
 				ai: {
@@ -16032,7 +16035,7 @@ game.import("character", function () {
 				},
 			},
 			xinfu_qianchong: {
-				audio: 3,
+				audio: 1,
 				group: ["qc_weimu", "qc_mingzhe"],
 				subSkill: {
 					effect: {
@@ -16054,6 +16057,7 @@ game.import("character", function () {
 					player: "phaseUseBegin",
 				},
 				direct: true,
+				derivation: ["qc_weimu", "qc_mingzhe"],
 				filter: function (event, player) {
 					var es = player.getCards("e");
 					if (!es.length) return true;
@@ -16089,7 +16093,7 @@ game.import("character", function () {
 				},
 			},
 			qc_weimu: {
-				audio: "xinfu_qianchong",
+				audio: true,
 				mod: {
 					targetEnabled: function (card, player, target) {
 						var bool = true;
@@ -16103,7 +16107,7 @@ game.import("character", function () {
 				},
 			},
 			qc_mingzhe: {
-				audio: "xinfu_qianchong",
+				audio: true,
 				trigger: {
 					player: ["useCard", "respond", "loseAfter"],
 					global: "loseAsyncAfter",
@@ -18312,6 +18316,7 @@ game.import("character", function () {
 				["mb_caomao_shadow", ["die_audio:mb_caomao"]],
 				["mb_caomao_dead", ["die_audio:mb_caomao"]],
 			],
+			shichangshi: [["shichangshi_dead", []]],
 		},
 		translate: {
 			liuzan: "手杀留赞",
@@ -18355,9 +18360,9 @@ game.import("character", function () {
 			xinfu_qianchong: "谦冲",
 			xinfu_qianchong_info: "锁定技，若你的装备区内有牌且：均为红色，则你视为拥有技能〖明哲〗。均为黑色，则你视为拥有技能〖帷幕〗。若均不满足，则出牌阶段开始时，你可以选择一种类别的牌，然后你本回合内使用该类别的牌时没有次数和距离限制。",
 			qc_weimu: "帷幕",
-			qc_weimu_info: "",
+			qc_weimu_info: "锁定技，你不能成为黑色锦囊牌的目标。",
 			qc_mingzhe: "明哲",
-			qc_mingzhe_info: "",
+			qc_mingzhe_info: "当你于回合外因使用、打出或弃置而失去一张红色牌时，你可以摸一张牌。",
 			xinfu_shangjian: "尚俭",
 			xinfu_shangjian_info: "锁定技。一名角色的结束阶段开始时，若你于此回合内不因使用装备牌而失去了X张或更少的牌，则你摸等量的牌（X为你的体力值）。",
 			rw_bagua_skill: "先天八卦阵",

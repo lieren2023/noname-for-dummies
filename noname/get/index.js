@@ -2768,6 +2768,24 @@ export class Get {
 		if (!out) players = players.filter((current) => !current.isOut());
 		return players;
 	}
+	/**
+	 * 返回指定角色所有的id，用于统一双将和单将的检查
+	 *
+	 * @author tangXins
+	 * @param {Player} player
+	 * @returns {string[]}
+	 */
+	nameList(player) {
+		let type;
+		if (typeof player == "undefined" || ((type = typeof player), type != "object") || ((type = get.itemtype(player)), type != "player")) {
+			throw new Error(`函数接受了一个不是Player的东西: ${type}: ${player}`);
+		}
+
+		return ["name", "name1", "name2"]
+			.filter(prop => player[prop])
+			.map(prop => player[prop])
+			.toUniqued();
+	}
 	position(card, ordering) {
 		if (get.itemtype(card) == "player") return parseInt(card.dataset.position);
 		if (card.timeout && card.destiny && card.destiny.classList) {

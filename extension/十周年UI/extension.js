@@ -7709,9 +7709,12 @@ content:function(config, pack){
 		if(lib.skill.clanshenjun != undefined){
 			lib.skill.clanshenjun.marktext = "神君";
 		}
-		// 谋法正眩惑标记修改
+		// 谋法正、九鼎法正眩惑标记修改
 		if(lib.skill.sbxuanhuo != undefined){
 			lib.skill.sbxuanhuo.marktext = "眩惑";
+		}
+		if(lib.skill.jdsbxuanhuo != undefined){
+			lib.skill.jdsbxuanhuo.marktext = "眩惑";
 		}
 		// 张世平行贾标记修改
 		if(lib.skill.olxinggu != undefined){
@@ -7895,6 +7898,10 @@ content:function(config, pack){
 		// 谋卧龙看破标记修改
 		if(lib.skill.sbkanpo != undefined){
 			lib.skill.sbkanpo.marktext = "看破";
+		}
+		// 九鼎诸葛亮看破标记修改
+		if(lib.skill.jdkanpo != undefined){
+			lib.skill.jdkanpo.marktext = "看破";
 		}
 		// 神诸葛亮狂风、大雾标记修改
 		lib.translate.kuangfeng2_bg = "狂风";

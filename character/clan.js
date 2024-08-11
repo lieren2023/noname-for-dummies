@@ -338,13 +338,6 @@ game.import("character", function () {
 						if (typeof get.number(trigger.card, player) != "number") return;
 						player.storage.clantanque_mark = trigger.card;
 						player.markSkill("clantanque_mark");
-						game.broadcastAll(
-							function (player, number) {
-								if (player.marks.clantanque_mark) player.marks.clantanque_mark.firstChild.innerHTML = get.translation(number);
-							},
-							player,
-							get.number(trigger.card, player)
-						);
 					}
 				},
 				onremove(player) {
@@ -363,13 +356,6 @@ game.import("character", function () {
 							else {
 								player.storage.clantanque_mark = trigger.card;
 								player.markSkill("clantanque_mark");
-								game.broadcastAll(
-									function (player, number) {
-										if (player.marks.clantanque_mark) player.marks.clantanque_mark.firstChild.innerHTML = get.translation(number);
-									},
-									player,
-									get.number(trigger.card, player)
-								);
 							}
 						},
 						intro: {

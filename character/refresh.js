@@ -15117,12 +15117,7 @@ game.import("character", function () {
 						var subtype = get.subtype(card);
 						if (
 							!game.hasPlayer(function (current) {
-								return (
-									current != player &&
-									current.hp != player.hp &&
-									get.attitude(player, current) > 0 &&
-									!current.countCards("e", { subtype: subtype })
-								);
+								return current != player && get.attitude(player, current) > 0 && !current.countCards("e", { subtype: subtype });
 							})
 						) {
 							return 0;
@@ -15189,29 +15184,23 @@ game.import("character", function () {
 						return 2;
 					},
 					result: {
+						player(player, target) {
+							let card = ui.selected.cards[0], val = -get.value(card, player) / 6;
+							if (get.position(card) == "e") val += 2;
+							if (player.hp > target.hp) val++;
+							else if (player.hp < target.hp && player.isDamaged()) {
+								val += get.recoverEffect(player, player, player) / get.attitude(player, player);
+							}
+							return val;
+						},
 						target: function (player, target) {
-							var goon = function () {
-								var es = player.getCards("e");
-								for (var i = 0; i < es.length; i++) {
-									if (player.countCards("h", { subtype: get.subtype(es[i]) })) return true;
-								}
-								return false;
-							};
-							if (player.hp < target.hp) {
-								if (player.isHealthy()) {
-									if (!player.needsToDiscard(1) || goon()) return 0.1;
-									return 0;
-								}
-								return 1.5;
+							let card = ui.selected.cards[0],
+								val = get.position(card) == "e" ? get.value(card, target) / 6 : 0;
+							if (target.hp > player.hp) val++;
+							else if (target.hp < player.hp && target.isDamaged()) {
+								val += get.recoverEffect(target, target, target) / get.attitude(target, target);
 							}
-							if (player.hp > target.hp) {
-								if (target.isHealthy()) {
-									if (!player.needsToDiscard(1) || goon()) return 0.1;
-									return 0;
-								}
-								return 1;
-							}
-							return 0;
+							return val;
 						},
 					},
 				},

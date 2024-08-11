@@ -6579,6 +6579,17 @@ game.import("character", function () {
 					player.addSkills(lib.skill.chuanshu.derivation);
 				},
 				derivation: ["ollongdan", "drlt_congjian", "chuanyun"],
+				ai: {
+					maixie_hp: true,
+					effect: {
+						target(card, player, target) {
+							if (get.tag(card, "damage")) {
+								if (target.isHealthy()) return [1, 3];
+							}
+							else if (get.tag(card, "recover") && target.getDamagedHp() == 1) return [0, 0];
+						}
+					}
+				}
 			},
 			longdan_tongyuan: { audio: true },
 			ocongjian_tongyuan: { audio: true },

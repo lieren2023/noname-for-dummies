@@ -37,7 +37,7 @@ game.import("character", function () {
 					"xia_zhaoe",
 					"xia_xiahouzie",
 				],
-				tw_beidingzhongyuan: ["huan_zhugeliang","huan_jiangwei","huan_zhanghe", "huan_guojia", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
+				tw_beidingzhongyuan: ["huan_zhugeliang","huan_jiangwei","huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
 				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo"],
 				tw_mobile2: [
 					"tw_chengpu",
@@ -69,7 +69,7 @@ game.import("character", function () {
 			licuilianzhaoquanding: ["double", "qun", 3, ["twciyin", "twchenglong"]],
 			huan_zhugeliang: ["male", "shu", "3/4", ["twbeiding", "twjielv", "twhunyou"]],
 			huan_jiangwei: ["male", "shu", 4, ["twqinghan", "twzhihuan"]],
-			huan_guojia: ["male", "wei", 3, ["huan_guojia_A", "huan_guojia_B"]],
+			huan_zhugeguo: ["female", "shu", 3, ["twxianshou", "twlingyin"]],
 			huan_zhanghe: ["male", "wei", 4, ["twkuiduan"]],
 			huan_zhaoyun: ["male", "shu", 4, ["twjiezhan", "twlongjin"]],
 			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"]],
@@ -1147,18 +1147,18 @@ game.import("character", function () {
 					}
 				},
 			},
-			//幻郭嘉
-			huan_guojia_A: {
+			//幻诸葛果
+			twxianshou: {
 				audio: 2,
 				enable: "phaseUse",
 				onChooseToUse(event) {
-					if (!game.online && event.type == "phase" && !event.huan_guojia_A) {
+					if (!game.online && event.type == "phase" && !event.twxianshou) {
 						const player = event.player;
 						event.set(
-							"huan_guojia_A",
+							"twxianshou",
 							player
 								.getRoundHistory("useSkill", evt => {
-									return evt.skill == "huan_guojia_A";
+									return evt.skill == "twxianshou";
 								})
 								.reduce((list, evt) => {
 									return list.add(evt.targets[0]);
@@ -1167,10 +1167,10 @@ game.import("character", function () {
 					}
 				},
 				filter(event, player) {
-					return player.countCards("he") && game.hasPlayer(target => lib.skill.huan_guojia_A.filterTarget(null, player, target));
+					return player.countCards("he") && game.hasPlayer(target => lib.skill.twxianshou.filterTarget(null, player, target));
 				},
 				filterTarget(card, player, target) {
-					return player != target && !get.event().huan_guojia_A.includes(target);
+					return player != target && !get.event().twxianshou.includes(target);
 				},
 				filterCard: true,
 				selectCard: [1, 2],
@@ -1185,8 +1185,8 @@ game.import("character", function () {
 				prompt: "将至多两张牌标记为“技一”并交给一名本轮未以此法交给其牌的角色",
 				content() {
 					const ID = player.playerid;
-					const skill = "huan_guojia_A_effect",
-						skillID = "huan_guojia_A_" + ID;
+					const skill = "twxianshou_effect",
+						skillID = "twxianshou_" + ID;
 					if (!lib.skill[skillID]) {
 						game.broadcastAll(skillID => {
 							lib.skill[skillID] = { charlotte: true };
@@ -1211,16 +1211,16 @@ game.import("character", function () {
 						},
 					},
 				},
-				group: ["huan_guojia_A_effect", "huan_guojia_A_remove"],
+				group: ["twxianshou_effect", "twxianshou_remove"],
 				subSkill: {
 					effect: {
-						audio: "huan_guojia_A",
+						audio: "twxianshou",
 						trigger: { global: "phaseUseBegin" },
 						filter(event, player) {
-							return event.player.hasCard(card => card.hasGaintag("huan_guojia_A_" + player.playerid), "h");
+							return event.player.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h");
 						},
 						prompt2(event, player) {
-							const num = event.player.storage["huan_guojia_A_effect"][player.playerid];
+							const num = event.player.storage["twxianshou_effect"][player.playerid];
 							return "观看其手牌并将其中至多" + get.cnNumber(num) + "张牌以任意顺序置于牌堆顶";
 						},
 						check(event, player) {
@@ -1229,7 +1229,7 @@ game.import("character", function () {
 						logTarget: "player",
 						async content(event, trigger, player) {
 							const target = trigger.player,
-								num = target.storage["huan_guojia_A_effect"][player.playerid];
+								num = target.storage["twxianshou_effect"][player.playerid];
 							const result = await player
 								.chooseToMove("技一：将" + get.translation(target) + "的至多" + get.cnNumber(num) + "张牌以任意顺序置于牌堆顶", true)
 								.set("list", [[get.translation(target) + "的手牌", target.getCards("h"), "dcsushou_tag"], ["牌堆顶"]])
@@ -1259,23 +1259,23 @@ game.import("character", function () {
 						},
 					},
 					remove: {
-						audio: "huan_guojia_A",
+						audio: "twxianshou",
 						trigger: { player: "phaseBegin" },
 						filter(event, player) {
-							return game.hasPlayer(target => target.hasCard(card => card.hasGaintag("huan_guojia_A_" + player.playerid), "h"));
+							return game.hasPlayer(target => target.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h"));
 						},
 						forced: true,
 						locked: false,
 						async content(event, trigger, player) {
-							const targets = game.filterPlayer(target => target.hasCard(card => card.hasGaintag("huan_guojia_A_" + player.playerid), "h"));
-							const sum = targets.reduce((num, target) => num + target.countCards("h", card => card.hasGaintag("huan_guojia_A_" + player.playerid)), 0);
-							for (const target of targets) target.removeGaintag("huan_guojia_A_" + player.playerid);
+							const targets = game.filterPlayer(target => target.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h"));
+							const sum = targets.reduce((num, target) => num + target.countCards("h", card => card.hasGaintag("twxianshou_" + player.playerid)), 0);
+							for (const target of targets) target.removeGaintag("twxianshou_" + player.playerid);
 							await player.draw(sum);
 						},
 					},
 				},
 			},
-			huan_guojia_B: {
+			twlingyin: {
 				audio: 2,
 				trigger: { target: "useCardToTarget" },
 				filter(event, player) {
@@ -1330,7 +1330,9 @@ game.import("character", function () {
 								evtx.name != "useCard" ||
 								!event.source.hasHistory("lose", evt => {
 									if (evt.getParent() != evtx) return false;
-									return Object.keys(evt.gaintag_map || {}).includes("twkuiduan_card");
+									for (var i in evt.gaintag_map) {
+										if (evt.gaintag_map[i].includes("twkuiduan_card")) return true;
+									}
 								})
 							)
 								return false;
@@ -22793,12 +22795,12 @@ game.import("character", function () {
 			huan_zhanghe_prefix: "幻",
 			twkuiduan: "溃端",
 			twkuiduan_info: "锁定技。①当你使用【杀】指定唯一目标后，你与其的随机两张手牌获得“溃端”标记，这些牌视为无属性【杀】。②一名角色使用含“溃端”标记的牌造成伤害时，若其含“溃端”标记的手牌数大于受伤角色含“溃端”标记的手牌数，则此伤害+1。",
-			huan_guojia: "幻郭嘉",
-			huan_guojia_prefix: "幻",
-			huan_guojia_A: "技一",
-			huan_guojia_A_info: "①出牌阶段限三次，你可以将至多两张牌标记为“技一”并交给一名本轮未以此法交给其牌的角色。②拥有“技一”标记牌的角色的出牌阶段开始时，你可以观看其手牌并将其中至多X张牌以任意顺序置于牌堆顶（X为你本局游戏发动〖技一〗交给其的牌数）。③回合开始时，你移去所有角色手牌中的“技一”标记，然后摸等量的牌。",
-			huan_guojia_B: "技二",
-			huan_guojia_B_info: "当你成为普通锦囊牌的目标时，你可以展示牌堆顶的一张牌，若此牌与使用的牌的：颜色相同，你获得此牌；花色相同，你令此牌对你无效；颜色不同，你将此牌置入弃牌堆。",
+			huan_zhugeguo: "幻诸葛果",
+			huan_zhugeguo_prefix: "幻",
+			twxianshou: "仙授",
+			twxianshou_info: "①出牌阶段限三次，你可以将至多两张牌标记为“仙授”并交给一名本轮未以此法交给其牌的角色。②拥有“仙授”标记牌的角色的出牌阶段开始时，你可以观看其手牌并将其中至多X张牌以任意顺序置于牌堆顶（X为你本局游戏发动〖仙授〗交给其的牌数）。③回合开始时，你移去所有角色手牌中的“仙授”标记，然后摸等量的牌。",
+			twlingyin: "灵隐",
+			twlingyin_info: "当你成为普通锦囊牌的目标时，你可以展示牌堆顶的一张牌，若此牌与使用的牌的：颜色相同，你获得此牌；花色相同，你令此牌对你无效；颜色不同，你将此牌置入弃牌堆。",
 			huan_jiangwei: "幻姜维",
 			huan_jiangwei_prefix: "幻",
 			twqinghan: "擎汉",

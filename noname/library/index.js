@@ -14598,6 +14598,15 @@ export class Library {
 			},
 		],
 		[
+			"九鼎",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("鼎")}`,
+			},
+		],
+		[
 			"少阴",
 			{
 				color: "#fffc2c",

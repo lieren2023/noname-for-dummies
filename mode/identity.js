@@ -105,7 +105,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					// 新手向导
 					ui.create.dialog('欢迎来到无名杀——新手向导');
 					game.saveConfig("new_tutorial", true);
-					ui.dialog.add('<div class="text left">★ 无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>- 中文名：无名杀；英文名：noname<br>- 开发者：水乎（于2013年底发布）<br>- 现更新者：苏婆玛丽奥<br>- 客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br><br>★ 最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span>');
+					ui.dialog.add('<div class="text left">★ 无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>- 中文名：无名杀；英文名：noname<br>- 开发者：水乎（于2013年底发布）<br>- 现更新者：诗笺<br>- 客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br><br>★ 最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span>');
 					ui.auto.hide();
 					ui.control.style.bottom = 'calc(100% - 150px)';
 					ui.create.control("开始游戏", function () {

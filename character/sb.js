@@ -7869,6 +7869,7 @@ game.import("character", function () {
 			},
 			//孙尚香
 			sbjieyin: {
+				audio: 2,
 				trigger: { player: "phaseUseBegin" },
 				forced: true,
 				locked: false,

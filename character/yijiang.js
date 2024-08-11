@@ -6420,14 +6420,14 @@ game.import("character", function () {
 					if (mode == "identity" && _status.mode == "purple") return false;
 				},
 				getZhu: player => {
-					if (get.mode == "doudizhu") return game.findPlayer(i => i.identity == "zhu");
+					if (get.mode() == "doudizhu") return game.findPlayer(i => i.identity == "zhu");
 					return get.zhu(player);
 				},
 				trigger: { player: "phaseJieshuBegin" },
 				direct: true,
 				filter: function (event, player) {
 					var zhu = get.info("qinqing").getZhu(player);
-					if (!zhu || (get.mode != "doudizhu" && !zhu.isZhu)) return false;
+					if (!zhu || (get.mode() != "doudizhu" && !zhu.isZhu)) return false;
 					return game.hasPlayer(function (current) {
 						return current != zhu && current.inRange(zhu);
 					});

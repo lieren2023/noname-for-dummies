@@ -8774,7 +8774,7 @@ game.import("character", function () {
 				},
 			},
 			jsrgchaozheng: {
-				audio: 2,
+				audio: 4,
 				trigger: { player: "phaseZhunbeiBegin" },
 				logTarget: function (event, player) {
 					return game.filterPlayer((i) => i != player);
@@ -8907,7 +8907,7 @@ game.import("character", function () {
 				},
 			},
 			jsrgjulian: {
-				audio: 2,
+				audio: 4,
 				trigger: { player: "phaseJieshuBegin" },
 				filter: function (event, player) {
 					return (
@@ -10387,10 +10387,10 @@ game.import("character", function () {
 								}
 							},
 							cardRespondable: function (card, player) {
-								return lib.skill.jsrgfendi.cardEnabled.apply(this, arguments);
+								return lib.skill.jsrgfendi_blocker.mod.cardEnabled.apply(this, arguments);
 							},
 							cardSavable: function (card, player) {
-								return lib.skill.jsrgfendi.cardEnabled.apply(this, arguments);
+								return lib.skill.jsrgfendi_blocker.mod.cardEnabled.apply(this, arguments);
 							},
 						},
 					},
@@ -10656,7 +10656,7 @@ game.import("character", function () {
 			},
 			//王允
 			jsrgshelun: {
-				audio: 2,
+				audio: 4,
 				enable: "phaseUse",
 				usable: 1,
 				filter: function (event, player) {

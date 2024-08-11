@@ -2643,6 +2643,10 @@ game.import("character", function () {
 								player.$throw(puts, 1000);
 								await player.lose(puts, ui.special);
 								await player.gain(gains, "gain2");
+								//调整手牌顺序
+								player.getCards("h").forEach(i => i.goto(ui.special));
+								player.directgain(moved[1].reverse(), false);
+								
 								cards = moved[0].slice();
 								if (cards.length) {
 									await game.cardsGotoOrdering(cards);
@@ -17868,8 +17872,10 @@ game.import("character", function () {
 				content: function () {
 					player.line(game.players, "green");
 					game.addGlobalSkill("spyanhuo_damage");
-					if (!_status.yanhuo) _status.yanhuo = 0;
-					_status.yanhuo++;
+					game.broadcastAll(() => {
+						if (!_status.yanhuo) _status.yanhuo = 0;
+						_status.yanhuo++;
+					});
 				},
 				subSkill: {
 					damage: {
@@ -30899,7 +30905,7 @@ game.import("character", function () {
 			panfeng: ["panfeng", "re_panfeng", "std_panfeng"],
 			sunluyu: ["sunluyu", "re_sunluyu", "mb_sunluyu"],
 			jin_simazhao: ["jin_simazhao", "simazhao", "sp_simazhao", "jd_jin_simazhao"],
-			jin_wangyuanji: ["jin_wangyuanji", "wangyuanji", "sp_wangyuanji", "std_wangyuanji"],
+			jin_wangyuanji: ["jin_wangyuanji", "wangyuanji", "sp_wangyuanji", "std_wangyuanji", "jd_jin_wangyuanji"],
 			wangyun: ["clan_wangyun", "wangyun", "dc_wangyun", "re_wangyun", "jsrg_wangyun", "old_wangyun", "pe_wangyun"],
 			zhangliang: ["xin_zhangliang", "re_zhangliang", "zhangliang"],
 			lingju: ["lingju", "old_lingju"],
@@ -30929,7 +30935,7 @@ game.import("character", function () {
 			zhaoyǎn: ["zhaoyǎn", "dc_zhaoyǎn"],
 			furong: ["ol_furong", "furong", "tw_furong"],
 			daxiaoqiao: ["daxiaoqiao", "dc_daxiaoqiao", "tw_daxiaoqiao"],
-			zhugeguo: ["zhugeguo", "tw_zhugeguo", "yue_zhugeguo"],
+			zhugeguo: ["zhugeguo", "tw_zhugeguo", "yue_zhugeguo", "huan_zhugeguo"],
 			wanglang: ["ol_wanglang", "wanglang", "old_wanglang", "std_wanglang"],
 			tengfanglan: ["tengfanglan", "dc_tengfanglan"],
 			zhangyì: ["ol_zhangyì", "zhangyì", "std_zhangyì"],

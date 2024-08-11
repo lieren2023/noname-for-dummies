@@ -706,7 +706,7 @@ game.import("character", function () {
 				marktext: "☯",
 				zhuanhuanji(player, skill) {
 					player.storage[skill] = !player.storage[skill];
-					//player.changeSkin({ characterName: "yj_sb_guojia" }, "yj_sb_guojia" + (player.storage[skill] ? "_shadow" : ""));
+					player.changeSkin({ characterName: "yj_sb_guojia" }, "yj_sb_guojia" + (player.storage[skill] ? "_shadow" : ""));
 				},
 				intro: {
 					content: function (storage) {
@@ -8873,28 +8873,31 @@ game.import("character", function () {
 						onremove: true,
 						charlotte: true,
 						direct: true,
-						content: function () {
-							"step 0";
-							event.cards = player.getStorage("dcshexue_study");
-							"step 1";
-							var card = cards.pop();
-							if (trigger.player.hasUseTarget(card, false)) {
-								game.broadcastAll(function (card) {
-									lib.skill.dcshexue_backup.viewAs = card;
-									lib.skill.dcshexue_backup.prompt = "设学：是否将一张牌当做" + get.translation(card) + "使用？";
-								}, card);
-								var next = trigger.player.chooseToUse();
-								next.set("openskilldialog", `###${get.prompt("dcshexue_study")}###将一张牌当做${get.translation(card.nature) || ""}【${get.translation(card.name)}】使用`);
-								next.set("norestore", true);
-								next.set("addCount", false);
-								next.set("_backupevent", "dcshexue_backup");
-								next.set("custom", {
+						async content(event, trigger, player) {
+							let cards = player.getStorage("dcshexue_study");
+							const result = await player.chooseButton(["设学：是否将一张牌当作其中一张牌使用？", [cards, "vcard"]])
+								.set("ai", button => {
+									return get.event().player.getUseValue(button.link, false);
+								})
+								.forResult();
+							if (!result.bool) return;
+							const card = result.links[0];
+							if (!trigger.player.hasUseTarget(card, false)) return;
+							game.broadcastAll(function (card) {
+								lib.skill.dcshexue_backup.viewAs = card;
+								lib.skill.dcshexue_backup.prompt = "设学：是否将一张牌当做" + get.translation(card) + "使用？";
+							}, card);
+							await trigger.player.chooseToUse()
+								.set("openskilldialog", `###${get.prompt("dcshexue_study")}###
+									将一张牌当做${get.translation(card.nature) || ""}【${get.translation(card.name)}】使用`)
+								.set("norestore", true)
+								.set("addCount", false)
+								.set("_backupevent", "dcshexue_backup")
+								.set("custom", {
 									add: {},
 									replace: { window: function () {} },
-								});
-								next.backup("dcshexue_backup");
-							}
-							if (cards.length) event.redo();
+								})
+								.backup("dcshexue_backup");
 						},
 					},
 					studyclear: {

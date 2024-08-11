@@ -9081,7 +9081,7 @@ game.import("character", function () {
 			pangde: ["re_pangde", "ol_pangde", "pangde"],
 			yanwen: ["yanwen", "ol_yanwen", "re_yanwen"],
 			caopi: ["caopi", "re_caopi", "ps_caopi", "sb_caopi"],
-			xuhuang: ["re_xuhuang", "ol_xuhuang", "sb_xuhuang", "xuhuang"],
+			xuhuang: ["re_xuhuang", "ol_xuhuang", "sb_xuhuang", "xuhuang", "jd_sb_xuhuang"],
 			menghuo: ["menghuo", "re_menghuo", "sb_menghuo", "jd_sb_menghuo"],
 			zhurong: ["zhurong", "ol_zhurong", "re_zhurong", "sb_zhurong"],
 			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian", "star_sunjian", "jx_sunjian"],

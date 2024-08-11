@@ -4,6 +4,7 @@ game.import("character", function () {
 		name: "collab",
 		connect: true,
 		character: {
+			liuxiecaojie: ["male", "qun", 2, ["dcjuanlv", "dcqixin"]],
 			dc_zhaoyun: [
 				"male",
 				"shen",
@@ -53,15 +54,156 @@ game.import("character", function () {
 				collab_olympic: ["sunyang", "yeshiwen"],
 				collab_tongque: ["sp_fuwan", "sp_fuhuanghou", "sp_jiben", "old_lingju", "sp_mushun"],
 				collab_oldoudizhu: ["wuhujiang"],
-				collab_duanwu_2023: ["sunwukong", "longwang", "taoshen"],
-				collab_duanwu_2024: ["quyuan"],
-				collab_liuyi_2024: ["xin_sunquan"],
+				collab_wuyi: ["dc_wuyi"],
+				collab_liuyi: ["xin_sunquan"],
+				collab_duanwu: ["sunwukong", "longwang", "taoshen", "quyuan"],
+				collab_qixi: ["liuxiecaojie"],
 				collab_decade: ["libai", "xiaoyuehankehan", "zhutiexiong", "wu_zhutiexiong"],
-				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_wuyi", "dc_noname", "xunyuxunyou"],
+				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_noname", "xunyuxunyou"],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//刘协曹节
+			//我们意念合一×2
+			dcjuanlv: {
+				audio: 2,
+				equipSkill: false,
+				inherit: "cixiong_skill",
+				filter(event, player) {
+					return player.differentSexFrom(event.target);
+				},
+			},
+			dcqixin: {
+				audio: 2,
+				enable: "phaseUse",
+				filter(event, player) {
+					return !player.storage.dcqixin_die;
+				},
+				filterCard: false,
+				selectCard: [0, 1],
+				prompt() {
+					const player = get.player();
+					return "将性别变更为" + (Boolean(player.storage["dcqixin"]) ? "刘协--男" : "曹节--女");
+				},
+				*content(event, map) {
+					const player = map.player;
+					player.changeZhuanhuanji("dcqixin");
+					player.storage.dcqixin_hp[1 - Boolean(player.storage["dcqixin"])] = player.hp;
+					const hp = player.storage.dcqixin_hp[0 + Boolean(player.storage["dcqixin"])];
+					if (player.hp != hp) yield player.changeHp(hp - player.hp);
+					player.tempBanSkill(
+						"dcqixin",
+						{
+							player: ["useCard1", "useSkillBegin", "phaseUseEnd"],
+							global: ["phaseAfter", "phaseBeforeStart"],
+						},
+						false
+					);
+					const sex = player.storage["dcqixin"] ? "female" : "male";
+					game.broadcastAll(
+						(player, sex) => {
+							player.sex = sex;
+						},
+						player,
+						sex
+					);
+					game.log(player, "将性别变为了", "#y" + get.translation(sex) + "性");
+				},
+				mark: true,
+				zhuanhuanji: true,
+				
+				// 临时修改（by 棘手怀念摧毁）
+				marktext: "☯",
+				init(player) {
+					if (_status.gameStarted && !player.storage.dcqixin_hp) player.storage.dcqixin_hp = [player.maxHp, player.maxHp];
+				},
+				/*
+				markimage: "image/character/liuxie.jpg",
+				$zhuanhuanji(skill, player) {
+					const image = Boolean(player.storage[skill]) ? "caojie" : "liuxie";
+					const mark = player.marks[skill];
+					if (mark) mark.setBackground(image, "character");
+				},
+				*/
+				
+				intro: {
+					content(storage, player) {
+						const str = "当前性别：" + (Boolean(!storage) ? "刘协--男" : "曹节--女");
+						const hp = player.storage.dcqixin_hp || [player.maxHp, player.maxHp];
+						return player.storage.dcqixin_die ? str : "<li>" + str + "<br><li>" + (Boolean(storage) ? "刘协" : "曹节") + "体力值：" + hp[1 - Boolean(storage)];
+					},
+				},
+				ai: {
+					order: 10,
+					result: {
+						player(player) {
+							const cards = player.getCards("hs");
+							const target = game
+								.filterPlayer(i => i != player)
+								.sort((a, b) => {
+									return (
+										cards
+											.filter(j => player.canUse(j, b, true, true) && get.effect(b, j, player, player) > 0)
+											.reduce((sum, card) => {
+												return sum + get.effect(card, b, player, player);
+											}, 0) -
+										cards
+											.filter(j => player.canUse(j, a, true, true) && get.effect(a, j, player, player) > 0)
+											.reduce((sum, card) => {
+												return sum + get.effect(card, a, player, player);
+											}, 0)
+									);
+								})[0];
+							return player.differentSexFrom(target) ? 0 : 1;
+						},
+					},
+				},
+				derivation: "dcqixin_faq",
+				group: ["dcqixin_die", "dcqixin_mark"],
+				subSkill: {
+					die: {
+						audio: "dcqixin",
+						trigger: { player: "dieBefore" },
+						filter(event, player) {
+							return !player.storage.dcqixin_die && player.maxHp > 0;
+						},
+						forced: true,
+						locked: false,
+						content() {
+							trigger.cancel();
+							player.storage.dcqixin_die = true;
+							player.changeZhuanhuanji("dcqixin");
+							const sex = player.storage["dcqixin"] ? "female" : "male";
+							game.broadcastAll(
+								(player, sex) => {
+									player.sex = sex;
+								},
+								player,
+								sex
+							);
+							game.log(player, "将性别变为了", "#y" + get.translation(sex) + "性");
+							player.storage.dcqixin_hp[1 - Boolean(player.storage["dcqixin"])] = player.hp;
+							const hp = player.storage.dcqixin_hp[0 + Boolean(player.storage["dcqixin"])];
+							if (player.hp != hp) player.changeHp(hp - player.hp);
+						},
+					},
+					//双武将牌--梦回橙续缘双面武将
+					mark: {
+						charlotte: true,
+						trigger: { global: "gameStart" },
+						filter(event, player) {
+							return !player.storage.dcqixin_hp;
+						},
+						forced: true,
+						popup: false,
+						firstDo: true,
+						content() {
+							player.storage.dcqixin_hp = [player.maxHp, player.maxHp];
+						},
+					},
+				},
+			},
 			//荀彧荀攸
 			zhinang: {
 				getMap() {
@@ -3133,6 +3275,7 @@ game.import("character", function () {
 			},
 		},
 		characterIntro: {
+			liuxiecaojie: "请分别查看「刘协」和「曹节」的武将介绍。",
 			dc_noname: " ",
 			xunyuxunyou: "请分别查看「荀彧」和「荀攸」的武将介绍。",
 			wuhujiang: "请分别查看「关羽」、「张飞」、「赵云」、「马超」和「黄忠」的武将介绍。",
@@ -3186,8 +3329,21 @@ game.import("character", function () {
 				);
 			},
 			dcbenxi(player) {
-				if(player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
+				if (player.storage.dcbenxi) return "转换技，锁定技。当你失去手牌后，阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。<span class='bluetext'>阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。</span>";
 				return "转换技，锁定技。当你失去手牌后，<span class='bluetext'>阴：系统随机检索出一句转换为拼音后包含“wu,yi”的技能台词，然后你念出此台词。</span>阳：你获得上次所念出的台词对应的技能直到你的下个回合开始；若你已拥有该技能，则改为对其他角色各造成1点伤害。";
+			},
+			dcqixin(player) {
+				const storage = player.storage["dcqixin"];
+				const banned = player.storage.dcqixin_die;
+				if (banned) return '<span style="opacity:0.5">' + lib.translate.dcqixin_info + "</span>";
+				let str = "转换技。①出牌阶段，你可以将性别变更为：";
+				if (!storage) str += '<span class="bluetext">';
+				str += "阴，曹节--女；";
+				if (!storage) str += "</span>";
+				if (storage) str += '<span class="bluetext">';
+				str += "阳，刘协--男。";
+				if (storage) str += "</span>";
+				return str + "②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。";
 			},
 		},
 		translate: {
@@ -3335,13 +3491,21 @@ game.import("character", function () {
 			zhinang_info: "当你使用锦囊牌后，你可以获得一个技能台词包含“谋”的技能；当你使用装备牌后，你可以获得一个技能名包含“谋”的技能。",
 			gouzhu: "苟渚",
 			gouzhu_info: "你发动技能后，若此技能为：锁定技，回复1点体力；觉醒技，获得一张基本牌；限定技，对随机一名其他角色造成1点伤害；转换技，手牌上限+1；主公技，增加1点体力上限。",
+			liuxiecaojie: "刘协曹节",
+			dcjuanlv: "眷侣",
+			dcjuanlv_info: "当你使用牌指定异性角色为目标后，你可以令其选择一项：①弃置一张牌；②令你摸一张牌。",
+			dcqixin: "齐心",
+			dcqixin_info: "转换技。①出牌阶段，你可以将性别变更为：阴，曹节--女；阳，刘协--男。②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。",
+			dcqixin_faq: "关于齐心",
+			dcqixin_faq_info: "<br>〖齐心①〗的两种状态各拥有初始体力上限的体力值，初始状态为“刘协--男”，且两种状态的体力值分别计算。",
 
 			collab_olympic: "OL·伦敦奥运会",
 			collab_tongque: "OL·铜雀台",
 			collab_oldoudizhu: "OL·限时地主",
-			collab_duanwu_2023: "新服·端午畅玩2023",
-			collab_duanwu_2024: "新服·端午畅玩2024",
-			collab_liuyi_2024: "新服·六一限时地主",
+			collab_wuyi: "新服·五一限时地主",
+			collab_liuyi: "新服·六一限时地主",
+			collab_duanwu: "新服·端午限时地主",
+			collab_qixi: "新服·七夕限时地主",
 			collab_decade: "新服·创玩节",
 			collab_remake: "新服·共创武将",
 			
@@ -4280,6 +4444,31 @@ game.import("character", function () {
 			"#yue_miheng:die": "映日荷花今犹在，不见当年采荷人……",
 			
 			// jsrg
+			"#jsrgchaozheng1": "何故争论无休？朝堂自有公论。",
+			"#jsrgchaozheng2": "今日之言，无是无非，皆为我大汉社稷。",
+			"#jsrgchaozheng3": "诸卿一心为公，大汉中兴可期！",
+			"#jsrgchaozheng4": "朝野皆论朋党之私，欲置朕于何处！",
+			"#jsrgshenchong1": "天子近前，岂曰无人？赏！",
+			"#jsrgshenchong2": "诸臣皆为己利，唯汝独讨朕心。",
+			"#jsrgjulian1": "朕聚天下之财，岂不为天下之事乎？",
+			"#jsrgjulian2": "若为汉家中兴，朕又何惜此金银之物！",
+			"#jsrgjulian3": "天下既无贤才，不知民有闲财否？哈哈哈！",
+			"#jsrgjulian4": "府仓国库，皆归朕有！",
+			"#jsrg_liuhong:die": "中兴无望，唯将大志托于此剑……",
+			"#jsrgzhaobing1": "此事，便依本初之言。",
+			"#jsrgzhaobing2": "诸侯兵马，皆听我调遣。",
+			"#jsrgzhuhuan1": "杀了你们，天下都是我说了算！",
+			"#jsrgzhuhuan2": "整顿天下，为国除害！",
+			"#jsrgyanhuo1": "附肉之蛆，也想弑主？",
+			"#jsrgyanhuo2": "陛下在哪儿？陛下在哪儿！",
+			"#jsrg_hejin:die": "太后诏我入宫，汝等这是何意？！",
+			"#jsrgshelun1": "董贼既死，凉州旧部当有处置。",
+			"#jsrgshelun2": "此事甚难定夺，还请诸公共议。",
+			"#jsrgshelun3": "此辈何罪？但为其主，不足杀之。",
+			"#jsrgshelun4": "今不屠此逆军，何慰关东义士之心？",
+			"#jsrgfayi1": "吾除董贼，朝野自是吾一言之堂。",
+			"#jsrgfayi2": "念私惠而忘公义，其与董贼同罪！",
+			"#jsrg_wangyun:die": "罢兵不成，新乱又起……老夫当以死谢天下……",
 			"#jsrgzhenglve1": "臣奉陛下之命，以伐乱臣。",
 			"#jsrgzhenglve2": "陛下且安坐宫中，待臣之捷报。",
 			"#jsrgzhenglve3": "齐桓之功，唯霸可彰王道。",
@@ -4421,6 +4610,8 @@ game.import("character", function () {
 			"#lizhaojiaobo:die": "陛下！尔等乱臣，安敢弑君，呃啊……",
 			"#mbxuetu1": "天子依仗在此，逆贼安扰圣驾。",
 			"#mbxuetu2": "末将救驾来迟，还望陛下恕罪。",
+			"#mbxuetu_re_yangfeng1": "徐、扬粮草甚多，众将随我前往。",
+			"#mbxuetu_re_yangfeng2": "哈哈哈哈，所过之处，粒粟不留。",
 			"#mbweiming1": "诸位东归洛阳，奉愿随驾以护。",
 			"#mbweiming2": "不遵皇命，视同倡乱之贼。",
 			"#mbweiming3": "布局良久，于今功亏一篑啊！",
@@ -4903,13 +5094,17 @@ game.import("character", function () {
 			"#xinfu_zhaoxin1": "吾心昭昭，何惧天下之口！",
 			"#xinfu_zhaoxin2": "公此行欲何为，吾自有量度。",
 			"#simazhao:die": "安世，接下来，就看你的了……",
-			"#xinfu_qianchong1": "宫闱之内，何必擅涉外事！",
-			"#xinfu_qianchong2": "谦瑾行事，方能多吉少恙。",
-			"#xinfu_qianchong3": "细行策划，只盼能助夫君一臂之力。",
+			"#xinfu_qianchong1": "细行筹划，只盼能助夫君一臂之力。",
+			"#qc_weimu": "宫闱之内，何必擅涉外事！",
+			"#qc_mingzhe": "谦瑾行事，方能多吉少恙。",
 			"#xinfu_shangjian1": "如今乱世，当秉俭行之节。",
 			"#xinfu_shangjian2": "百姓尚处寒饥之困，吾等不可奢费财力。",
 			"#wangyuanji:die": "世事沉浮，非是一人可逆啊……",
 			"#xinfu_pingcai": "吾有众好友，分为卧龙、凤雏、水镜、元直。",
+			"#pcaudio_wolong_card": "孔明能借天火之势。",
+			"#pcaudio_fengchu_card": "士元虑事环环相扣。",
+			"#pcaudio_shuijing_card": "德操深谙处世之道。",
+			"#pcaudio_xuanjian_card": "元直侠客惩恶扬善。",
 			"#pangdegong:die": "吾知人而不自知，何等荒唐……",
 			"#shouye1": "敌军攻势渐怠，还望诸位依策坚守。",
 			"#shouye2": "袁幽州不日便至，当行策建功以报之。",
@@ -6534,6 +6729,11 @@ game.import("character", function () {
 			"#spmiewu2": "吾军势如破竹，江东六郡唾手可得。",
 			
 			// sp
+			"#olchishi1": "柴米油盐之细，不逊兵家之谋。",
+			"#olchishi2": "治大家如烹小鲜，须面面俱到。",
+			"#olweimian1": "不过二三小事，夫君何须烦恼。",
+			"#olweimian2": "宦海疾风大浪，家为避风之塘。",
+			"#ol_sunru:die": "从来无情者，皆出帝王家……",
 			"#olyongzu1": "既拜我为父，咱家当视汝为骨肉。",
 			"#olyongzu2": "天地君亲师，此五者最须尊崇。",
 			"#rejianxiong_caoteng": "躬行禁闱，不敢争一时之气。",
@@ -7876,6 +8076,16 @@ game.import("character", function () {
 			"#re_yuanshu:die": "把玉玺，还给我……",
 			
 			// tw
+			"#twqinghan1": "二十四代终未尽，今以一隅誓还天！",
+			"#twqinghan2": "维继丞相遗托，当负擎汉之重。",
+			"#twzhihuan1": "贪心祸国谗言媚主，汝罪不容诛！",
+			"#twzhihuan2": "阉宦小人，何以蔽天！",
+			"#huan_jiangwei:die": "九州未定，维……有负丞相遗托……",
+			"#twlingyin1": "我自逍遥天地，何拘凡尘俗法。",
+			"#twlingyin2": "朝暮露霞雾，夜枕夕缠绵。",
+			"#twxianshou1": "顺天者，天助之。",
+			"#twxianshou2": "所思所寻，皆得天应。",
+			"#huan_zhugeguo:die": "仙缘已了，魂入轮回……",
 			"#twbeiding1": "众将同心扶汉，北伐或可功成。",
 			"#twbeiding2": "虽失天时地利，亦有三分胜机。",
 			"#twjielv1": "竭一国之材，尽万人之力。",
@@ -8246,6 +8456,16 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+			"#dcbizu1": "花既繁于枝，当为众乔灌荫。",
+			"#dcbizu2": "手执金麾伞，可为我族遮风挡雨。",
+			"#dcwuxie1": "一介弱质女流，安能登辇拔剑？",
+			"#dcwuxie2": "主上既亡，我当为生者计。",
+			"#bianyue:die": "空怀悲怆之心，未有杀贼之力……",
+			"#dcjingyin1": "金柝越关山，唯送君于南。",
+			"#dcjingyin2": "燕燕于飞，寒江照孤影。",
+			"#dcchixing1": "孤鸿鸣晚林，泪垂大江流。",
+			"#dcchixing2": "若路的尽头是离别，妾宁愿蹒跚一世。",
+			"#liutan:die": "孤灯照长夜，羹熟唤何人？",
 			"#dcshizha1": "不好，江东鼠辈欲乘东风来袭！ ",
 			"#dcshizha2": "江上起东风，恐战局生变。",
 			"#dcgaojian1": "江东不乏能人，主公不可小觑。",

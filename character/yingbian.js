@@ -994,7 +994,7 @@ game.import("character", function () {
 				hiddenSkill: true,
 				filter: function (event, player) {
 					// 临时修改（by 棘手怀念摧毁）
-					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("gaoling")) && player != _status.currentPhase && game.hasPlayer(current => current.isDamaged());
+					return event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("gaoling")) && player != _status.currentPhase && game.hasPlayer(current => current.isDamaged());
 					// return event.toShow?.some(i => get.character(i).skills?.includes("gaoling")) && player != _status.currentPhase && game.hasPlayer(current => current.isDamaged());
 				},
 				direct: true,
@@ -1931,7 +1931,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					var target = _status.currentPhase;
 					// 临时修改（by 棘手怀念摧毁）
-					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("buchen")) && target && target != player && target.countGainableCards(player, "he") > 0;
+					return event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("buchen")) && target && target != player && target.countGainableCards(player, "he") > 0;
 					// return event.toShow?.some(i => get.character(i).skills?.includes("buchen")) && target && target != player && target.countGainableCards(player, "he") > 0;
 				},
 				direct: true,
@@ -2583,7 +2583,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					return (
 						// 临时修改（by 棘手怀念摧毁）
-						event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("huirong")) &&
+						event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("huirong")) &&
 						// event.toShow?.some(i => get.character(i).skills?.includes("huirong")) &&
 						game.hasPlayer(function (target) {
 							var num = target.countCards("h");
@@ -2969,7 +2969,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					var target = _status.currentPhase;
 					// 临时修改（by 棘手怀念摧毁）
-					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("taoyin"));
+					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("taoyin"));
 					// return player != target && target && target.isAlive() && event.toShow?.some(i => get.character(i).skills?.includes("taoyin"));
 				},
 				check: function (event, player) {
@@ -3158,7 +3158,7 @@ game.import("character", function () {
 				hiddenSkill: true,
 				filter: function (event, player) {
 					// 临时修改（by 棘手怀念摧毁）
-					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("baoqie"));
+					return event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("baoqie"));
 					// return event.toShow?.some(i => get.character(i).skills?.includes("baoqie"));
 				},
 				content: function () {
@@ -3274,7 +3274,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					var target = _status.currentPhase;
 					// 临时修改（by 棘手怀念摧毁）
-					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("tuishi"));
+					return player != target && target && target.isAlive() && event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("tuishi"));
 					// return player != target && target && target.isAlive() && event.toShow?.some(i => get.character(i).skills?.includes("tuishi"));
 				},
 				content: function () {
@@ -3538,7 +3538,7 @@ game.import("character", function () {
 				},
 				filter: function (event, player) {
 					// 临时修改（by 棘手怀念摧毁）
-					if (!(event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("shiren")))) return false;
+					if (!(event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("shiren")))) return false;
 					// if (!event.toShow?.some(i => get.character(i).skills?.includes("shiren"))) return false;
 					var target = _status.currentPhase;
 					return target && target != player && target.isAlive() && target.countCards("h") > 0;
@@ -3770,7 +3770,7 @@ game.import("character", function () {
 							game
 								.getAllGlobalHistory("everything", evt => {
 									// 临时修改（by 棘手怀念摧毁）
-									return evt.name == "showCharacter" && evt.toShow && evt.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("xijue"));
+									return evt.name == "showCharacter" && evt.toShow && evt.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("xijue"));
 									// return evt.name == "showCharacter" && evt.toShow?.some(i => get.character(i).skills?.includes("xijue"));
 								})
 								.indexOf(event) == 0
@@ -3998,7 +3998,7 @@ game.import("character", function () {
 				hiddenSkill: true,
 				filter: function (event, player) {
 					// 临时修改（by 棘手怀念摧毁）
-					return event.toShow && event.toShow.some(i => get.character(i).skills && get.character(i).skills.includes("xuanmu")) && player != _status.currentPhase;
+					return event.toShow && event.toShow.some(i => get.character(i, 3) && get.character(i, 3).includes("xuanmu")) && player != _status.currentPhase;
 					// return event.toShow?.some(i => get.character(i).skills?.includes("xuanmu")) && player != _status.currentPhase;
 				},
 				content: function () {
