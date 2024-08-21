@@ -1,27 +1,35 @@
 window.noname_package = {
 	character: {
+		//经典标包＋神话再临
 		standard: "标准",
-		refresh: "界限突破",
 		shenhua: "神话再临",
+		//一将成名+界限突破+神将
 		yijiang: "一将成名",
-		sp: "璀璨星河",
+		refresh: "界限突破",
+		extra: "神将",
+		//OL服
 		onlyOL: "OL专属",
-		yingbian: "文德武备",
+		sp: "璀璨星河",
 		clan: "门阀士族",
+		yingbian: "文德武备",
+		//十周年服
 		xinghuoliaoyuan: "星火燎原",
 		huicui: "群英荟萃",
 		xianding: "限定专属",
 		sp2: "系列专属",
-		extra: "神将",
+		//移动服+外服
 		mobile: "移动版",
-		shiji: "始计篇",
 		sb: "谋攻篇",
+		shiji: "始计篇",
 		tw: "外服武将",
-		collab: "联动卡",
+		//线下系列
 		offline: "线下武将",
 		jsrg: "江山如故",
 		sixiang: "四象封印",
+		//各服联动+怀旧
+		collab: "联动卡",
 		old: "怀旧",
+		//DIY系列
 		diy: "DIY",
 		ddd: "3D精选",
 		key: "Key",
@@ -50,6 +58,7 @@ window.noname_package = {
 		gwent: "昆特牌",
 		mtg: "万智牌",
 		huanlekapai: "欢乐卡牌",
+		xianxia: "线下卡牌",
 	},
 	play: {
 		boss: "诸神降临",

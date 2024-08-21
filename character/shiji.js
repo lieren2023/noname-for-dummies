@@ -8003,7 +8003,7 @@ game.import("character", function () {
 			wujing: ["wujing", "tw_wujing"],
 			zhouchu: ["jin_zhouchu", "zhouchu", "tw_zhouchu", "std_zhouchu"],
 			liuzhang: ["liuzhang", "tw_liuzhang", "std_liuzhang"],
-			chenzhen: ["sp_chenzhen", "tw_chenzhen"],
+			sp_chenzhen: ["sp_chenzhen", "tw_chenzhen"],
 			feiyi: ["ol_feiyi", "feiyi", "tw_feiyi", "std_feiyi"],
 			wangling: ["dc_wangling", "wangling", "tw_wangling", "clan_wangling"],
 			qiaogong: ["qiaogong", "tw_qiaogong"],

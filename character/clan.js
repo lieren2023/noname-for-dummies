@@ -32,8 +32,8 @@ game.import("character", function () {
 				clan_wu: ["clan_wuxian", "clan_wuban", "clan_wukuang", "clan_wuqiao"],
 				clan_xun: ["clan_xunshu", "clan_xunchen", "clan_xuncai", "clan_xuncan", "clan_xunyou"],
 				clan_han: ["clan_hanshao", "clan_hanrong"],
-				clan_wang: ["clan_wangling", "clan_wangyun", "clan_wanghun", "clan_wanglun", "clan_wangguang", "clan_wangmingshan"],
 				clan_zhong: ["clan_zhongyan", "clan_zhonghui", "clan_zhongyu", "clan_zhongyao"],
+				clan_wang: ["clan_wangling", "clan_wangyun", "clan_wanghun", "clan_wanglun", "clan_wangguang", "clan_wangmingshan"],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -3689,7 +3689,7 @@ game.import("character", function () {
 			},
 		},
 		characterReplace: {
-			wuban: ["clan_wuban", "dc_wuban", "wuban", "xin_wuban"],
+			wuban: ["clan_wuban", "dc_wuban", "wuban", "xin_wuban", "ty_wuban"],
 		},
 		characterIntro: {
 			xunshu: "荀淑（83年～149年），字季和，为郎陵侯相，颍川颍阴人（今河南省许昌市）人。汉和帝至汉桓帝时人物，以品行高洁著称。有子八人，号八龙。年轻时有高尚的德行，学问渊博，不喜欢雕章琢句，徒在文字上用功，不注重实际的学识。因此，常常被俗儒看不起。但州里却称他有知人之明。安帝时，征召任为郎中，后来再升当涂长。离职还乡里。他的孙子荀彧是曹操部下著名的谋士。",
@@ -3856,8 +3856,8 @@ game.import("character", function () {
 			clan_wu: "陈留·吴氏",
 			clan_xun: "颍川·荀氏",
 			clan_han: "颍川·韩氏",
-			clan_wang: "太原·王氏",
 			clan_zhong: "颍川·钟氏",
+			clan_wang: "太原·王氏",
 		},
 	};
 });

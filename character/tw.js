@@ -37,7 +37,7 @@ game.import("character", function () {
 					"xia_zhaoe",
 					"xia_xiahouzie",
 				],
-				tw_beidingzhongyuan: ["huan_zhugeliang","huan_jiangwei","huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
+				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
 				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo"],
 				tw_mobile2: [
 					"tw_chengpu",
@@ -66,10 +66,12 @@ game.import("character", function () {
 			},
 		},
 		character: {
+			huan_luxun: ["male", "wu", 3, ["twlifeng", "twniwo"]],
+			huan_liushan: ["male", "shu", 3, ["twguihan", "twrenxian", "twyanzuo"], ["zhu"]],
 			licuilianzhaoquanding: ["double", "qun", 3, ["twciyin", "twchenglong"]],
 			huan_zhugeliang: ["male", "shu", "3/4", ["twbeiding", "twjielv", "twhunyou"]],
 			huan_jiangwei: ["male", "shu", 4, ["twqinghan", "twzhihuan"]],
-			huan_zhugeguo: ["female", "shu", 3, ["twxianshou", "twlingyin"]],
+			huan_zhugeguo: ["female", "shu", 3, ["rexianyuan", "twlingyin"]],
 			huan_zhanghe: ["male", "wei", 4, ["twkuiduan"]],
 			huan_zhaoyun: ["male", "shu", 4, ["twjiezhan", "twlongjin"]],
 			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"]],
@@ -402,6 +404,327 @@ game.import("character", function () {
 			},
 		},
 		skill: {
+			//幻陆逊
+			twlifeng: {
+				enable: "phaseUse",
+				filter(event, player) {
+					if (!player.countCards("he")) return false;
+					let cardx = player.getCards("he").randomGet();
+					return player.countCards("he", card => get.number(card, player) != get.number(cardx, player));
+				},
+				filterCard(card, player) {
+					if (ui.selected.cards.length) return get.number(card, player) != get.number(ui.selected.cards[0], player);
+					return true;
+				},
+				position: "he",
+				selectCard: 2,
+				filterTarget(card, player, target) {
+					if (ui.selected.cards.length < 2) return false;
+					let cards = ui.selected.cards,
+						num = Math.abs(get.number(cards[0], player) - get.number(cards[1], player));
+					return get.distance(player, target) <= num;
+				},
+				check(card) {
+					return 7 - get.value(card);
+				},
+				complexSelect: true,
+				async content(event, player, target) {
+					await event.target.damage();
+				},
+				group: "twlifeng_effect",
+				subSkill: {
+					effect: {
+						trigger: {
+							source: "damageBegin3",
+						},
+						filter(event, player) {
+							return event.getParent().name == "twlifeng";
+						},
+						async cost(event, trigger, player) {
+							const target = trigger.player,
+								cards = trigger.getParent().cards,
+								num1 = get.number(cards[0]),
+								num2 = get.number(cards[1]);
+							if (target.countCards("h")) {
+								let max = num1 > num2;
+								const result = await target
+									.chooseCard("是否重铸一张手牌？", `若此牌点数位于${num1}和${num2}之间，防止此伤害`)
+									.set("ai", card => {
+										const maxNum = get.event("maxNum"),
+											minNum = get.event("minNum");
+										if (get.damageEffect(get.player(), get.event().getTrigger().source, get.player()) > 0) return 0;
+										if (get.number(card) >= minNum && get.number(card) <= minNum) return 15 - get.value(card);
+										return 8 - get.value(card);
+									})
+									.set("maxNum", max ? num1 : num2)
+									.set("minNum", max ? num2 : num1)
+									.forResult();
+								event.result = {
+									bool: result.bool,
+									cards: result.cards,
+								};
+							}
+							else {
+								const result = await target
+									.chooseBool("是否摸一张牌？", `若此牌点数位于${num1}和${num2}之间，防止此伤害`)
+									.forResult();
+								event.result = {
+									bool: result.bool,
+								};
+							}
+							event.result.cost_data = [num1, num2];
+							event.result.skill_popup = false;
+						},
+						async content(event, trigger, player) {
+							let card,
+								nums = event.cost_data,
+								target = trigger.player;
+							// 临时修改（by 棘手怀念摧毁）
+							if (event.cards && event.cards.length > 0) {
+							// if (event.cards?.length > 0) {
+								await target.recast(event.cards);
+								card = event.cards[0];
+							}
+							else {
+								const { result } = await target.draw();
+								card = result[0];
+							}
+							if (nums[0] > nums[1]) nums.reverse();
+							if (nums[0] <= get.number(card) && nums[1] >= get.number(card)) {
+								trigger.cancel();
+								player.tempBanSkill("twlifeng");
+							}
+						},
+					},
+				},
+				ai: {
+					order: 5,
+					result: {
+						target(player, target) {
+							return get.damageEffect(target, player, player);
+						},
+					},
+				},
+			},
+			twniwo: {
+				trigger: {
+					player: "phaseUseBegin",
+				},
+				filter(event, player) {
+					return player.countCards("h") && game.hasPlayer(current => {
+						return current != player && current.countCards("h");
+					});
+				},
+				async cost(event, trigger, player) {
+					event.result = await player
+						.chooseTarget(get.prompt2(event.name.slice(0, -5)), lib.filter.notMe)
+						.set("ai", target => {
+							return -get.attitude(get.player(), target) / (target.countCards("h") + 1);
+						})
+						.forResult();
+				},
+				async content(event, trigger, player) {
+					const target = event.targets[0];
+					const dialog = ["选择你与" + get.translation(target) + "的等量张手牌"];
+					if (player.countCards("h")) {
+						dialog.add("你的手牌");
+						dialog.add(player.getCards("h"));
+					}
+					if (target.countCards("h")) {
+						dialog.add(get.translation(target) + "的手牌");
+						let hs = target.getCards("h");
+						if (player.hasSkillTag("viewHandcard", null, target, true)) dialog.add(hs);
+						else dialog.add([hs, "blank"])
+					}
+					const result = await player
+						.chooseButton(dialog, true, [2, Infinity])
+						.set("filterOk", () => {
+							const buttons = ui.selected.buttons;
+							return buttons.filter(i => get.owner(i.link) == get.player()).length * 2 == buttons.length;
+						})
+						.set("cards", function () {
+							let cards = player.getCards("h").slice(0).sort((a, b) => get.value(a) - get.value(b));
+							let result = [];
+							while (result.length < target.countCards("h")) {
+								let card = cards.shift();
+								if (get.value(card) <= 5) result.push(card);
+								else break;
+							}
+							return result.concat(target.getCards("h").randomGets(result.length));
+						}())
+						.set("ai", button => {
+							return get.event("cards").includes(button.link);
+						})
+						.forResult();
+					for (const owner of [player, target]) {
+						owner.addTempSkill("twniwo_block");
+						owner.addGaintag(result.links.filter(i => get.owner(i) == owner), "twniwo");
+					}
+				},
+				subSkill: {
+					block: {
+						charlotte: true,
+						onremove(player) {
+							player.removeGaintag("twniwo");
+						},
+						mod: {
+							cardEnabled2(card) {
+								if (card.hasGaintag("twniwo")) return false;
+							},
+						},
+					},
+				},
+			},
+			//幻刘禅
+			twguihan: {
+				audio: 2,
+				enable: "phaseUse",
+				filter(event, player) {
+					return game.hasPlayer(target => lib.skill.twguihan.filterTarget(null, player, target));
+				},
+				filterTarget(card, player, target) {
+					return target != player && target.isDamaged() && target.countCards("h");
+				},
+				selectTarget: [1, 3],
+				usable: 1,
+				multiline: true,
+				multitarget: true,
+				async content(event, trigger, player) {
+					const card = get.cards(1, true)[0];
+					await player.showCards([card], get.translation(player) + "发动了【归汉】");
+					let num = 0;
+					for (const target of event.targets.sortBySeat()) {
+						const result = await target
+							.chooseCard("归汉：将一张" + get.translation(get.type2(card)) + "牌置于牌堆顶，或失去1点体力", (card, player) => {
+								return get.type2(card) == get.event().type;
+							})
+							.set("type", get.type2(card))
+							.set("ai", card => {
+								const player = get.player();
+								if (get.effect(player, { name: "losehp" }, player, player) > 0) return 0;
+								return 7 - get.value(card);
+							})
+							.forResult();
+						if (!result.bool) await target.loseHp();
+						else {
+							num++;
+							target.$throw(1, 1000);
+							await target.lose(result.cards, ui.cardPile, "insert");
+							game.log(target, "将一张牌置于了牌堆顶");
+						}
+						// 临时修改（by 棘手怀念摧毁）
+						await game.asyncDelayx();
+						// await game.delayx();
+					}
+					const index = await player
+						.chooseControl()
+						.set("choiceList", ["摸" + get.cnNumber(num) + "张牌", "获得牌堆顶第" + get.cnNumber(num) + "张牌下的三张牌"])
+						.set("prompt", "归汉：请选择一项")
+						.set("ai", () => {
+							const player = get.player(),
+								index = num >= 3 - num ? 0 : 1;
+							return player.hasSkillTag("nogain") ? 1 - index : index;
+						})
+						.set("num", num)
+						.forResult("index");
+					if (index == 0 && num > 0) await player.draw(3);
+					else if (ui.cardPile.childElementCount > num) {
+						const gains = Array.from(ui.cardPile.childNodes).slice(num).slice(0, 3);
+						if (gains.length > 0) await player.gain(gains, "gain2");
+					}
+				},
+				ai: {
+					order: 1,
+					threaten: 4.5,
+					result: { target: -1 },
+				},
+			},
+			twrenxian: {
+				audio: 2,
+				enable: "phaseUse",
+				filter(event, player) {
+					return player.countCards("h", { type: "basic" });
+				},
+				usable: 1,
+				filterTarget: lib.filter.notMe,
+				filterCard: { type: "basic" },
+				selectCard: -1,
+				lose: false,
+				discard: false,
+				delay: false,
+				position: "h",
+				async content(event, trigger, player) {
+					const target = event.target;
+					await player.give(event.cards, target);
+					target.addTempSkill("twrenxian_phase", { player: "twrenxian_phaseAfter" });
+					target.markAuto("twrenxian_phase", event.cards);
+				},
+				ai: {
+					order: 0.01,
+					threaten: 4.5,
+					result: { target: 1 },
+				},
+				locked: false,
+				mod: {
+					aiOrder(player, card, num) {
+						const cards = player.getCards("h", { type: "basic" });
+						if (cards.length === 1 && cards.includes(card) && game.hasPlayer(target => target != player && get.attitude(player, target) > 0)) return 0;
+					},
+				},
+				subSkill: {
+					phase: {
+						charlotte: true,
+						onremove: true,
+						trigger: { global: "phaseAfter" },
+						forced: true,
+						popup: false,
+						content() {
+							const next = player.insertPhase();
+							player
+								.when({ global: "phaseBefore" })
+								.filter(evt => evt == next)
+								.then(() => {
+									player.addTempSkill("twrenxian_mark", "phaseAfter");
+									player.markAuto("twrenxian_mark", cards);
+								})
+								.assign({ firstDo: true })
+								.vars({ cards: player.getStorage("twrenxian_phase") });
+						},
+					},
+					mark: {
+						mark: true,
+						charlotte: true,
+						onremove: true,
+						marktext: "令",
+						intro: {
+							markcount: () => 0,
+							content: "执行一个额外回合",
+						},
+						mod: {
+							cardEnabled2(card, player) {
+								if (!player.getStorage("twrenxian_mark").includes(card)) return false;
+							},
+							cardUsable(card, player, num) {
+								if (card.name == "sha") return Infinity;
+							},
+						},
+					},
+				},
+			},
+			twyanzuo: {
+				trigger: { global: "damageSource" },
+				filter(event, player) {
+					if (event.getParent("phase").skill !== "twrenxian_phase") return false;
+					const source = event.source;
+					return source && source != player && source.group == "shu";
+				},
+				usable: 3,
+				zhuSkill: true,
+				forced: true,
+				content() {
+					player.draw();
+				},
+			},
 			//李赵
 			twciyin: {
 				audio: 2,
@@ -1148,17 +1471,106 @@ game.import("character", function () {
 				},
 			},
 			//幻诸葛果
-			twxianshou: {
+			rexianyuan: {
+				audio: "twxianyuan",
+				trigger: { global: "phaseUseBegin" },
+				filter(event, player) {
+					return event.player.hasMark("rexianyuan");
+				},
+				forced: true,
+				locked: false,
+				logTarget: "player",
+				async content(event, trigger, player) {
+					const target = trigger.player,
+						str = get.translation(target);
+					const num = target.countMark("rexianyuan");
+					let choice;
+					if (!target.countCards("h")) choice = 1;
+					else
+						choice = await player
+							.chooseControl()
+							.set("choiceList", ["观看" + str + "的手牌并将其中至多" + get.cnNumber(num) + "张牌置于牌堆顶", "令" + str + "摸" + get.cnNumber(num) + "张牌"])
+							.set("ai", () => (get.attitude(get.player(), get.event().getTrigger().player) > 0 ? 1 : 0))
+							.forResult("index");
+					if (typeof choice != "number") return;
+					if (choice == 0) {
+						const result = await player.choosePlayerCard(target, "h", "visible", [1, num], true, '###仙援###<div class="text center">将其中至多' + get.cnNumber(num) + "张牌置于牌堆顶（先选择的在上）</div>").forResult();
+						// 临时修改（by 棘手怀念摧毁）
+						if (result.bool && result.cards && result.cards.length) {
+						// if (result.bool && result.cards?.length) {
+							const cards = result.cards.slice();
+							target.$throw(cards.length, 1000);
+							await target.lose(cards, ui.cardPile, "insert");
+						}
+					} else await target.draw(num);
+					if (_status.currentPhase !== player) target.clearMark("rexianyuan");
+				},
+				limit: 3,
+				intro: { content: "mark" },
+				group: ["rexianyuan_give", "rexianyuan_gain"],
+				subSkill: {
+					give: {
+						audio: "twxianyuan",
+						enable: "phaseUse",
+						filter(event, player) {
+							return player.hasMark("rexianyuan") && game.hasPlayer(i => lib.skill.rexianyuan.subSkill.give.filterTarget(null, player, i));
+						},
+						filterTarget(card, player, target) {
+							return target != player && target.countMark("rexianyuan") < lib.skill.rexianyuan.limit;
+						},
+						prompt: "将“仙援”标记分配给其他角色",
+						async content(event, trigger, player) {
+							const target = event.target;
+							const gives = Array.from({ length: player.countMark("rexianyuan") }).map((_, i) => get.cnNumber(i + 1) + "枚");
+							let give;
+							if (gives.length == 1) give = 0;
+							else
+								give = await player
+									.chooseControl(gives)
+									.set("ai", () => 0)
+									.set("prompt", "仙援：将任意枚“仙援”标记分配给" + get.translation(target))
+									.forResult("index");
+							if (typeof give != "number") return;
+							give++;
+							player.removeMark("rexianyuan", give);
+							target.addMark("rexianyuan", give);
+						},
+						ai: {
+							order: 1,
+							result: {
+								player: 1,
+								target(player, target) {
+									const sgn = get.sgn(get.attitude(player, target));
+									return sgn == 0 ? 0.5 : sgn * (2 - sgn);
+								},
+							},
+						},
+					},
+					gain: {
+						audio: "twxianyuan",
+						trigger: { global: "roundStart" },
+						filter(event, player) {
+							return player.countMark("rexianyuan") < lib.skill.rexianyuan.limit;
+						},
+						forced: true,
+						locked: false,
+						content() {
+							player.addMark("rexianyuan", lib.skill.rexianyuan.limit - player.countMark("rexianyuan"));
+						},
+					},
+				},
+			},
+			twxianyuan: {
 				audio: 2,
 				enable: "phaseUse",
 				onChooseToUse(event) {
-					if (!game.online && event.type == "phase" && !event.twxianshou) {
+					if (!game.online && event.type == "phase" && !event.twxianyuan) {
 						const player = event.player;
 						event.set(
-							"twxianshou",
+							"twxianyuan",
 							player
 								.getRoundHistory("useSkill", evt => {
-									return evt.skill == "twxianshou";
+									return evt.skill == "twxianyuan";
 								})
 								.reduce((list, evt) => {
 									return list.add(evt.targets[0]);
@@ -1167,10 +1579,10 @@ game.import("character", function () {
 					}
 				},
 				filter(event, player) {
-					return player.countCards("he") && game.hasPlayer(target => lib.skill.twxianshou.filterTarget(null, player, target));
+					return player.countCards("he") && game.hasPlayer(target => lib.skill.twxianyuan.filterTarget(null, player, target));
 				},
 				filterTarget(card, player, target) {
-					return player != target && !get.event().twxianshou.includes(target);
+					return player != target && !get.event().twxianyuan.includes(target);
 				},
 				filterCard: true,
 				selectCard: [1, 2],
@@ -1182,15 +1594,15 @@ game.import("character", function () {
 				lose: false,
 				discard: false,
 				delay: 0,
-				prompt: "将至多两张牌标记为“技一”并交给一名本轮未以此法交给其牌的角色",
+				prompt: "将至多两张牌标记为“仙援”并交给一名本轮未以此法交给其牌的角色",
 				content() {
 					const ID = player.playerid;
-					const skill = "twxianshou_effect",
-						skillID = "twxianshou_" + ID;
+					const skill = "twxianyuan_effect",
+						skillID = "twxianyuan_" + ID;
 					if (!lib.skill[skillID]) {
 						game.broadcastAll(skillID => {
 							lib.skill[skillID] = { charlotte: true };
-							lib.translate[skillID] = "技一";
+							lib.translate[skillID] = "仙援";
 						}, skillID);
 					}
 					if (!target.storage[skill]) {
@@ -1211,16 +1623,16 @@ game.import("character", function () {
 						},
 					},
 				},
-				group: ["twxianshou_effect", "twxianshou_remove"],
+				group: ["twxianyuan_effect", "twxianyuan_remove"],
 				subSkill: {
 					effect: {
-						audio: "twxianshou",
+						audio: "twxianyuan",
 						trigger: { global: "phaseUseBegin" },
 						filter(event, player) {
-							return event.player.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h");
+							return event.player.hasCard(card => card.hasGaintag("twxianyuan_" + player.playerid), "h");
 						},
 						prompt2(event, player) {
-							const num = event.player.storage["twxianshou_effect"][player.playerid];
+							const num = event.player.storage["twxianyuan_effect"][player.playerid];
 							return "观看其手牌并将其中至多" + get.cnNumber(num) + "张牌以任意顺序置于牌堆顶";
 						},
 						check(event, player) {
@@ -1229,9 +1641,9 @@ game.import("character", function () {
 						logTarget: "player",
 						async content(event, trigger, player) {
 							const target = trigger.player,
-								num = target.storage["twxianshou_effect"][player.playerid];
+								num = target.storage["twxianyuan_effect"][player.playerid];
 							const result = await player
-								.chooseToMove("技一：将" + get.translation(target) + "的至多" + get.cnNumber(num) + "张牌以任意顺序置于牌堆顶", true)
+								.chooseToMove("仙援：将" + get.translation(target) + "的至多" + get.cnNumber(num) + "张牌以任意顺序置于牌堆顶", true)
 								.set("list", [[get.translation(target) + "的手牌", target.getCards("h"), "dcsushou_tag"], ["牌堆顶"]])
 								.set("filterOk", moved => {
 									const num = get.event().num;
@@ -1259,17 +1671,17 @@ game.import("character", function () {
 						},
 					},
 					remove: {
-						audio: "twxianshou",
+						audio: "twxianyuan",
 						trigger: { player: "phaseBegin" },
 						filter(event, player) {
-							return game.hasPlayer(target => target.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h"));
+							return game.hasPlayer(target => target.hasCard(card => card.hasGaintag("twxianyuan_" + player.playerid), "h"));
 						},
 						forced: true,
 						locked: false,
 						async content(event, trigger, player) {
-							const targets = game.filterPlayer(target => target.hasCard(card => card.hasGaintag("twxianshou_" + player.playerid), "h"));
-							const sum = targets.reduce((num, target) => num + target.countCards("h", card => card.hasGaintag("twxianshou_" + player.playerid)), 0);
-							for (const target of targets) target.removeGaintag("twxianshou_" + player.playerid);
+							const targets = game.filterPlayer(target => target.hasCard(card => card.hasGaintag("twxianyuan_" + player.playerid), "h"));
+							const sum = targets.reduce((num, target) => num + target.countCards("h", card => card.hasGaintag("twxianyuan_" + player.playerid)), 0);
+							for (const target of targets) target.removeGaintag("twxianyuan_" + player.playerid);
 							await player.draw(sum);
 						},
 					},
@@ -1284,7 +1696,7 @@ game.import("character", function () {
 				async content(event, trigger, player) {
 					const cards = get.cards(1, true),
 						card = cards[0];
-					await player.showCards(cards, get.translation(player) + "发动了【技二】");
+					await player.showCards(cards, get.translation(player) + "发动了【灵隐】");
 					if (get.color(card) == get.color(trigger.card)) {
 						await player.gain(cards, "gain2");
 					}
@@ -1683,16 +2095,35 @@ game.import("character", function () {
 			},
 			twpiankuang: {
 				audio: 2,
-				getNum: (event, player) => Math.min(3, player.getHistory("sourceDamage", evt => evt.card && evt.card.name == event.card.name && evt.card != event.card).length),
 				trigger: {
+					player: "useCardAfter",
 					source: "damageBegin1",
 				},
 				filter(event, player) {
-					return event.card && event.getParent().type == "card" && get.info("twpiankuang").getNum(event, player) > 0;
+					if (event.name == "useCard") return event.card.name == "sha" && player == _status.currentPhase && !player.hasHistory("sourceDamage", evt => evt.card == event.card);
+					// 临时修改（by 棘手怀念摧毁）
+					return event.card && event.card.name == "sha" && event.getParent().type == "card" && player.hasHistory("sourceDamage", evt => evt.card && evt.card.name == "sha");
+					// return event.card?.name == "sha" && event.getParent().type == "card" && player.hasHistory("sourceDamage", evt => evt.card?.name == "sha");
 				},
 				forced: true,
 				async content(event, trigger, player) {
-					trigger.num += get.info("twpiankuang").getNum(trigger, player);
+					if (trigger.name == "useCard") {
+						player.addTempSkill(event.name + "_effect");
+						player.addMark(event.name + "_effect", 1, false);
+					} else trigger.num++;
+				},
+				subSkill: {
+					effect: {
+						charlotte: true,
+						onremove: true,
+						markimage: "image/card/handcard.png",
+						intro: { content: "手牌上限-#" },
+						mod: {
+							maxHandcard(player, num) {
+								return num - player.countMark("twpiankuang_effect");
+							},
+						},
+					},
 				},
 			},
 			//诸葛均
@@ -21796,7 +22227,7 @@ game.import("character", function () {
 		characterReplace: {
 			tw_caocao: ["tw_caocao", "jsrg_caocao", "yj_caocao"],
 			mateng: ["tw_mateng", "mateng", "std_mateng"],
-			xiahouen: ["tw_xiahouen", "jsrg_xiahouen"],
+			tw_xiahouen: ["tw_xiahouen", "jsrg_xiahouen"],
 			jiangji: ["dc_jiangji", "tw_jiangji", "jiangji"],
 			baoxin: ["tw_baoxin", "baoxin"],
 			yanxiang: ["yanxiang", "tw_yanxiang"],
@@ -22775,10 +23206,10 @@ game.import("character", function () {
 			chenjie_info: "一名角色的判定牌生效前，你可打出一张花色相同的牌。系统将你打出的牌作为新判定牌，将原判定牌置入弃牌堆。然后你摸两张牌。",
 			huan_weiyan: "幻魏延",
 			huan_weiyan_prefix: "幻",
-			twqiji: "奇计",
+			twqiji: "奇击",
 			twqiji_info: "出牌阶段开始时，你可以视为对一名其他角色使用X张无距离限制且不计入次数的【杀】，此【杀】指定目标时，其可以选择一名本回合未以此法选择的其他角色，被选择的角色摸一张牌，然后其可以将此【杀】的目标转移给自己（X为出牌阶段开始时你手牌的类型数）。",
 			twpiankuang: "偏狂",
-			twpiankuang_info: "锁定技，你使用的牌造成的伤害+Y（Y为你本回合使用过的且造成过伤害的相同牌名的牌的数量，且至多为3）。",
+			twpiankuang_info: "锁定技。①当你使用【杀】造成伤害时，若你本回合使用【杀】造成过伤害，此伤害+1。②你的回合内，当你使用【杀】结算结束后，若此【杀】未造成伤害，本回合你的手牌上限-1。",
 			huan_simayi: "幻司马懿",
 			huan_simayi_prefix: "幻",
 			twzongquan: "纵权",
@@ -22797,8 +23228,10 @@ game.import("character", function () {
 			twkuiduan_info: "锁定技。①当你使用【杀】指定唯一目标后，你与其的随机两张手牌获得“溃端”标记，这些牌视为无属性【杀】。②一名角色使用含“溃端”标记的牌造成伤害时，若其含“溃端”标记的手牌数大于受伤角色含“溃端”标记的手牌数，则此伤害+1。",
 			huan_zhugeguo: "幻诸葛果",
 			huan_zhugeguo_prefix: "幻",
-			twxianshou: "仙授",
-			twxianshou_info: "①出牌阶段限三次，你可以将至多两张牌标记为“仙授”并交给一名本轮未以此法交给其牌的角色。②拥有“仙授”标记牌的角色的出牌阶段开始时，你可以观看其手牌并将其中至多X张牌以任意顺序置于牌堆顶（X为你本局游戏发动〖仙授〗交给其的牌数）。③回合开始时，你移去所有角色手牌中的“仙授”标记，然后摸等量的牌。",
+			twxianyuan: "仙援",
+			twxianyuan_info: "①出牌阶段限三次，你可以将至多两张牌标记为“仙援”并交给一名本轮未以此法交给其牌的角色。②拥有“仙援”标记牌的角色的出牌阶段开始时，你可以观看其手牌并将其中至多X张牌以任意顺序置于牌堆顶（X为你本局游戏发动〖仙援〗交给其的牌数）。③回合开始时，你移去所有角色手牌中的“仙援”标记，然后摸等量的牌。",
+			rexianyuan: "仙援",
+			rexianyuan_info: "①一轮游戏开始时，你获得3枚“仙援”标记（一名角色至多拥有3枚“仙援”标记）。②出牌阶段，你可以将“仙援”标记分配给其他角色。③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
 			twlingyin: "灵隐",
 			twlingyin_info: "当你成为普通锦囊牌的目标时，你可以展示牌堆顶的一张牌，若此牌与使用的牌的：颜色相同，你获得此牌；花色相同，你令此牌对你无效；颜色不同，你将此牌置入弃牌堆。",
 			huan_jiangwei: "幻姜维",
@@ -22815,9 +23248,9 @@ game.import("character", function () {
 			twjielv_info: "锁定技。①每名角色回合结束时，若你未对其使用牌，你失去1点体力。②当你失去1点体力或受到1点伤害后，若你的体力上限小于7，你增加1点体力上限。",
 			twhunyou: "魂游",
 			twhunyou_info: "限定技，当你处于濒死状态时，你可以将体力值回复至1点，若如此做，本回合当你受到伤害时或失去体力时，取消之；当前回合结束后，你入幻：进行一个额外的回合。",
-			twbeidingx: "北定",
+			twbeidingx: "北定·入幻",
 			twbeidingx_info: "你使用〖北定〗记录的牌无距离限制且不计入次数；当你使用〖北定〗记录的牌结算结束后，你摸一张牌，然后从〖北定〗记录中移除此牌名。",
-			twjielvx: "竭虑",
+			twjielvx: "竭虑·入幻",
 			twjielvx_info: "锁定技，当你减少1点体力上限后，你回复1点体力。",
 			twhuanji: "幻计",
 			twhuanji_info: "出牌阶段限一次，你可以减少1点体力上限，然后增加至多X个〖北定〗未记录过的牌名 （X为你的体力值）。",
@@ -22828,6 +23261,20 @@ game.import("character", function () {
 			twciyin_info: "①你或同心角色的准备阶段，你可以亮出牌堆顶X张牌，然后将其中任意张♠或♥牌置于武将牌上，称为“荫”，然后将其余牌放回牌堆顶（X为当前回合角色的体力值的两倍，且至多为10）。②你每获得三张“荫”后，你选择本局游戏未选择的一项：1.增加1点体力上限并回复1点体力；2.将手牌补至体力上限。",
 			twchenglong: "成龙",
 			twchenglong_info: "觉醒技，一名角色的结束阶段，若你已经执行过〖慈荫〗所有选项，你获得武将牌上的所有“荫”并失去〖慈荫〗，然后你从四张蜀势力或群势力武将牌中选择至多两个技能描述中含【杀】或【闪】的技能获得之。",
+			huan_liushan: "幻刘禅",
+			huan_liushan_prefix: "幻",
+			twguihan: "归汉",
+			twguihan_info: "出牌阶段限一次，你可以选择至多三名已受伤且有手牌的其他角色。你展示牌堆顶的一张牌，然后这些角色依次选择一项：①将一张与此牌类别相同的牌置于牌堆顶；②失去1点体力。然后你选择一项，摸X张牌，获得牌堆顶第X张牌下的三张牌（X为本次选择选项①的角色数）。",
+			twrenxian: "任贤",
+			twrenxian_info: "出牌阶段限一次，你可以将手牌中的所有基本牌交给一名其他角色，然后令其于本回合结束后执行一个额外的回合（只能使用你交给其的牌，且使用【杀】无次数限制）。",
+			twyanzuo: "延祚",
+			twyanzuo_info: "主公技，锁定技。每回合限三次，其他蜀势力角色于〖任贤〗回合造成伤害后，你摸一张牌。",
+			huan_luxun: "幻陆逊",
+			huan_luxun_prefix: "幻",
+			twlifeng: "砺锋",
+			twlifeng_info: "出牌阶段 你可弃置两张不同点数的牌，然后对一名距离x以内的角色造成一点伤害（x为你弃置牌点数的差）。该角色因此受到伤害时，其可重铸一张手牌（若没有手牌，则改为摸一张牌），若此牌点数与你弃置的两张牌点数相同，或处于两张牌点数之间，其防止此伤害，且【砺锋】失效直到回合结束。",
+			twniwo: "逆涡",
+			twniwo_info: "出牌阶段开始时，你可选择一名其他角色，然后选择你与其等量的手牌。若如此做，直到本回合结束，你与其均无法使用或打出你以此法选择的牌。",
 
 			tw_mobile: "海外服·稀有专属",
 			tw_yunchouzhi: "运筹帷幄·智",

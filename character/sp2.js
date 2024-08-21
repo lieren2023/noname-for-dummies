@@ -4,26 +4,10 @@ game.import("character", function () {
 		name: "sp2",
 		connect: true,
 		character: {
-			mp_wangrong: ["male", "wei", 3, ["mpjianlin", "mpsixiao"]],
 			matie: ["male", "qun", 4, ["dczhuiwang", "dcquxian"]],
 			hansong: ["male", "qun", 3, ["dcyinbi", "dcshuaiyan"]],
 			chezhou: ["male", "wei", 4, ["dcshefu", "dcpigua"]],
-			star_zhangzhao: ["male", "wu", 3, ["starzhongyan", "starjinglun"]],
-			star_sunjian: ["male", "qun", "4/5", ["starruijun", "stargangyi"]],
 			liqueguosi: ["male", "qun", 4, ["xiongsuan"]],
-			star_zhangchunhua: ["female", "wei", 3, ["starliangyan", "starminghui"]],
-			star_yuanshao: [
-				"male",
-				"qun",
-				4,
-				["starxiaoyan", "starzongshi", "starjiaowang", "staraoshi"],
-				["zhu"],
-			],
-			star_dongzhuo: ["male", "qun", 5, ["starweilin", "starzhangrong", "starhaoshou"], ["zhu"]],
-			star_yuanshu: ["male", "qun", 4, ["starcanxi", "starpizhi", "starzhonggu"], ["zhu"]],
-			star_caoren: ["male", "wei", 4, ["starsujun", "starlifeng"]],
-			star_sunshangxiang: ["female", "wu", 3, ["starsaying", "starjiaohao"]],
-			mp_liuling: ["male", "jin", 3, ["mpjiusong", "mpmaotao", "mpbishi"], ["doublegroup:wei:qun:jin"]],
 			dc_jikang: ["male", "wei", 3, ["new_qingxian", "dcjuexiang"]],
 			dc_jsp_guanyu: ["male", "wei", 4, ["new_rewusheng", "dcdanji"]],
 			dc_mengda: ["male", "wei", 4, ["dclibang", "dcwujie"]],
@@ -126,20 +110,7 @@ game.import("character", function () {
 					"liqueguosi",
 				],
 				sp_zlzy: ["zhangqiying", "lvkai", "zhanggong", "weiwenzhugezhi", "beimihu"],
-				sp_longzhou: ["xf_tangzi", "xf_huangquan", "xf_sufei", "sp_liuqi"],
-				sp_zizouqi: ["mangyachang", "xugong", "zhangchangpu"],
 				sp_sbfm: ["lisu", "xinpi", "zhangwen"],
-				sp_guandu: [
-					"sp_zhanghe",
-					"xunchen",
-					"sp_shenpei",
-					"gaolan",
-					"lvkuanglvxiang",
-					"chunyuqiong",
-					"sp_xuyou",
-					"xinping",
-					"hanmeng",
-				],
 				sp_qihuan: ["zhaozhong", "re_hejin", "fengfang", "mushun"],
 				sp_binglin: [
 					"re_niujin",
@@ -164,14 +135,26 @@ game.import("character", function () {
 					"dc_jsp_guanyu",
 				],
 				sp_fenghuo: ["re_nanhualaoxian", "tongyuan", "zhangning", "re_pangdegong"],
+				sp_zizouqi: ["mangyachang", "xugong", "zhangchangpu"],
+				
 				sp_huangjin: ["liuhong", "zhujun", "re_hansui", "xushao"],
 				sp_fadong: ["ol_dingyuan", "wangrong", "re_quyi", "hanfu"],
 				sp_xuzhou: ["re_taoqian", "caosong", "zhangmiao", "qiuliju"],
 				sp_zhongyuan: ["re_hucheer", "re_zoushi", "caoanmin", "re_dongcheng"],
 				sp_xiaohu: ["haomeng", "yanfuren", "yanrou", "dc_zhuling"],
 				sp_qunxiong: ["chezhou", "hansong", "matie"],
-				sp_star: ["star_caoren", "star_yuanshu", "star_dongzhuo", "star_yuanshao", "star_zhangchunhua", "star_sunjian", "star_zhangzhao", "star_sunshangxiang"],
-				mini_qixian: ["mp_liuling", "mp_wangrong"],
+				sp_guandu: [
+					"sp_zhanghe",
+					"xunchen",
+					"sp_shenpei",
+					"gaolan",
+					"lvkuanglvxiang",
+					"chunyuqiong",
+					"sp_xuyou",
+					"xinping",
+					"hanmeng",
+				],
+				sp_longzhou: ["xf_tangzi", "xf_huangquan", "xf_sufei", "sp_liuqi"],
 				sp2_waitforsort: ["caobuxing", "re_maliang", "dc_jikang"],
 			},
 		},
@@ -221,7 +204,7 @@ game.import("character", function () {
 					const cards = get.info("mpjianlin").getCards(player);
 					const {
 						result: { bool, links },
-					} = await player.chooseButton(["悭吝：你可以获得其中一张牌", cards]).set("ai", get.buttonValue);
+					} = await player.chooseButton(["俭吝：你可以获得其中一张牌", cards]).set("ai", get.buttonValue);
 					event.result = {
 						bool: bool,
 						cost_data: links,
@@ -5675,9 +5658,7 @@ game.import("character", function () {
 						.set("ai", function () {
 							var player = _status.event.player,
 								target = _status.event.getParent().target;
-							/*if(get.attitude(player,target)<0&&game.hasPlayer(function(current){
-							return current!=player&&current!=target&&!current.hasMark('yijiao')&&get.attitude(player,current)<0;
-						})) return 3;*/
+							if (get.attitude(player, target) < 0) return 3;
 							return 0;
 						});
 					"step 1";
@@ -5781,6 +5762,7 @@ game.import("character", function () {
 				content: function () {
 					"step 0";
 					player.give(cards, target);
+					player.addTempSkill("channi_effect");
 					"step 1";
 					if (target.countCards("h") > 0) {
 						game.broadcastAll(function (num) {
@@ -5796,37 +5778,39 @@ game.import("character", function () {
 						next.set("_backupevent", "channi_backup");
 						next.set("custom", {
 							add: {},
-							replace: { window: function () {} },
+							replace: { window: function () { } },
 						});
 						next.backup("channi_backup");
-					} else event.finish();
+					}
 					"step 2";
-					if (result.bool) {
-						var evts = target.getHistory("useCard", function (evt) {
-							return evt.card.name == "juedou" && evt.getParent(2) == event;
-						});
-						if (!evts.length) {
-							event.finish();
-							return;
-						}
-						var num = evts[0].cards.length;
-						if (
-							target.hasHistory("sourceDamage", function (evt) {
-								return evt.card && evt.card.name == "juedou" && evt.getParent(4) == event;
-							})
-						)
-							target.draw(num);
-					} else event.finish();
-					"step 3";
-					if (
-						player.countCards("h") > 0 &&
-						target.hasHistory("damage", function (evt) {
-							return evt.card && evt.card.name == "juedou" && evt.getParent(4) == event;
-						})
-					)
-						player.chooseToDiscard("h", true, player.countCards("h"));
+					player.removeSkill("channi_effect");
 				},
 				subSkill: {
+					effect: {
+						trigger: {
+							global: ["damageSource", "damageEnd"],
+						},
+						filter(event, player, name) {
+							if (!event.card || event.card.name != "juedou") return false;
+							let evt = event.getParent(2);
+							if (!evt || evt.name != "useCard" || evt.card.name != "juedou") return false;
+							let user = evt.player;
+							let evtx = event.getParent("channi", true);
+							if (!evtx || evtx.player != player) return false;
+							if (name == "damageSource") return event.source == user && evt.cards.length;
+							return event.player == user && player.countCards("h");
+						},
+						forced: true,
+						charlotte: true,
+						logTarget(event, player, name) {
+							return event[name == "damageSource" ? "source" : "player"];
+						},
+						content() {
+							let evt = trigger.getParent(2);
+							if (event.triggername == "damageSource") evt.player.draw(evt.cards.length);
+							else player.chooseToDiscard("h", true, player.countCards("h"));
+						},
+					},
 					backup: {
 						filterCard: function (card) {
 							return get.itemtype(card) == "card";
@@ -13316,11 +13300,15 @@ game.import("character", function () {
 				ai: {
 					order: 9,
 					result: {
-						target: function (player, target) {
+						player(player, target) {
+							if (target.countCards("hej")) return 0.92;
+							return 0;
+						},
+						target(player, target) {
 							var numj = target.countCards("j");
 							var numhe = target.countCards("he");
-							if (numhe == 0) return numj > 0 ? 6 : -6;
-							return -6 - (numj + 1) / numhe;
+							if (numhe + numj > 0) return (1.6 * numj - numhe) / (numj + numhe) - 0.3;
+							return -0.3;
 						},
 					},
 					threaten: 1.1,
@@ -14607,12 +14595,9 @@ game.import("character", function () {
 			mushun: "穆顺，小说《三国演义》中的人物，男，东汉末宦官。献帝欲修书与国舅伏完，共谋图曹公。因顺为宦官中之忠义可托者，乃命顺往送书。顺藏书于发中，潜出禁宫，径至完宅，将书呈上。及完回书付顺，顺乃藏于头髻内，辞完回宫。然公闻信，先于宫门等候，顺回遇公，公喝左右，遍搜身上，并无夹带，放行。忽然风吹落其帽。公又唤回，取帽视之，遍观无物，还帽令戴。顺双手倒戴其帽。公心疑，令左右搜其头发中，搜出伏完书来。公见书大怒，执下顺于密室问之，顺不肯招。当晚将顺、完等宗族二百余口，皆斩于市。",
 			jsp_guanyu:
 				"关羽，字云长。曾水淹七军、擒于禁、斩庞德、威震华夏，吓得曹操差点迁都躲避，但是东吴偷袭荆州，关羽兵败被害。后传说吕蒙因关羽之魂索命而死。",
-			liuling:
-				"刘伶（约221年-约300年），字伯伦，西晋沛国（治今安徽濉溪县西北）人，竹林七贤之一，中国魏晋时期作家，名士。<br>刘伶自幼便失去了父爱，因其父亲身材矮小，及至长大成人后，刘伶身高也不过六尺。魏齐王曹芳正始之末（249年），刘伶已成为当世名重一时的名士，并且常与嵇康、阮籍、阮咸集会于山阳竹林之下，饮酒赋诗，弹琴作歌。晋武帝司马炎泰始初年（265年）前后，曾做过一段时间的建威参军，不久朝廷下诏，入宫中策问。他大谈老庄，强调无为而治，非但没有得到重用，反而连参军之职也被罢免了，从此再无仕进。晋惠帝司马衷永康元年（300年）前后，以寿而终。<br>刘伶有“品酒第一人”的美称，也被酒行业传颂至今，后人以古瀑河边上的井水酿酒，还取刘伶墓地的黄土垒成窖池酿酒，为了纪念刘伶，当地百姓也将“润泉涌”更名为“刘伶醉”。其传世作品仅有《酒德颂》《北芒客舍》两篇，其中《酒德颂》所表现出的藐视一切存在的气概，敌视礼教之士的反抗精神，既高扬了人格的力量，批判了当时的黑暗政治，同时也抒发了压抑的愤世之情，充满了浪漫色彩，气魄豪迈，用辞又骈偶间行，有无意追求而自至的特点，对后代影响极大。",
 			chezhou: "车胄（？－199年至200年），东汉末年武将，为曹操所置徐州刺史。建安四年，左将军刘备率军出征，前往下邳，于同年或次年杀死车胄。",
 			hansong: "韩嵩（生卒年不详），字德高，南阳人。少好学，贫不改操。不应三公辟命，与同好数人隐居郦西山中。后担任刘表手下的别驾，转为从事中郎。出使许都，被拜为侍中，迁零陵太守。建安十三年（208年），韩嵩与蒯越、傅巽劝刘琮降曹。曹操平定荆州后，拜韩嵩为大鸿胪。",
 			matie: "马铁（？－212年），扶风茂陵（今陕西兴平）人。马腾之子，马超之弟。马腾遭韩遂进攻，乃携马铁等入京受职。马铁被封为骑都尉。后在邺城居住。因其兄马超反曹而被曹操夷灭。",
-			mp_wangrong: "王戎（234年－305年7月11日），字濬冲。琅玡郡临沂县（今山东省临沂市白沙埠镇诸葛村）人。祖父为三国魏幽州刺史王雄，曹魏凉州刺史王浑的儿子。三国至西晋时期名士、官员，“竹林七贤”之一。<br>王戎出身琅玡王氏。自少神采秀美，长于清谈，以精辟的品评与识鉴而著称，以聪颖知名，为父辈好友、名士阮籍器重，后人视之为玄学名士。初袭父爵贞陵亭侯，被大将军司马昭辟为掾属。累官豫州刺史、建威将军，参与晋灭吴之战。战后以功进封安丰县侯，故人称“王安丰”。治理荆州时，他拉拢士人，颇有成效。后历任侍中、光禄勋、吏部尚书、太子太傅、中书令、尚书左仆射等职。元康七年（296年），升任司徒，位列三公。王戎认为天下将乱，于是不理世事，以山水游玩为乐。赵王司马伦发动政变时，王戎被牵连免官。之后被起用为尚书令，再迁司徒。右将军张方劫持晋惠帝入长安后，王戎逃奔郏县。<br>永兴二年（305年），王戎去世，时年七十二，谥号为“元”。",
 		},
 		characterTitle: {
 			chunyuqiong: "#b对决限定武将",
@@ -14687,15 +14672,15 @@ game.import("character", function () {
 			caoanmin: ["caoanmin", "ns_caoanmin"],
 			duanwei: ["duanwei", "junk_duanwei"],
 			xushao: ["xushao", "jsrg_xushao"],
-			huban: ["ol_huban", "dc_huban", "mb_huban"],
-			mengda: ["ol_mengda", "dc_mengda", "pe_mengda"],
+			ol_huban: ["ol_huban", "dc_huban", "mb_huban"],
+			ol_mengda: ["ol_mengda", "dc_mengda", "pe_mengda"],
 			jsp_guanyu: ["jsp_guanyu", "dc_jsp_guanyu", "jsrg_guanyu"],
 			mushun: ["mushun", "sp_mushun"],
 			wangjun: ["dc_wangjun", "wangjun"],
 			re_zoushi: ["re_zoushi", "jsrg_zoushi", "yue_zoushi"],
-			zhangmancheng: ["dc_zhangmancheng", "tw_zhangmancheng"],
+			dc_zhangmancheng: ["dc_zhangmancheng", "tw_zhangmancheng"],
 			xf_huangquan: ["xf_huangquan", "dc_huangquan"],
-			lvkulvkuanglvxiang: ["lvkuanglvxiang", "dc_lvkuanglvxiang"],
+			lvkuanglvxiang: ["lvkuanglvxiang", "dc_lvkuanglvxiang"],
 		},
 		translate: {
 			lijue: "李傕",
@@ -15218,8 +15203,7 @@ game.import("character", function () {
 			xiongmang_info: "你可将任意张花色各不相同的手牌当做目标数上限为X的【杀】使用（X为此【杀】对应的实体牌数）。此【杀】使用结算结束后，若此牌造成过/未造成过伤害，则你本阶段使用【杀】的额定次数+1/减1点体力上限。",
 			yanfuren: "严夫人",
 			channi: "谗逆",
-			channi_info:
-				"出牌阶段限一次。你可将任意张手牌交给一名其他角色，然后其可以将至多等量的手牌当做【决斗】使用。若其因此【决斗】造成了伤害，则其摸X张牌（X为此【决斗】对应的实体牌数）。若其因此【决斗】受到过伤害，则你弃置所有手牌。",
+			channi_info: "出牌阶段限一次。你可将任意张手牌交给一名其他角色，然后其可以将至多等量的手牌当做【决斗】使用。当其因此【决斗】：造成伤害后，其摸X张牌（X为此【决斗】对应的实体牌数）；受到伤害后，你弃置所有手牌。",
 			nifu: "匿伏",
 			nifu_info: "锁定技。一名角色的回合结束时，你将手牌摸至或弃置至三张。",
 			licaiwei: "李采薇",
@@ -15468,25 +15452,27 @@ game.import("character", function () {
 			mpsixiao: "死孝",
 			mpsixiao_info: "锁定技，游戏开始时，你选择一名其他角色。每回合限一次，当该角色需要使用或打出除【无懈可击】外的牌时，其可以观看你的手牌并可以使用或打出其中一张牌，然后你摸一张牌。",
 
-			sp_whlw: "文和乱武",
-			sp_zlzy: "逐鹿中原",
-			sp_longzhou: "同舟共济",
-			sp_zizouqi: "自走棋",
-			sp_sbfm: "上兵伐谋",
-			sp_shengun: "三国奇人传",
-			sp_guandu: "官渡之战",
+			// 南征北战
+			sp_whlw: "征战·文和乱武",
+			sp_zlzy: "征战·逐鹿天下",
+			sp_sbfm: "征战·上兵伐谋",
+			sp_qihuan: "征战·戚宦之争",
+			sp_binglin: "征战·兵临城下",
+			sp_danqi: "征战·千里单骑",
+			sp_fenghuo: "征战·烽火连天",
+			sp_zizouqi: "征战·自走棋",
+			
+			// 武将列传
 			sp_huangjin: "列传·黄巾之乱",
 			sp_fadong: "列传·诸侯伐董",
 			sp_xuzhou: "列传·徐州风云",
-			sp_qihuan: "戚宦之争",
 			sp_zhongyuan: "列传·中原狼烟",
-			sp_binglin: "兵临城下",
 			sp_xiaohu: "列传·虓虎悲歌",
 			sp_qunxiong: "列传·群雄伺动",
-			sp_fenghuo: "烽火连天",
-			sp_danqi: "千里单骑",
-			sp_star: "将星系列",
-			mini_qixian: "小程序·竹林七贤",
+			
+			// sp_shengun: "三国奇人传",
+			sp_guandu: "官渡之战",
+			sp_longzhou: "同舟共济",
 			sp2_waitforsort: "等待分包",
 		},
 		pinyins: {

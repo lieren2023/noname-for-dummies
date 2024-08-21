@@ -2422,6 +2422,27 @@ game.import("character", function () {
 					);
 				},
 				zixiList: ["lebu", "bingliang", "shandian"],
+				selectAi(player, names) {
+					let max = [null, 0, null, null];
+					for (let name of names) {
+						let res = [null, null, 0];
+						player.getCards("h", i => {
+							if (!i.hasGaintag("dcqiqin_tag") || get.value(i) >= 7) return false;
+							game.countPlayer(target => {
+								if (!target.canAddJudge(get.autoViewAs({ name: "dczixi_" + name }, [i]))) return;
+								let eff = get.effect(target, get.autoViewAs({ name }, [i]), player, player);
+								if (get.attitude(player, target) > 0) {
+									if (-eff > res[2]) res = [target, i, -eff / 16]; //避免人机一直贴队友
+								}
+								else {
+									if (eff > res[2]) res = [target, i, eff];
+								}
+							});
+						});
+						if (res[0] && res[2] > max[1]) max = [get.translation(name), res[2], res[1], res[0]];
+					}
+					return max;
+				},
 				direct: true,
 				async content(event, trigger, player) {
 					game.addVideo("skill", player, ["dczixi", []]);
@@ -2439,6 +2460,7 @@ game.import("character", function () {
 					for (const name of names) {
 						map[get.translation(name)] = name;
 					}
+					let max = lib.skill.dczixi.selectAi(player, Object.values(map));
 					const {
 						result: { bool, links },
 					} = await player
@@ -2465,26 +2487,14 @@ game.import("character", function () {
 							);
 						})
 						.set("ai", (button) => {
-							const player = get.event("player"),
-								list = Object.keys(get.event("map"));
 							if (typeof button.link == "string") {
-								const card = player
-									.getCards("h", (card) => {
-										if (get.value(card) >= 7) return false;
-										return card.hasGaintag("dcqiqin_tag") && game.hasPlayer(target => target.canAddJudge(get.autoViewAs({ name: "dczixi_" + button.link }, [card])));
-									})
-									.sort((a, b) => get.value(a) - get.value(b))[0];
-								if (
-									game.hasPlayer((current) => {
-										return get.attitude(player, current) < 0 && lib.skill.dczixi.zixiList.some(name => current.canAddJudge(get.autoViewAs({ name: "dczixi_" + button.link }, [card])));
-									})
-								)
-									return list.indexOf(button.link) + 1;
-								return 1 / (list.indexOf(button.link) + 1);
+								if (button.link == get.event("max")[0]) return 1;
+								return 0;
 							}
-							return 7 - get.value(button.link);
+							if (button.link == get.event("max")[2]) return 1;
+							return 0;
 						})
-						.set("map", map);
+						.set("max", max);
 					if (bool) {
 						const name = links.find((i) => typeof i == "string"),
 							card = links.find((j) => j != name),
@@ -2504,25 +2514,12 @@ game.import("character", function () {
 								true
 							)
 							.set("ai", (target) => {
-								const player = get.event("player"),
-									card = get.event("card");
-								if (
-									game.hasPlayer((current) => {
-										return (
-											get.attitude(player, current) < 0 &&
-											current.canAddJudge(
-												get.autoViewAs({ name: "dczixi_" + get.event("cardname") }, [
-													card,
-												])
-											)
-										);
-									})
-								)
-									return -target.countCards("j") - 1;
-								return target.countCards("j") + 1;
+								if (target == get.event("max")[3]) return 1;
+								return 0;
 							})
 							.set("card", card)
-							.set("cardname", cardname);
+							.set("cardname", cardname)
+							.set("max", max);
 						if (bool) {
 							const target = targets[0];
 							player.logSkill("dczixi", target);
@@ -2603,6 +2600,22 @@ game.import("character", function () {
 									break;
 							}
 						},
+						ai: {
+							effect: {
+								player_use(card, player, target) {
+									if (player._dczixi_effect_use || get.tag(card, "multitarget")) return;
+									let js = target.countCards("j");
+									if (js == 1) return [2, 0, 2, 0];
+									else if (js == 2) return [1, 2];
+									else if (js == 3 && get.attitude(player, target) < 0) {
+										player._dczixi_effect_use = true;
+										let eff = get.damageEffect(target, player, player);
+										delete player._dczixi_effect_use;
+										if (eff > 0) return [1, 0, 1, -6];
+									}
+								}
+							}
+						}
 					},
 				},
 			},
@@ -3394,7 +3407,7 @@ game.import("character", function () {
 					}
 					if (player.countCards("h", (card) => card.hasGaintag("dcjiaowei_tag")) <= len) {
 						player.storage.counttrigger.dcfeibai--;
-						game.log(player, "重置了", "#【飞白】");
+						game.log(player, "重置了", "#g【飞白】");
 					}
 				},
 				mod: {
@@ -4683,8 +4696,8 @@ game.import("character", function () {
 					effect: {
 						player_use: function (card, player, target, current) {
 							if (_status.currentPhase != player) return;
-							if (get.type(card) == "equip" && get.cardtag(card, "gifts")) return;
-							if (player.countCards("h") > Math.max(1, player.countCards("e"))) return [1, 3];
+							let cha = player.countCards("h") - Math.max(1, player.countCards("e"));
+							if (cha == 0 || cha < 0 && !player.hasSkill("dczuowei_ban")) return [1, 2];
 						},
 					},
 				},
@@ -13720,7 +13733,7 @@ game.import("character", function () {
 				trigger: { target: "useCardToTargeted" },
 				filter: function (event, player) {
 					if (player == event.player || event.targets.length != 1) return false;
-					return player.countCards("h") >= 2;
+					return event.player.isIn() && player.countCards("h") >= 2;
 				},
 				usable: 2,
 				async cost(event, trigger, player) {
@@ -16477,6 +16490,7 @@ game.import("character", function () {
 			zhangchu: ["zhangchu", "jsrg_zhangchu"],
 			mamidi: ["mamidi", "xin_mamidi"],
 			chunyuqiong: ["chunyuqiong", "re_chunyuqiong", "jsrg_chunyuqiong"],
+			chengui: ["chengui", "mb_chengui"],
 			
 			sp_menghuo: ["sp_menghuo", "dc_sp_menghuo", "tw_menghuo"],
 			

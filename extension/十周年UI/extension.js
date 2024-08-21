@@ -8374,9 +8374,12 @@ content:function(config, pack){
 			lib.skill.sbyijue.marktext = "义绝";
 			lib.skill.sbyijue.subSkill.effect.marktext = "义绝";
 		}
-		// TW神关羽梦魇标记修改
+		// TW神关羽、桃神关羽梦魇标记修改
 		if(lib.skill.twwuhun != undefined){
 			lib.skill.twwuhun.marktext = "梦魇";
+		}
+		if(lib.skill.tywuhun != undefined){
+			lib.skill.tywuhun.marktext = "梦魇";
 		}
 		// 承关羽冠绝、念恩标记修改
 		if(lib.skill.jsrgguanjue != undefined){
@@ -9010,6 +9013,8 @@ content:function(config, pack){
 		lib.translate.shencai_info = "出牌阶段限一次，你可以令一名其他角色进行判定。你获得此判定牌，然后若此判定牌：包含以下要素中的任意一个，则其失去已有的下列效果，并获得对应的效果：{⒈“笞”-体力：当其受到伤害后，其失去等量的体力、⒉“杖”-武器：其不能使用牌响应【杀】、⒊“徒”-打出：当其失去手牌后，其再随机弃置一张手牌（不嵌套触发）、⒋“流”-距离：其的结束阶段开始时，其翻面}；若均不包含，你获得其区域里的一张牌，其获得一枚“死”并获得如下效果：其的角色手牌上限-X、其的回合结束时，若X大于场上存活人数，则其死亡（X为其“死”标记数）。";
 		// 巡使技能描述修改
 		lib.translate.xunshi_info = "锁定技。①你的多目标锦囊牌均视为花色为无色的普通【杀】。②你使用颜色为无色的牌无距离和次数限制。③当你使用无颜色的牌选择目标后，你令你的〖神裁〗的发动次数上限+1（至多为5），然后可以为此牌增加任意个目标。";
+		lib.translate.tyxunshi_info = "锁定技。①你手牌中的的多目标锦囊牌花色视为无色。②你使用颜色为无色的牌无距离和次数限制。③当你使用无颜色的牌选择目标后，你令你的〖神裁〗的发动次数上限+1（至多为5），然后可以为此牌增加任意个目标。";
+		lib.translate.tyxunshi_tag = "巡使";
 		// 巧思技能描述修正
 		lib.translate.qiaosi_info = "出牌阶段限一次，你可以表演「水转百戏图」并根据表演结果获得相应的牌。然后，你选择一项：1.弃置X张牌。2.将X张牌交给一名其他角色。（X为你以此法得到的牌数）";
 		lib.translate.qiaosi_map_info = "<br><li>王：锦囊牌*2<br><li>商：装备牌/【杀】/【酒】*1<br><li>工：【杀】/【酒】*1<br><li>农：【闪】/【桃】*1<br><li>士：锦囊牌/【闪】/【桃】*1<br><li>将：装备牌*2";

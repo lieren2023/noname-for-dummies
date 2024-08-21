@@ -963,7 +963,7 @@ game.import("character", function () {
 						charlotte: true,
 						forced: true,
 						filter: function (event, player) {
-							return event.source && event.source.isIn() && event.source.hasSkill("mingjian2");
+							return event.source && event.source.isIn() && event.source.hasSkill("remingjian_buff");
 						},
 						content: function () {
 							player.restoreSkill("rexingshuai");
@@ -7605,6 +7605,7 @@ game.import("character", function () {
 				content: function () {
 					trigger.player.draw();
 				},
+				global: "faen_global",
 			},
 			dcfaen: {
 				audio: "refaen",
@@ -7621,6 +7622,7 @@ game.import("character", function () {
 				content: function () {
 					trigger.player.draw();
 				},
+				global: "faen_global",
 			},
 			//界曹彰
 			xinjiangchi: {
@@ -14522,6 +14524,7 @@ game.import("character", function () {
 					guansuo: "wusheng_guansuo",
 					gz_jun_liubei: "shouyue_wusheng",
 					std_guanxing: "wusheng_guanzhang",
+					ty_guanxing: "wusheng_guanzhang",
 				},
 				enable: ["chooseToRespond", "chooseToUse"],
 				filterCard: function (card, player) {

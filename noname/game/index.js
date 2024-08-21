@@ -4139,7 +4139,9 @@ export class Game {
 		}
 	}
 	reloadCurrent() {
-		game.saveConfig("continue_name", [game.me.name1 || game.me.name, game.me.name2]);
+		let names = [game.me.name1 || game.me.name, game.me.name2];
+		if(game.me.name1 != game.me.name) names = [game.me.name];
+		game.saveConfig("continue_name", names);
 		game.saveConfig("mode", lib.config.mode);
 		localStorage.setItem(lib.configprefix + "directstart", true);
 		game.reload();

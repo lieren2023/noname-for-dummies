@@ -4845,7 +4845,16 @@ export class Player extends HTMLDivElement {
 		next.autochoose = function () {
 			if (!this.forced) return false;
 			if (typeof this.selectCard == "function") return false;
-			if (this.complexCard || this.complexSelect || this.filterOk || this.getParent().name.startsWith("chooseToCompare")) return false;
+			
+			// 临时修改（by 棘手怀念摧毁）
+			if (this.complexCard || this.complexSelect || this.filterOk) return false;
+			let evt=this.getParent();
+			while(evt && evt.name){
+				if(evt.name.startsWith("chooseToCompare")) return false;
+				evt=evt.getParent();
+			}
+			// if (this.complexCard || this.complexSelect || this.filterOk || this.getParent().name.startsWith("chooseToCompare")) return false;
+			
 			var cards = this.player.getCards(this.position);
 			if (cards.some(card => !this.filterCard(card, this.player, this))) return false;
 			return get.select(this.selectCard)[0] >= this.player.countCards(this.position);
@@ -8523,7 +8532,7 @@ export class Player extends HTMLDivElement {
 				let currentHistory = history[i];
 				if (key) currentHistory = currentHistory[key];
 				if (filter) currentHistory = currentHistory.filter(filter);
-				evts.addArray(currentHistory.reverse());
+				evts.addArray(currentHistory.slice().reverse());
 			}
 			if (history[i].isRound) {
 				if (num > 0) num--;

@@ -3926,7 +3926,7 @@ export class Library {
 					init: false,
 					unfrequent: true,
 					onclick(bool) {
-						game.saveConfig("show_statusbar", bool);
+						game.saveConfig("show_statusbar_android", bool);
 						if (window.StatusBar && lib.device == "android") {
 							if (bool) {
 								window.StatusBar.overlaysWebView(false);
@@ -14454,6 +14454,15 @@ export class Library {
 			},
 		],
 		[
+			"手杀SP",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("手杀")}${get.prefixSpan("SP")}`,
+			},
+		],
+		[
 			"战役篇神",
 			{
 				/**
@@ -14528,6 +14537,22 @@ export class Library {
 			{
 				color: "#ff0000",
 				nature: "firemm",
+			},
+		],
+		[
+			"桃",
+			{
+				color: "#FFC0CB",
+				nature: "firemm",
+			},
+		],
+		[
+			"桃神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("桃")}${get.prefixSpan("神")}`,
 			},
 		],
 		[

@@ -747,7 +747,7 @@ game.import("card", function () {
 					if (result.bool) {
 						var card = player.getEquip("muniu");
 						result.targets[0].equip(card);
-						player.$give(card, result.targets[0]);
+						player.$give(card.cards, result.targets[0]);
 						player.line(result.targets, "green");
 						game.delay();
 					} else {
@@ -1115,15 +1115,14 @@ game.import("card", function () {
 				},
 				audio: true,
 				check: function (event, player) {
-					var eff = 0;
-					for (var i = 0; i < event.targets.length; i++) {
-						var target = event.targets[i];
-						var eff1 = get.damageEffect(target, player, player);
-						var eff2 = get.damageEffect(target, player, player, "fire");
-						eff += eff2;
-						eff -= eff1;
+					let eff = 0, nature = event.card.nature;
+					for (let i = 0; i < event.targets.length; i++) {
+						eff -= get.effect(event.targets[i], event.card, player, player);
+						event.card.nature = "fire";
+						eff += get.effect(event.targets[i], event.card, player, player);
+						event.card.nature = nature;
 					}
-					return eff >= 0;
+					return eff > 0;
 				},
 				prompt2: function (event, player) {
 					return "将" + get.translation(event.card) + "改为火属性";

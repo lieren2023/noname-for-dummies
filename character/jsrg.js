@@ -1708,10 +1708,8 @@ game.import("character", function () {
 						game.log(source, forceTargets.includes(source) ? "自愿选择" : "选择了", current, "作为讨伐目标");
 						ticketsMap.set(current, (ticketsMap.get(current) || 0) + 1);
 					});
-					console.log(ticketsMap);
 					let maxTicket = 0;
 					const target = ticketsMap.entries().reduce((target, data) => {
-						console.log(data);
 						const [current, ticket] = data;
 						if (ticket > maxTicket) {
 							maxTicket = ticket;
@@ -1721,7 +1719,7 @@ game.import("character", function () {
 					}, false);
 					//上Buff
 					if (target) {
-						game.log(target, "成为了", "#g【执盟】", "的讨伐目标");
+						game.log(target, "成为了", "#g【诛逆】", "的讨伐目标");
 						player.addTempSkill("jsrgzhuni_effect");
 						player.markAuto("jsrgzhuni_effect", [target]);
 					}
@@ -1732,7 +1730,7 @@ game.import("character", function () {
 					threaten: 1.8,
 				},
 				chooseTarget(player, source) {
-					const next = player.chooseTarget(`${get.translation(source)}发动了【执盟】，请选择一名讨伐目标`, (card, player, target) => target !== source, true);
+					const next = player.chooseTarget(`${get.translation(source)}发动了【诛逆】，请选择一名讨伐目标`, (card, player, target) => target !== source, true);
 					next.set("ai", target => -get.attitude(get.player(), target));
 					next.set("animate", false);
 					next.set("_global_waiting", true);
@@ -5950,6 +5948,7 @@ game.import("character", function () {
 							var damaged = get.event("damaged");
 							return damaged.includes(target) ^ (ui.selected.cards.length > 0);
 						},
+						complexSelect: true,
 						selectTarget: 1,
 						ai1: function (card) {
 							if (get.event("damaged").includes(get.event("aiTarget"))) return 0;
@@ -9038,7 +9037,7 @@ game.import("character", function () {
 				},
 			},
 			jsrgzhuhuan: {
-				audio: "mouzhu",
+				audio: 2,
 				trigger: { player: "phaseZhunbeiBegin" },
 				filter: function (event, player) {
 					var hs = player.getCards("h", "sha");
@@ -9096,6 +9095,7 @@ game.import("character", function () {
 			},
 			jsrgyanhuo: {
 				inherit: "spyanhuo",
+				audio: 2,
 				forced: true,
 			},
 			//孙坚

@@ -37,6 +37,8 @@ game.import("character", function () {
 			wuhujiang: ["male", "shu", 4, ["olhuyi"], ["die_audio:wuhujiang:wuhujiang2:wuhujiang3:wuhujiang4:wuhujiang5"]],
 			dc_noname: ["male", "qun", 3, ["dcchushan"]],
 			xunyuxunyou: ["male", "wei", 3, ["zhinang", "gouzhu"]],
+			mp_wangrong: ["male", "wei", 3, ["mpjianlin", "mpsixiao"]],
+			mp_liuling: ["male", "jin", 3, ["mpjiusong", "mpmaotao", "mpbishi"], ["doublegroup:wei:qun:jin"]],
 		},
 		characterFilter: {
 			old_lingju(mode) {
@@ -60,6 +62,7 @@ game.import("character", function () {
 				collab_qixi: ["liuxiecaojie"],
 				collab_decade: ["libai", "xiaoyuehankehan", "zhutiexiong", "wu_zhutiexiong"],
 				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_noname", "xunyuxunyou"],
+				mini_qixian: ["mp_liuling", "mp_wangrong"],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -3297,6 +3300,8 @@ game.import("character", function () {
 			zhutiexiong:
 				"朱铁雄，福建莆田人，1994年出生，短视频创作者。中国魔法少年的英雄梦，国风变装的热血与浪漫。抖音年度高光时刻作者，国风变装现象级人物。创玩节期间化身三国杀武将，来一场热血变身！",
 			nezha: "哪吒是中国神话中的民俗神之一，在古典名著《西游记》《封神演义》等及其衍生作品中也多有登场。传说中，哪吒是托塔天王李靖的第三子。哪吒之母怀胎三年，而哪吒出生之时是一个肉球，李靖惊怒之下，用剑劈开了肉球，而哪吒就在肉球中。哪吒广泛流传于道教以及民间传说中，被称为三坛海会大神、威灵显圣大将军、中坛元帅等，民间俗称“三太子”，又常冠其父姓，称为“李哪吒”。哪吒的原型为佛教护法神“那咤”。在不同作品的设定中，哪吒的师承关系有所不同，比如《封神演义》中，哪吒是太乙真人的弟子、元始天尊的徒孙，而《西游记》之中，哪吒则是释迦牟尼（如来佛祖）的弟子。在传说中，哪吒的形象常被形容为可化作三头六臂（封神之中是三头八臂），使用多种武器战斗。比如，《封神演义》中哪吒使用的武器（法宝）为乾坤圈、混天绫、火尖枪和风火轮等，西游记中是斩妖剑、砍妖刀、缚妖索、降妖杵、绣球儿、火轮儿。而哪吒第一次死后被其师父（太乙真人或如来佛祖）以莲花和莲藕复活。",
+			liuling: "刘伶（约221年-约300年），字伯伦，西晋沛国（治今安徽濉溪县西北）人，竹林七贤之一，中国魏晋时期作家，名士。<br>刘伶自幼便失去了父爱，因其父亲身材矮小，及至长大成人后，刘伶身高也不过六尺。魏齐王曹芳正始之末（249年），刘伶已成为当世名重一时的名士，并且常与嵇康、阮籍、阮咸集会于山阳竹林之下，饮酒赋诗，弹琴作歌。晋武帝司马炎泰始初年（265年）前后，曾做过一段时间的建威参军，不久朝廷下诏，入宫中策问。他大谈老庄，强调无为而治，非但没有得到重用，反而连参军之职也被罢免了，从此再无仕进。晋惠帝司马衷永康元年（300年）前后，以寿而终。<br>刘伶有“品酒第一人”的美称，也被酒行业传颂至今，后人以古瀑河边上的井水酿酒，还取刘伶墓地的黄土垒成窖池酿酒，为了纪念刘伶，当地百姓也将“润泉涌”更名为“刘伶醉”。其传世作品仅有《酒德颂》《北芒客舍》两篇，其中《酒德颂》所表现出的藐视一切存在的气概，敌视礼教之士的反抗精神，既高扬了人格的力量，批判了当时的黑暗政治，同时也抒发了压抑的愤世之情，充满了浪漫色彩，气魄豪迈，用辞又骈偶间行，有无意追求而自至的特点，对后代影响极大。",
+			mp_wangrong: "王戎（234年－305年7月11日），字濬冲。琅玡郡临沂县（今山东省临沂市白沙埠镇诸葛村）人。祖父为三国魏幽州刺史王雄，曹魏凉州刺史王浑的儿子。三国至西晋时期名士、官员，“竹林七贤”之一。<br>王戎出身琅玡王氏。自少神采秀美，长于清谈，以精辟的品评与识鉴而著称，以聪颖知名，为父辈好友、名士阮籍器重，后人视之为玄学名士。初袭父爵贞陵亭侯，被大将军司马昭辟为掾属。累官豫州刺史、建威将军，参与晋灭吴之战。战后以功进封安丰县侯，故人称“王安丰”。治理荆州时，他拉拢士人，颇有成效。后历任侍中、光禄勋、吏部尚书、太子太傅、中书令、尚书左仆射等职。元康七年（296年），升任司徒，位列三公。王戎认为天下将乱，于是不理世事，以山水游玩为乐。赵王司马伦发动政变时，王戎被牵连免官。之后被起用为尚书令，再迁司徒。右将军张方劫持晋惠帝入长安后，王戎逃奔郏县。<br>永兴二年（305年），王戎去世，时年七十二，谥号为“元”。",
 		},
 		card: {
 			ruyijingubang: {
@@ -3508,6 +3513,7 @@ game.import("character", function () {
 			collab_qixi: "新服·七夕限时地主",
 			collab_decade: "新服·创玩节",
 			collab_remake: "新服·共创武将",
+			mini_qixian: "小程序·竹林七贤",
 			
 			
 			
@@ -4553,6 +4559,20 @@ game.import("character", function () {
 			"#key_saya:die": "砰——",
 			
 			// mobile
+			"#mbbojian1": "闻古者贤女，未有不学前事成败而以为己诫。",
+			"#mbbojian2": "视字辄识，方知何为礼义。",
+			"#mbjiwei1": "乱世之宝，非金银田产，而在仁心。",
+			"#mbjiwei2": "匹夫怀璧为罪，更况吾豪门大族。",
+			"#mbjiwei3": "左右乡邻，当共力时艰。",
+			"#mbjiwei4": "民不逢时，吾又何忍视其饥苦。",
+			"#mb_sp_zhenji:die": "悔入帝王家，万愿皆成空……",
+			"#mbquchong1": "器有九距之备，亦有九攻之变。",
+			"#mbquchong2": "攻城之机变，于此车皆可解之！",
+			"#mbquchong3": "大攻起兮，可辟山海之艰！",
+			"#mbquchong4": "破坚阵如朽木，履高城如平地。",
+			"#mbxunjie1": "藏于心者竭爱，动于身者竭恭。",
+			"#mbxunjie2": "修身如藏器，大巧若无工。",
+			"#mb_zhangfen:die": "而立之年，未立功名，实憾也……",
 			"#qiaomeng_xin_gongsunzan1": "夺汝兵刃战马，尔等必败无疑。",
 			"#qiaomeng_xin_gongsunzan2": "摧敌似折枯，荡寇如反掌。",
 			"#mbbifeng1": "众士暂避其锋，万不可冲撞圣驾。",
@@ -5992,6 +6012,17 @@ game.import("character", function () {
 			"#yinghun_re_sunce2": "父亲，吾定不负你期望！",
 			
 			// sb
+			"#sbwansha1": "世人皆行殊途，于死亦有同归！",
+			"#sbwansha2": "九幽泉下，是你最好的归宿。",
+			"#sbluanwu_jiaxu1": "降则任人鱼肉，竭战或可保生！",
+			"#sbluanwu_jiaxu2": "一将功成需万骨，何妨多添此一城！",
+			"#sbluanwu_jiaxu3": "人之道，损不足以奉有余！",
+			"#sbluanwu_jiaxu4": "寒烟起于朽木，白骨亦可生花！",
+			"#sbweimu1": "执棋之人，不可入局者共论！",
+			"#sbweimu2": "世有千万门法，与我均无纠葛。",
+			"#sbweimu3": "方圆之间，参透天地万物心！",
+			"#sbweimu4": "帐前独知形表，幕后可见人心！",
+			"#sb_jiaxu:die": "踽踽黄泉，与吾行世又有何异？",
 			"#sbqianxun1": "虽有戈矛之刺，不如恭俭之利也。",
 			"#sbqianxun2": "贤者任重而行恭，知者功大而辞顺。",
 			"#sblianying1": "蜀营连绵百里，正待吾燎原一炬！",
@@ -7431,11 +7462,11 @@ game.import("character", function () {
 			"#tiandu_xizhicai1": "既是如此。",
 			"#tiandu_xizhicai2": "天意，不可逆。",
 			"#xianfu1": "辅佐明君，从一而终。",
-			"#xianfu2": "愿为主公，尽我所能。",
+			"#xianfu2": "吾于此生，竭尽所能。",
 			"#xianfu3": "赠人玫瑰，手有余香。",
-			"#xianfu4": "吾于此生，竭尽所能。",
+			"#xianfu4": "主公之幸，我之幸也。",
 			"#xianfu5": "春蚕至死，蜡炬成灰！",
-			"#xianfu6": "主公之幸，我之幸也。",
+			"#xianfu6": "愿为主公，尽我所能。",
 			"#chouce1": "一筹一划，一策一略。",
 			"#chouce2": "主公之忧，吾之所思也。",
 			"#xizhicai:die": "为何……不再给我……一点点时间……",
@@ -8083,8 +8114,8 @@ game.import("character", function () {
 			"#huan_jiangwei:die": "九州未定，维……有负丞相遗托……",
 			"#twlingyin1": "我自逍遥天地，何拘凡尘俗法。",
 			"#twlingyin2": "朝暮露霞雾，夜枕夕缠绵。",
-			"#twxianshou1": "顺天者，天助之。",
-			"#twxianshou2": "所思所寻，皆得天应。",
+			"#twxianyuan1": "顺天者，天助之。",
+			"#twxianyuan2": "所思所寻，皆得天应。",
 			"#huan_zhugeguo:die": "仙缘已了，魂入轮回……",
 			"#twbeiding1": "众将同心扶汉，北伐或可功成。",
 			"#twbeiding2": "虽失天时地利，亦有三分胜机。",

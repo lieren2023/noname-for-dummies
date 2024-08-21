@@ -3024,7 +3024,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			if (!connectMenu) {
 				lib.config.nocards=[];
 				lib.config.defaultcards=['standard','extra'];
-				lib.config.notdefaultcards=['sp','guozhan','zhulu','yingbian','yongjian','zhenfa','yunchou','swd','gujian','hearth','gwent','mtg','huanlekapai'];
+				lib.config.notdefaultcards=['sp','guozhan','zhulu','yingbian','yongjian','zhenfa','yunchou','swd','gujian','hearth','gwent','mtg','huanlekapai','xianxia'];
 				lib.config.benticards=lib.config.defaultcards.concat(lib.config.notdefaultcards);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
 					game.saveConfig('cards', lib.config.all.cards);

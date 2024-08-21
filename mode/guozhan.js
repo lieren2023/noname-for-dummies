@@ -13399,7 +13399,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				preHidden: true,
 				trigger: { target: "useCardToTargeted" },
 				filter: function (event, player) {
-					if (player == event.player || event.targets.length != 1) return false;
+					if (player == event.player || event.targets.length != 1 || !event.player.isIn()) return false;
 					var hs = player.getCards("h");
 					if (hs.length == 0) return false;
 					for (var i of hs) {

@@ -1219,7 +1219,8 @@ game.import("character", function () {
 						})
 						.set("ai", target => {
 							const player = get.event("player");
-							return -1 / target.countCards("h");
+							if (get.attitude(player, target) >= 0) return 0;
+							return 1 / target.countCards("h");
 						})
 						.forResult();
 				},
@@ -2092,7 +2093,7 @@ game.import("character", function () {
 		characterReplace: {
 			sunhao: ["sunhao", "std_sunhao"],
 			lvlingqi: ["lvlingqi", "std_lvlingqi"],
-			chengyu: ["chengyu", "std_chengyu"],
+			chengyu: ["chengyu", "std_chengyu", "dc_sb_chengyu"],
 			fanyufeng: ["fanyufeng", "std_fanyufeng"],
 		},
 		translate: {

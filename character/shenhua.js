@@ -6254,6 +6254,9 @@ game.import("character", function () {
 			luanwu: {
 				audio: 2,
 				audioname: ["re_jiaxu"],
+				audioname2: {
+					"sb_jiaxu": "sbluanwu_jiaxu",
+				},
 				unique: true,
 				enable: "phaseUse",
 				limited: true,
@@ -6267,7 +6270,7 @@ game.import("character", function () {
 				multiline: true,
 				content() {
 					"step 0";
-					player.awakenSkill("luanwu");
+					player.awakenSkill(event.name);
 					event.current = player.next;
 					event.currented = [];
 					"step 1";
@@ -9063,35 +9066,35 @@ game.import("character", function () {
 		},
 		characterReplace: {
 			caoren: ["caoren", "old_caoren", "sb_caoren", "new_caoren", "star_caoren"],
-			sp_caoren: ["sp_caoren", "jsp_caoren"],
+			sp_caoren: ["sp_caoren", "jsp_caoren", "drag_caoren"],
 			xiahouyuan: ["re_xiahouyuan", "ol_xiahouyuan", "xiahouyuan"],
-			huangzhong: ["re_huangzhong", "ol_huangzhong", "sb_huangzhong", "huangzhong", "jsrg_huangzhong", "yj_huangzhong"],
-			weiyan: ["re_weiyan", "ol_weiyan", "weiyan", "huan_weiyan"],
+			huangzhong: ["re_huangzhong", "ol_huangzhong", "sb_huangzhong", "huangzhong", "jsrg_huangzhong", "yj_huangzhong", "ty_huangzhong"],
+			weiyan: ["re_weiyan", "ol_weiyan", "weiyan", "huan_weiyan", "yj_weiyan"],
 			zhoutai: ["zhoutai", "xin_zhoutai", "old_zhoutai"],
 			xiaoqiao: ["xiaoqiao", "ol_xiaoqiao", "re_xiaoqiao", "sb_xiaoqiao", "old_xiaoqiao", "jd_sb_xiaoqiao", "yue_xiaoqiao"],
 			yuji: ["xin_yuji", "re_yuji", "yuji"],
 			zhangjiao: ["sp_zhangjiao", "re_zhangjiao", "sb_zhangjiao", "jsrg_zhangjiao", "zhangjiao"],
-			dianwei: ["dianwei", "ol_dianwei", "re_dianwei", "dc_sb_dianwei"],
+			dianwei: ["dianwei", "ol_dianwei", "re_dianwei", "dc_sb_dianwei", "xia_dianwei"],
 			xunyu: ["xunyu", "ol_xunyu", "re_xunyu", "sb_xunyu"],
 			sp_zhugeliang: ["sp_zhugeliang", "ol_sp_zhugeliang", "re_sp_zhugeliang", "sb_sp_zhugeliang", "jd_sb_sp_zhugeliang"],
 			pangtong: ["pangtong", "ol_pangtong", "re_pangtong", "ol_sb_pangtong", "sb_pangtong", "jd_sb_pangtong"],
 			re_jsp_pangtong: ["re_jsp_pangtong", "jsrg_pangtong", "sp_pangtong"],
 			taishici: ["taishici", "re_taishici", "ol_sb_taishici"],
-			re_yuanshao: ["re_yuanshao", "ol_yuanshao", "xin_yuanshao", "ol_sb_yuanshao", "star_yuanshao", "sb_yuanshao", "jd_sb_yuanshao"],
+			re_yuanshao: ["re_yuanshao", "ol_yuanshao", "xin_yuanshao", "ol_sb_yuanshao", "star_yuanshao", "sb_yuanshao", "jd_sb_yuanshao", "jsrg_yuanshao"],
 			pangde: ["re_pangde", "ol_pangde", "pangde"],
 			yanwen: ["yanwen", "ol_yanwen", "re_yanwen"],
 			caopi: ["caopi", "re_caopi", "ps_caopi", "sb_caopi"],
 			xuhuang: ["re_xuhuang", "ol_xuhuang", "sb_xuhuang", "xuhuang", "jd_sb_xuhuang"],
 			menghuo: ["menghuo", "re_menghuo", "sb_menghuo", "jd_sb_menghuo"],
 			zhurong: ["zhurong", "ol_zhurong", "re_zhurong", "sb_zhurong"],
-			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian", "star_sunjian", "jx_sunjian"],
-			jiaxu: ["jiaxu", "re_jiaxu", "ns_jiaxu", "ps_jiaxu", "dc_sb_jiaxu"],
+			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian", "star_sunjian", "jx_sunjian", "ol_sb_sunjian"],
+			jiaxu: ["jiaxu", "re_jiaxu", "ns_jiaxu", "ps_jiaxu", "dc_sb_jiaxu", "sb_jiaxu"],
 			dongzhuo: ["dongzhuo", "ol_dongzhuo", "re_dongzhuo", "star_dongzhuo", "jsrg_dongzhuo", "sp_dongzhuo", "yj_dongzhuo"],
 			dengai: ["dengai", "ol_dengai", "re_dengai"],
 			sp_ol_zhanghe: ["sp_ol_zhanghe", "yj_zhanghe", "sp_zhanghe", "jsrg_zhanghe", "huan_zhanghe"],
 			jiangwei: ["jiangwei", "ol_jiangwei", "re_jiangwei", "ol_sb_jiangwei", "sb_jiangwei", "jsrg_jiangwei", "huan_jiangwei", "jd_sb_jiangwei"],
-			liushan: ["liushan", "ol_liushan", "re_liushan"],
-			sunce: ["sunce", "re_sunce", "re_sunben", "sb_sunce", "dc_sunce"],
+			liushan: ["liushan", "ol_liushan", "re_liushan", "huan_liushan"],
+			sunce: ["sunce", "re_sunce", "re_sunben", "sb_sunce", "dc_sunce", "jsrg_sunce", "sp_sunce"],
 			zhangzhang: ["zhangzhang", "ol_zhangzhang", "re_zhangzhang", "tw_zhangzhao", "tw_zhanghong", "star_zhangzhao"],
 			zuoci: ["zuoci", "re_zuoci"],
 			caiwenji: ["caiwenji", "ol_caiwenji", "re_caiwenji", "yue_caiwenji"],

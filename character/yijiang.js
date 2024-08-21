@@ -11855,6 +11855,25 @@ game.import("character", function () {
 				ai: {
 					expose: 0.2,
 				},
+				global: "faen_global",
+				subSkill: {
+					global: {
+						ai: {
+							effect: {
+								target(card, player, target) {
+									if (card.name == "tiesuo" && !target.isLinked()) return [1, 0.6 * game.countPlayer(cur => {
+										return (
+											cur.hasSkill("faen") ||
+											cur.hasSkill("oldfaen") ||
+											cur.hasSkill("refaen") ||
+											cur.hasSkill("dcfaen")
+										) && get.attitude(target, cur) > 0;
+									})];
+								}
+							}
+						}
+					}
+				},
 			},
 			jiaojin: {
 				audio: 2,
@@ -15236,7 +15255,7 @@ game.import("character", function () {
 			caozhang: ["caozhang", "ol_caozhang", "re_caozhang", "xin_caozhang"],
 			guanzhang: ["guanzhang", "re_guanzhang", "old_guanzhang"],
 			madai: ["old_madai", "re_madai", "tw_madai", "madai"],
-			liaohua: ["liaohua", "re_liaohua", "xin_liaohua"],
+			liaohua: ["liaohua", "re_liaohua", "xin_liaohua", "ty_liaohua"],
 			bulianshi: ["bulianshi", "dc_bulianshi", "re_bulianshi", "old_bulianshi"],
 			handang: ["handang", "xin_handang", "re_handang", "tw_handang", "sb_handang", "old_handang"],
 			chengpu: ["chengpu", "ol_chengpu", "re_chengpu", "xin_chengpu", "tw_chengpu", "ns_chengpu", "std_chengpu"],
@@ -15257,7 +15276,7 @@ game.import("character", function () {
 			sunluban: ["re_sunluban", "xin_sunluban", "sunluban"],
 			zhuhuan: ["re_zhuhuan", "xin_zhuhuan", "zhuhuan", "old_zhuhuan"],
 			caoxiu: ["caoxiu", "re_caoxiu", "xin_caoxiu", "tw_caoxiu", "old_caoxiu"],
-			xiahoushi: ["xiahoushi", "re_xiahoushi", "sb_xiahoushi"],
+			xiahoushi: ["xiahoushi", "re_xiahoushi", "sb_xiahoushi", "sp_xiahoushi"],
 			zhangyi: ["zhangyi", "re_zhangyi", "xin_zhangyi"],
 			quancong: ["quancong", "re_quancong", "xin_quancong", "old_quancong"],
 			sunxiu: ["sunxiu", "re_sunxiu", "xin_sunxiu"],
@@ -15291,6 +15310,8 @@ game.import("character", function () {
 			wuxian: ["wuxian", "clan_wuxian"],
 			simafu: ["mb_simafu", "simafu", "yj_simafu"],
 			xuangongzhu: ["yj_xuangongzhu", "xuangongzhu"],
+			cenhun: ["cenhun", "std_cenhun"],
+			
 			kebineng: ["kebineng", "ol_kebineng", "ddd_kebineng"],
 			hanlong: ["hanlong", "jd_hanlong"],
 		},

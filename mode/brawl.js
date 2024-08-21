@@ -3317,9 +3317,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								var evt = _status.event.getParent("phase");
 								if (evt) {
 									game.resetSkills();
-									_status.event = evt;
-									_status.event.finish();
-									_status.event.untrigger(true);
+									let evtx=_status.event;
+									while(evtx!=evt){
+										evtx.finish();
+										evtx.untrigger(true);
+										evtx = evtx.getParent();
+									}
+									evtx.finish();
+									evtx.untrigger(true);
 								}
 							},
 						};
@@ -3524,7 +3529,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								game.addOverDialog = function (dialog) {
 									dialog.addText("共计通过" + _status.qianlidanji.completeNumber + "关");
 								};
-								lib.element.player.dieAfter = function () {
+								lib.element.player.dieAfter2 = function () {
 									if (this == game.fellow) return;
 									_status.characterlist.removeArray(_status.qianlidanji.used);
 									if (game.zhu == this || !_status.characterlist.length) {
@@ -3536,8 +3541,13 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 										next.setContent(_status.qianlidanji.replace_character);
 									}
 								};
-								lib.element.player.dieAfter2 = function () {
+								lib.element.player.dieAfter = function (source) {
 									_status.characterlist.removeArray(_status.qianlidanji.used);
+									let next = game.createEvent("dieAfter", false);
+									next.player = this;
+									next.forceDie = true;
+									next.source = source;
+									next.setContent("emptyEvent");
 								};
 								game.zhu.dieAfter = lib.element.player.dieAfter;
 								game.fan.dieAfter = lib.element.player.dieAfter;

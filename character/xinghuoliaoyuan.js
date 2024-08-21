@@ -16,15 +16,40 @@ game.import("character", function () {
 			yanjun: ["male", "wu", 3, ["xinfu_guanchao", "xinfu_xunxian"]],
 			liuyao: ["male", "qun", 4, ["xinfu_kannan", "twniju"], ["zhu"]],
 			liuyan: ["male", "qun", 3, ["xinfu_tushe", "xinfu_limu"]],
+			
+			star_zhangzhao: ["male", "wu", 3, ["starzhongyan", "starjinglun"]],
+			star_sunjian: ["male", "qun", "4/5", ["starruijun", "stargangyi"]],
+			star_zhangchunhua: ["female", "wei", 3, ["starliangyan", "starminghui"]],
+			star_yuanshao: [
+				"male",
+				"qun",
+				4,
+				["starxiaoyan", "starzongshi", "starjiaowang", "staraoshi"],
+				["zhu"],
+			],
+			star_dongzhuo: ["male", "qun", 5, ["starweilin", "starzhangrong", "starhaoshou"], ["zhu"]],
+			star_yuanshu: ["male", "qun", 4, ["starcanxi", "starpizhi", "starzhonggu"], ["zhu"]],
+			star_caoren: ["male", "wei", 4, ["starsujun", "starlifeng"]],
+			star_sunshangxiang: ["female", "wu", 3, ["starsaying", "starjiaohao"]],
 		},
 		characterSort: {
 			xinghuoliaoyuan: {
-				// xinghuoliaoyuan_tianfu:[],
+				// xinghuoliaoyuan_tianfu: [],
 				xinghuoliaoyuan_tianliang: ["duji", "liuyan", "yanjun"],
 				xinghuoliaoyuan_tianji: ["panjun", "wangcan"],
 				xinghuoliaoyuan_tiantong: ["re_jsp_pangtong", "sp_taishici"],
 				xinghuoliaoyuan_tianxiang: ["lvdai", "zhoufang", "liuyao"],
 				xinghuoliaoyuan_qisha: ["lvqian", "re_zhangliang"],
+				
+				xinghuoliaoyuan_tianshu: ["star_yuanshu", "star_dongzhuo", "star_yuanshao"],
+				// xinghuoliaoyuan_tianxuan: [],
+				// xinghuoliaoyuan_bdtianji: [],
+				// xinghuoliaoyuan_tianquan: [],
+				xinghuoliaoyuan_yuheng: ["star_caoren", "star_zhangchunhua"],
+				xinghuoliaoyuan_kaiyang: ["star_sunjian"],
+				xinghuoliaoyuan_yaoguang: ["star_sunshangxiang"],
+				xinghuoliaoyuan_waitforsort: ["star_zhangzhao"],
+				
 			},
 		},
 		characterIntro: {
@@ -1988,12 +2013,22 @@ game.import("character", function () {
 			xinyingshi_info:
 				"出牌阶段开始时，若场上所有角色的武将牌上均没有“酬”，则你可以将任意张牌置于一名角色的武将牌上，称为“酬”。若如此做：当有角色使用牌对有“酬”的角色造成伤害后，其可以获得一张“酬”，并获得牌堆中所有与“酬”花色点数均相同的牌；有“酬”的角色死亡时，你获得其所有“酬”。",
 
-			xinghuoliaoyuan_tianfu: "天府",
-			xinghuoliaoyuan_tianliang: "天梁",
-			xinghuoliaoyuan_tianji: "天机",
-			xinghuoliaoyuan_tiantong: "天同",
-			xinghuoliaoyuan_tianxiang: "天相",
-			xinghuoliaoyuan_qisha: "七杀",
+			xinghuoliaoyuan_tianfu: "南斗六星·天府",
+			xinghuoliaoyuan_tianliang: "南斗六星·天梁",
+			xinghuoliaoyuan_tianji: "南斗六星·天机",
+			xinghuoliaoyuan_tiantong: "南斗六星·天同",
+			xinghuoliaoyuan_tianxiang: "南斗六星·天相",
+			xinghuoliaoyuan_qisha: "南斗六星·七杀",
+			
+			xinghuoliaoyuan_tianshu: "北斗七星·天枢",
+			xinghuoliaoyuan_tianxuan: "北斗七星·天璇",
+			xinghuoliaoyuan_bdtianji: "北斗七星·天玑",
+			xinghuoliaoyuan_tianquan: "北斗七星·天权",
+			xinghuoliaoyuan_yuheng: "北斗七星·玉衡",
+			xinghuoliaoyuan_kaiyang: "北斗七星·开阳",
+			xinghuoliaoyuan_yaoguang: "北斗七星·瑶光",
+			
+			xinghuoliaoyuan_waitforsort: "等待分包",
 		},
 	};
 });

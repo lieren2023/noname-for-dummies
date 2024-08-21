@@ -97,6 +97,7 @@ var pinyin_dict_polyphone = {
 	"荐降": " xiáng",
 	"破降": " xiáng",
 	"拒降": " xiáng",
+	"奔降": "bēn xiáng",
 	"应势": "yìng ",
 	"应援": "yìng ",
 	"应机": "yìng ",
@@ -168,6 +169,7 @@ var pinyin_dict_polyphone = {
 	"犷骜": " ào",
 	"媵予": " yǔ",
 	"天予": " yǔ",
+	"累卵": "lěi ",
 	
 	"蒙斥": "méng ",
 	

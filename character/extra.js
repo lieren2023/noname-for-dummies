@@ -23,7 +23,7 @@ game.import("character", function () {
 			},
 		},
 		character: {
-			shen_huangzhong: ["male", "shen", 4, ["1！5！", "chiren"], ["shu"]],
+			shen_huangzhong: ["male", "shen", 4, ["1！5！", 'chiren'], ["shu"]],
 			new_simayi: ["male", "shen", 4, ["jilin", "yingyou", "yingtian"], ["wei"]],
 			xin_simayi: ["male", "shen", 4, ["xinrenjie", "xinbaiyin", "xinlianpo"], ["tempname:shen_simayi", "wei"]],
 			dc_shen_huatuo: ["male", "shen", 3, ["jingyu", "lvxin", "huandao"], ["qun"]],
@@ -77,7 +77,7 @@ game.import("character", function () {
 		characterReplace: {
 			shen_zhangliao: ["ol_zhangliao", "shen_zhangliao"],
 			shen_zhaoyun: ["shen_zhaoyun", "dc_zhaoyun", "old_shen_zhaoyun", "boss_zhaoyun"],
-			shen_guanyu: ["shen_guanyu", "tw_shen_guanyu"],
+			shen_guanyu: ["shen_guanyu", "tw_shen_guanyu", "ty_shen_guanyu"],
 			shen_sunquan: ["shen_sunquan", "junk_sunquan"],
 			shen_lvmeng: ["shen_lvmeng", "tw_shen_lvmeng"],
 			shen_machao: ["shen_machao", "ps_shen_machao"],
@@ -86,6 +86,8 @@ game.import("character", function () {
 			shen_zhangjiao: ["shen_zhangjiao", "junk_zhangjiao"],
 			shen_huatuo: ["dc_shen_huatuo", "shen_huatuo"],
 			shen_simayi: ["shen_simayi", "xin_simayi", "new_simayi"],
+			shen_liubei: ["shen_liubei", "ty_shen_liubei"],
+			shen_zhangfei: ["shen_zhangfei", "ty_shen_zhangfei"]
 		},
 		characterFilter: {
 			shen_diaochan(mode) {
@@ -109,6 +111,7 @@ game.import("character", function () {
 		skill: {
 			//神黄忠
 			//丁真神将，赤矢神将，爆头神将，吃人神将
+			// 扎针小游戏？
 			"1！5！": {
 				audio: 2,
 				trigger: { source: "damageSource" },
@@ -116,30 +119,19 @@ game.import("character", function () {
 					return event.player.isIn() && event.source != event.player;
 				},
 				logTarget: "player",
-				prompt2: (event, player) => ("获得一个“赤”标记" + player.getStorage("1！5！_used").length >= 7 ? "" : "，然后可以击伤其一个部位"),
+				prompt2: (event, player) => ("击伤其一个部位"),
 				async content(event, trigger, player) {
-					player.addMark("1！5！", 1);
 					const target = trigger.player;
 					const places = lib.skill["1！5！"].derivation
 						.slice()
 						.filter(i => {
-							return !player.getStorage("1！5！_used").includes(i) && !target.getStorage("1！5！_injury").includes(i);
+							let storage = target.getStorage("1！5！_injury");
+							if (!storage.length && i == "1！5！_place1") {
+								return false;
+							}
+							return true;
 						})
-						.randomGets(player.countMark("1！5！"));
 					if (!places.length) return;
-					
-					// 旧版
-					/*
-					const result = await player
-						.chooseButton(["毅武：是否击伤" + get.translation(target) + "的一个部位？", [places.slice().map(skill => [skill, '<div class="popup text" style="width:calc(100% - 10px);display:inline-block"><div class="skill">【' + get.translation(skill) + "】</div><div>" + lib.translate[skill + "_info"] + "</div></div>"]), "textbutton"]])
-						.set("ai", () => {
-							const player = get.player(),
-								target = get.event().getTrigger().player;
-							if (get.attitude(player, target) > 0) return 0;
-							return Math.random() + 1; //插眼，PZ157
-						})
-						.forResult();
-					*/
 					//射击部位-by 鸽子
 					//牢萌负责精修断后
 					//一个团队要有XX的X，YY的Y，ZZ的Z...
@@ -147,17 +139,14 @@ game.import("character", function () {
 					event.videoId = lib.status.videoId++;
 					if (player.isUnderControl()) game.swapPlayerAuto(player);
 					const switchToAuto = function () {
-						// 临时修改（by 棘手怀念摧毁）
-						// setTimeout(function () {
-							_status.imchoosing = false;
-							if (event.dialog) event.dialog.close();
-							if (event.control) event.control.close();
-							game.resume();
-							return Promise.resolve({
-								bool: true,
-								hurt: places.randomGet(),
-							});
-						// }, 5000);
+						_status.imchoosing = false;
+						if (event.dialog) event.dialog.close();
+						if (event.control) event.control.close();
+						game.resume();
+						return Promise.resolve({
+							bool: true,
+							hurt: places.randomGet(),
+						});
 					};
 					const chooseButton = (places, target) => {
 						const { promise, resolve } = Promise.withResolvers();
@@ -172,10 +161,8 @@ game.import("character", function () {
 						};
 						const dialog = ui.create.dialog("forcebutton", "hidden");
 						event.dialog = dialog;
-						
 						//白底大图不加textPrompt了
-						// dialog.textPrompt = dialog.add('<div class="text center">毅武：选择击伤' + get.translation(target) +'的一个部位</div>');
-						
+						//dialog.textPrompt = dialog.add('<div class="text center">毅武：选择击伤' + get.translation(target) +'的一个部位</div>');
 						dialog.style.display = "flex";
 						dialog.style.justifyContent = "center";
 						dialog.style.alignItems = "center";
@@ -190,6 +177,10 @@ game.import("character", function () {
 						dialog.classList.add("scroll3");
 						dialog.classList.add("fullwidth");
 						dialog.classList.add("fullheight");
+						
+						// 临时修改（by 棘手怀念摧毁）
+						ui.arena.classList.add("choose-to-move");
+						
 						const target_img = document.createElement("div");
 						const position = lib.skill["1！5！"].derivation;
 						target_img.style.width = "50%";
@@ -200,7 +191,7 @@ game.import("character", function () {
 						target_img.style.border = "1px solid black";
 						
 						// 临时修改（by 棘手怀念摧毁）
-						target_img.style.backgroundColor = "rgba(113,70,35,0.9)";
+						target_img.style.backgroundColor = "rgba(113,70,35,0.95)";
 						// target_img.style.backgroundColor = "rgb(255,178,102)";
 						
 						dialog.appendChild(target_img);
@@ -213,8 +204,8 @@ game.import("character", function () {
 						const number = target.hasSex("male")
 							? [
 									["7", "1"],
-									["5", "3"],
-									["4", "7"],
+									//["5", "3"],
+									//["4", "7"],
 									["9", "5"],
 									["9", "13"],
 									["7", "3"],
@@ -222,8 +213,8 @@ game.import("character", function () {
 							  ]
 							: [
 									["7", "1"],
-									["8", "3"],
-									["4", "7"],
+									//["8", "3"],
+									//["4", "7"],
 									["9", "5"],
 									["9", "13"],
 									["6", "3"],
@@ -252,14 +243,12 @@ game.import("character", function () {
 								};
 								dialog.close();
 								game.resume();
-								dialog.close();
-								game.resume();
 								_status.imchoosing = false;
 								resolve(event._result);
 							});
 							list.push(num_px);
 						}
-						const selectedList = list.filter(i => places.includes(i.id)).randomGets(Math.min(places.length, event.player.countMark("1！5！")));
+						const selectedList = list.filter(i => places.includes(i.id))
 						for (const i of selectedList) target_img.appendChild(i);
 						dialog.open();
 						game.pause();
@@ -284,20 +273,31 @@ game.import("character", function () {
 					const result = await next;
 					game.resume();
 					
+					// 临时修改（by 棘手怀念摧毁）
+					game.broadcastAll(function () {
+						ui.arena.classList.remove("choose-to-move");
+					});
+					
 					if (result.bool) {
 						player.line(target);
-						
-						// 旧版
-						// const place = result.links[0];
 						const place = result.hurt;
-						
 						player.popup(place, "fire");
 						game.log(player, "击伤了", target, "的", "#y" + get.translation(place));
 						target.addSkill("1！5！_injury");
 						target.markAuto("1！5！_injury", [place]);
 						switch (parseInt(place.slice("1！5！_place".length))) {
 							case 1:
-								if (target.getHp() > 0) await target.loseHp(target.getHp());
+								if (target.getHp() > 0) {
+									await target.loseHp(target.getHp());
+									if (game.getGlobalHistory("everything", evt => {
+										if (evt.name != "die" || evt.player != target) return false;
+										// 临时修改（by 棘手怀念摧毁）
+										return evt.reason && evt.reason.getParent() == event;
+										// return evt.reason?.getParent() == event;
+									}).length > 0) {
+										await player.gainMaxHp();
+									}
+								}
 								break;
 							case 2:
 								const cards = target
@@ -312,7 +312,8 @@ game.import("character", function () {
 								break;
 							case 4:
 								const cardx = target.getDiscardableCards(target, "h");
-								if (cardx.length) await target.discard(cardx.randomGets(2));
+								const num = Math.floor(cardx.length / 2);
+								if (cardx.length) await target.discard(cardx.randomGets(num));
 								break;
 							case 5:
 								target.addTempSkill("1！5！_damage", { player: "phaseEnd" });
@@ -329,49 +330,10 @@ game.import("character", function () {
 				marktext: "赤",
 				intro: { content: "mark" },
 				frequent: true,
-				subfrequent: ["effect"],
-				derivation: ["1！5！_place1", "1！5！_place2", "1！5！_place3", "1！5！_place4", "1！5！_place5", "1！5！_place6", "1！5！_place7"],
-				group: ["1！5！_equip", "1！5！_effect"],
+				derivation: ["1！5！_place1", "1！5！_place4", "1！5！_place5", "1！5！_place6", "1！5！_place7"],
 				subSkill: {
-					equip: {
-						audio: "1！5！",
-						trigger: { player: "useCard" },
-						filter(event, player) {
-							return event.card.name == "sha" && player.getEquips(1).length > 0;
-						},
-						forced: true,
-						locked: false,
-						content() {
-							trigger.directHit.addArray(game.players);
-							game.log(trigger.card, "不可被响应");
-						},
-						ai: {
-							directHit_ai: true,
-							skillTagFilter(player, _, arg) {
-								// 临时修改（by 棘手怀念摧毁）
-								// return player.getEquips(1).length > 0 && arg.card?.name == "sha";
-								return player.getEquips(1).length > 0 && arg && arg.card && arg.card.name == "sha";
-							},
-						},
-					},
-					effect: {
-						audio: "1！5！",
-						trigger: { player: "useCardAfter" },
-						filter(event, player) {
-							// 临时修改（by 棘手怀念摧毁）
-							// return event.card.name == "sha" && !player.hasHistory("sourceDamage", evt => evt?.card == event.card);
-							return event.card.name == "sha" && !player.hasHistory("sourceDamage", evt => evt && evt.card == event.card);
-						},
-						frequent: true,
-						prompt: "是否发动【毅武】摸两张牌？",
-						content() {
-							player.draw(2);
-						},
-					},
 					injury: {
 						charlotte: true,
-						mark: true,
-						intro: { content: "$已被击伤" },
 					},
 					maxhand: {
 						charlotte: true,
@@ -411,18 +373,22 @@ game.import("character", function () {
 					},
 					use: {
 						charlotte: true,
+						forced:true,
 						mark: true,
 						marktext: "伤",
 						intro: {
 							name: "中伤 - 胸部",
-							content: (_, player) => (_status.currentPhase === player ? "" : "下回合") + "不能使用伤害牌",
+							content: (_, player) => (_status.currentPhase === player ? "" : "下回合") + "使用伤害牌造成的伤害-1",
 						},
-						mod: {
-							cardEnabled(card, player) {
-								if (_status.currentPhase !== player) return;
-								if (get.tag(card, "damage")) return false;
-							},
+						trigger:{
+							source: "damageBegin2",
 						},
+						filter(event, player){
+							if (get.tag(event.card, "damage")) return true;
+						},
+						async content(event, trigger, player) {
+							trigger.num -= 1;
+						}
 					},
 					respond: {
 						charlotte: true,
@@ -445,17 +411,63 @@ game.import("character", function () {
 			},
 			chiren: {
 				audio: 2,
-				trigger: { player: "phaseJieshuBegin" },
-				filter(event, player) {
-					return player.countMark("1！5！") >= Math.max(1, player.getDamagedHp());
+				trigger:{
+					player: "phaseUseBegin",
 				},
-				forced: true,
+				async cost (event, trigger, player) {
+					let list = ["摸体力值张牌，此阶段【杀】无距离限制且不能被响应。", "摸已损失体力值张牌，此阶段造成伤害后，回复1点体力。"];
+					let result = await player.chooseControlList(list).set("ai", function(){
+						//等157优化）
+						return Math.random();
+					}).forResult();
+					event.result = {
+						bool: result.control != "cancel2",
+						cost_data: result.control,
+					}
+				},
 				async content(event, trigger, player) {
-					const num = player.countMark("1！5！");
-					await player.recoverTo(4);
-					player.clearMark("1！5！");
-					await player.draw(num);
+					if (event.cost_data == "选项一") {
+						player.draw(player.getHp());
+						player.addTempSkill("chiren_directHit", {player:"phaseUseEnd"});
+					} else {
+						player.draw(player.getDamagedHp());
+						player.addTempSkill("chiren_recover", {player:"phaseUseEnd"});
+					}
 				},
+				subSkill:{
+					directHit: {
+						charlotte:true,
+						forced:true,
+						mod:{
+							targetInRange:function(card){
+								if(card.name == "sha") return true;
+							}
+						},
+						trigger: {
+							player: "useCard",
+						},
+						filter:function(event, player){
+							return event.card.name == "sha";
+						},
+						content:async function (event, trigger, player) {
+							trigger.directHit.addArray(game.players);
+							game.log(trigger.card, "不可被响应");
+						}
+					},
+					recover: {
+						trigger: {
+							source: "damageSource",
+						},
+						forced:true,
+						charlotte:true,
+						filter:function(event, player){
+							return player.isDamaged();
+						},
+						content:async function (event, trigger, player) {
+							player.recover();
+						}
+					},
+				}
 			},
 			//手杀神司马？
 			//应天司马懿！肯定又要修改
@@ -471,7 +483,7 @@ game.import("character", function () {
 					return event.name != "phase" || game.phaseNumber == 0;
 				},
 				async content(event, trigger, player) {
-					const cards = get.cards(2);
+					const cards = get.cards(get.mode() == "doudizhu" ? 1 : 2);
 					const next = player.addToExpansion(cards, "draw");
 					next.gaintag.add(event.name);
 					await next;
@@ -1700,17 +1712,11 @@ game.import("character", function () {
 							],
 						],
 					]);
-					next.set("processAI", (list) => {
-						const listx = list[0][1][0];
-						const me = listx.find(
-							(info) => parseInt(info.split("|")[0]) == get.player().getSeatNum()
-						);
-						listx.randomSort();
-						if (me) {
-							listx.remove(me);
-							listx.unshift(me);
-						}
-						return [listx];
+					next.set("toSortPlayers", toSortPlayers.slice(0));
+					next.set("processAI", () => {
+						const players = get.event("toSortPlayers"), player = get.player();
+						players.randomSort().sort((a, b) => get.attitude(player, b) - get.attitude(player, a));
+						return [players.map(i => `${i.getSeatNum()}|${i.name}`)];
 					});
 					const { result } = await next;
 					if (!result.bool) return;
@@ -11424,6 +11430,8 @@ game.import("character", function () {
 			new_simayi_prefix: "应天神",
 			jilin: "戢鳞",
 			jilin_info: "①游戏开始时，你将牌堆顶两张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
+			//太幽默了我超
+			jilin_info_doudizhu: "①游戏开始时，你将牌堆顶一张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
 			yingyou: "英猷",
 			yingyou_info: "①出牌阶段开始时，你可明置一张“志”然后摸X张牌（X为明置的“志”的数量）。②当你失去与明置的“志”其中一张花色相同的牌时，你摸一张牌。",
 			yingtian: "应天",
@@ -11431,15 +11439,11 @@ game.import("character", function () {
 			shen_huangzhong: "神黄忠",
 			shen_huangzhong_prefix: "神",
 			"1！5！": "毅武",
-			"1！5！_info": "①若你的装备区里有武器牌，则你使用【杀】不可被响应。②当你使用【杀】结算完毕后，若你未因此【杀】造成过伤害，则你可以摸两张牌。③当你对一名其他角色造成伤害后，你可以获得1枚“赤”标记，然后从其随机X个未被击伤的部位中选择一个击伤（X为你的“赤”标记数）。",
+			"1！5！_info": "当你对一名其他角色造成伤害后，你可以在任意部位中选择一个“击伤”；若你击伤了一名角色，则再次击伤该角色时出现“头部”选项。",
 			"1！5！_place1": "头部",
 			"1！5！_place1_info": "令其失去所有体力。",
-			"1！5！_place2": "肩部",
-			"1！5！_place2_info": "令其弃置装备区里的武器牌和坐骑牌。",
-			"1！5！_place3": "手部",
-			"1！5！_place3_info": "令其手牌上限视为原来的一半（向下取整）直到其下个回合结束。",
 			"1！5！_place4": "上肢",
-			"1！5！_place4_info": "令其随机弃置两张手牌。",
+			"1！5！_place4_info": "令其随机弃置一半手牌（向下取整）。",
 			"1！5！_place5": "下肢",
 			"1！5！_place5_info": "令其体力值大于1时受到的伤害+1直到其下个回合结束。",
 			"1！5！_place6": "胸部",
@@ -11447,7 +11451,7 @@ game.import("character", function () {
 			"1！5！_place7": "腹部",
 			"1！5！_place7_info": "令其不能使用【闪】和【桃】直到其下个回合结束。",
 			chiren: "赤刃",
-			chiren_info: "锁定技，结束阶段，若你的“赤”标记数大于等于你的已损失体力值，则你将体力值回复至4点，然后移去所有“赤”标记并摸等量的牌。",
+			chiren_info: "出牌阶段开始时，你可以选择一项：1.摸体力值张牌，此阶段【杀】无距离限制且不能被响应。2.摸已损失体力值张牌，此阶段造成伤害后，回复1点体力。",
 
 			extra_feng: "神话再临·风",
 			extra_huo: "神话再临·火",

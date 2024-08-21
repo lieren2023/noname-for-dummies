@@ -2810,7 +2810,7 @@ game.import("character", function () {
 				forced: true,
 				unique: true,
 				forceunique: true,
-				filter: function () {
+				filter: function (event, player) {
 					return Math.random() < 0.5 && [player.name1, player.name2].includes("pal_longkui");
 				},
 				derivation: ["diesha", "guijiang"],

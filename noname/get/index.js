@@ -783,7 +783,7 @@ export class Get {
 		}
 		
 		// 原版代码
-		info3 = info.slice(5);
+		let info3 = info.slice(5);
 		let infoarr = info3.split("-");
 		
 		// let infoarr = info.split("-");
@@ -2950,6 +2950,11 @@ export class Get {
 		}
 		return game.menuZoom;
 	}
+	/**
+	 * 返回数字在扑克牌中的表示形式
+	 * @param { number } num
+	 * @returns { string }
+	 */
 	strNumber(num) {
 		switch (num) {
 			case 1:
@@ -2964,6 +2969,31 @@ export class Get {
 				return num.toString();
 		}
 	}
+	/**
+	 * 返回扑克牌中的表示形式对应的数字
+	 * @param { string } str
+	 * @returns { number }
+	 */
+	numString(str) {
+		switch (str) {
+			case "A":
+				return 1;
+			case "J":
+				return 11;
+			case "Q":
+				return 12;
+			case "K":
+				return 13;
+			default:
+				return parseInt(str);
+		}
+	}
+	/**
+	 * 将阿拉伯数字转换为中文的表达形式
+	 * @param { number } num
+	 * @param { boolean } [ordinal]
+	 * @returns { string }
+	 */
 	cnNumber(num, ordinal) {
 		if (isNaN(num)) return "";
 		let numStr = "" + num;

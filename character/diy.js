@@ -128,7 +128,8 @@ game.import("character", function () {
 			],
 			junk_guanyu: ["male", "shu", 4, ["olsbfumeng", "olsbguidao"]],
 			junk_liuyan: ["male", "qun", "4/6", ["olpianan", "olyinji", "olkuisi"]],
-			std_pengyang: ["male", "shu", 3, ["stdxiaofan", "stdtuishi"]],
+			
+			std_pengyang: ["male", "shu", 3, ["stdxiaofan", "stdtuishi"], ["unseen"]],//不想你，diy牢彭羕
 		},
 		characterFilter: {
 			ns_duangui(mode) {

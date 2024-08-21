@@ -135,7 +135,7 @@ window.config={
 
 	card_font:'xiaozhuan',
 	show_statusbar_ios:'off',
-	show_statusbar_android:true,
+	show_statusbar_android:false,
 	show_name:true,
 	show_round_menu:true,
 	show_pause:true,

@@ -10678,7 +10678,6 @@ game.import("character", function () {
 					const cardToUse = { name: "sha", isCard: true };
 					if (lib.filter.targetEnabled(cardToUse, player, trigger.player)) {
 						const { card } = await player.useCard(cardToUse, trigger.player);
-						console.log(card);
 						if (
 							!player.hasHistory("sourceDamage", function (evt) {
 								return evt.card === card;
