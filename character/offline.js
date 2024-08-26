@@ -1155,16 +1155,16 @@ game.import("character", function () {
 			tyshencai: {
 				audio: "shencai",
 				enable: "phaseUse",
-				usable: 5,
 				filter(event, player) {
-					var count = player.getStat("skill").tyshencai;
-					if (count && count > player.countMark("shencai")) return false;
+					if (player.countMark("tyshencai") > player.countMark("shencai")) return false;
 					return true;
 				},
 				filterTarget: lib.filter.notMe,
 				onremove: true,
 				prompt: "选择一名其他角色进行地狱审判",
 				content() {
+					player.addMark("tyshencai", 1, false);
+					player.addTempSkill("tyshencai_clear", "phaseUseEnd");
 					var next = target.judge();
 					next.callback = lib.skill.shencai.contentx;
 				},
@@ -1174,6 +1174,10 @@ game.import("character", function () {
 				},
 				group: "tyshencai_wusheng",
 				subSkill: {
+					clear: {
+						onremove: ["tyshencai"],
+						charlotte: true,
+					},
 					wusheng: {
 						audio: "shencai",
 						enable: ["chooseToRespond", "chooseToUse"],
@@ -1409,8 +1413,8 @@ game.import("character", function () {
 						ai: {
 							respondSha: true,
 							respondShan: true,
-							skillTagFilter(player, target, arg) {
-								let name = tag.slice(7);
+							skillTagFilter(player, tag) {
+								let name = tag.slice(7).toLowerCase();
 								if (!player.getExpansions("tybianta").length) return false;
 								return get.name(player.getExpansions("tybianta")[0], false) == name;
 							}
@@ -2440,6 +2444,7 @@ game.import("character", function () {
 					if (player.countCards("h")) return true;
 					return false;
 				},
+				seatRelated: true,
 				async cost(event, trigger, player) {
 					const result = await player
 						.chooseControl("选项一", "选项二", "cancel2")
@@ -3412,6 +3417,7 @@ game.import("character", function () {
 					if (get.nameList(event.player).some(name => get.rawName(name) == "刘备")) return true;
 				},
 				usable: 1,
+				seatRelated: true,
 				async cost(event, trigger, player) {
 					event.result = await player.chooseCardTarget({
 						prompt: get.prompt("tyfuwei", trigger.player),
@@ -5723,7 +5729,7 @@ game.import("character", function () {
 								att = get.attitude(player, target);
 							if (target.maxHp <= 1) return 114514119810 * get.sgn(-att);
 							if (player.identity == "nei" && target != player) return 0;
-							return target.maxHp - 1;
+							return (target.maxHp - 1) * att;
 						})
 						.set(
 							"targets",
@@ -5791,13 +5797,14 @@ game.import("character", function () {
 					} else {
 						const color = player.storage.jdjuqi ? "red" : "black";
 						event.result = await target
-							.chooseCard((card, player) => get.color(card, player) == color, `举棋：你可以交给${get.translation(player)}一张${get.translation(color)}手牌`)
+							.chooseCard((card, player) => get.color(card, player) == _status.event.color, `举棋：你可以交给${get.translation(player)}一张${get.translation(color)}手牌`)
 							.set("ai", card => {
 								const player = get.player(),
 									target = get.event("target");
 								if (get.attitude(player, target) <= 0) return 0;
 								return 6 - get.value(card);
 							})
+							.set("color", color)
 							.set("target", player)
 							.forResult();
 					}
@@ -6294,11 +6301,12 @@ game.import("character", function () {
 				filter(event, player) {
 					const num = get.info("jsrgjuxia").countSkill(player) - 2;
 					if (num <= 0 || get.type(event.card) == "equip") return false;
-					return !player.getRoundHistory("useCard", evt => {
-						get.name(evt.card) == get.name(event.card) && evt != event;
-					}).length && !player.getRoundHistory("respond", evt => {
-						get.name(evt.card) == get.name(event.card) && evt != event;
+					let name = get.name(event.card), stat = player.getRoundHistory("useCard", evt => {
+						return evt != event && get.name(evt.card) == name;
+					}).length + player.getRoundHistory("respond", evt => {
+						return evt != event && get.name(evt.card) == name;
 					}).length;
+					return stat == 0;
 				},
 				forced: true,
 				async content(event, trigger, player) {
@@ -6487,6 +6495,7 @@ game.import("character", function () {
 				},
 				direct: true,
 				groupSkill: true,
+				seatRelated: true,
 				content() {
 					player
 						.chooseToUse(function (card, player, event) {
@@ -11441,12 +11450,12 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 1,
 				filter: function (event, player) {
-					var zhu = get.zhu(player) || game.filterPlayer(i => i.getSeatNum() == 1)[0];
+					var zhu = get.zhu(player);
 					if (!zhu) return false;
 					return zhu.countGainableCards(player, zhu == player ? "ej" : "hej");
 				},
 				filterTarget: function (card, player, target) {
-					var zhu = get.zhu(player) || game.filterPlayer(i => i.getSeatNum() == 1)[0];
+					var zhu = get.zhu(player);
 					return target == zhu;
 				},
 				selectTarget: 1,

@@ -4,7 +4,7 @@ game.import("character", function () {
 		name: "onlyOL",
 		connect: true,
 		character: {
-			ol_sb_sunjian: ["male", "wu", 4, ["olsbhulie", "olsbyipo"]],
+			ol_sb_sunjian: ["male", "wu", "4/5", ["olsbhulie", "olsbyipo"]],
 			ol_sb_jiangwei: ["male", "shu", 4, ["olsbzhuri", "olsbranji"]],
 			ol_caozhang: ["male", "wei", 4, ["oljiangchi"], ["die_audio:xin_caozhang"]],
 			ol_jianyong: [
@@ -268,7 +268,7 @@ game.import("character", function () {
 					game.addVideo("showCards", player, ["称象", get.cardsInfo(event.cards)]);
 					game.addVideo("delay", null, 2);
 					"step 1";
-					var next = player.chooseButton([0, 4]);
+					var next = player.chooseButton([0, Infinity]);
 					next.set("dialog", event.videoId);
 					next.set("filterButton", function (button) {
 						var num = 0;
@@ -426,25 +426,24 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { player: "phaseEnd" },
 				filter(event, player) {
-					return player.hasMark("olsbliwen") && game.hasPlayer(t => t != player);
+					return game.hasPlayer(t => t.hasMark("olsbliwen"));
 				},
-				async cost(event, trigger, player) {
-					event.result = await player
-						.chooseTarget(
-							get.prompt("olsbliwen"),
-							"移去任意枚“贤”标记并令任意其他角色各获得1枚“贤”标记",
-							(card, player, target) => {
-								return target.countMark("olsbliwen") < 5;
-							},
-							[1, Infinity]
-						)
-						.set("ai", target => get.attitude(get.event().player, target) * (target.countCards("h") + 1))
-						.forResult();
-				},
+				forced: true,
+				locked: false,
 				async content(event, trigger, player) {
-					const ts = event.targets.sortBySeat();
-					player.removeMark("olsbliwen", ts.length);
-					for (const t of ts) t.addMark("olsbliwen", 1);
+					while (player.hasMark("olsbliwen") && game.hasPlayer(t => t != player && t.countMark("olsbliwen") < 5)) {
+						const result = await player
+							.chooseTarget("是否发动【立文】？", "将任意枚“贤”标记分配给任意其他角色", (card, player, target) => {
+								return target !== player && target.countMark("olsbliwen") < 5;
+							})
+							.set("ai", target => get.attitude(get.event().player, target) * (target.countCards("h") + 1))
+							.forResult();
+						if (result.bool) {
+							player.line(result.targets);
+							player.removeMark("olsbliwen", 1);
+							result.targets[0].addMark("olsbliwen", 1);
+						} else break;
+					}
 					const targets = game.filterPlayer(target => target.hasMark("olsbliwen")).sort((a, b) => b.countMark("olsbliwen") - a.countMark("olsbliwen"));
 					if (!targets.length) return;
 					player.line(targets);
@@ -3230,7 +3229,7 @@ game.import("character", function () {
 			ol_sb_kongrong: "OL谋孔融",
 			ol_sb_kongrong_prefix: "OL谋",
 			olsbliwen: "立文",
-			olsbliwen_info: "①你使用牌时，若此牌与你使用的上一张牌的花色或类型相同，则你获得1枚“贤”标记（一名角色的“贤”标记上限为5）。②回合结束时，你可以失去任意枚“贤”标记并令等量其他角色各获得1枚“贤”标记，然后场上所有有“贤”标记的角色按照“贤”标记由大到小的顺序（“贤”标记数相同的角色按座次逆时针排序）依次选择是否使用一张手牌，若不选择使用，则其移去所有“贤”标记，然后你摸等量的牌。",
+			olsbliwen_info: "①你使用牌时，若此牌与你使用的上一张牌的花色或类型相同，则你获得1枚“贤”标记（一名角色的“贤”标记上限为5）。②回合结束时，你依次执行：⒈你可以将任意枚“贤”标记分配给其他角色；⒉场上所有有“贤”标记的角色按照“贤”标记由大到小的顺序（“贤”标记数相同的角色按座次逆时针排序）依次选择是否使用一张手牌，若不选择使用，则其移去所有“贤”标记，然后你摸等量的牌。",
 			olsbzhengyi: "争义",
 			olsbzhengyi_info: "当一名有“贤”标记的角色受到伤害时，所有有“贤”标记同时选择是否取消此伤害，所有角色选择完毕后，若有角色选择是，则取消此伤害，然后选择是的角色中体力值最大的角色依次失去X点体力（X为伤害值）。",
 			ol_zhangchunhua: "OL界张春华",
@@ -3248,7 +3247,7 @@ game.import("character", function () {
 			olsbhulie: "虎烈",
 			olsbhulie_info: "每回合各限一次，当你使用【杀】或【决斗】指定唯一目标后，你可以令此牌伤害值基数+1。若此牌未造成伤害，你可以令目标角色视为对你使用一张【杀】。",
 			olsbyipo: "毅魄",
-			olsbyipo_info: "你的体力值变化后，若你体力值大于0且为你首次达到，你可以选择一名角色并选择一项：1.令其摸X张牌，然后弃置弃置一张牌；2.令其摸一张牌，然后其弃置X张牌（X为你已损失体力值且至少为1）。",
+			olsbyipo_info: "你的体力值变化后，若你体力值大于0且为你首次达到，你可以选择一名角色并选择一项：1.令其摸X张牌，然后弃置一张牌；2.令其摸一张牌，然后其弃置X张牌（X为你已损失体力值且至少为1）。",
 
 			onlyOL_yijiang1: "OL专属·将1",
 			onlyOL_yijiang2: "OL专属·将2",

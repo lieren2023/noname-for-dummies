@@ -735,7 +735,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					lib.characterIntro.boss_fuweizilong = lib.characterIntro.zhaoyun;
 					"step 1";
 					for (var i in lib.skill) {
-						if (lib.skill[i].changeSeat) {
+						if (lib.skill[i].seatRelated) {
 							lib.skill[i] = {};
 							if (lib.translate[i + "_info"]) {
 								lib.translate[i + "_info"] = "此模式下不可用";
@@ -1562,7 +1562,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"step 0";
 					ui.arena.classList.add("choose-character");
 					for (var i in lib.skill) {
-						if (lib.skill[i].changeSeat) {
+						if (lib.skill[i].seatRelated) {
 							lib.skill[i] = {};
 							if (lib.translate[i + "_info"]) {
 								lib.translate[i + "_info"] = "此模式下不可用";
@@ -2195,7 +2195,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					game.enemy = [];
 
 					for (var i in lib.skill) {
-						if (lib.skill[i].changeSeat) {
+						if (lib.skill[i].seatRelated) {
 							lib.skill[i] = {};
 							if (lib.translate[i + "_info"]) {
 								lib.translate[i + "_info"] = "固定位置时不可用";
@@ -2691,7 +2691,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						}
 					} else {
 						for (var i in lib.skill) {
-							if (lib.skill[i].changeSeat) {
+							if (lib.skill[i].seatRelated) {
 								lib.skill[i] = {};
 								if (lib.translate[i + "_info"]) {
 									lib.translate[i + "_info"] = "固定位置时不可用";
@@ -4325,7 +4325,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					var swap = [],
 						swap2 = [];
 					for (var i = 0; i < game.players.length; i++) {
-						if (game.players[i].isOut()) continue;
+						// if (game.players[i].isOut()) continue;
 						if (!game.players[i].classList.contains("acted")) {
 							if (game.players[i].side == target.side) {
 								swap.push(game.players[i]);
@@ -4340,7 +4340,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							swap = swap2;
 						} else {
 							for (var i = 0; i < game.players.length; i++) {
-								if (game.players[i].isOut()) continue;
+								// if (game.players[i].isOut()) continue;
 								game.players[i].classList.remove("acted");
 							}
 							delete _status.roundStart;

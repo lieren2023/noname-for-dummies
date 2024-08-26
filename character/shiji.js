@@ -1241,6 +1241,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 1,
 				changeSeat: true,
+				seatRelated: true,
 				limited: true,
 				skillAnimation: true,
 				animationColor: "orange",
@@ -3393,7 +3394,7 @@ game.import("character", function () {
 					player.storage.counttrigger.dbquedi--;
 				},
 			},
-			//王淩
+			//王凌
 			xingqi: {
 				audio: 2,
 				trigger: { player: "useCard" },
@@ -4959,8 +4960,8 @@ game.import("character", function () {
 			mjweipo: {
 				audio: 2,
 				enable: "phaseUse",
-				usable: 1,
 				filter: function (event, player) {
+					if (player.hasSkill("mjweipo_used")) return false;
 					return game.hasPlayer(function (current) {
 						return !current.hasSkill("mjweipo_effect");
 					});
@@ -4970,6 +4971,7 @@ game.import("character", function () {
 				},
 				content: function () {
 					"step 0";
+					player.addTempSkill("mjweipo_used");
 					var list = ["binglinchengxiax"];
 					list.addArray(get.zhinangs());
 					player
@@ -4986,6 +4988,11 @@ game.import("character", function () {
 						target.addSkill("mjweipo_effect");
 						game.delayx();
 					}
+				},
+				subSkill: {
+					used: {
+						charlotte: true,
+					},
 				},
 				ai: {
 					order: 7.1,
@@ -5808,10 +5815,8 @@ game.import("character", function () {
 					var map = {},
 						cards = [];
 					player.getHistory("useCard", function (evt) {
-						if (evt.getParent("phaseUse") == trigger) {
-							var type = get.type2(evt.card, false);
-							if (!map[type]) map[type] = [];
-						}
+						let type = get.type2(evt.card, false);
+						if (!map[type]) map[type] = [];
 					});
 					for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
 						var card = ui.discardPile.childNodes[i],
@@ -6080,7 +6085,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					if (
 						!player.hasSkill("muzhen1") &&
-						player.countCards("e") > 0 &&
+						player.hasCard(i => get.type(i) == "e", "he") &&
 						game.hasPlayer(function (current) {
 							return current != player && current.countCards("h") > 0;
 						})
@@ -6115,7 +6120,7 @@ game.import("character", function () {
 						if (button.link == 0)
 							return (
 								!player.hasSkill("muzhen1") &&
-								player.countCards("e") > 0 &&
+								player.hasCard(i => get.type(i) == "e", "he") &&
 								game.hasPlayer(function (current) {
 									return current != player && current.countCards("h") > 0;
 								})
@@ -6143,6 +6148,7 @@ game.import("character", function () {
 							][links[0]],
 							filterCard: [
 								function (card, player) {
+									if (get.type(card) != "equip") return false;
 									if (ui.selected.targets.length)
 										return ui.selected.targets[0].canEquip(card);
 									return game.hasPlayer(function (current) {
@@ -6150,9 +6156,9 @@ game.import("character", function () {
 									});
 								},
 								true,
-							],
+							][links[0]],
 							selectCard: 1 + links[0],
-							position: "eh"[links[0]],
+							position: "he",
 							discard: false,
 							lose: false,
 							delay: false,
@@ -6272,63 +6278,60 @@ game.import("character", function () {
 					global: ["phaseBefore", "dieAfter"],
 					player: "enterGame",
 				},
-				direct: true,
-				filter: function (event, player) {
-					if (event.name == "die") return event.player == player.storage.xunyi2;
-					return !player.storage.xunyi2 && (event.name != "phase" || game.phaseNumber == 0);
-				},
-				content: function () {
-					"step 0";
-					player.removeSkill("xunyi2");
-					player.chooseTarget(lib.filter.notMe, get.prompt2("xunyi")).set("ai", function (target) {
-						var player = _status.event.player;
-						return Math.max(
-							1 + get.attitude(player, target) * get.threaten(target),
-							Math.random()
-						);
-					});
-					"step 1";
-					if (result.bool) {
-						var target = result.targets[0];
-						player.logSkill("xunyi", target);
-						player.storage.xunyi2 = target;
-						player.addSkill("xunyi2");
-					}
-				},
-			},
-			xunyi2: {
-				audio: "xunyi",
-				trigger: { global: "damageSource" },
-				forced: true,
-				charlotte: true,
-				filter: function (event, player) {
-					var list = [player, player.storage.xunyi2];
-					return list.includes(event.source) && !list.includes(event.player);
-				},
-				logTarget: function (event, player) {
-					return player.storage.xunyi2;
-				},
-				content: function () {
-					(player == trigger.source ? player.storage.xunyi2 : player).draw(trigger.num);
-				},
-				group: "xunyi3",
-				mark: true,
 				intro: { content: "效果目标：$" },
-			},
-			xunyi3: {
-				audio: "xunyi",
-				trigger: { global: "damageEnd" },
-				forced: true,
-				charlotte: true,
 				filter: function (event, player) {
-					var list = [player, player.storage.xunyi2];
-					return event.num && list.includes(event.player) && !list.includes(event.source) && (player == event.player ? player.storage.xunyi2 : player).countCards("he") > 0;
+					if (event.name == "die") return player.getStorage("xunyi").includes(event.player);
+					return !player.getStorage("xunyi").length && (event.name != "phase" || game.phaseNumber == 0);
 				},
-				logTarget: function (event, player) {
-					return player.storage.xunyi2;
+				async cost(event, trigger, player) {
+					player.removeSkill("xunyi_effect");
+					let prompt = trigger.name == "die" ? "是否令一名其他角色获得“义”？" : "令一名其他角色获得“义”";
+					event.result = await player
+						.chooseTarget(lib.filter.notMe, "殉义", prompt, trigger.name != "die")
+						.set("ai", function (target) {
+							var player = _status.event.player;
+							return Math.max(1 + get.attitude(player, target) * get.threaten(target), Math.random());
+						})
+						.forResult();
 				},
-				content: function () {
-					(player == trigger.player ? player.storage.xunyi2 : player).chooseToDiscard("he", trigger.num, true);
+				async content(event, trigger, player) {
+					player.markAuto("xunyi", event.targets);
+					player.addSkill("xunyi_effect");
+				},
+				subSkill: {
+					effect: {
+						audio: "xunyi",
+						trigger: {
+							global: ["damageSource", "damageEnd"],
+						},
+						forced: true,
+						charlotte: true,
+						onremove(player) {
+							player.unmarkAuto("xunyi", player.getStorage("xunyi"));
+						},
+						getIndex(event) {
+							return event.num;
+						},
+						filter(event, player, name) {
+							if (!player.getStorage("xunyi").length) return false;
+							let viewer = event[name == "damageEnd" ? "player" : "source"];
+							let list = player.getStorage("xunyi").concat([player]);
+							if (!list.includes(viewer)) return false;
+							let target = list.find(current => current != viewer);
+							if (!target || name == "damageEnd" && !target.countCards("he")) return false;
+							return target.isIn() && target != event[name != "damageEnd" ? "player" : "source"];
+						},
+						logTarget(event, player, name) {
+							return player.getStorage("xunyi")[0];
+						},
+						async content(event, trigger, player) {
+							const bool = event.triggername == "damageEnd";
+							let viewer = trigger[bool ? "player" : "source"];
+							let target = viewer == player ? event.targets[0] : player;
+							if (bool) await target.chooseToDiscard("he", true);
+							else await target.draw();
+						},
+					},
 				},
 			},
 			//狗剩
@@ -6961,6 +6964,7 @@ game.import("character", function () {
 						charlotte: true,
 						trigger: { global: "useCardToPlayer" },
 						filter: function (event, player) {
+							if (!event.player.isPhaseUsing()) return false;
 							return (
 								event.player != event.target &&
 								event.player.hasMark("fyjianyu_" + player.playerid) &&
@@ -7733,7 +7737,7 @@ game.import("character", function () {
 			wangfuzhaolei:
 				"王甫（？—222年），字国山，广汉郪（今四川三台县）人，三国时期蜀汉重臣。刘璋时，为益州书佐，之后归降刘备，先后担任绵竹令、荆州议曹从事，并在夷陵之战中阵亡。其子王祐，官至尚书右选郎。赵累，蜀汉大将关羽部下都督。后来吴将吕蒙袭取荆州，赵累被吴将潘璋等在临沮擒获。",
 			wangling:
-				"王淩（172年～251年6月15日），字彦云，太原郡祁县（今山西省祁县）人，三国时期曹魏将领，东汉司徒王允之侄。王淩出身太原王氏祁县房。举孝廉出身，授发干县令，迁中山太守。颇有政绩，迁司空（曹操）掾属。魏文帝曹丕即位，拜散骑常侍、兖州刺史。参加洞口之战，跟从张辽击败吴将吕范，加号建武将军，封宜城亭侯。太和二年（228年），王淩参与石亭之战，跟从曹休征伐东吴，力挽狂澜，历任扬豫二州刺史，治境有方。齐王曹芳继位，拜征东将军，联合孙礼击败吴将全琮，进封南乡侯，授车骑将军、仪同三司，正始九年（248年），代高柔为司空。嘉平元年（249年），代蒋济为太尉。嘉平三年（251年），不满太傅司马懿专擅朝政，联合兖州刺史令狐愚谋立楚王曹彪为帝，事泄自尽，时年八十岁，夷灭三族。",
+				"王凌（172年～251年6月15日），字彦云，太原郡祁县（今山西省祁县）人，三国时期曹魏将领，东汉司徒王允之侄。王凌出身太原王氏祁县房。举孝廉出身，授发干县令，迁中山太守。颇有政绩，迁司空（曹操）掾属。魏文帝曹丕即位，拜散骑常侍、兖州刺史。参加洞口之战，跟从张辽击败吴将吕范，加号建武将军，封宜城亭侯。太和二年（228年），王凌参与石亭之战，跟从曹休征伐东吴，力挽狂澜，历任扬豫二州刺史，治境有方。齐王曹芳继位，拜征东将军，联合孙礼击败吴将全琮，进封南乡侯，授车骑将军、仪同三司，正始九年（248年），代高柔为司空。嘉平元年（249年），代蒋济为太尉。嘉平三年（251年），不满太傅司马懿专擅朝政，联合兖州刺史令狐愚谋立楚王曹彪为帝，事泄自尽，时年八十岁，夷灭三族。",
 			wujing: "吴景，本吴郡吴县（今江苏苏州）人，后迁居吴郡钱塘（今浙江杭州），孙坚妻子吴夫人（武烈皇后）之弟，孙策和孙权的舅舅，东汉末年将领。吴景因追随孙坚征伐有功，被任命为骑都尉。袁术上表举荐吴景兼任丹杨太守，讨伐前任太守周昕，占据丹杨。后遭扬州刺史刘繇逼迫，再度依附袁术，袁术任用他为督军中郎将，与孙贲共同进击樊能等人。又在秣陵攻打笮融、薛礼。袁术与刘备争夺徐州时，任吴景为广陵太守。建安二年（197年），吴景放弃广陵东归孙策，孙策任他为丹杨太守。朝廷使者吴景为扬武将军，郡守之职照旧。建安八年（203年），吴景死于任上。",
 			feiyi: "费祎（？～253年2月），字文伟，江夏鄳县（今河南省罗山县）人，三国时期蜀汉名臣，与诸葛亮、蒋琬、董允并称为蜀汉四相。深得诸葛亮器重，屡次出使东吴，孙权、诸葛恪、羊茞等人以辞锋刁难，而费祎据理以答，辞义兼备，始终不为所屈。孙权非常惊异于他的才能，加以礼遇。北伐时为中护军，又转为司马。当时魏延与杨仪不和，经常争论，费祎常为二人谏喻，两相匡护，以尽其用。诸葛亮死后，初为后军师，再为尚书令，官至大将军，封成乡侯。费祎主政时，与姜维北伐的主张相左，执行休养生息的政策，为蜀汉的发展尽心竭力。费祎性格谦恭真诚，颇为廉洁，家无余财。后为魏降将郭循（一作郭脩）行刺身死。葬于今广元市昭化古城城西。",
 			luotong:
@@ -8008,7 +8012,7 @@ game.import("character", function () {
 			wangling: ["dc_wangling", "wangling", "tw_wangling", "clan_wangling"],
 			qiaogong: ["qiaogong", "tw_qiaogong"],
 			sp_chendong: ["sp_chendong", "tw_chendong", "chendong"],
-			sp_jiangqing: ["sp_jiangqing", "tw_jiangqing", "jiangqing"],
+			sp_jiangqing: ["sp_jiangqing", "tw_jiangqing", "jiangqing", "dc_jiangqing"],
 			kongrong: ["ol_sb_kongrong", "dc_kongrong", "sp_kongrong", "jsrg_kongrong", "kongrong"],
 			dc_mifuren: ["dc_mifuren", "sp_mifuren"],
 			sp_jiangwan: ["ol_jiangwan", "sp_jiangwan", "std_jiangwan"],
@@ -8071,8 +8075,7 @@ game.import("character", function () {
 			mjweipo: "危迫",
 			mjweipo_effect: "危迫",
 			mjweipo_remove: "危迫",
-			mjweipo_info:
-				"出牌阶段限一次。你可以选择一个智囊或【兵临城下】，令一名没有〖危迫〗效果的角色获得如下一次性效果直到你下回合开始：其可于出牌阶段弃置一张【杀】，并获得一张你选择的牌。",
+			mjweipo_info: "每回合限一次，出牌阶段，你可以选择一个智囊或【兵临城下】，令一名没有〖危迫〗效果的角色获得如下一次性效果直到你下回合开始：其可于出牌阶段弃置一张【杀】，并获得一张你选择的牌。",
 			mjchenshi: "陈势",
 			mjchenshi_player: "陈势",
 			mjchenshi_target: "陈势",
@@ -8109,8 +8112,7 @@ game.import("character", function () {
 			reshengxi: "生息",
 			reshengxi_info: "结束阶段，若你于本回合内未造成过伤害，则你可摸两张牌。",
 			fyjianyu: "谏喻",
-			fyjianyu_info:
-				"每轮限一次。出牌阶段，你可选择两名角色，令这些角色获得“喻”直到你的下回合开始。当一名有“喻”的角色A使用牌指定另一名有“喻”的角色B为目标时，你令B摸一张牌。",
+			fyjianyu_info: "每轮限一次。出牌阶段，你可选择两名角色，令这些角色获得“喻”直到你的下回合开始。当一名有“喻”的角色A于其出牌阶段内使用牌指定另一名有“喻”的角色B为目标时，你令B摸一张牌。",
 			mjshengxi: "生息",
 			mjshengxi_info:
 				"准备阶段，你可以获得一张【调剂盐梅】；结束阶段，若你本回合使用过牌且未造成伤害，则你可以获得一张智囊或摸一张牌。",
@@ -8171,7 +8173,7 @@ game.import("character", function () {
 			reduoji: "夺冀",
 			reduoji_info:
 				"出牌阶段限一次，你可将一张牌置于其他角色的武将牌上，称为“冀”。当有装备牌因使用而进入一名角色的装备区后，若该角色有“冀”且其为使用者，则你获得此装备牌，其移去一个“冀”并摸一张牌。一名其他角色的回合结束后，若其有“冀”，则你获得其的所有“冀”。",
-			wangling: "王淩",
+			wangling: "王凌",
 			mouli: "谋立",
 			mouli_info:
 				"出牌阶段限一次，你可以将一张手牌交给一名其他角色，其获得如下效果直到你的下回合开始：其可以将黑色牌当做【杀】，红色牌当做【闪】使用。其第一次触发“使用【杀】/【闪】结算完成后”的时机时，你摸三张牌。",
@@ -8193,7 +8195,7 @@ game.import("character", function () {
 			xunyi: "殉义",
 			xunyi2: "殉义",
 			xunyi3: "殉义",
-			xunyi_info: "游戏开始时，或当上一个拥有“殉义”效果的角色死亡后，你可以选择一名角色获得如下效果：当其/你对二者之外的角色造成1点伤害后，你/其摸一张牌；当其/你受到二者之外的角色造成的1点伤害后，你/其弃置一张牌。",
+			xunyi_info: "①游戏开始时，你令一名其他角色获得“义”；拥有“义”效果的角色死亡后，你可以令另一名其他角色获得“义”。②当你或“义”角色造成/受到1点伤害后，若受伤角色/伤害来源不为另一方，令另一方摸一张牌/弃置一张牌。",
 			zhouchu: "手杀周处",
 			xianghai: "乡害",
 			xianghai_info: "锁定技，其他角色的手牌上限-1。你手牌区的装备牌均视为【酒】。",
@@ -8224,8 +8226,7 @@ game.import("character", function () {
 				"锁定技。每回合限一次，当你于回合外因使用/打出/弃置而失去牌后，若牌数为1，则你获得一枚“固”并令当前回合角色选择一项：①随机交给你一张牌。②令你获得本次失去的牌，若为装备牌，则你使用之。准备阶段开始时，你移去所有“固”并弃置等量的牌。",
 			muzhen: "睦阵",
 			muzhen_backup: "睦阵",
-			muzhen_info:
-				"出牌阶段各限一次。①你可以将两张牌交给一名装备区内有牌的其他角色，然后获得其装备区内的一张牌。②你可以将装备区内的一张牌置于其他角色的装备区内，然后获得其一张手牌。",
+			muzhen_info: "出牌阶段各限一次。①你可以将两张牌交给一名装备区内有牌的其他角色，然后获得其装备区内的一张牌。②你可以将一张装备牌置于其他角色的装备区内，然后获得其一张手牌。",
 			sp_huaxin: "手杀华歆",
 			hxrenshi: "仁仕",
 			hxrenshi_info: "出牌阶段每名角色限一次。你可以将一张手牌交给一名其他角色。",
@@ -8236,8 +8237,7 @@ game.import("character", function () {
 			buqi_info:
 				"锁定技，当有角色进入濒死状态时，若你的“仁”数大于1，则你移去两张“仁”并令其回复1点体力。一名角色死亡后，你将所有“仁”置入弃牌堆。",
 			yuanqing: "渊清",
-			yuanqing_info:
-				"锁定技，出牌阶段结束时，你随机将弃牌堆中你本阶段使用过的牌类型的各一张牌置于仁库中。",
+			yuanqing_info: "锁定技，出牌阶段结束时，你随机将弃牌堆中你本回合使用过的牌类型的各一张牌置于仁库中。",
 			shuchen: "疏陈",
 			shuchen_info:
 				"锁定技，当有角色进入濒死状态时，若仁库中的牌数大于三，则你获得仁库中的所有牌，然后其回复1点体力。",

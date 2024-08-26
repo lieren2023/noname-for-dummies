@@ -2484,6 +2484,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 1,
 				changeSeat: true,
+				seatRelated: true,
 				filterTarget: function (card, player, target) {
 					return player != target && player.next != target;
 				},

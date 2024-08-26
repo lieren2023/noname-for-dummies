@@ -104,7 +104,7 @@ export class Check {
 		const isSelectable = (target, event) => {
 			if (game.chess && !event.chessForceAll && player && get.distance(player, target, "pure") > 7)
 				return false;
-			if (target.isOut()) return false;
+			if (target.isOut() && !event.includeOut) return false;
 			return event.filterTarget(card, player, target);
 		};
 		return game.Check.processSelection({ type: "target", items: targets, event, useCache, isSelectable });

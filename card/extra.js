@@ -461,7 +461,16 @@ game.import("card", function () {
 				ai: {
 					basic: {
 						order: 1,
-						useful: 1,
+						useful(card, i) {
+							let player = _status.event.player;
+							if (_status.event.isPhaseUsing()) return game.hasPlayer(cur => {
+								return (
+									cur !== player &&
+									lib.filter.judge(card, player, cur) &&
+									get.effect(cur, card, player, player) > 0
+								);
+							}) ? 3.2 : 1;
+						},
 						value: 4,
 					},
 					result: {
@@ -718,6 +727,7 @@ game.import("card", function () {
 					);
 					game.delayx();
 					"step 2";
+					player.updateMarks();
 					var muniu = player.getEquip("muniu");
 					var players = game.filterPlayer(function (current) {
 						if (

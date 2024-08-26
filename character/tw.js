@@ -964,6 +964,7 @@ game.import("character", function () {
 							return true;
 					},
 				},
+				locked: false,
 				onremove: true,
 				derivation: "twbeidingx",
 				group: ["twbeiding_record", "twbeiding_use", "twbeiding_huan"],
@@ -1085,6 +1086,7 @@ game.import("character", function () {
 				audioname2: { huan_zhugeliang_shadow: "twjielvx" },
 				derivation: "twjielvx",
 				group: ["twjielv_lose", "twjielv_buff", "twjielv_huan"],
+				locked: true,
 				subSkill: {
 					lose: {
 						audio: "twjielv",
@@ -1294,10 +1296,10 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 1,
 				filter(event, player) {
-					return player.countCards("he", { type: "equip" }) && game.hasPlayer(current => player.canCompare(current));
+					return player.countCards("he", { type: "equip" }) && game.hasPlayer(current => player.canCompare(current, true));
 				},
 				filterTarget(card, player, target) {
-					return player.canCompare(target);
+					return player.canCompare(target, true);
 				},
 				filterCard: { type: "equip" },
 				position: "he",
@@ -1555,7 +1557,7 @@ game.import("character", function () {
 						forced: true,
 						locked: false,
 						content() {
-							player.addMark("rexianyuan", lib.skill.rexianyuan.limit - player.countMark("rexianyuan"));
+							player.addMark("rexianyuan", Math.min(2, lib.skill.rexianyuan.limit - player.countMark("rexianyuan")));
 						},
 					},
 				},
@@ -2535,7 +2537,7 @@ game.import("character", function () {
 			},
 			//颜良文丑，但是颜良+文丑
 			twduwang: {
-				audio: 3,
+				audio: 2,
 				dutySkill: true,
 				derivation: ["twxiayong", "twylyanshix"],
 				global: "twduwang_global",
@@ -4244,20 +4246,15 @@ game.import("character", function () {
 							const card = new lib.element.VCard({ name: "sha" });
 							player
 								.when("useCard2")
-								.filter(
-									(evt) =>
-										evt.getParent(2) == event &&
-										game.hasPlayer(
-											(target) =>
-												!evt.targets.includes(target) &&
-												player.canUse(evt.card, target)
-										)
-								)
+								.filter(evt => evt.getParent(2) == event)
 								.assign({
 									firstDo: true,
 								})
 								.then(() => {
 									trigger.baseDamage++;
+									if (!game.hasPlayer(target => {
+										return !trigger.targets.includes(target) && player.canUse(trigger.card, target);
+									})) return;
 									player
 										.chooseTarget(
 											"额外指定至多" + get.cnNumber(num) + "名目标",
@@ -7153,6 +7150,7 @@ game.import("character", function () {
 				init: function (player) {
 					lib.skill.baonvezhi.change(player, 0);
 				},
+				audio: 2,
 				trigger: { source: "damageSource" },
 				forced: true,
 				usable: 1,
@@ -8405,7 +8403,7 @@ game.import("character", function () {
 					if (num > 0) player.recover(num);
 				},
 			},
-			//王淩
+			//王凌
 			twmibei: {
 				audio: "mibei",
 				trigger: { player: "useCardAfter" },
@@ -12684,12 +12682,22 @@ game.import("character", function () {
 						logTarget: "player",
 						charlotte: true,
 						filter: function (event, player) {
-							return event.player.hasHistory("lose", (evt) => {
+							return player !== event.player && event.player.hasHistory("lose", evt => {
 								if (event != evt.getParent()) return false;
 								for (var i in evt.gaintag_map) {
 									if (evt.gaintag_map[i].includes("twkujianx")) return true;
 								}
 							});
+						},
+						getIndex(event, player) {
+							let num = 0;
+							event.player.getHistory("lose", evt => {
+								if (event != evt.getParent()) return false;
+								for (let i in evt.gaintag_map) {
+									if (evt.gaintag_map[i].includes("twkujianx")) num++;
+								}
+							});
+							return num;
 						},
 						content: function () {
 							"step 0";
@@ -12711,30 +12719,10 @@ game.import("character", function () {
 							],
 						},
 						forced: true,
-						logTarget: function (event, player) {
-							return game.filterPlayer(function (current) {
-								var evt = event.getl(current);
-								if (!evt || !evt.hs || !evt.hs.length) return false;
-								if (event.name == "lose") {
-									var name = event.getParent().name;
-									if (name == "useCard" || name == "respond") return false;
-									for (var i in event.gaintag_map) {
-										if (event.gaintag_map[i].includes("twkujianx")) return true;
-									}
-									return false;
-								}
-								return current.hasHistory("lose", function (evt) {
-									if (event != evt.getParent()) return false;
-									for (var i in evt.gaintag_map) {
-										if (evt.gaintag_map[i].includes("twkujianx")) return true;
-									}
-									return false;
-								});
-							});
-						},
 						charlotte: true,
 						filter: function (event, player) {
 							return game.hasPlayer(function (current) {
+								if (player === current) return false;
 								var evt = event.getl(current);
 								if (!evt || !evt.hs || !evt.hs.length) return false;
 								if (event.name == "lose") {
@@ -12754,35 +12742,38 @@ game.import("character", function () {
 								});
 							});
 						},
-						content: function () {
-							"step 0";
-							var event = trigger;
-							var targets = game.filterPlayer(function (current) {
-								var evt = event.getl(current);
+						getIndex(event, player) {
+							let targets = [];
+							game.filterPlayer(current => {
+								if (player === current) return false;
+								let evt = event.getl(current);
 								if (!evt || !evt.hs || !evt.hs.length) return false;
 								if (event.name == "lose") {
-									var name = event.getParent().name;
+									let name = event.getParent().name;
 									if (name == "useCard" || name == "respond") return false;
-									for (var i in event.gaintag_map) {
-										if (event.gaintag_map[i].includes("twkujianx")) return true;
+									for (let i in event.gaintag_map) {
+										if (event.gaintag_map[i].includes("twkujianx")) targets.push(current);
 									}
 									return false;
 								}
 								return current.hasHistory("lose", function (evt) {
 									if (event != evt.getParent()) return false;
-									for (var i in evt.gaintag_map) {
-										if (evt.gaintag_map[i].includes("twkujianx")) return true;
+									for (let i in evt.gaintag_map) {
+										if (evt.gaintag_map[i].includes("twkujianx")) targets.push(current);
 									}
 									return false;
 								});
 							});
-							targets.add(player);
-							targets.sortBySeat();
-							_status.event.targets = targets;
-							"step 1";
-							var target = targets.shift();
-							if (target.countCards("he") > 0) target.chooseToDiscard("he", true);
-							if (targets.length > 0) event.redo();
+							return targets.sortBySeat();
+						},
+						logTarget(event, player, triggername, target) {
+							return target;
+						},
+						async content(event, trigger, player) {
+							let targets = [player, event.targets[0]].sortBySeat();
+							for (let tar of targets) {
+								if (tar.countCards("he") > 0) await tar.chooseToDiscard("he", true);
+							}
 						},
 					},
 					ai: {
@@ -14129,7 +14120,7 @@ game.import("character", function () {
 			},
 			//卞夫人
 			twwanwei: {
-				audio: "wanwei",
+				audio: "spwanwei",
 				trigger: { global: "damageBegin4" },
 				filter: function (event, player) {
 					return event.player.isMinHp();
@@ -14172,7 +14163,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					effect: {
-						audio: "wanwei",
+						audio: "spwanwei",
 						charlotte: true,
 						trigger: { global: "phaseJieshuBegin" },
 						prompt2: "获得牌堆顶的牌并亮出牌堆底的牌，若展示的牌能被使用，你使用之",
@@ -14191,7 +14182,7 @@ game.import("character", function () {
 				},
 			},
 			twyuejian: {
-				audio: "yuejian",
+				audio: "spyuejian",
 				enable: "phaseUse",
 				filterCard: true,
 				selectCard: function () {
@@ -22226,7 +22217,7 @@ game.import("character", function () {
 		},
 		characterReplace: {
 			tw_caocao: ["tw_caocao", "jsrg_caocao", "yj_caocao"],
-			mateng: ["tw_mateng", "mateng", "std_mateng"],
+			mateng: ["tw_mateng", "mateng", "std_mateng", "dc_mateng"],
 			tw_xiahouen: ["tw_xiahouen", "jsrg_xiahouen"],
 			jiangji: ["dc_jiangji", "tw_jiangji", "jiangji"],
 			baoxin: ["tw_baoxin", "baoxin"],
@@ -22661,7 +22652,7 @@ game.import("character", function () {
 			twshigong: "示恭",
 			twshigong_info:
 				"限定技。当你于回合外进入濒死状态时，你可以令当前回合角色选择一项：1.加1点体力上限并回复1点体力，摸一张牌，然后令你将体力回复至体力上限；2.弃置X张手牌，然后令你将体力回复至1点（X为其体力值）。",
-			tw_wangling: "TW王淩",
+			tw_wangling: "TW王凌",
 			tw_wangling_prefix: "TW",
 			twmibei: "秘备",
 			twmibei_info:
@@ -22872,8 +22863,7 @@ game.import("character", function () {
 			tw_yanxiang_prefix: "TW",
 			twkujian: "苦谏",
 			twkujianx: "谏",
-			twkujian_info:
-				"出牌阶段限一次。你可以将至多三张手牌交给一名其他角色，称为“谏”，你获得以下效果：当其他角色使用或打出牌后，若其中有“谏”，你与其各摸一张牌；当其他角色不因使用或打出而失去牌后，若其中有“谏”，你与其各弃置一张牌。",
+			twkujian_info: "出牌阶段限一次。你可以将至多三张手牌交给一名其他角色，称为“谏”，你获得以下效果：当其他角色使用或打出“谏”牌后，你与其各摸一张牌；当其他角色不因使用或打出而失去“谏”牌后，你与其各弃置一张牌。",
 			twruilian: "睿敛",
 			twruilian2: "睿敛",
 			twruilian_info:
@@ -23231,7 +23221,7 @@ game.import("character", function () {
 			twxianyuan: "仙援",
 			twxianyuan_info: "①出牌阶段限三次，你可以将至多两张牌标记为“仙援”并交给一名本轮未以此法交给其牌的角色。②拥有“仙援”标记牌的角色的出牌阶段开始时，你可以观看其手牌并将其中至多X张牌以任意顺序置于牌堆顶（X为你本局游戏发动〖仙援〗交给其的牌数）。③回合开始时，你移去所有角色手牌中的“仙援”标记，然后摸等量的牌。",
 			rexianyuan: "仙援",
-			rexianyuan_info: "①一轮游戏开始时，你获得3枚“仙援”标记（一名角色至多拥有3枚“仙援”标记）。②出牌阶段，你可以将“仙援”标记分配给其他角色。③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
+			rexianyuan_info: "①一轮游戏开始时，你获得2枚“仙援”标记（一名角色至多拥有3枚“仙援”标记）。②出牌阶段，你可以将“仙援”标记分配给其他角色。③拥有“仙援”标记的角色的出牌阶段开始时，你选择一项：⒈观看其手牌，将其中至多X张牌置于牌堆顶；⒉令其摸X张牌（X为其拥有的“仙援”标记数）。然后若当前回合角色不为你，则移去其所有“仙援”标记。",
 			twlingyin: "灵隐",
 			twlingyin_info: "当你成为普通锦囊牌的目标时，你可以展示牌堆顶的一张牌，若此牌与使用的牌的：颜色相同，你获得此牌；花色相同，你令此牌对你无效；颜色不同，你将此牌置入弃牌堆。",
 			huan_jiangwei: "幻姜维",

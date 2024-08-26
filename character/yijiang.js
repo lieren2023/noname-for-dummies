@@ -1095,6 +1095,7 @@ game.import("character", function () {
 							})()
 						);
 					"step 1";
+					var type = get.type2(trigger.card, trigger.player);
 					var guessedNum = result.index;
 					player.chat("我猜" + get.cnNumber(guessedNum) + "张");
 					game.log(player, "猜测", trigger.player, "有", get.cnNumber(guessedNum) + "张" + get.translation(type) + "牌");
@@ -1327,6 +1328,7 @@ game.import("character", function () {
 					);
 				},
 				direct: true,
+				seatRelated: true,
 				content: function () {
 					"step 0";
 					var zhu = game.findPlayer(i => i.getSeatNum() == 1);

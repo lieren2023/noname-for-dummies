@@ -1438,7 +1438,7 @@ game.import("character", function () {
 				},
 				filter(event, player) {
 					if (event.type != "player") return false;
-					var skill = event.sourceSkill || event.skill;
+					var skill = get.sourceSkillFor(event);
 					var info = get.info(skill);
 					if (info.charlotte) return false;
 					var translation = get.skillInfoTranslation(skill, event.player);
@@ -2017,7 +2017,7 @@ game.import("character", function () {
 				},
 				subSkill: { clan_zhonghui: { audio: 6 } },
 			},
-			//族王淩
+			//族王凌
 			clanbolong: {
 				audio: 2,
 				enable: "phaseUse",
@@ -2345,6 +2345,7 @@ game.import("character", function () {
 					return game.hasPlayer(current => !current.isLinked());
 				},
 				direct: true,
+				seatRelated: true,
 				content() {
 					"step 0";
 					player
@@ -3087,7 +3088,7 @@ game.import("character", function () {
 					if (player.getStorage("clanfenchai").length > 0) return;
 					var history = player.getHistory("useSkill", evt => {
 						if (evt.type != "player") return false;
-						var skill = evt.sourceSkill || evt.skill,
+						var skill = get.sourceSkillFor(evt),
 							targets = evt.targets;
 						var info = get.info(skill);
 						if (!info || info.charlotte) return false;
@@ -3120,7 +3121,7 @@ game.import("character", function () {
 					if (event.type != "player") return false;
 					var targets = event.targets;
 					if (!targets || !targets.length) return false;
-					var info = get.info(event.sourceSkill || event.skill);
+					var info = get.info(get.sourceSkillFor(event));
 					if (!info || info.charlotte) return false;
 					if (player.getStorage("clanfenchai").length != 0) return false;
 					return targets.filter(i => player.differentSexFrom(i)).length > 0;
@@ -3791,7 +3792,7 @@ game.import("character", function () {
 			clan_wukuang: "族吴匡",
 			clanlianzhu: "联诛",
 			clanlianzhu_info: "转换技。每名角色Ａ的出牌阶段限一次。阴：Ａ可以重铸一张牌，然后你可以重铸一张牌。若这两张牌颜色相同，则你的手牌上限+1；阳：Ａ可以令你选择一名在你或Ａ攻击范围内的另一名其他角色Ｂ，然后Ａ和你可依次选择是否对Ｂ使用一张【杀】。若这两张【杀】颜色不同，则你的手牌上限-1。",
-			clan_wangling: "族王淩",
+			clan_wangling: "族王凌",
 			clanbolong: "驳龙",
 			clanbolong_info: "出牌阶段限一次。你可以令一名其他角色选择一项：1.你交给其一张牌，然后视为对其使用一张雷【杀】；2.交给你等同于你手牌数的牌，然后视为对你使用一张【酒】。",
 			clanzhongliu: "中流",

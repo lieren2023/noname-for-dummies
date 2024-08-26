@@ -4,9 +4,12 @@ game.import("character", function () {
 		name: "xianding",
 		connect: true,
 		character: {
+			dc_jiangqing: ["male", "wu", 4, ["dcshangyi", "dcniaoxiang"]],
+			dc_tianfeng: ["male", "qun", 3, ["sijian", "dcsuishi"]],
+			dc_zhangren: ["male", "qun", 4, ["dcchuanxin", "dcfengshi"]],
 			dc_sb_jushou: ["male", "qun", 3, ["dcsbzuojun", "dcsbmuwang"]],
 			dc_sb_chengyu: ["male", "wei", 3, ["dcshizha", "dcgaojian"]],
-			dc_lingcao: ["male", "wu", "4/5", ["dcdufeng"]],
+			dc_lingcao: ["male", "wu", "3/5", ["dcdufeng"]],
 			zhugejing: ["male", "qun", 3, ["dcyanzuo", "dczuyin", "dcpijian"]],
 			liutan: ["female", "shu", 3, ["dcjingyin", "dcchixing"]],
 			yj_sb_guojia: ["male", "wei", 3, ["xianmou", "lunshi"]],
@@ -122,7 +125,7 @@ game.import("character", function () {
 		},
 		characterSort: {
 			xianding: {
-				sp2_huben: ["chendong", "wangshuang", "wenyang", "re_liuzan", "dc_huangzu", "wulan", "leitong", "chentai", "dc_duyu", "dc_wangjun", "dc_xiahouba", "old_huangfusong", "huzun", "dc_lingcao"],
+				sp2_huben: ["dc_zhangren", "dc_jiangqing", "chendong", "wangshuang", "wenyang", "re_liuzan", "dc_huangzu", "wulan", "leitong", "chentai", "dc_duyu", "dc_wangjun", "dc_xiahouba", "old_huangfusong", "huzun", "dc_lingcao"],
 				sp2_shengun: ["puyuan", "guanlu", "gexuan", "wufan", "re_zhangbao", "dukui", "zhaozhi", "zhujianping", "dc_zhouxuān", "zerong"],
 				sp2_bizhe: ["dc_luotong", "dc_wangchang", "chengbing", "dc_yangbiao", "ruanji", "cuimao"],
 				sp2_huangjia: ["caomao", "liubian", "dc_liuyu", "quanhuijie", "dingshangwan", "yuanji", "xielingyu", "sunyu", "ganfurenmifuren", "dc_ganfuren", "dc_mifuren", "dc_shixie", "caofang", "zhupeilan", "bianyue"],
@@ -131,7 +134,7 @@ game.import("character", function () {
 				sp2_yinyu: ["zhouyi", "luyi", "sunlingluan", "caoyi"],
 				sp2_wangzhe: ["dc_daxiaoqiao", "dc_sp_machao", "sp_zhenji"],
 				sp2_doukou: ["re_xinxianying", "huaman", "xuelingyun", "dc_ruiji", "duanqiaoxiao", "tianshangyi", "malingli", "bailingyun"],
-				sp2_jichu: ["zhaoang", "dc_liuye", "dc_wangyun", "yanghong", "huanfan", "xizheng", "lvfan"],
+				sp2_jichu: ["zhaoang", "dc_liuye", "dc_wangyun", "yanghong", "huanfan", "xizheng", "lvfan", "dc_tianfeng"],
 				sp2_yuxiu: ["dongguiren", "dc_tengfanglan", "zhangjinyun", "zhoubuyi", "dc_xujing", "guanyue", "zhugejing"],
 				sp2_qifu: ["dc_guansuo", "xin_baosanniang", "dc_zhaoxiang"],
 				sp2_gaoshan: ["wanglang", "liuhui", "zhangjian"],
@@ -163,6 +166,172 @@ game.import("character", function () {
 			],
 		},
 		skill: {
+			//蒋钦
+			dcshangyi: {
+				audio: 2,
+				enable: "phaseUse",
+				usable: 1,
+				filter: function (event, player) {
+					return player.countCards("he") > 0 && game.hasPlayer(current => lib.skill.dcshangyi.filterTarget(null, player, current));
+				},
+				filterTarget(card, player, target) {
+					return target != player;
+				},
+				async content(event, trigger, player) {
+					const target = event.target;
+					await target.viewHandcards(player);
+					if (!target.countCards("h")) return;
+					await player
+						.discardPlayerCard(target, "h", 2, "visible", "是否弃置弃置♠♣花色的牌各一张？")
+						.set("filterButton", button => {
+							if (!["spade", "club"].includes(get.suit(button.link))) return false;
+							// 临时修改（by 棘手怀念摧毁）
+							return ui.selected.buttons && ui.selected.buttons.every(buttonx => {
+							// return ui.selected.buttons?.every(buttonx => {
+								return get.suit(buttonx.link) != get.suit(button.link);
+							});
+						});
+				},
+				ai: {
+					order: 6,
+					result: {
+						player: 0.5,
+						target(player, target) {
+							if (!target.countCards("h")) return 1;
+							return -2;
+						},
+					},
+				},
+			},
+			dcniaoxiang: {
+				audio: 2,
+				trigger: { player: "useCardToPlayered" },
+				forced: true,
+				filter(event, player) {
+					if (!event.target.inRange(player)) return false;
+					return event.card.name == "sha" && !event.getParent().directHit.includes(event.target);
+				},
+				logTarget: "target",
+				async content(event, trigger, player) {
+					const id = trigger.target.playerid;
+					const map = trigger.getParent().customArgs;
+					if (!map[id]) map[id] = {};
+					if (typeof map[id].shanRequired == "number") {
+						map[id].shanRequired++;
+					} else {
+						map[id].shanRequired = 2;
+					}
+				},
+				ai: {
+					directHit_ai: true,
+					skillTagFilter(player, tag, arg) {
+						if (!arg.target.inRange(player)) return false;
+						if (arg.card.name != "sha" || arg.target.countCards("h", "shan") > 1) return false;
+					},
+				},
+			},
+			//田丰
+			dcsuishi: {
+				audio: 2,
+				trigger: {
+					global: ["dying", "dieAfter"],
+				},
+				forced: true,
+				filter(event, player) {
+					if (event.player == player) return false;
+					if (event.name == "dying") {
+						// 临时修改（by 棘手怀念摧毁）
+						return event.reason && event.reason.name == "damage" && event.reason.source.group == player.group;
+						// return event.reason?.name == "damage" && event.reason?.source.group == player.group;
+					}
+					// 临时修改（by 棘手怀念摧毁）
+					return event.player && event.player.group == player.group && player.countCards("h");
+					// return event.player?.group == player.group && player.countCards("h");
+				},
+				async content(event, trigger, player) {
+					if (trigger.name == "dying") await player.draw();
+					else {
+						await player
+							.chooseToDiscard("h", [1, Infinity], true)
+							.set("ai", card => {
+								if (get.player().countCards("h") - ui.selected.cards.length > 1) return 2 - get.value(card);
+								return 4 - get.value(card);
+							});
+					}
+				},
+				ai: {
+					halfneg: true,
+				},
+			},
+			//张任
+			dcchuanxin: {
+				audio: 2,
+				trigger: { source: "damageBegin2" },
+				filter(event, player) {
+					if (_status.currentPhase != player) return false;
+					if (!_status.event.getParent("phaseUse")) return false;
+					return event.card&&["sha", "juedou"].includes(event.card.name)&&event.getParent().name==event.card.name;
+				},
+				logTarget: "player",
+				check(event, player) {
+					if (get.attitude(player, event.player) < 0) {
+						if (event.player.hp == 1 && event.player.countCards("e") < 2 && event.player.name2 != "gz_pangtong") return false;
+						return true;
+					}
+					return false;
+				},
+				async content(event,trigger,player) {
+					trigger.cancel();
+					let result;
+					const target=event.targets[0];
+					if (target.countCards("e")) {
+						result=await target
+							.chooseControl(function (event, player) {
+								if (player.hp == 1) return 1;
+								if (player.hp == 2 && player.countCards("e") >= 2) return 1;
+								return 0;
+							})
+							.set("choiceList", [
+								"弃置装备区内的所有牌并失去1点体力", 
+								"弃置两张手牌，然后非锁定技本回合失效",
+							])
+							.forResult();
+					} else {
+						result = { index: 1 };
+					}
+					if (result.index == 1) {
+						await target.chooseToDiscard("h",2,true);
+						target.addTempSkill("fengyin");
+					} else {
+						target.discard(trigger.player.getCards("e"));
+						target.loseHp();
+					}
+				},
+			},
+			dcfengshi: {
+				audio: 2,
+				trigger: { player: "useCardToPlayered" },
+				filter: function (event, player) {
+					if (event.card.name != "sha" || event.target.inRange(player)) return false;
+					return event.target.getCards("e",card=>["equip2","equip3"].includes(get.subtype(card))).length;			
+				},
+				async cost(event,trigger,player){
+					event.result=await player
+						.choosePlayerCard("e",trigger.target,get.prompt2("dcfengshi",trigger.target))
+						.set("filterButton",button=>{
+							return ["equip2","equip3"].includes(get.subtype(button.link));
+						})
+						.set("ai",button=>{
+							if(get.attitude(get.player(),get.event().getTrigger().target)>0) return 0;
+							return get.value(button.link)+1;
+						})
+						.forResult();
+					event.result.targets=[trigger.target];
+				},
+				async content(event,trigger,player){
+					await event.targets[0].discard(event.cards);
+				},
+			},
 			//谋沮授
 			dcsbzuojun: {
 				audio: 2,
@@ -10465,12 +10634,19 @@ game.import("character", function () {
 							evt.relatedEvent = trigger.relatedEvent || trigger.getParent(2);
 							if (trigger.skill) evt.skill = trigger.skill;
 							else delete evt.skill;
+							evt.wumei_phase = true;
+							if (!lib.onround.includes(lib.skill.dcwumei.onRound)) {
+								lib.onround.push(lib.skill.dcwumei.onRound);
+							}
 							game.broadcastAll(function (player) {
 								player.classList.remove("glow_phase");
 								delete _status.currentPhase;
 							}, player);
 						}
 					}
+				},
+				onRound(event) {
+					return !event.wumei_phase;
 				},
 				subSkill: {
 					used: { charlotte: true },
@@ -13986,6 +14162,7 @@ game.import("character", function () {
 					});
 					return num >= 2;
 				},
+				seatRelated: true,
 				logTarget: "player",
 				check: function (event, player) {
 					return get.attitude(player, event.player) <= 0;
@@ -14818,6 +14995,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					return event.player.getSeatNum() == game.roundNumber && player.countCards("h") > 0;
 				},
+				seatRelated: true,
 				content: function () {
 					"step 0";
 					var suits = [],
@@ -19004,6 +19182,7 @@ game.import("character", function () {
 			zhangxiu: ["zhangxiu", "dc_sb_zhangxiu"],
 			yuanji: ["yuanji", "ol_yuanji"],
 			zhangfen: ["zhangfen", "mb_zhangfen"],
+			dc_tianfeng: ["dc_tianfeng", "tianfeng"],
 		},
 		translate: {
 			puyuan: "蒲元",
@@ -19339,7 +19518,7 @@ game.import("character", function () {
 			oldjue: "举讹",
 			oldjue_info: "准备阶段，你可以视为对一名体力值或手牌数大于你的角色使用一张【杀】。",
 			dcjue: "举讹",
-			dcjue_info: "每轮限一次。一名角色的结束阶段，你可以视为对其随机使用【杀】/【过河拆桥】/【五谷丰登】，直到你以此法使用的牌数不小于Y（Y为本回合因弃置进入弃牌堆的牌数，且至多为其体力上限）。若此时是你的回合，改为你选择一名其他角色。",
+			dcjue_info: "每轮限一次。一名角色的结束阶段，你可以选择一名其他角色（若当前回合角色不为你则改为当前回合角色，以此法使用的牌不能指定你与其以外的角色为目标）视为随机使用【杀】/【过河拆桥】/【五谷丰登】，直到你以此法使用的牌数不小于Y（Y为本回合因弃置进入弃牌堆的牌数，且至多为其体力上限）。",
 			dc_tengfanglan: "滕芳兰",
 			dcluochong: "落宠",
 			dcluochong_info: "一轮游戏开始时，你可以弃置任意名角色区域里的共计至多[4]张牌，然后若你以此法弃置了一名角色的至少三张牌，则你方括号内的数字-1。",
@@ -19614,7 +19793,7 @@ game.import("character", function () {
 			dcsbhoude_info: "当你于其他角色的出牌阶段内首次成为红色【杀】/黑色普通锦囊牌的目标后，你可以弃置你/其的一张牌，令此牌对你无效。",
 			dcsbzijin: "自矜",
 			dcsbzijin_info: "锁定技。①你不能成为〖讨州〗的目标。②当你使用牌结算结束后，若此牌未造成过伤害，你须弃置一张牌或失去1点体力。",
-			dc_wangling: "新杀谋王淩",
+			dc_wangling: "新杀谋王凌",
 			dc_wangling_prefix: "新杀谋",
 			dc_simashi: "新杀谋司马师",
 			dc_simashi_prefix: "新杀谋",
@@ -19689,6 +19868,22 @@ game.import("character", function () {
 			dcsbzuojun_info: "出牌阶段限一次，你可以令一名角色摸三张牌并令其选择一项：1.直到其下个回合结束，其不能使用这些牌且这些牌不计入手牌上限；2.失去1点体力，摸一张牌并使用因此获得的任意张牌，然后弃置其余牌。",
 			dcsbmuwang: "暮往",
 			dcsbmuwang_info: "锁定技，当你每回合首次失去的基本牌或普通锦囊牌进入弃牌堆时，你获得之。当你本回合再次失去这些牌后，你弃置一张牌。",
+			dc_zhangren: "新杀张任",
+			dc_zhangren_prefix: "新杀",
+			dc_tianfeng: "新杀田丰",
+			dc_tianfeng_prefix: "新杀",
+			dc_jiangqing: "新杀蒋钦",
+			dc_jiangqing_prefix: "新杀",
+			dcshangyi: "尚义",
+			dcshangyi_info: "出牌阶段限一次，你可以令一名其他角色观看你的手牌，然后你观看其手牌并可以弃置其中♠♣花色的牌各一张。",
+			dcniaoxiang: "鸟翔",
+			dcniaoxiang_info: "锁定技，你使用【杀】指定目标后，若你在其攻击范围内，其需要额外使用一张【闪】来抵消此【杀】。",
+			dcchuanxin: "穿心",
+			dcchuanxin_info: "当你于出牌阶段使用【杀】或【决斗】对一名角色造成伤害时，你可以防止此伤害，令其选择一项：1.弃置装备区里的所有牌，然后失去1点体力；2.弃置两张手牌，然后非锁定技失效直到回合结束。",
+			dcfengshi: "锋矢",
+			dcfengshi_info: "你使用【杀】指定目标后，若你不在其攻击范围内，你可以弃置该角色装备区里的一张防具或防御马。",
+			dcsuishi: "随势",
+			dcsuishi_info: "锁定技，其他角色进入濒死时，若伤害来源与你势力相同，你摸一张牌；其他角色死亡时，若其势力与你相同，你弃置至少1张手牌。",
 
 			sp2_yinyu: "隐山之玉",
 			sp2_huben: "百战虎贲",

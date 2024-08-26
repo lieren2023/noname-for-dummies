@@ -4861,7 +4861,7 @@ game.import("character", function () {
 					player: "phaseZhunbeiBegin",
 				},
 				filter(event, player) {
-					return player.countMark("dddshichao") + 1 <= game.countPlayer();
+					return player.countMark("dddshichao") + 1 <= game.countPlayer() && get.zhu(player);
 				},
 				onremove: true,
 				forced: true,
@@ -4877,7 +4877,7 @@ game.import("character", function () {
 							}
 						)
 						.set("ai", (target) => {
-							var zhu = get.zhu(player) || game.filterPlayer((i) => i.getSeatNum() == 1)[0];
+							var zhu = get.zhu(player);
 							return Math.min(
 								target.countCards("h") - player.countCards("h"),
 								zhu.maxHp - player.countCards("h")
@@ -4914,7 +4914,7 @@ game.import("character", function () {
 					if (result.bool) {
 						var target = result.targets[0];
 						player.logSkill("dddshichao", target);
-						var zhu = get.zhu(player) || game.filterPlayer((i) => i.getSeatNum() == 1)[0];
+						var zhu = get.zhu(player);
 						var del = Math.min(
 							target.countCards("h") - player.countCards("h"),
 							zhu.maxHp - player.countCards("h")

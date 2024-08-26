@@ -157,6 +157,10 @@ window.noname_character_rank = {
 		"mb_sp_zhenji",
 	],
 	a: [
+		"dc_mateng",
+		"dc_jiangqing",
+		"dc_tianfeng",
+		"dc_zhangren",
 		"star_caoren",
 		"star_yuanshao",
 		"xia_shitao",
@@ -2466,6 +2470,10 @@ window.noname_character_rank = {
 			"ol_sb_sunjian",
 		],
 		rare: [
+			"dc_mateng",
+			"dc_jiangqing",
+			"dc_tianfeng",
+			"dc_zhangren",
 			"ty_wuque",
 			"ty_yanque",
 			"ty_wangque",

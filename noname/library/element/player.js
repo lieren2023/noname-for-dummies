@@ -1568,13 +1568,9 @@ export class Player extends HTMLDivElement {
 	}
 	getSeatNum() {
 		if (typeof this.seatNum == "number") return this.seatNum;
-		if (get.mode() === "boss") {
-			return get.distance(
-				game.bossinfo.loopFirst ? game.bossinfo.loopFirst() : game.boss,
-				this,
-				"absolute"
-			) + 1;
-		}
+		// if (get.mode() === "boss") {
+			// return get.distance(game.bossinfo.loopFirst ? game.bossinfo.loopFirst() : game.boss, this, "absolute") + 1;
+		// }
 		return 0;
 	}
 	/**

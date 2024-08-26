@@ -338,7 +338,7 @@ content:function(config,pack){
 		// xianding:'限定专属',
 		lib.characterTitle.dc_sb_jushou = "忠不逢时";
 		lib.characterTitle.dc_sb_chengyu = "沐风知秋";
-		lib.characterTitle.yj_sb_guojia = "";
+		lib.characterTitle.yj_sb_guojia = "翼谋奇佐";
 		lib.characterTitle.dc_sb_zhangxiu = "凌枪破宛";
 		lib.characterTitle.dc_sb_guanping = "百战烈烈";
 		lib.characterTitle.dc_sb_caoang = "两全忠孝";
@@ -3103,53 +3103,127 @@ content:function(config,pack){
 			priority: 800,
 			firstDo: true,
 			filter: function (event, player) {
-				return player === game.me && ['identity', 'guozhan', 'doudizhu'].contains(lib.config.mode);
+				return player === game.me && ['identity', 'guozhan', 'doudizhu'].contains(lib.config.mode) && !(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']==false);
 			},
 			content: function () {
 				'step 0'
+				var oldconfiglist = [game.filterPlayer().length,lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']];
+				event.configbackup = oldconfiglist;
+				
 				var list = [];
-				for (var i = 0; i < game.players.length; i++) {
-					list.push([get.translation(game.players[i].name)+"的手牌", game.players[i].getCards("h")]);
+				
+				if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']==false) {
+					list.push([get.translation(game.me.name)+"的手牌", game.me.getCards("h")]);
+				} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+					for (var target of game.filterPlayer().sortBySeat()) {
+						if(target!=game.me) list.push([get.translation(target.name)+"的手牌", target.getCards("h")]);
+					}
+				} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+					for (var target of game.filterPlayer().sortBySeat()) {
+						list.push([get.translation(target.name)+"的手牌", target.getCards("h")]);
+					}
 				}
-				var uicardPile = [];
-				for (var m = 0; m < ui.cardPile.childElementCount; m++) {
-					var cardPile = ui.cardPile.childNodes[m];
-					uicardPile.push(cardPile);
+				
+				if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) {
+					var uicardPile = [];
+					for (var m = 0; m < ui.cardPile.childElementCount; m++) {
+						var cardPile = ui.cardPile.childNodes[m];
+						uicardPile.push(cardPile);
+					}
 				}
-				var uidiscardPile = [];
-				for (var n = 0; n < ui.discardPile.childElementCount; n++) {
-					var discardPile = ui.discardPile.childNodes[n];
-					uidiscardPile.push(discardPile);
+				
+				if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+					var uidiscardPile = [];
+					for (var n = 0; n < ui.discardPile.childElementCount; n++) {
+						var discardPile = ui.discardPile.childNodes[n];
+						uidiscardPile.push(discardPile);
+					}
 				}
-				list.push(["牌堆（顺序为牌堆顶→牌堆底）", uicardPile], ["弃牌堆（顺序为弃牌堆顶→弃牌堆顶底）", uidiscardPile.reverse()]);
-				var next = player.chooseToMove("请调整手牌和牌堆（若对话框显示不完整，可下滑操作）");
+				
+				if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) list.push(["牌堆（顺序为牌堆顶→牌堆底）", uicardPile]);
+				if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) list.push(["弃牌堆（顺序为弃牌堆顶→弃牌堆顶底）", uidiscardPile.reverse()]);
+				
+				var next = player.chooseToMove("请调整手牌和牌堆（若对话框显示不完整，可下滑操作）", true);
 				next.set("list", list);
 				next.set("processAI", function (list) {
 					event.result = { bool: false };
 				});
 				'step 1'
 				if(result.bool) {
-					var moved = result.moved;
-					var cards = {};
-					for (var i = 0; i < moved.length; i++) {
-						cards[i] = moved[i];
+					var newconfiglist = [game.filterPlayer().length,lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']];
+					var resultbool = false;
+					
+					for (var i = 0; i < newconfiglist.length; i++) {
+						if(event.configbackup[i] !== newconfiglist[i]) {
+							resultbool = true;
+							break;
+						}
 					}
-					for (var j = 0; j < game.players.length; j++) {
-						game.players[j].directgain(cards[j], false);
-					}
-					var mlinks = moved[moved.length-2];
-					for (var m = 0; m < mlinks.length; m++) {
-						ui.cardPile.appendChild(mlinks[m]);
-					}
-					var nlinks = moved[moved.length-1];
-					nlinks.reverse();
-					for (var n = 0; n < nlinks.length; n++) {
-						ui.discardPile.appendChild(nlinks[n]);
+					
+					// 场上角色数发生变化后/操作过程中改变设置后不继续执行代码
+					if(resultbool) {
+						event.goto(2);
+					} else {
+						var moved = result.moved;
+						
+						var cards = {};
+						for (var i = 0; i < moved.length; i++) {
+							cards[i] = moved[i];
+						}
+						
+						if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']==false) {
+							var hs = cards[0].reverse();
+							hs.forEach(i => i.goto(ui.special));
+							game.me.directgain(hs, false);
+						} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+							var players = game.filterPlayer().sortBySeat();
+							for (var j = 1; j < players.length; j++) {
+								var hs = cards[j-1].reverse();
+								hs.forEach(i => i.goto(ui.special));
+								players[j].directgain(hs, false);
+							}
+						} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+							var players = game.filterPlayer().sortBySeat();
+							for (var j = 0; j < players.length; j++) {
+								var hs = cards[j].reverse();
+								hs.forEach(i => i.goto(ui.special));
+								players[j].directgain(hs, false);
+							}
+						}
+						
+						if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) {
+							var mlinks;
+							if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+								mlinks = moved[moved.length-2];
+							} else mlinks = moved[moved.length-1];
+							for (var m = 0; m < mlinks.length; m++) {
+								ui.cardPile.appendChild(mlinks[m]);
+							}
+						}
+						
+						if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+							var nlinks = moved[moved.length-1];
+							nlinks.reverse();
+							for (var n = 0; n < nlinks.length; n++) {
+								ui.discardPile.appendChild(nlinks[n]);
+							}
+						}
 					}
 				} else event.finish();
 				'step 2'
 				ui.updatehl();
 				game.updateRoundNumber();
+				// 临时修复手牌数显示无法及时更新的bug
+				if(!(lib.config.extensions && lib.config.extensions.contains('十周年UI') && lib.config['extension_十周年UI_enable'] && (lib.config['extension_十周年UI_szn_shoupaishangxian']==true || lib.config['extension_十周年UI_szn_shoupaishuxsxf']==true))) {
+					var libUpdate = player => {
+						var numh = player.countCards('h');
+						player.node.count.innerHTML = numh;
+					}
+					var players = game.filterPlayer().sortBySeat();
+					for (var i = 0; i < players.length; i++) {
+						libUpdate(players[i]);
+					}
+				}
 				game.delayx();
 				'step 3'
 				player.chooseBool('是否继续调整手牌和牌堆？').ai=function(event,player){
@@ -3161,6 +3235,71 @@ content:function(config,pack){
 				}else{
 					event.finish();
 				}
+			},
+		};
+	}
+	
+	// 所有角色使用手气卡
+	if (config.byzy_sqkall) {
+		lib.skill._byzy_sqkall = {
+			trigger: {
+				global: 'gameDrawAfter',
+			},
+			forced: true,
+			popup: false,
+			silent: true,
+			priority: 801,
+			firstDo: true,
+			filter: function (event, player) {
+				return player === game.me && ['identity', 'guozhan', 'doudizhu'].contains(lib.config.mode);
+			},
+			content: function () {
+				'step 0'
+				player.chooseBool('是否令所有角色选择是否使用手气卡？').ai=function(event,player){
+					event.result = { bool: false };
+				};
+				'step 1'
+				if(result.bool) {
+					var targets = game.filterPlayer().sortBySeat();
+					if(lib.config.byzy_sqkallsx=='1') {
+						event.targets = targets.reverse();
+					} else event.targets = targets;
+				} else event.goto(9);
+				'step 2'
+				var target = targets.shift();
+				event.target = target;
+				if(lib.config.byzy_ziyuzile==true) {
+					event.changeCardnum = lib.config.extension_搬运自用_byzy_sqkallcs === undefined ? 1 : Number(lib.config.extension_搬运自用_byzy_sqkallcs);
+					event.goto(3);
+				} else {
+					event.goto(5);
+				}
+				'step 3'
+				target.chooseBool('是否使用手气卡？').ai=function(event,player){
+					event.result = { bool: true };
+				};
+				'step 4'
+				if(result.bool) {
+					event.goto(5);
+				} else event.goto(7);
+				'step 5'
+				game.byzyusesqk(target);
+				if(lib.config.byzy_ziyuzile==true) game.delayx(2);
+				'step 6'
+				if(lib.config.byzy_ziyuzile==true) {
+					event.changeCardnum-=1;
+					if(event.changeCardnum>0) {
+						event.goto(3);
+					}
+				} else {
+					event.goto(7);
+				}
+				'step 7'
+				if (targets.length > 0) event.goto(2);
+				'step 8'
+				event.goto(0);
+				'step 9'
+				event.finish();
 			},
 		};
 	}
@@ -6894,77 +7033,77 @@ content:function(config,pack){
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.type(card)=='basic'&&(!cards.includes(card));
+									return get.type(card)=='basic'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardtrick':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.type(card, "trick")=='trick'&&(!cards.includes(card));
+									return get.type(card, "trick")=='trick'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnormaltrick':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.type(card)=='trick'&&(!cards.includes(card));
+									return get.type(card)=='trick'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCarddelay':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.type(card)=='delay'&&(!cards.includes(card));
+									return get.type(card)=='delay'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.type(card)=='equip'&&(!cards.includes(card));
+									return get.type(card)=='equip'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip1':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip1'&&(!cards.includes(card));
+									return get.subtype(card)=='equip1'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip2':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip2'&&(!cards.includes(card));
+									return get.subtype(card)=='equip2'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						// 坐骑：equip3防御坐骑、equip4攻击坐骑、equip6特殊装备（如【六龙骖驾】、【长安大舰】等）
@@ -6972,308 +7111,308 @@ content:function(config,pack){
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return ['equip3','equip4','equip6'].includes(get.subtype(card))&&(!cards.includes(card));
+									return ['equip3','equip4','equip6'].includes(get.subtype(card))&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip3':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip3'&&(!cards.includes(card));
+									return get.subtype(card)=='equip3'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip4':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip4'&&(!cards.includes(card));
+									return get.subtype(card)=='equip4'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip5':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip5'&&(!cards.includes(card));
+									return get.subtype(card)=='equip5'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardequip6':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.subtype(card)=='equip6'&&(!cards.includes(card));
+									return get.subtype(card)=='equip6'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardred':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.color(card)=='red'&&(!cards.includes(card));
+									return get.color(card)=='red'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardblack':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return get.color(card)=='black'&&(!cards.includes(card));
+									return get.color(card)=='black'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardheart':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.suit=='heart'&&(!cards.includes(card));
+									return card.suit=='heart'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCarddiamond':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.suit=='diamond'&&(!cards.includes(card));
+									return card.suit=='diamond'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardspade':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.suit=='spade'&&(!cards.includes(card));
+									return card.suit=='spade'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardclub':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.suit=='club'&&(!cards.includes(card));
+									return card.suit=='club'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardfire':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.nature=='fire'&&(!cards.includes(card));
+									return card.nature=='fire'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardthunder':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.nature=='thunder'&&(!cards.includes(card));
+									return card.nature=='thunder'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardice':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.nature=='ice'&&(!cards.includes(card));
+									return card.nature=='ice'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardstab':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.nature=='stab'&&(!cards.includes(card));
+									return card.nature=='stab'&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber1':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==1&&(!cards.includes(card));
+									return card.number==1&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber2':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==2&&(!cards.includes(card));
+									return card.number==2&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber3':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==3&&(!cards.includes(card));
+									return card.number==3&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber4':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==4&&(!cards.includes(card));
+									return card.number==4&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber5':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==5&&(!cards.includes(card));
+									return card.number==5&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber6':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==6&&(!cards.includes(card));
+									return card.number==6&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber7':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==7&&(!cards.includes(card));
+									return card.number==7&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber8':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==8&&(!cards.includes(card));
+									return card.number==8&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber9':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==9&&(!cards.includes(card));
+									return card.number==9&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber10':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==10&&(!cards.includes(card));
+									return card.number==10&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber11':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==11&&(!cards.includes(card));
+									return card.number==11&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber12':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==12&&(!cards.includes(card));
+									return card.number==12&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'gainCardnumber13':{
 							var cards=[];
 							for(var i=0;i<num;i++){
 								var card2=get.cardPile(function(card){
-								return card.number==13&&(!cards.includes(card));
+									return card.number==13&&(!cards.includes(card));
 								});
-								target.gain(card2);
 								cards.push(card2);
 							}
+							target.gain(cards);
 							break;
 						}
 						case 'chongzhuh':target.recast(target.getCards('h').randomGets(num));break;
@@ -7307,6 +7446,7 @@ content:function(config,pack){
 						case 'kuozhanfwzj':target.expandEquip(3);break;
 						case 'kuozhangjzj':target.expandEquip(4);break;
 						case 'kuozhanbaowu':target.expandEquip(5);break;
+						case 'shiyongshouqika':game.byzyusesqk(target);break;
 					}
 				}
 				// if(ui.coin){
@@ -7875,6 +8015,11 @@ content:function(config,pack){
 		option2=document.createElement('option');
 		option2.text="扩展装备区-宝物栏";
 		option2.value="kuozhanbaowu";
+		select2.add(option2);
+		
+		option2=document.createElement('option');
+		option2.text="使用手气卡";
+		option2.value="shiyongshouqika";
 		select2.add(option2);
 		
 		var nodex1=ui.create.div('.menubutton','一',clickrow2);
@@ -11393,51 +11538,136 @@ precontent:function(){
 		next.setContent(function () {
 			// 搬运自上方点击可调整手牌和牌堆功能的content: function () {
 			'step 0'
+			var oldconfiglist = [game.filterPlayer().length,lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']];
+			event.configbackup = oldconfiglist;
+			
 			var list = [];
-			for (var i = 0; i < game.players.length; i++) {
-				list.push([get.translation(game.players[i].name)+"的手牌", game.players[i].getCards("h")]);
+			
+			if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']==false) {
+				list.push([get.translation(game.me.name)+"的手牌", game.me.getCards("h")]);
+			} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+				for (var target of game.filterPlayer().sortBySeat()) {
+					if(target!=game.me) list.push([get.translation(target.name)+"的手牌", target.getCards("h")]);
+				}
+			} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+				for (var target of game.filterPlayer().sortBySeat()) {
+					list.push([get.translation(target.name)+"的手牌", target.getCards("h")]);
+				}
 			}
-			var uicardPile = [];
-			for (var m = 0; m < ui.cardPile.childElementCount; m++) {
-				var cardPile = ui.cardPile.childNodes[m];
-				uicardPile.push(cardPile);
+			
+			if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) {
+				var uicardPile = [];
+				for (var m = 0; m < ui.cardPile.childElementCount; m++) {
+					var cardPile = ui.cardPile.childNodes[m];
+					uicardPile.push(cardPile);
+				}
 			}
-			var uidiscardPile = [];
-			for (var n = 0; n < ui.discardPile.childElementCount; n++) {
-				var discardPile = ui.discardPile.childNodes[n];
-				uidiscardPile.push(discardPile);
+			
+			if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+				var uidiscardPile = [];
+				for (var n = 0; n < ui.discardPile.childElementCount; n++) {
+					var discardPile = ui.discardPile.childNodes[n];
+					uidiscardPile.push(discardPile);
+				}
 			}
-			list.push(["牌堆（顺序为牌堆顶→牌堆底）", uicardPile], ["弃牌堆（顺序为弃牌堆顶→弃牌堆顶底）", uidiscardPile.reverse()]);
-			var next = player.chooseToMove("请调整手牌和牌堆（若对话框显示不完整，可下滑操作）");
+			
+			if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) list.push(["牌堆（顺序为牌堆顶→牌堆底）", uicardPile]);
+			if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) list.push(["弃牌堆（顺序为弃牌堆顶→弃牌堆顶底）", uidiscardPile.reverse()]);
+			
+			var next = player.chooseToMove("请调整手牌和牌堆（若对话框显示不完整，可下滑操作）", true);
 			next.set("list", list);
 			next.set("processAI", function (list) {
 				event.result = { bool: false };
 			});
 			'step 1'
 			if(result.bool) {
-				var moved = result.moved;
-				var cards = {};
-				for (var i = 0; i < moved.length; i++) {
-					cards[i] = moved[i];
+				var newconfiglist = [game.filterPlayer().length,lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd'],lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']];
+				var resultbool = false;
+				
+				for (var i = 0; i < newconfiglist.length; i++) {
+					if(event.configbackup[i] !== newconfiglist[i]) {
+						resultbool = true;
+						break;
+					}
 				}
-				for (var j = 0; j < game.players.length; j++) {
-					game.players[j].directgain(cards[j], false);
-				}
-				var mlinks = moved[moved.length-2];
-				for (var m = 0; m < mlinks.length; m++) {
-					ui.cardPile.appendChild(mlinks[m]);
-				}
-				var nlinks = moved[moved.length-1];
-				nlinks.reverse();
-				for (var n = 0; n < nlinks.length; n++) {
-					ui.discardPile.appendChild(nlinks[n]);
+				
+				// 场上角色数发生变化后/操作过程中改变设置后不继续执行代码
+				if(resultbool) {
+					event.goto(2);
+				} else {
+					var moved = result.moved;
+					
+					var cards = {};
+					for (var i = 0; i < moved.length; i++) {
+						cards[i] = moved[i];
+					}
+					
+					if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']==false) {
+						var hs = cards[0].reverse();
+						hs.forEach(i => i.goto(ui.special));
+						game.me.directgain(hs, false);
+					} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']==false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+						var players = game.filterPlayer().sortBySeat();
+						for (var j = 1; j < players.length; j++) {
+							var hs = cards[j-1].reverse();
+							hs.forEach(i => i.goto(ui.special));
+							players[j].directgain(hs, false);
+						}
+					} else if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_wj']!=false && lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qtjs']!=false) {
+						var players = game.filterPlayer().sortBySeat();
+						for (var j = 0; j < players.length; j++) {
+							var hs = cards[j].reverse();
+							hs.forEach(i => i.goto(ui.special));
+							players[j].directgain(hs, false);
+						}
+					}
+					
+					if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_pd']!=false) {
+						var mlinks;
+						if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+							mlinks = moved[moved.length-2];
+						} else mlinks = moved[moved.length-1];
+						for (var m = 0; m < mlinks.length; m++) {
+							ui.cardPile.appendChild(mlinks[m]);
+						}
+					}
+					
+					if(lib.config['extension_搬运自用_byzy_tiaozhengshoupai_qpd']!=false) {
+						var nlinks = moved[moved.length-1];
+						nlinks.reverse();
+						for (var n = 0; n < nlinks.length; n++) {
+							ui.discardPile.appendChild(nlinks[n]);
+						}
+					}
 				}
 			} else event.finish();
 			'step 2'
 			ui.updatehl();
 			game.updateRoundNumber();
+			// 临时修复手牌数显示无法及时更新的bug
+			if(!(lib.config.extensions && lib.config.extensions.contains('十周年UI') && lib.config['extension_十周年UI_enable'] && (lib.config['extension_十周年UI_szn_shoupaishangxian']==true || lib.config['extension_十周年UI_szn_shoupaishuxsxf']==true))) {
+				var libUpdate = player => {
+					var numh = player.countCards('h');
+					player.node.count.innerHTML = numh;
+				}
+				var players = game.filterPlayer().sortBySeat();
+				for (var i = 0; i < players.length; i++) {
+					libUpdate(players[i]);
+				}
+			}
 			game.delayx();
 		});
+	};
+	
+	// 使用手气卡函数
+	game.byzyusesqk = function (player) {
+		var target = player;
+		var hs = target.getCards("h");
+		game.addVideo("lose", target, [get.cardsInfo(hs), [], [], []]);
+		for (var i = 0; i < hs.length; i++) {
+			hs[i].discard(false);
+		}
+		target.directgain(get.cards(hs.length));
 	};
 	
 	// 点击可交换一次位置
@@ -12077,7 +12307,7 @@ config:{
 				'<br>'+
 				'<br>※ 点击获得一个额外的回合<br>- 点击下方<span style="text-decoration: underline;">点击获得一个额外的回合</span>链接按钮，“我”（玩家）获得一个额外的回合，当前角色回合结束后生效；点击1次获得的额外回合+1，无点击次数限制'+
 				'<br>'+
-				'<br>※ 点击可调整手牌和牌堆功能<br>- 点击下方<span style="text-decoration: underline;">点击可调整手牌和牌堆功能</span>链接按钮，“我”（玩家）可以调整场上所有角色手牌（若开启调整装备区和判定区的牌开关则可调整区域内的牌）和牌堆（牌堆和弃牌堆）；点击1次获得的交换次数+1，无点击次数限制'+
+				'<br>※ 点击可调整手牌和牌堆功能<br>- 点击下方<span style="text-decoration: underline;">点击可调整手牌和牌堆功能</span>链接按钮，“我”（玩家）可以调整场上所有角色手牌（若开启调整装备区和判定区的牌开关则可调整区域内的牌）和牌堆（牌堆和弃牌堆）；点击1次获得的调整次数+1，无点击次数限制'+
 				'<br>'+
 				'<br>※ 点击可交换一次位置<br>- 点击下方<span style="text-decoration: underline;">点击可交换一次位置</span>链接按钮，“我”（玩家）可以交换两名角色的座次；点击1次获得的交换次数+1，无点击次数限制'+
 				'<br>'+
@@ -12154,8 +12384,9 @@ config:{
 				'<br>※ 自由选将-随机按钮<br>- 由假装无敌扩展原功能【AI选将】分离而来，开启后，将在自由选将界面添加“随机”筛选按钮，点击该按钮可切换显示全部武将和随机武将，设置为默认开启'+
 				'<br>'+
 				'<br>▷ 调整卡牌功能'+
-				'<br>※ 调整手牌和牌堆功能<br>- 开启后，分发起始手牌后，玩家可以调整手牌和牌堆功能(限身份场、斗地主、国战)'+
+				'<br>※ 调整手牌和牌堆功能<br>- 开启后，分发起始手牌后，玩家可以调整手牌和牌堆功能(限身份场、斗地主、国战)<br>- 调整选项（可自行设置）：调整手牌（玩家）、调整手牌（其他角色）、调整牌堆、调整弃牌堆'+
 				// '<br>※ 调整装备区和判定区的牌<br>- 开启后，在使用调整手牌和牌堆功能时，可调整区域内的牌（即额外装备区和判定区内的牌）'+
+				'<br>※ 所有角色使用手气卡<br>- 开启后，分发起始手牌后，玩家可令所有角色使用手气卡(限身份场、斗地主、国战)<br>- 调整选项（可自行设置）：使用手气卡次数、使用手气卡顺序'+
 				'<br>'+
 				'<br>▷ 游戏模式：详情请点击下方【游戏模式介绍】折叠选项查看'+
 				'<br>'+
@@ -13480,10 +13711,51 @@ config:{
 		"clear":true,
 	},
 	
+	byzy_tiaozhengshoupai_fenjiexian1:{
+		clear:true,
+		name:"<li>调整卡牌（点击后折叠）▽",
+		onclick:function(){
+			if(lib.config.byzy_tiaozhengshoupai_fenjiexian1==undefined){
+				lib.config.byzy_tiaozhengshoupai_fenjiexian1=[
+					this.nextSibling,
+					this.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+				];
+				this.innerHTML="<li>调整卡牌（点击后展开）▷";
+				lib.config.byzy_tiaozhengshoupai_fenjiexian1.forEach(function(element) {element.hide()});
+			}else{
+				this.innerHTML="<li>调整卡牌（点击后折叠）▽";
+				lib.config.byzy_tiaozhengshoupai_fenjiexian1.forEach(function(element) {element.show()});
+				delete lib.config.byzy_tiaozhengshoupai_fenjiexian1;
+			}
+		}
+	},
 	"byzy_tiaozhengshoupai": {
 		name: '调整手牌和牌堆功能',
 		init: false,
 		intro: '开启后，分发起始手牌后，玩家可以调整手牌和牌堆功能。(限身份场、斗地主、国战)',
+	},
+	"byzy_tiaozhengshoupai_wj": {
+		name: '| 调整手牌（玩家）',
+		init: true,
+		intro: '调整选项',
+	},
+	"byzy_tiaozhengshoupai_qtjs": {
+		name: '| 调整手牌（其他角色）',
+		init: true,
+		intro: '调整选项',
+	},
+	"byzy_tiaozhengshoupai_pd": {
+		name: '| 调整牌堆',
+		init: true,
+		intro: '调整选项',
+	},
+	"byzy_tiaozhengshoupai_qpd": {
+		name: '| 调整弃牌堆',
+		init: true,
+		intro: '调整选项',
 	},
 	
 	// "byzy_tiaozhengshoupai_he": {
@@ -13491,6 +13763,67 @@ config:{
 		// init: false,
 		// intro: '开启后，在使用调整手牌和牌堆功能时，可调整区域内的牌（即额外装备区和判定区内的牌）。',
 	// },
+	
+	// 吧友需求：开自娱自乐左右互搏时用（为显公平）
+	byzy_sqkall_fenjiexian1:{
+		clear:true,
+		name:"<li>使用手气卡（点击后折叠）▽",
+		onclick:function(){
+			if(lib.config.byzy_sqkall_fenjiexian1==undefined){
+				lib.config.byzy_sqkall_fenjiexian1=[
+					this.nextSibling,
+					this.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling,
+				];
+				this.innerHTML="<li>使用手气卡（点击后展开）▷";
+				lib.config.byzy_sqkall_fenjiexian1.forEach(function(element) {element.hide()});
+			}else{
+				this.innerHTML="<li>使用手气卡（点击后折叠）▽";
+				lib.config.byzy_sqkall_fenjiexian1.forEach(function(element) {element.show()});
+				delete lib.config.byzy_sqkall_fenjiexian1;
+			}
+		}
+	},
+	"byzy_sqkall": {
+		name: '所有角色使用手气卡',
+		init: false,
+		intro: '开启后，分发起始手牌后，玩家可令所有角色使用手气卡。(限身份场、斗地主、国战)',
+	},
+	"byzy_sqkallcs":{
+		"name": "| 使用手气卡次数",
+		"intro": "所有角色使用手气卡的次数设置，即时生效。",
+		"init":lib.config.byzy_sqkallcs === undefined ? "1" : lib.config.byzy_sqkallcs,
+		"item":{
+			"1":"1次",
+			"2":"2次",
+			"3":"3次",
+			"4":"4次",
+			"5":"5次",
+			"6":"6次",
+			"7":"7次",
+			"8":"8次",
+			"9":"9次",
+			"10":"10次",
+			"Infinity":"无限",
+		},
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_sqkallcs',item);
+			game.saveConfig('byzy_sqkallcs',item);
+		},
+	},
+	"byzy_sqkallsx":{
+		"name": "| 使用手气卡顺序",
+		"intro": "所有角色使用手气卡的顺序设置，即时生效。",
+		"init":lib.config.byzy_sqkallsx === undefined ? "0" : lib.config.byzy_sqkallsx,
+		"item":{
+			"0":"顺时针",
+			"1":"逆时针",
+		},
+		onclick:function(item){
+			game.saveConfig('extension_搬运自用_byzy_sqkallsx',item);
+			game.saveConfig('byzy_sqkallsx',item);
+		},
+	},
 	
 	// 分割线
 	"byzyfgx13":{
@@ -13948,25 +14281,25 @@ config:{
 					var card03=get.cardPile(function(card){
 						return (get.type(card)=='equip')&&(!cards03.includes(card));
 					});
-					gameplayers0.gain(card03);
 					cards03.push(card03);
 				}
+				gameplayers0.gain(cards03);
 				var cards04=[];
 				for(var j=0;j<2;j++){
 					var card04=get.cardPile(function(card){
 						return (get.type(card)=='trick')&&(!cards04.includes(card));
 					});
-					gameplayers0.gain(card04);
 					cards04.push(card04);
 				}
+				gameplayers0.gain(cards04);
 				var cards05=[];
 				for(var k=0;k<2;k++){
 					var card05=get.cardPile(function(card){
 						return (get.type(card)=='basic')&&(!cards05.includes(card));
 					});
-					gameplayers0.gain(card05);
 					cards05.push(card05);
 				}
+				gameplayers0.gain(cards05);
 				
 				gameplayers1.classList.add('linked2');
 				var card11=get.cardPile(function(card){return get.subtype(card)=='equip3';},'cardPile'); if(card11) gameplayers1.useCard(card11,gameplayers1);
@@ -14052,12 +14385,12 @@ config:{
 					}
 				}
 				
-				// 暂时先这么写吧，后续会加曹金玉caojinyu 4、张星彩zhangxingcai 7、羊徽瑜yanghuiyu 4、吴苋wuxian 6、杨婉yangwan 8、曹节caojie 8，用map？，改随机生成、同名武将解锁
+				// 暂时先这么写吧，后续会加曹金玉caojinyu 4、张星彩zhangxingcai 7、羊徽瑜yanghuiyu 4、吴苋wuxian 6、杨婉yangwan 8、曹节caojie 8、袁姬yuanji 3、孙茹sunru 1，用map？，改随机生成、同名武将解锁
 				var name0="guanyinping",num0=10;
 				gameplayers0.node.avatar.setBackgroundImage("image/skin/" + name0 + "/" + num0 + ".jpg");
 				var name1="zhangqiying",num1=11;
 				gameplayers1.node.avatar.setBackgroundImage("image/skin/" + name1 + "/" + num1 + ".jpg");
-				var name2="zhoufei",num2=8;
+				var name2="zhoufei",num2=9;
 				gameplayers2.node.avatar.setBackgroundImage("image/skin/" + name2 + "/" + num2 + ".jpg");
 				var name3="zhugeguo",num3=8;
 				gameplayers3.node.avatar.setBackgroundImage("image/skin/" + name3 + "/" + num3 + ".jpg");
@@ -14259,7 +14592,6 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 总双势力武将等统计错误
 // 场上所有角色禁将+解除场上其他角色禁将无法禁用“我”（玩家）的武将、禁将名出现undefined
 // 选项导航功能的搜索，未输入点确定弹出提示内容不正确，未输入时保持请输入关键字显示
-// 控制台从牌堆&弃牌堆获得牌不能选择多名角色
 // 资料卡点击查看技能信息的alert显示有问题（部分代码显示错误/显示不全），请到控制台查看没有问题的代码
 
 // 后续更新计划：
@@ -14285,6 +14617,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 弹框查看存在list里的各种武将（可视化）
 // 真白板模式，真清空模式
 // 神将势力没随机选？自由选将没随机选？重新选将，选势力[0]改随机
+// 来自群友的需求：悔棋功能、武将胜率
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
 // 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；牌库增添-自定义牌堆；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本；奇妙工具-卡牌创造（开启后在可以创造卡牌）、添加技能（开启后在游戏进行时给自己加技能）等
@@ -14330,13 +14663,14 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 露头皮肤效果图、其他选项先关露头皮肤？
 // 双击武将切换双形态？
 // 特殊处理武将（张郃、神赵云、神关羽等）的资料卡试听技能配音
-// 一将成名、神将、OL专属、星火燎原、群英荟萃、限定专属、外服武将、四象封印等武将称号待补充
+// 一将成名、神将、OL专属、星火燎原、群英荟萃、外服武将、四象封印等武将称号待补充
 // 处理〖妙剑·改〗〖绝情·改〗等技能？：lib.notShowSkillNamePinyin、台词显示
 // 阵亡配音待适配写法"die:yujin.mp3"（例：于禁）、旧版台词函数适配"die:xxx"写法；还要改noname/library/element/content.js的die: function () {函数？
 // 资料卡点击查看武将信息增加其他rank信息（武将、技能）、场上技能和技能ID查看
 // 资料卡切换按钮改成切换原画功能；切换按钮改成即时生效（目前需先关闭资料卡，然后重新打开资料卡）
-// 绘制效果图bug fix：改async函数，await game.asyncDelay()？
 // 自由选将搜索增加台词搜索，衍生技能搜索开关/选项
 // 搬运自由/手杀ui新增：蒸蒸日上-多人场牌堆扩充（多副牌）
-// 优化调整卡牌功能：手牌顺序调整（参考蒋琬自若？）、调整装备区和判定区的牌（参考kagari_zongsi/移动场上一张牌？）、可仅一人换牌（加入控制台命令？）、可仅透视牌堆/弃牌堆等
+// 优化调整卡牌功能：调整装备区和判定区的牌（参考kagari_zongsi/移动场上一张牌？）、仅一人换牌函数（加入控制台命令）、点击交换一次手牌等
 // chooseToMove支持拖动卡牌加入测试中的功能？
+// 控制台从牌堆&弃牌堆获得牌不能选择多名角色
+// 绘制效果图获得牌bug fix：改async函数，await game.asyncDelay()？

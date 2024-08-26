@@ -1108,6 +1108,21 @@ export class Get {
 		}
 		return nature + "mm";
 	}
+	/**
+	 * Get the source of the skill or event
+	 *
+	 * 获取一个技能或事件的源技能
+	 */
+	sourceSkillFor(skill) {
+		if (typeof skill !== "string") skill = skill.sourceSkill || skill.skill;
+		let info = get.info(skill);
+		while (true) {
+			if (info && !info.sourceSkill) break;
+			skill = info.sourceSkill;
+			info = get.info(skill);
+		}
+		return skill;
+	}
 	sgn(num) {
 		if (num > 0) return 1;
 		if (num < 0) return -1;

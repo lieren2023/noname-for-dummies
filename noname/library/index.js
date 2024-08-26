@@ -12863,7 +12863,8 @@ export class Library {
 							game.ip,
 							game.players[0].playerid,
 							null,
-							_status.cardtag
+							_status.cardtag,
+							_status.postReconnect
 						);
 						if (!ui.removeObserve) {
 							ui.removeObserve = ui.create.system(

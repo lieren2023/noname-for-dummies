@@ -3653,7 +3653,7 @@ export const Content = {
 					info.chooseControl ? result : result.links,
 					player
 				);
-				lib.skill[event.buttoned + "_backup"].sourceSkill = lib.skill[event.buttoned].sourceSkill ? lib.skill[event.buttoned].sourceSkill : event.buttoned;
+				lib.skill[event.buttoned + "_backup"].sourceSkill = event.buttoned;
 				if (game.online) {
 					event._sendskill = [event.buttoned + "_backup", lib.skill[event.buttoned + "_backup"]];
 				} else {
@@ -3865,7 +3865,7 @@ export const Content = {
 					info.chooseControl ? result : result.links,
 					player
 				);
-				lib.skill[event.buttoned + "_backup"].sourceSkill = lib.skill[event.buttoned].sourceSkill ? lib.skill[event.buttoned].sourceSkill : event.buttoned;
+				lib.skill[event.buttoned + "_backup"].sourceSkill = event.buttoned;
 				if (game.online) {
 					event._sendskill = [event.buttoned + "_backup", lib.skill[event.buttoned + "_backup"]];
 				} else {

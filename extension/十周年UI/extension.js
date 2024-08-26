@@ -183,7 +183,7 @@ content:function(config, pack){
 				if(event.type!='player'){
 					return false;
 				}else{
-					var skill=event.sourceSkill||event.skill;
+					var skill=get.sourceSkillFor(event);
 					var info=get.info(skill);
 					if(info.limited || (info.intro && info.intro.content === 'limited') || info.juexingji || (info && info.equipSkill)){
 						return false;
@@ -2066,7 +2066,7 @@ content:function(config, pack){
 				}
 				else{
 					for(var i in lib.skill){
-						if(lib.skill[i].changeSeat){
+						if(lib.skill[i].seatRelated){
 							lib.skill[i]={};
 							if(lib.translate[i+'_info']){
 								lib.translate[i+'_info']='固定位置时不可用';
@@ -5745,7 +5745,7 @@ content:function(config, pack){
 						'step 0'
 						for(var i in lib.skill){
 							if(lib.skill[i].audio&&!lib.skill[i].equipSkill) lib.skill[i].audio=false;
-							if(lib.skill[i].changeSeat){
+							if(lib.skill[i].seatRelated){
 								lib.skill[i]={};
 								if(lib.translate[i+'_info']){
 									lib.translate[i+'_info']='此模式下不可用';
@@ -9224,6 +9224,35 @@ content:function(config, pack){
 			},
 		};
 		
+	} else {
+		if (config.szn_shoupaishuxsxf) {
+			// 临时修复手牌数显示无法及时更新的bug
+			lib.skill._showHandCardNum = {
+				trigger: {
+					global: ['gameStart', 'roundStart'],
+				},
+				forced: true,
+				popup: false,
+				silent: true,
+				content: function () {
+					var libUpdate = player => {
+						var numh = player.countCards('h');
+						player.node.count.innerHTML = numh;
+					}
+					if (Array.isArray(lib.element.player.updates)) {
+						lib.element.player.updates.unshift(libUpdate)
+					} else {
+						lib.element.player.updates = [libUpdate]
+					}
+					
+					var interval = setInterval(() => {
+						// 清除定时器条件改为游戏结束
+						if (_status.over) return clearInterval(interval);
+						libUpdate(player);
+					}, 500);
+				},
+			};
+		}
 	}
 	
 	/*--------------------十周年UI魔改--------------------*/
@@ -11528,7 +11557,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 							var nochess = true;
 							if (game.chess && !event.chessForceAll && player && get.distance(player, players[i], 'pure') > 7) {
 								nochess = false;
-							} else if (players[i].isOut()) {
+							} else if (players[i].isOut() && !event.includeOut) {/*适配新版本体*/
 								nochess = false;
 							} else if (event._targetChoice && event._targetChoice.has(card)) {
 								var targetChoice = event._targetChoice.get(card);
@@ -17506,6 +17535,7 @@ config:{
 				'<br>- 新增座位布局调整开关选项，可调整座位布局（2-8人），即时生效。'+
 				'<br>- 新增折叠手牌开关选项，设置当手牌过多时，是否折叠手牌，即时生效；修复折叠手牌后手牌区可上下移动的bug。'+
 				'<br>- 新增装备栏布局调整开关选项，开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效；显示扩展装备区状态时，同步更新装备栏布局。'+
+				'<br>- 新增手牌数显示修复开关选项，开启后，临时修复手牌数显示无法及时更新的bug（手牌上限显示开启后失效）。'+
 				'<br>- 新增手牌上限显示开关选项，原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可；开启后，游戏内显示的手牌数将改为显示手牌数与手牌上限(例：2/3，代表拥有2张牌，手牌上限为3)。'+
 				'<br>- 新增对话框美化开关选项（因短歌修改技能不全，为使对话框样式统一，并为避免旧代码出bug，设置默认关闭），可自行选用短歌修改的对话框美化，手动重启后生效。<br>① 拼点美化：开启后，启用chooseToCompare函数和chooseToCompareMultiple函数，美化拼点对话框。<br>② 观星美化：开启后，启用chooseToGuanxing函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项。'+
 				'<br>- 新增不显示托管文字开关（默认开启，托管时不显示“托管中...”文字和阴影），并调整托管区域大小位置。'+
@@ -18045,7 +18075,12 @@ config:{
     },
 	szn_fenjiexian27:{
 		clear:true,
-		name:"<font size='3'><li>手牌上限显示</font>",
+		name:"<font size='3'><li>手牌数/上限显示</font>",
+	},
+	"szn_shoupaishuxsxf": {
+		name: '手牌数显示修复',
+		init: true,
+		intro: '开启后，临时修复手牌数显示无法及时更新的bug（手牌上限显示开启后失效）。',
 	},
 	"szn_shoupaishangxian": {
 		name: '手牌上限显示',

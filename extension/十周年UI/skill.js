@@ -4029,6 +4029,193 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			},
 		},
 		
+		// 侠鲁肃临时修复，lib.card[type]与卡牌美化（加fullskin）冲突，例如曹婴凌人
+		twkaizeng: {
+			audio: 2,
+			global: "twkaizeng_want",
+			refuseInfo: ["不给", "拒绝"],
+			subSkill: {
+				want: {
+					audio: "twkaizeng",
+					forceaudio: true,
+					enable: "phaseUse",
+					usable: 1,
+					charlotte: true,
+					filter: function (event, player) {
+						if (player.hasSkill("twkaizeng_used")) return false;
+						return game.hasPlayer((current) => {
+							return current != player && current.hasSkill("twkaizeng");
+						});
+					},
+					chooseButton: {
+						dialog: function (event, player) {
+							var targets = game.filterPlayer((current) => {
+								return current != player && current.hasSkill("twkaizeng");
+							});
+							return ui.create.dialog(
+								"###慨赠###" +
+									"选择一种基本牌的牌名或非基本牌的类型，然后令" +
+									get.translation(targets) +
+									(targets.length > 1 ? "中的一人" : "") +
+									"选择是否交给你任意张牌"
+							);
+						},
+						chooseControl: function () {
+							var list = [];
+							var basic = [];
+							for (var i = 0; i < lib.inpile.length; i++) {
+								var name = lib.inpile[i];
+								var type = get.type(name, "trick");
+								if (type == "basic") {
+									list.push(name);
+									basic.push(name);
+								} else list.add(type);
+							}
+							list.push("cancel2");
+							return list;
+						},
+						check: function (event, player) {
+							if (Math.random() < 0.4) {
+								var list = _status.event.controls.slice();
+								list.remove("du");
+								return list.randomGet();
+							}
+							var targets = game.filterPlayer(
+								(current) => current != player && current.hasSkill("twkaizeng")
+							);
+							targets.sort((a, b) => get.attitude(player, b) - get.attitude(player, a));
+							var cards = targets[0].getCards("h");
+							var list = [];
+							for (var card of cards) {
+								var type = get.type2(card);
+								if (type == "basic") list.add(get.name(card));
+								else list.add(type);
+							}
+							var need = ["trick", "equip"].randomSort();
+							need.addArray(["sha", "jiu"].randomSort());
+							for (var type of need) {
+								if (list.includes(type)) return type;
+							}
+							return list.randomGet();
+						},
+						backup: function (result, player) {
+							return {
+								audio: "twkaizeng",
+								type: result.control,
+								log: false,
+								delay: false,
+								filterTarget: function (card, player, target) {
+									return target.hasSkill("twkaizeng");
+								},
+								selectTarget: function () {
+									var player = _status.event.player;
+									var targets = game.filterPlayer(function (current) {
+										return current != player && current.hasSkill("twkaizeng");
+									});
+									return targets.length > 1 ? 1 : -1;
+								},
+								prepare: function (cards, player, targets) {
+									targets[0].logSkill("twkaizeng_want", player);
+								},
+								content: function () {
+									"step 0";
+									player.addTempSkill("twkaizeng_used");
+									var type = lib.skill.twkaizeng_want_backup.type;
+									// 临时修复
+									var isbasic = (type == "equip" || type == "trick") ? undefined : lib.card[type];
+									// var isbasic = lib.card[type];
+									target
+										.chooseCard(
+											"慨赠：是否交给" + get.translation(player) + "任意张手牌？",
+											"若你以此法：交给其至少两张牌，你摸一张牌；交给其的牌包含其选择的牌名或类型，你获得一张不为此牌名或类型的牌",
+											[1, Infinity]
+										)
+										.set("ai", (card) => {
+											if (!_status.event.goon) return -get.value(card);
+											var player = _status.event.player,
+												target = _status.event.getParent().player;
+											if (
+												ui.selected.cards.length > player.countCards("h") / 2 &&
+												ui.selected.cards.length >= 2
+											)
+												return 0;
+											var type = _status.event.type;
+											// 临时修复
+											var isbasic = (type == "equip" || type == "trick") ? undefined : lib.card[type];
+											// var isbasic = lib.card[type];
+											var add = 0;
+											if (
+												!ui.selected.cards.some(
+													(i) =>
+														get[isbasic ? "name" : "type2"](i, target) == type
+												)
+											)
+												add += 3;
+											if (ui.selected.cards.length < 2) add += 3;
+											return (
+												get.value(card, target) - get.value(card, player) + add
+											);
+										})
+										.set("type", type)
+										.set("goon", get.attitude(target, player) > 0);
+									"step 1";
+									if (result.bool) {
+										var cards = result.cards;
+										event.cards = cards;
+										target.give(cards, player);
+									} else {
+										var refuseInfo = lib.skill.twkaizeng.refuseInfo.slice();
+										if (get.attitude(target, player) < 0) refuseInfo.push("没门");
+										target.chat(refuseInfo.randomGet());
+										event.finish();
+									}
+									"step 2";
+									if (cards.length > 1) target.draw();
+									"step 3";
+									var type = lib.skill.twkaizeng_want_backup.type;
+									// 临时修复
+									var isbasic = (type == "equip" || type == "trick") ? undefined : lib.card[type];
+									// var isbasic = lib.card[type];
+									var fn = isbasic ? "name" : "type2";
+									if (cards.some((card) => get[fn](card, player) == type)) {
+										var card = get.cardPile((cardx) => {
+											return get[fn](cardx, target) != type;
+										});
+										if (card) target.gain(card, "gain2");
+									}
+									"step 4";
+									game.delayx();
+								},
+								ai: {
+									result: {
+										target: 1,
+									},
+								},
+							};
+						},
+						prompt: () => "请选择一名有【慨赠】的角色",
+					},
+					ai: {
+						order: 10,
+						result: {
+							player: function (player) {
+								var targets = game.filterPlayer((current) => {
+									return current != player && current.hasSkill("twkaizeng");
+								});
+								for (var i of targets) if (get.attitude(player, i) > 0) return 1;
+								return 0;
+							},
+						},
+					},
+				},
+				want_backup: {},
+				used: {},
+			},
+			ai: {
+				threaten: 3,
+			},
+		},
+		
 		
 	};
 	

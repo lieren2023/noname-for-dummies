@@ -2078,7 +2078,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						"useSkill",
 						(evt) =>
 							evt.event.getParent("phaseUse") == event &&
-							skills.includes(evt.sourceSkill || evt.skill)
+							skills.includes(get.sourceSkillFor(evt))
 					);
 				},
 				forced: true,
@@ -11776,7 +11776,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					order: (item, player) => {
 						if (game.hasPlayer(cur => {
 							if (player === cur || get.attitude(player, cur) <= 0) return false;
-							return Math.min(5, target.maxHp) - cur.countCards("h") > 2;
+							return Math.min(5, cur.maxHp) - cur.countCards("h") > 2;
 						})) return get.order({ name: "nanman" }, player) - 0.1;
 						return 10;
 					},

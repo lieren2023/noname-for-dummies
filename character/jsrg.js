@@ -143,10 +143,10 @@ game.import("character", function () {
 			jsrg_yuanshao: ["male", "qun", 4, ["jsrgzhimeng", "jsrgtianyu", "jsrgzhuni", "jsrghezhi"], ["zhu"]],
 			jsrg_caojiewangfu: ["male", "qun", 3, ["jsrgzonghai", "jsrgjueyin"]],
 			jsrg_songhuanghou: ["female", "qun", 3, ["jsrgzhongzen", "jsrgxuchong"]],
-			jsrg_zhangjiao: ["male", "qun", 3, ["jsrgxiangru", "jsrgwudao"]],
+			jsrg_zhangjiao: ["male", "qun", 4, ["jsrgxiangru", "jsrgwudao"]],
 			jsrg_yangqiu: ["male", "qun", 4, ["jsrgsaojian"]],
 			jsrg_dongzhuo: ["male", "qun", 4, ["jsrgguanshi", "jsrgcangxiong", "jsrgjiebing"]],
-			jsrg_zhanghuan: ["male", "qun", 3, ["jsrgzhushou", "jsrgyangge"]],
+			jsrg_zhanghuan: ["male", "qun", 4, ["jsrgzhushou", "jsrgyangge"]],
 			jsrg_liubiao: ["male", "qun", 3, ["jsrgyansha", "jsrgqingping"]],
 			jsrg_yl_luzhi: ["male", "qun", 3, ["jsrgruzong", "jsrgdaoren"]],
 			jsrg_chenfan: ["male", "qun", 3, ["jsrggangfen", "jsrgdangren"]],
@@ -236,6 +236,9 @@ game.import("character", function () {
 			},
 		},
 		characterFilter: {
+			jsrg_caocao(mode) {
+				return mode != "chess" && mode != "tafang";
+			},
 			jsrg_xushao: function (mode) {
 				return mode != "guozhan";
 			},
@@ -973,6 +976,7 @@ game.import("character", function () {
 				trigger: { player: "phaseZhunbeiBegin" },
 				forced: true,
 				juexingji: true,
+				seatRelated: true,
 				skillAnimation: true,
 				animationColor: "gray",
 				filter(event, player) {
@@ -997,13 +1001,13 @@ game.import("character", function () {
 					const mode = get.mode();
 					if (mode === "identity") {
 						if (_status.mode === "purple") {
-							return game.findPlayer(current => {
+							return game.findPlayer2(current => {
 								return current.isZhu2() && current.identity.slice(0, 1) === player.identity.slice(0, 1);
 							});
 						}
-						return game.findPlayer(current => current.isZhu2());
+						return game.findPlayer2(current => current.isZhu2());
 					} else {
-						return game.findPlayer(current => current.getSeatNum() === 1);
+						return game.findPlayer2(current => current.getSeatNum() === 1);
 					}
 				},
 			},
@@ -8606,7 +8610,7 @@ game.import("character", function () {
 				forced: true,
 				locked: false,
 				filter: function (event, player) {
-					var skill = event.sourceSkill || event.skill;
+					var skill = get.sourceSkillFor(event);
 					return (
 						player.invisibleSkills.includes(skill) &&
 						lib.skill.sbyingmen.getSkills(player.getStorage("sbyingmen"), player).includes(skill)
@@ -8618,7 +8622,7 @@ game.import("character", function () {
 					var drawers = visitors.filter(function (name) {
 						return (
 							Array.isArray(lib.character[name]) &&
-							lib.character[name][3].includes(trigger.sourceSkill)
+							lib.character[name][3].includes(get.sourceSkillFor(trigger))
 						);
 					});
 					event.drawers = drawers;
@@ -10933,8 +10937,24 @@ game.import("character", function () {
 				audio: 4,
 				trigger: { global: "phaseEnd" },
 				filter: function (event, player) {
-					var zhu = get.zhu(player) || game.findPlayer((current) => current.getSeatNum() == 1);
-					return event.player == zhu;
+					return game
+						.filterPlayer(target => {
+							switch (get.mode()) {
+								case "identity":
+									return target.isZhu;
+								case "guozhan":
+									get.is.jun(target);
+								case "versus": {
+									if (["three", "four", "guandu"].includes(_status.mode)) return target.identity == "zhu";
+								}
+								case "doudizhu":
+								case "boss":
+									return target.identity == "zhu";
+								default:
+									return true;
+							}
+						})
+						.includes(event.player);
 				},
 				locked: false,
 				group: "jsrgzhenglve_damage",
@@ -11072,7 +11092,7 @@ game.import("character", function () {
 						});
 					"step 1";
 					if (result.bool) {
-						var target = result.targets[0];
+						const target = result.targets[0];
 						player.logSkill("jsrgpingrong", target);
 						player.addTempSkill("jsrgpingrong_used", "roundStart");
 						target.removeMark("jsrgzhenglve_mark", target.countMark("jsrgzhenglve_mark"));
@@ -11525,8 +11545,14 @@ game.import("character", function () {
 			jsrg_caocao: "梦曹操",
 			jsrg_caocao_prefix: "梦",
 			jsrgzhenglve: "政略",
-			jsrgzhenglve_info:
-				"①主公的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若主公本回合没有造成过伤害，则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info: "①一号位的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若一号位本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_identity: "①主公的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若主公本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_guozhan: "①君主的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若君主本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_doudizhu: "①地主的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若地主本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_boss: "①BOSS的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若BOSS本回合没有造成过伤害，则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_versus_three: "①主公的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若主公本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_versus_four: "①主公的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若主公本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
+			jsrgzhenglve_info_versus_guandu: "①主公的回合结束时，你可以摸一张牌，然后令一名没有“猎”标记的角色获得“猎”（若主公本回合没有造成过伤害则改为至多两名）。②你对有“猎”的角色使用牌无距离和次数限制。③每回合限一次。当你对有“猎”的角色造成伤害后，你可以摸一张牌并获得造成此伤害的牌。",
 			jsrghuilie: "会猎",
 			jsrghuilie_info:
 				"觉醒技。准备阶段，若有“猎”的角色数大于2，你减1点体力上限，然后获得〖平戎〗和〖飞影〗。",

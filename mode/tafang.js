@@ -61,7 +61,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			ui.placeChess = result.ui.placeChess;
 			ui.click.moveContainer = result.ui.click.moveContainer;
 			for (var i in lib.skill) {
-				if (lib.skill[i].changeSeat) {
+				if (lib.skill[i].seatRelated) {
 					lib.skill[i] = {};
 					if (lib.translate[i + "_info"]) {
 						lib.translate[i + "_info"] = "此模式下不可用";

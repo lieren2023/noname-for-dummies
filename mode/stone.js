@@ -2383,7 +2383,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 
 				lib.skill._recasting.usable = 3;
 				for (i in lib.skill) {
-					if (lib.skill[i].changeSeat) {
+					if (lib.skill[i].seatRelated) {
 						lib.skill[i] = {};
 						if (lib.translate[i + "_info"]) {
 							lib.translate[i + "_info"] = "此模式下不可用";

@@ -516,11 +516,11 @@ game.import("card", function () {
 				mod: {
 					globalFrom(from,to,distance){
 						const num=from.storage.mengchong_skill;
-						return distance+num;
+						if(typeof num == "number") return distance+num;
 					},
 					globalTo(from,to,distance){
 						const num=to.storage.mengchong_skill;
-						return distance+num;
+						if(typeof num == "number") return distance+num;
 					},
 					canBeReplaced: function (card, player) {
 						if (player.getEquips("mengchong").includes(card)) return false;

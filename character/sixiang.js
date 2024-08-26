@@ -600,6 +600,7 @@ game.import("character", function () {
 				limited: true,
 				animationColor: "fire",
 				changeSeat: true,
+				seatRelated: true,
 				async content(event, trigger, player) {
 					const target = event.targets[0];
 					player.awakenSkill(event.name);

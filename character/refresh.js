@@ -304,7 +304,7 @@ game.import("character", function () {
 			},
 		},
 		perfectPair: {
-			sunben: ["zhouyu", "taishici", "daqiao"],
+			sunben: ["zhouyu", "taishici", "re_taishici", "daqiao"],
 			re_xushu: ["zhaoyun", "sp_zhugeliang"],
 			re_guohuai: ["xiahouyuan", "zhanghe"],
 		},
@@ -11437,7 +11437,7 @@ game.import("character", function () {
 			},
 			rejiushi: {
 				audio: 2,
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "rejiushi_mb_caomao", mb_caomao_shadow: "rejiushi_mb_caomao", mb_caomao_dead: "rejiushi_mb_caomao" },
 				group: ["rejiushi1", "rejiushi2", "rejiushi3", "rejiushi_gain"],
 				subfrequent: ["gain"],
 				subSkill: {
@@ -11464,7 +11464,7 @@ game.import("character", function () {
 					return false;
 				},
 				audio: "rejiushi",
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "rejiushi_mb_caomao", mb_caomao_shadow: "rejiushi_mb_caomao", mb_caomao_dead: "rejiushi_mb_caomao" },
 				enable: "chooseToUse",
 				filter: function (event, player) {
 					if (player.classList.contains("turnedover")) return false;
@@ -15188,6 +15188,7 @@ game.import("character", function () {
 					},
 					result: {
 						player(player, target) {
+							if(!ui.selected.cards.length) return 0;
 							let card = ui.selected.cards[0], val = -get.value(card, player) / 6;
 							if (get.position(card) == "e") val += 2;
 							if (player.hp > target.hp) val++;
@@ -15197,6 +15198,7 @@ game.import("character", function () {
 							return val;
 						},
 						target: function (player, target) {
+							if(!ui.selected.cards.length) return 0;
 							let card = ui.selected.cards[0],
 								val = get.position(card) == "e" ? get.value(card, target) / 6 : 0;
 							if (target.hp > player.hp) val++;
@@ -18793,8 +18795,7 @@ game.import("character", function () {
 			re_simalang: "界司马朗",
 			re_simalang_prefix: "界",
 			requji: "去疾",
-			requji_info:
-				"出牌阶段限一次，你可以弃置至多X张牌并令等量名角色回复1点体力，然后仍处于受伤状态的目标角色摸一张牌，若你以此法弃置了黑色牌，你失去1点体力（X为你已损失的体力值）。",
+			requji_info: "出牌阶段限一次，你可以弃置X张牌（X为你已损失的体力值）并令至多X名角色回复1点体力，然后仍处于受伤状态的目标角色摸一张牌。若你以此法弃置了黑色牌，你失去1点体力。",
 			rejunbing: "郡兵",
 			rejunbing_info:
 				"一名角色的结束阶段，若其手牌数小于其体力值，其可以摸一张牌并将所有手牌交给你，然后你可以交给其等量的牌。",

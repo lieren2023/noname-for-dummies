@@ -178,15 +178,12 @@ game.import("character", function () {
 				},
 			},
 			sbluanwu: {
-				audio: "luanwu",
+				audio: 4,
 				inherit: "luanwu",
 				contentBefore() {
 					player.addTempSkill("sbluanwu_add");
 				},
 				subSkill: {
-					jiaxu: {
-						audio: 4,
-					},
 					add: {
 						trigger: {
 							global: "loseHpEnd",
@@ -1039,7 +1036,9 @@ game.import("character", function () {
 						if (
 							!game.hasPlayer((current) => {
 								const evt = event.getl(current);
-								return evt.cards && evt.cards.length > 0;
+								// 临时修改（by 棘手怀念摧毁）
+								return evt.cards && evt.cards.someInD("od");
+								// return evt.cards?.someInD("od");
 							})
 						)
 							return false;
@@ -1051,12 +1050,12 @@ game.import("character", function () {
 				},
 				group: "sbqingjian_give",
 				async content(event, trigger, player) {
-					let cards = trigger.cards.slice();
+					let cards = trigger.cards.filterInD("od").slice();
 					const maxNum = Math.max(1, player.getHp() - 1);
 					const myLen = player.getExpansions("sbqingjian").length,
 						cardsLen = trigger.cards.length;
-					const overflow = myLen + cardsLen - maxNum;
-					if (overflow > 0) cards.randomRemove(overflow);
+					const num = Math.min(cardsLen, maxNum - myLen);
+					if (num > 0) cards = cards.randomGets(num);
 					const next = player.addToExpansion(cards, "gain2");
 					next.gaintag.add("sbqingjian");
 					await next;
@@ -1911,7 +1910,7 @@ game.import("character", function () {
 					},
 				],
 				audio: 2,
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "sbfangzhu_mb_caomao", mb_caomao_shadow: "sbfangzhu_mb_caomao", mb_caomao_dead: "sbfangzhu_mb_caomao" },
 				enable: "phaseUse",
 				filter(event, player) {
 					return get.info("sbfangzhu").getList.some(effect => {
@@ -1957,7 +1956,7 @@ game.import("character", function () {
 						return {
 							effect: effect,
 							audio: "sbfangzhu",
-							audioname: ["mb_caomao"],
+							audioname2: { mb_caomao: "sbfangzhu_mb_caomao", mb_caomao_shadow: "sbfangzhu_mb_caomao", mb_caomao_dead: "sbfangzhu_mb_caomao" },
 							filterCard: () => false,
 							selectCard: -1,
 							filterTarget: effect.filterTarget,
@@ -3745,21 +3744,14 @@ game.import("character", function () {
 							if (!lib.inpile.includes("nanman")) lib.inpile.add("nanman");
 						});
 					}
-					player
-						.chooseTarget(
-							get.prompt("sbjuxiang"),
-							"将游戏外的随机一张【南蛮入侵】交给一名角色（剩余" +
-								get.cnNumber(_status.sbjuxiang_nanman.length) +
-								"张）"
-						)
-						.set("ai", (target) => {
-							var player = _status.event.player;
-							return (
-								Math.max(0, target.getUseValue({ name: "nanman" })) *
-								get.attitude(player, target) *
-								(target == player ? 0.5 : 1)
-							);
-						});
+					player.chooseTarget("请选择【巨象】的目标", "将游戏外的随机一张【南蛮入侵】交给一名角色（剩余" + get.cnNumber(_status.sbjuxiang_nanman.length) + "张）", true).set("ai", target => {
+						var player = _status.event.player;
+						return (
+							Math.max(0, target.getUseValue({ name: "nanman" })) *
+							get.attitude(player, target) *
+							(target == player ? 0.5 : 1)
+						);
+					});
 					"step 1";
 					if (result.bool) {
 						var target = result.targets[0];
@@ -6760,7 +6752,7 @@ game.import("character", function () {
 			},
 			sbqingzheng: {
 				audio: 2,
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "sbqingzheng_mb_caomao", mb_caomao_shadow: "sbqingzheng_mb_caomao", mb_caomao_dead: "sbqingzheng_mb_caomao" },
 				trigger: { player: "phaseUseBegin" },
 				filter: function (event, player) {
 					return player.countCards("h") > 0;
@@ -8541,7 +8533,7 @@ game.import("character", function () {
 			},
 			//华雄
 			sbyangwei: {
-				audio: 3,
+				audio: 2,
 				enable: "phaseUse",
 				filter: function (event, player) {
 					return !player.hasSkill("sbyangwei_counter", null, null, false);
@@ -9532,8 +9524,7 @@ game.import("character", function () {
 			sblieren_info:
 				"当你使用【杀】指定唯一目标后，你可以摸一张牌，然后与其拼点。若你赢，此【杀】结算结束后，你可以对另一名其他角色造成1点伤害。",
 			sbjuxiang: "巨象",
-			sbjuxiang_info:
-				"锁定技。①【南蛮入侵】对你无效。②当其他角色使用【南蛮入侵】结算结束后，你获得此牌对应的所有实体牌。③结束阶段，若你未于本回合使用过【南蛮入侵】，你可以将一张游戏外的随机【南蛮入侵】（共2张）交给一名角色。",
+			sbjuxiang_info: "锁定技。①【南蛮入侵】对你无效。②当其他角色使用【南蛮入侵】结算结束后，你获得此牌对应的所有实体牌。③结束阶段，若你未于本回合使用过【南蛮入侵】，你将一张游戏外的随机【南蛮入侵】（共2张）交给一名角色。",
 			sb_menghuo: "谋孟获",
 			sbhuoshou: "祸首",
 			sbhuoshou_info:

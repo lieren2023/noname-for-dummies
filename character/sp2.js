@@ -1823,6 +1823,7 @@ game.import("character", function () {
 						ai: {
 							effect: {
 								player_use: function (card, player, target) {
+									if (get.itemtype(card) !== "card" || !player || !target) return;
 									var targets = game.filterPlayer(
 										(targetx) =>
 											targetx != player &&
@@ -2164,10 +2165,11 @@ game.import("character", function () {
 							if (get.attitude(player, result.winner) <= 0) return 'cancel2';
 							if (!game.hasPlayer(current => {
 								return result.winner.canUse({ name: 'sha' }, current, false) && get.effect(current, { name: 'sha' }, result.winner, result.winner) > 0;
-							})) return '选项一';
+							}) || !cards.length) return '选项一';
 							let eff1 = result.winner.getUseValue({ name: 'sha' }), eff2 = 0;
-							if (cards[0]) eff2 = get.value(cards[0], result.winner);
-							if (cards[1]) eff2 += get.value(cards[1], result.winner);
+							for (let card of cards) {
+								eff2 += get.value(card, result.winner);
+							}
 							if (eff1 > eff2 * 2.5) return '选项二';
 							return '选项一';
 						}()).forResult();
@@ -2540,9 +2542,7 @@ game.import("character", function () {
 						},
 						direct: true,
 						content: function () {
-							player
-								.chooseUseTarget(trigger.cards[0], get.prompt("dcjiaoxia"), false, false)
-								.set("prompt2", "使用" + get.translation(card)).logSkill = "dcjiaoxia";
+							player.chooseUseTarget(trigger.cards[0], get.prompt("dcjiaoxia"), false, false).set("prompt2", "使用" + get.translation(trigger.cards[0])).logSkill = "dcjiaoxia";
 						},
 					},
 				},
@@ -3188,7 +3188,7 @@ game.import("character", function () {
 						popup: false,
 						onremove: true,
 						filter: function (event, player) {
-							var skill = event.sourceSkill || event.skill;
+							var skill = get.sourceSkillFor(event);
 							return (
 								player.getStorage("dclongsong_remove").includes(skill) &&
 								!player.getStockSkills(false, true).includes(skill)
@@ -3196,7 +3196,7 @@ game.import("character", function () {
 						},
 						content: function () {
 							"step 0";
-							var skill = trigger.sourceSkill || trigger.skill;
+							var skill = get.sourceSkillFor(trigger);
 							player.removeSkills(skill);
 							player.unmarkAuto("dclongsong_remove", [skill]);
 						},
@@ -3637,7 +3637,7 @@ game.import("character", function () {
 					},
 					*/
 					attackRange: function (player, num) {
-						if (!player.getEquips(1).length) return num + 1;
+						return num + 1;
 					},
 					selectTarget: function (card, player, range) {
 						if (card.name == "sha") {
@@ -4689,7 +4689,7 @@ game.import("character", function () {
 			},
 			//牛辅
 			dcxiaoxi: {
-				auto: 2,
+				audio: 2,
 				trigger: { player: "phaseUseBegin" },
 				forced: true,
 				filter: function (event, player) {
@@ -12293,14 +12293,14 @@ game.import("character", function () {
 				filter: function (event, player) {
 					var info = get.info(event.skill);
 					if (info && info.charlotte) return false;
-					var skill = event.sourceSkill || event.skill;
+					var skill = get.sourceSkillFor(event);
 					return player.storage.pingjian_check[skill];
 				},
 				direct: true,
 				firstDo: true,
 				priority: Infinity,
 				content: function () {
-					var skill = trigger.sourceSkill || trigger.skill;
+					var skill = get.sourceSkillFor(trigger);
 					player.removeSkill(skill);
 					const names =
 						player.tempname && player.tempname.filter((i) => lib.character[i][3].includes(skill));
@@ -15303,7 +15303,7 @@ game.import("character", function () {
 			dctingxian: "铤险",
 			dctingxian_info: "每回合限一次。当你使用【杀】指定最后一个目标后，你可以摸X张牌，然后可以令此【杀】对其中至多X个目标无效（X为你装备区的牌数+1）。",
 			dcbenshi: "奔矢",
-			dcbenshi_info: "锁定技。①若你未装备武器牌，则你的攻击范围+1。②由你使用的【杀】的牌面信息中的“使用目标”产生的规则改为“攻击范围内的所有角色”。",
+			dcbenshi_info: "锁定技。①你的攻击范围+1。②由你使用的【杀】的牌面信息中的“使用目标”产生的规则改为“攻击范围内的所有角色”。",
 			sunhuan: "孙桓",
 			dcniji: "逆击",
 			dcniji_info:

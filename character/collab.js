@@ -149,12 +149,12 @@ game.import("character", function () {
 										cards
 											.filter(j => player.canUse(j, b, true, true) && get.effect(b, j, player, player) > 0)
 											.reduce((sum, card) => {
-												return sum + get.effect(card, b, player, player);
+												return sum + get.effect(b, card, player, player);
 											}, 0) -
 										cards
 											.filter(j => player.canUse(j, a, true, true) && get.effect(a, j, player, player) > 0)
 											.reduce((sum, card) => {
-												return sum + get.effect(card, a, player, player);
+												return sum + get.effect(a, card, player, player);
 											}, 0)
 									);
 								})[0];
@@ -275,7 +275,7 @@ game.import("character", function () {
 				},
 				filter(event, player) {
 					if (["global", "equip"].includes(event.type)) return false;
-					let skill = event.sourceSkill || event.skill;
+					let skill = get.sourceSkillFor(event);
 					if (!skill || skill == "gouzhu") return false;
 					let info = get.info(skill);
 					while (true) {
@@ -328,7 +328,7 @@ game.import("character", function () {
 				locked: false,
 				onremove: true,
 				async content(event, trigger, player) {
-					let skill = trigger.sourceSkill || trigger.skill,
+					let skill = get.sourceSkillFor(trigger),
 						info = get.info(skill);
 					while (true) {
 						if (info && !info.sourceSkill) break;
@@ -398,7 +398,7 @@ game.import("character", function () {
 							});
 					return skills;
 				},
-				excludedskills: ["boss_juejing", "xinlonghun", "relonghun", "sbwusheng", "jsrgnianen", "jsrgguanjue", "shencai", "sbpaoxiao", "sbliegong", "pshengwu"],
+				prioritySkills: ["boss_juejing", "xinlonghun", "relonghun", "sbwusheng", "jsrgnianen", "jsrgguanjue", "shencai", "sbpaoxiao", "sbliegong", "pshengwu"],
 				trigger: {
 					global: "phaseBefore",
 					player: ["enterGame", "useCardAfter", "respondAfter"],
@@ -439,7 +439,7 @@ game.import("character", function () {
 						next.set("ai", button => {
 							const skill = button.link,
 								choice = get.event("choice");
-							if (get.info("olhuyi").excludedskills.includes(skill)) return 3;
+							if (get.info("olhuyi").prioritySkills.includes(skill)) return 3;
 							if (skill == choice) return 2;
 							return 1;
 						});
@@ -486,7 +486,7 @@ game.import("character", function () {
 							next.set("ai", button => {
 								const skill = button.link;
 								let skills = get.event("skills").slice(0);
-								skills.removeArray(get.info("olhuyi").excludedskills);
+								skills.removeArray(get.info("olhuyi").prioritySkills);
 								if (skills.length < 4) return 0;
 								if (skills.includes(skill)) return 2;
 								return Math.random();
@@ -5318,6 +5318,11 @@ game.import("character", function () {
 			"#huangzhong:die": "不得不服老啦~",
 			
 			// onlyOL
+			"#olchengxiang1": "谁知道称大象需要几步？",
+			"#olchengxiang2": "象虽大，然可并舟称之。",
+			"#olrenxin1": "待三日中，然后自归。",
+			"#olrenxin2": "王者仁心，尚性善之本。",
+			"#ol_caochong:die": "性慧早夭，为之奈何？",
 			"#olxuanhuo1": "眩惑之术，非为迷惑，乃为明辨贤愚。",
 			"#olxuanhuo2": "以眩惑试人心，以真情待贤才，方能得天下。",
 			"#olenyuan1": "恩重如山，必报之以雷霆之势！",
@@ -6012,12 +6017,22 @@ game.import("character", function () {
 			"#yinghun_re_sunce2": "父亲，吾定不负你期望！",
 			
 			// sb
+			"#sbgongqi1": "敌寇首级，且看吾一箭取之。",
+			"#sbgongqi2": "末将尤善骑射，今示于主公一观。",
+			"#sbjiefan1": "一箭可解之事，何使公忧烦至此。",
+			"#sbjiefan2": "贼盛不畏惧，有吾解烦营。",
+			"#sb_handang:die": "吾子难堪大用，主公，勿以重任相托……",
+			"#sbyicong1": "尔等性命，皆在吾甲骑之间。",
+			"#sbyicong2": "围以疲敌，不做无谓之战。",
+			"#sbqiaomeng1": "观今天下，何有我义从之敌。",
+			"#sbqiaomeng2": "众将征战所得，皆为汝等所有。",
+			"#sb_gongsunzan:die": "称雄半生，岂可为他人俘虏，啊啊啊……",
 			"#sbwansha1": "世人皆行殊途，于死亦有同归！",
 			"#sbwansha2": "九幽泉下，是你最好的归宿。",
-			"#sbluanwu_jiaxu1": "降则任人鱼肉，竭战或可保生！",
-			"#sbluanwu_jiaxu2": "一将功成需万骨，何妨多添此一城！",
-			"#sbluanwu_jiaxu3": "人之道，损不足以奉有余！",
-			"#sbluanwu_jiaxu4": "寒烟起于朽木，白骨亦可生花！",
+			"#sbluanwu1": "降则任人鱼肉，竭战或可保生！",
+			"#sbluanwu2": "一将功成需万骨，何妨多添此一城！",
+			"#sbluanwu3": "人之道，损不足以奉有余！",
+			"#sbluanwu4": "寒烟起于朽木，白骨亦可生花！",
 			"#sbweimu1": "执棋之人，不可入局者共论！",
 			"#sbweimu2": "世有千万门法，与我均无纠葛。",
 			"#sbweimu3": "方圆之间，参透天地万物心！",
@@ -6760,6 +6775,9 @@ game.import("character", function () {
 			"#spmiewu2": "吾军势如破竹，江东六郡唾手可得。",
 			
 			// sp
+			"#olpingduan1": "草原儿郎，张弓善射，勇不可当。",
+			"#olpingduan2": "策马逐雄鹰，孤当与尔等共分天下。",
+			"#ol_kebineng:die": "未驱青马饮于黄河，死难瞑目……",
 			"#olchishi1": "柴米油盐之细，不逊兵家之谋。",
 			"#olchishi2": "治大家如烹小鲜，须面面俱到。",
 			"#olweimian1": "不过二三小事，夫君何须烦恼。",
@@ -8487,6 +8505,11 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+			"#dcsbzuojun1": "彼不得安，我取其逸，则大局可定。",
+			"#dcsbzuojun2": "义者无敌，骄者先败，今非用兵之时。",
+			"#dcsbmuwang1": "授熟读十万书，腹中唯无降字。",
+			"#dcsbmuwang2": "长河没日，天岂无再明之时！",
+			"#dc_sb_jushou:die": "身虽死，忠魂不灭……",
 			"#dcbizu1": "花既繁于枝，当为众乔灌荫。",
 			"#dcbizu2": "手执金麾伞，可为我族遮风挡雨。",
 			"#dcwuxie1": "一介弱质女流，安能登辇拔剑？",
@@ -9888,8 +9911,8 @@ game.import("character", function () {
 			"#gz_zuoci:die": "腾云跨风，飞升太虚……",
 			"#gz_bianfuren:die": "心肝涂地，惊愕断绝……",
 			"#gz_xunyou:die": "主公，臣下先行告退……",
-			"#xuanlve1": "强敌破阵，斩将于须臾！",
-			"#xuanlve2": "轻装急袭，破敌于千里！",
+			"#xuanlve1": "强兵破阵，斩将于须臾。",
+			"#xuanlve2": "轻装急袭，破敌于千里。",
 			"#yongjin1": "冲啊，扬我东吴之勇！",
 			"#yongjin2": "东吴虎威，岂是尔等可犯！",
 			"#gz_lingtong:die": "大丈夫不惧死亡……",

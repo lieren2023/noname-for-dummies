@@ -16,7 +16,7 @@ game.import("character", function () {
 				sp_qifu: ["ol_jiangwan", "ol_feiyi", "caoying", "panshu", "caochun", "yuantanyuanshang", "caoshuang", "wolongfengchu", "guansuo", "baosanniang", "fengfangnv", "jin_zhouchu"],
 				sp_wanglang: ["ol_wanglang", "ol_puyuan", "ol_zhouqun"],
 				sp_zhongdan: ["cuiyan", "huangfusong"],
-				sp_guozhan2: ["sp_dongzhuo", "zhangren"],
+				sp_guozhan2: ["sp_dongzhuo"],
 				sp_others: ["hanba", "caiyang"],
 				sp_waitforsort: ["ol_peixiu", "kongshu", "ol_tw_zhangji", "mawan"],
 			},
@@ -92,7 +92,7 @@ game.import("character", function () {
 			jin_guohuai: ["female", "jin", 3, ["zhefu", "yidu"]],
 			xiahouxuan: ["male", "wei", 3, ["olhuanfu", "olqingyi", "olzeyue"]],
 			dengzhong: ["male", "wei", 4, ["dzkanpo", "dzgengzhan"]],
-			wangyan: ["male", "jin", 3, ["yangkuang", "cihuang", "sanku"]],
+			wangyan: ["male", "jin", 4, ["yangkuang", "cihuang", "sanku"]],
 			huojun: ["male", "shu", 4, ["qiongshou", "fenrui"]],
 			caoxiancaohua: ["female", "qun", 3, ["huamu", "qianmeng", "liangyuan", "jisi"]],
 			jin_zhouchu: ["male", "jin", 4, ["shanduan", "yilie"]],
@@ -209,7 +209,7 @@ game.import("character", function () {
 			dingfeng: ["male", "wu", 4, ["reduanbing", "refenxun"]],
 			shamoke: ["male", "shu", 4, ["gzjili"]],
 
-			zhangren: ["male", "qun", 4, ["chuanxin", "zfengshi"]],
+			// zhangren: ["male", "qun", 4, ["chuanxin", "zfengshi"]],
 
 			wangyun: ["male", "qun", 4, ["xinlianji", "xinmoucheng"], ["clan:太原王氏"]],
 			sunqian: ["male", "shu", 3, ["qianya", "shuimeng"]],
@@ -350,7 +350,7 @@ game.import("character", function () {
 			dingfeng: "吴国将领。年少时以骁勇为小将，经常奋勇杀敌，屡立功勋，此后又于东兴之战中“雪中奋短兵”，大破侵犯东吴的魏军。吴景帝孙休在位时，丁奉设计除掉了东吴的权臣孙綝，被拜为大将军，后为右大司马、左军师。",
 			panfeng: "冀州牧韩馥部下的上将。当十八路诸侯讨伐董卓之时，他奉韩馥之命前往汜水关前挑战董卓部下大将华雄，不敌被斩。",
 			maliang: "字季常，因眉毛中有白毛，人称白眉马良，马谡的兄长。马良在兄弟五人中名声最佳，因此有“马氏五常，白眉最良”的说法。",
-			zhugedan: "字公休，曹魏后期的重要将领，诸葛亮的族弟。曾与司马师一同平定毌丘俭、文钦的叛乱。之后因与被诛的夏侯玄、邓飏交厚，且见到王淩、毌丘俭等人的覆灭而心不自安，于甘露二年起兵，并得到东吴的支援，但于次年被镇压，被大将军司马胡奋所斩。",
+			zhugedan: "字公休，曹魏后期的重要将领，诸葛亮的族弟。曾与司马师一同平定毌丘俭、文钦的叛乱。之后因与被诛的夏侯玄、邓飏交厚，且见到王凌、毌丘俭等人的覆灭而心不自安，于甘露二年起兵，并得到东吴的支援，但于次年被镇压，被大将军司马胡奋所斩。",
 			hetaihou: "大将军何进的妹妹，汉灵帝刘宏第二任皇后，汉少帝刘辩的生母。何氏出身于屠户家庭，后选入掖庭，得到汉灵帝临幸，生下皇子刘辩，并受封贵人。光和三年（180年），立为皇后。中平六年（189年），汉灵帝去世，刘辩继位，尊何氏为皇太后。董卓进京，废黜刘辩，不久毒杀刘辩及何氏。",
 			sunluyu: "又名小虎，孙权与步练师之女。吴后期，孙鲁班诬陷孙鲁育参与谋反，于是孙峻杀害了孙鲁育。",
 			wenpin: "本为刘表大将，刘表死后，跟随刘琮投降曹操。后曹操令其镇守江夏，多次阻止了关羽和孙权的进攻，为曹操倚为屏障的大将之一。",
@@ -14718,12 +14718,16 @@ game.import("character", function () {
 				ai: {
 					result: {
 						player: function (player, target) {
-							return (target.getAllHistory("useCard", evt => evt.card.name == "sha").length + 1) * lib.card.juedou.ai.result.player.apply(this, arguments);
+							let num = target.getAllHistory("useCard", evt => evt.card.name == "sha").length + 1;
+							if (num < target.hp) return 0;
+							return num * lib.card.juedou.ai.result.player.apply(this, arguments);
 						},
 						target: function (player, target) {
-							var num = target.getAllHistory("useCard", evt => evt.card.name == "sha").length + 1;
+							let num = target.getAllHistory("useCard", evt => evt.card.name == "sha").length + 1;
 							if (num < target.hp) return 0;
-							return num * lib.card.juedou.ai.result.target;
+							let res = num * lib.card.juedou.ai.result.target.apply(this, arguments);
+							if (res >= 0) return 0;
+							return res;
 						},
 					},
 				},
@@ -22812,7 +22816,7 @@ game.import("character", function () {
 							});
 						if (cardsx.length > 0) {
 							current.addSkill("xiehui2");
-							current.addGaintag(cards, "xiehui");
+							current.addGaintag(cards.filter(card => cards.includes(card) && get.color(card, player) == "black"), "xiehui");
 						}
 					});
 				},
@@ -31196,7 +31200,7 @@ game.import("character", function () {
 			fanjiangzhangda: ["fanjiangzhangda", "jsrg_fanjiangzhangda"],
 			simalang: ["re_simalang", "simalang"],
 			zhugedan: ["re_zhugedan", "zhugedan"],
-			zhangren: ["jsrg_zhangren", "zhangren"],
+			dc_zhangren: ["jsrg_zhangren", "dc_zhangren"],
 			ol_wenqin: ["ol_wenqin", "pe_wenqin", "mb_wenqin"],
 			lukai: ["ol_lukai", "lukai"],
 			liupi: ["ol_liupi", "liupi"],

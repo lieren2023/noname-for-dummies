@@ -526,8 +526,8 @@ game.import("character", function () {
 				audio: 4,
 				getNum(event, player) {
 					let num = 0;
-					if (game.countPlayer2(current => current.hasHistory("lose")) > 1) num++;
-					if (game.countPlayer2(current => current.hasHistory("damage")) > 1) num++;
+					if (game.countPlayer2(current => current.hasHistory("lose")) >= 1) num++;
+					if (game.countPlayer2(current => current.hasHistory("damage")) >= 1) num++;
 					if (event.name == "phase") return num;
 					return Math.max(game.countPlayer(), player.getHp());
 				},
@@ -2089,7 +2089,7 @@ game.import("character", function () {
 			},
 			mbcmqingzheng: {
 				audio: "sbqingzheng",
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "sbqingzheng_mb_caomao", mb_caomao_shadow: "sbqingzheng_mb_caomao", mb_caomao_dead: "sbqingzheng_mb_caomao" },
 				persevereSkill: true,
 				trigger: { player: "phaseUseBegin" },
 				filter(event, player) {
@@ -2243,7 +2243,7 @@ game.import("character", function () {
 					},
 					turnback: {
 						audio: "rejiushi",
-						audioname: ["mb_caomao"],
+						audioname2: { mb_caomao: "rejiushi_mb_caomao", mb_caomao_shadow: "rejiushi_mb_caomao", mb_caomao_dead: "rejiushi_mb_caomao" },
 						persevereSkill: true,
 						trigger: { player: "damageEnd" },
 						check(event, player) {
@@ -2262,7 +2262,7 @@ game.import("character", function () {
 					},
 					gain: {
 						audio: "rejiushi",
-						audioname: ["mb_caomao"],
+						audioname2: { mb_caomao: "rejiushi_mb_caomao", mb_caomao_shadow: "rejiushi_mb_caomao", mb_caomao_dead: "rejiushi_mb_caomao" },
 						persevereSkill: true,
 						trigger: { player: "turnOverAfter" },
 						frequent: true,
@@ -2278,7 +2278,7 @@ game.import("character", function () {
 			},
 			mbcmfangzhu: {
 				audio: "sbfangzhu",
-				audioname: ["mb_caomao"],
+				audioname2: { mb_caomao: "sbfangzhu_mb_caomao", mb_caomao_shadow: "sbfangzhu_mb_caomao", mb_caomao_dead: "sbfangzhu_mb_caomao" },
 				persevereSkill: true,
 				inherit: "sbfangzhu",
 				filter(event, player) {
@@ -2327,6 +2327,7 @@ game.import("character", function () {
 						return {
 							num: links[0],
 							audio: "sbfangzhu",
+							audioname2: { mb_caomao: "sbfangzhu_mb_caomao", mb_caomao_shadow: "sbfangzhu_mb_caomao", mb_caomao_dead: "sbfangzhu_mb_caomao" },
 							filterCard: () => false,
 							selectCard: -1,
 							filterTarget(card, player, target) {
@@ -2512,6 +2513,9 @@ game.import("character", function () {
 					},
 				},
 			},
+			sbqingzheng_mb_caomao: { audio: 2 },
+			rejiushi_mb_caomao: { audio: 2 },
+			sbfangzhu_mb_caomao: { audio: 2 },
 			//杨奉
 			mbxuetu: {
 				audio: 2,
@@ -2519,6 +2523,10 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 2,
 				filter(event, player) {
+					if (!game.hasPlayer(current => current.isDamaged())) {
+						if (player.countMark("mbxuetu_status") == 1 && player.getStorage("mbxuetu_used").includes(1)) return false;
+						if (player.countMark("mbxuetu_status") == 0 && !player.storage.mbxuetu) return false;
+					}
 					if (player.countMark("mbxuetu_status") !== 1 && player.getStat("skill").mbxuetu) return false;
 					return true;
 				},
@@ -2540,6 +2548,7 @@ game.import("character", function () {
 							list[player.storage.mbxuetu ? "shift" : "pop"]();
 						} else {
 							list = list.filter((choice, index) => {
+								if (index == 0 && !game.hasPlayer(current => current.isDamaged())) return false;
 								return !player.getStorage("mbxuetu_used").includes(index);
 							});
 						}
@@ -2555,7 +2564,11 @@ game.import("character", function () {
 							choice: result.control.includes("回复") ? 0 : 1,
 							filterCard: () => false,
 							selectCard: -1,
-							filterTarget: true,
+							filterTarget(card, player, target) {
+								const { choice } = get.info("mbxuetu_backup");
+								if (player.countMark("mbxuetu_status") !== 2 && choice == 0) return target.isDamaged();
+								return true;
+							},
 							async content(event, trigger, player) {
 								const { choice } = get.info("mbxuetu_backup");
 								const target = event.targets[0];
@@ -2664,27 +2677,33 @@ game.import("character", function () {
 						},
 						filter(event, player) {
 							return game.hasPlayer(current => {
-								return !player.getStorage("mbweiming").includes(current);
+								return !player.getStorage("mbweiming").includes(current) && current != player;
 							});
 						},
-						forced: true,
-						direct: true,
-						async content(event, trigger, player) {
-							const targets = await player
-								.chooseTarget("威命：记录一名未记录过的角色", "当你杀死没有被记录过的角色后，则〖威命〗使命成功；如果在你杀死这些角色中的一名之前，有被记录过的角色死亡，则你〖威命〗使命失败。", true)
-								.set("filterTarget", (card, player, target) => {
-									return !player.getStorage("mbweiming").includes(target);
-								})
-								.set("ai", target => {
-									if (target === player) return 1;
-									return 1 + (Math.sqrt(Math.abs(get.attitude(player, target))) * Math.abs(get.threaten(target))) / Math.sqrt(target.getHp() + 1) / Math.sqrt(target.countCards("hes") + 1);
-								})
-								.forResultTargets();
-							if (targets && targets.length > 0) {
-								const target = targets[0];
-								player.logSkill("mbweiming_effect", target);
-								player.markAuto("mbweiming", target);
+						locked: true,
+						async cost(event, trigger, player) {
+							const targets = game.filterPlayer(current => !player.getStorage("mbweiming").includes(current) && current != player);
+							if (targets.length == 1) {
+								event.result = { bool: true, targets: targets };
 							}
+							else {
+								event.result = await player
+									.chooseTarget("威命：记录一名未记录过的其他角色", "当你杀死没有被记录过的角色后，则〖威命〗使命成功；如果在你杀死这些角色中的一名之前，有被记录过的角色死亡，则你〖威命〗使命失败。", true)
+									.set("filterTarget", (card, player, target) => {
+										return !player.getStorage("mbweiming").includes(target) && target != player;
+									})
+									.set("ai", target => {
+										if (target === player) return 1;
+										return 1 + (Math.sqrt(Math.abs(get.attitude(player, target))) * Math.abs(get.threaten(target))) / Math.sqrt(target.getHp() + 1) / Math.sqrt(target.countCards("hes") + 1);
+									})
+									.forResult();
+							}
+						},
+						async content(event, trigger, player) {
+							const targets = event.targets;
+							// 临时修改（by 棘手怀念摧毁）
+							if (targets && targets.length) player.markAuto("mbweiming", targets[0]);
+							// if (targets?.length) player.markAuto("mbweiming", targets[0]);
 						},
 					},
 					achieve: {
@@ -3465,29 +3484,54 @@ game.import("character", function () {
 				selectCard: [1, 2],
 				content: function () {
 					player.give(cards, target).gaintag.add("twkujianx");
-					player.addSkill("kujian_draw");
-					player.addSkill("twkujian_discard");
+					player.addSkill("kujian_discard");
 				},
 				subSkill: {
-					draw: {
-						charlotte: true,
-						audio: "twkujian2.mp3",
-						trigger: { global: ["useCardAfter", "respondAfter"] },
-						filter: function (event, player) {
-							return event.player.hasHistory("lose", evt => {
-								if (event != evt.getParent()) return false;
-								for (var i in evt.gaintag_map) {
-									if (evt.gaintag_map[i].includes("twkujianx")) return true;
-								}
-							});
+					discard: {
+						trigger: {
+							global: ["loseAfter", "equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter"],
 						},
 						forced: true,
-						logTarget: "player",
-						content: function () {
-							"step 0";
-							game.asyncDraw([player, trigger.player], 2);
-							"step 1";
-							game.delayx();
+						getIndex(event, player) {
+							let list=[],players=game.filterPlayer().sortBySeat();
+							for(const current of players){
+								let bool = ["useCard","respond"].includes(event.getParent().name);
+								if(current == player) continue;
+								var evt = event.getl(current);
+								if (!evt || !evt.hs || !evt.hs.length) continue;
+								if (event.name == "lose") {
+									for (var i in event.gaintag_map) {
+										if (event.gaintag_map[i].includes("twkujianx")) list.push([current,bool]);
+									}
+									continue;
+								}
+								current.getHistory("lose", evt=>{
+									if (event != evt.getParent()) return false;
+									for (var i in evt.gaintag_map) {
+										if (evt.gaintag_map[i].includes("twkujianx")) list.push([current,bool]);
+									}
+								});
+							}
+							return list;
+						},
+						charlotte: true,
+						logTarget(event,player,name,data){
+							return data[0];
+						},
+						// 临时修改（by 棘手怀念摧毁）
+						// logAudio(event,player,name,data){
+							// let type = data[1];
+							// if(type) return "twkujian2.mp3";
+							// return "twkujian3.mp3";
+						// },
+						async content(event,trigger,player) {
+							const target=event.targets[0];
+							const type=event.indexedData[1];
+							if(type) await game.asyncDraw([player,target],2);
+							else{
+								if(player.countCards("h")) await player.chooseToDiscard(1,true,"h");
+								if(target.countCards("h")) await target.chooseToDiscard(1,true,"h");
+							}
 						},
 					},
 				},
@@ -12440,6 +12484,7 @@ game.import("character", function () {
 				multitarget: true,
 				multiline: true,
 				changeSeat: true,
+				seatRelated: true,
 				contentBefore: function () {
 					player.$fullscreenpop("败移", "thunder");
 				},
@@ -19785,7 +19830,7 @@ game.import("character", function () {
 			mbzhixi_info: "锁定技。出牌阶段，若你于此阶段使用过的牌数不小于X，你不能使用牌（X为你的体力值）；当你使用锦囊牌时，你结束此阶段。",
 			yanxiang: "阎象",
 			kujian: "苦谏",
-			kujian_info: "出牌阶段限一次，你可以将至多两张手牌称为“谏”并交给一名其他角色，然后你获得以下效果：当其他角色使用或打出牌后，若其中有“谏”，你与其各摸两张牌；当其他角色不因使用或打出而失去牌后，若其中有“谏”，你与其各弃置一张牌。",
+			kujian_info: "出牌阶段限一次，你可以将至多两张手牌称为“谏”并交给一名其他角色，然后你获得以下效果：其他角色失去“谏”后，若为因使用或打出而失去，你与其各摸两张牌；否则你与其各弃置一张牌。",
 			ruilian: "睿敛",
 			ruilian_info: "一轮游戏开始时，你可以选择一名角色。其下回合结束时，若其本回合弃置过牌，你可以选择其本回合弃置过的一种类别，你与其各从弃牌堆中获得一张此类别的牌。",
 			mb_xianglang: "手杀向朗",
@@ -19829,7 +19874,7 @@ game.import("character", function () {
 			mbxuetu_fail: "血途·失败",
 			mbxuetu_fail_info: "转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名角色弃置两张牌；阳：你可以摸一张牌，然后对一名角色造成1点伤害。",
 			mbweiming: "威命",
-			mbweiming_info: "使命技，锁定技。①出牌阶段开始时，你记录一名未以此法记录过的角色。②成功：当你杀死一名未被〖威命①〗记录过的角色后，修改〖血途〗为成功版本。③失败：当一名被〖威命①〗记录过的角色死亡后，你修改〖血途〗为失败版本。",
+			mbweiming_info: "使命技，锁定技。①出牌阶段开始时，你记录一名未以此法记录过的其他角色。②成功：当你杀死一名未被〖威命①〗记录过的角色后，修改〖血途〗为成功版本。③失败：当一名被〖威命①〗记录过的角色死亡后，你修改〖血途〗为失败版本。",
 			lizhaojiaobo: "李昭焦伯",
 			mbzuoyou: "佐佑",
 			mbzuoyou_info: "转换技。出牌阶段限一次，阴：你可以令一名角色摸三张牌，然后其弃置两张手牌；阳：你可以令一名有手牌的角色弃置一张手牌，然后其获得1点护甲。",
@@ -19914,7 +19959,7 @@ game.import("character", function () {
 			mbbojian: "博鉴",
 			mbbojian_info: "锁定技。若你本阶段使用牌数与花色数与上个出牌阶段皆不同，你摸两张牌；否则你将一张弃牌堆中本阶段你因使用而失去的牌交给一名角色。",
 			mbjiwei: "济危",
-			mbjiwei_info: "锁定技。①其他角色的回合结束时，你摸X张牌（X为本回合满足的项数：1.至少两名角色失去过牌；2.至少两名角色受到过伤害）。②准备阶段，若你的手牌数不小于Y，你将手牌中颜色较多的牌分配给任意名其他角色（Y为存活人数与你体力值的最大值）。",
+			mbjiwei_info: "锁定技。①其他角色的回合结束时，你摸X张牌（X为本回合满足的项数：1.至少[1]名角色失去过牌；2.至少[1]名角色受到过伤害）。②准备阶段，若你的手牌数不小于Y，你将手牌中颜色较多的牌分配给任意名其他角色（Y为存活人数与你体力值的最大值）。",
 
 			mobile_standard: "手杀异构·标准包",
 			mobile_shenhua_feng: "手杀异构·其疾如风",
