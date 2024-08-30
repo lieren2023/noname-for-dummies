@@ -48,6 +48,7 @@ game.import("character", function () {
 				xinghuoliaoyuan_yuheng: ["star_caoren", "star_zhangchunhua"],
 				xinghuoliaoyuan_kaiyang: ["star_sunjian"],
 				xinghuoliaoyuan_yaoguang: ["star_sunshangxiang"],
+				
 				xinghuoliaoyuan_waitforsort: ["star_zhangzhao"],
 				
 			},
@@ -2013,6 +2014,7 @@ game.import("character", function () {
 			xinyingshi_info:
 				"出牌阶段开始时，若场上所有角色的武将牌上均没有“酬”，则你可以将任意张牌置于一名角色的武将牌上，称为“酬”。若如此做：当有角色使用牌对有“酬”的角色造成伤害后，其可以获得一张“酬”，并获得牌堆中所有与“酬”花色点数均相同的牌；有“酬”的角色死亡时，你获得其所有“酬”。",
 
+			// 南斗六星
 			xinghuoliaoyuan_tianfu: "南斗六星·天府",
 			xinghuoliaoyuan_tianliang: "南斗六星·天梁",
 			xinghuoliaoyuan_tianji: "南斗六星·天机",
@@ -2020,6 +2022,7 @@ game.import("character", function () {
 			xinghuoliaoyuan_tianxiang: "南斗六星·天相",
 			xinghuoliaoyuan_qisha: "南斗六星·七杀",
 			
+			// 北斗七星
 			xinghuoliaoyuan_tianshu: "北斗七星·天枢",
 			xinghuoliaoyuan_tianxuan: "北斗七星·天璇",
 			xinghuoliaoyuan_bdtianji: "北斗七星·天玑",

@@ -21,9 +21,10 @@ game.import("character", function () {
 				mobile_yijiang3: ["re_liru", "xin_jianyong", "xin_zhuran", "xin_guohuai", "xin_panzhangmazhong", "xin_fuhuanghou", "re_yufan"],
 				mobile_yijiang4: ["xin_zhoucang", "xin_caifuren", "xin_guyong", "xin_sunluban", "xin_caozhen", "xin_jushou", "xin_wuyi", "xin_zhuhuan", "re_chenqun"],
 				mobile_yijiang5: ["xin_zhangyi", "xin_sunxiu", "xin_quancong", "xin_zhuzhi", "xin_caoxiu"],
-				mobile_yijiang67: ["re_jikang"],
-				mobile_changshi: ["scs_zhangrang", "scs_zhaozhong", "scs_sunzhang", "scs_bilan", "scs_xiayun", "scs_hankui", "scs_lisong", "scs_duangui", "scs_guosheng", "scs_gaowang"],
+				mobile_yijiang7: ["re_jikang"],
 				mobile_sp: ["old_yuanshu", "re_wangyun", "re_baosanniang", "re_weiwenzhugezhi", "re_zhanggong", "re_xugong", "re_heqi", "liuzan", "xin_hansui", "mb_sunluyu", "mb_sp_zhenji"],
+				
+				mobile_changshi: ["scs_zhangrang", "scs_zhaozhong", "scs_sunzhang", "scs_bilan", "scs_xiayun", "scs_hankui", "scs_lisong", "scs_duangui", "scs_guosheng", "scs_gaowang"],
 			},
 		},
 		character: {
@@ -2523,6 +2524,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 2,
 				filter(event, player) {
+					if (player.countMark("mbxuetu_status") == 2 && !game.hasPlayer(current => current != player)) return false;
 					if (!game.hasPlayer(current => current.isDamaged())) {
 						if (player.countMark("mbxuetu_status") == 1 && player.getStorage("mbxuetu_used").includes(1)) return false;
 						if (player.countMark("mbxuetu_status") == 0 && !player.storage.mbxuetu) return false;
@@ -2549,6 +2551,7 @@ game.import("character", function () {
 						} else {
 							list = list.filter((choice, index) => {
 								if (index == 0 && !game.hasPlayer(current => current.isDamaged())) return false;
+								if (player.countMark("mbxuetu_status") == 2 && current == player) return false;
 								return !player.getStorage("mbxuetu_used").includes(index);
 							});
 						}
@@ -2567,6 +2570,7 @@ game.import("character", function () {
 							filterTarget(card, player, target) {
 								const { choice } = get.info("mbxuetu_backup");
 								if (player.countMark("mbxuetu_status") !== 2 && choice == 0) return target.isDamaged();
+								if (player.countMark("mbxuetu_status") == 2) return target != player;
 								return true;
 							},
 							async content(event, trigger, player) {
@@ -2628,7 +2632,7 @@ game.import("character", function () {
 						if (status < 2) {
 							str += "令一名角色" + (choice ? "摸两张牌" : "回复1点体力");
 						} else {
-							str += choice ? "摸一张牌，然后对一名角色造成1点伤害" : "回复1点体力，然后令一名角色弃置两张牌";
+							str += choice ? "摸一张牌，然后对一名其他角色造成1点伤害" : "回复1点体力，然后令一名其他角色弃置两张牌";
 						}
 						return `###血途###<div class="text center">${str}</div>`;
 					},
@@ -2644,8 +2648,8 @@ game.import("character", function () {
 							if (storage) return "转换技。出牌阶段限一次，你可以令一名角色摸两张牌。";
 							return "转换技。出牌阶段限一次，你可以令一名角色回复1点体力。";
 						} else {
-							if (storage) return "转换技。出牌阶段限一次，你可以摸一张牌，然后对一名角色造成1点伤害。";
-							return "转换技。出牌阶段限一次，你可以回复1点体力，然后令一名角色弃置两张牌。";
+							if (storage) return "转换技。出牌阶段限一次，你可以摸一张牌，然后对一名其他角色造成1点伤害。";
+							return "转换技。出牌阶段限一次，你可以回复1点体力，然后令一名其他角色弃置两张牌。";
 						}
 					},
 				},
@@ -4345,6 +4349,8 @@ game.import("character", function () {
 							return 0;
 						},
 					},
+					combo: "mbquesong",
+					halfneg: true
 				},
 			},
 			mbquesong: {
@@ -6497,6 +6503,7 @@ game.import("character", function () {
 							if (card.name == "lebu" || card.name == "bingliang") return 0.5;
 						},
 					},
+					combo: "fenli"
 				},
 			},
 			// 彭羕
@@ -10327,7 +10334,6 @@ game.import("character", function () {
 				trigger: { player: ["damageEnd", "phaseUseEnd"] },
 				frequent: true,
 				locked: false,
-				notemp: true,
 				filter: function (event, player) {
 					if (event.name == "phaseUse") return player.countCards("h") > player.hp;
 					return event.num > 0;
@@ -10374,6 +10380,7 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
+					notemp: true,
 					threaten: 0.8,
 					effect: {
 						target: function (card, player, target) {
@@ -16216,10 +16223,13 @@ game.import("character", function () {
 					game.delay(0.5);
 					if (!targets[0].hasEquipableSlot(1)) event.goto(2);
 					"step 1";
-					var target = targets[0];
-					var equip1 = get.cardPile2(function (card) {
-						return get.subtype(card) == "equip1" && target.canUse(card, target);
-					});
+					let target = targets[0];
+					let equip1 = get.cardPile2(card=>card.name=="qinggang");
+					if(!equip1 || Math.random()>0.5){
+						equip1 = get.cardPile2(function (card) {
+							return get.subtype(card) == "equip1" && target.canUse(card, target);
+						});
+					}
 					if (!equip1) {
 						player.popup("连计失败");
 						game.log("牌堆中无装备");
@@ -16227,8 +16237,9 @@ game.import("character", function () {
 						return;
 					}
 					if (equip1.name == "qinggang" && !lib.inpile.includes("qibaodao")) {
-						equip1.remove();
-						equip1 = game.createCard("qibaodao", equip1.suit, equip1.number);
+						game.broadcastAll(function (card) {
+							card.init([card.suit, card.number, "qibaodao"]);
+						}, equip1);
 					}
 					target.$draw(equip1);
 					target.chooseUseTarget(equip1, "noanimate", "nopopup", true);
@@ -18967,8 +18978,8 @@ game.import("character", function () {
 				} else if (status === 1) {
 					return lib.translate.mbxuetu_achieve_info;
 				} else {
-					if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阴：你可以回复1点体力，然后令一名角色弃置两张牌；</span>阳：你可以摸一张牌，然后对一名角色造成1点伤害。';
-					return '转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名角色弃置两张牌；<span class="bluetext">阳：你可以摸一张牌，然后对一名角色造成1点伤害。</span>';
+					if (!xuetu) return '转换技。出牌阶段限一次，<span class="bluetext">阴：你可以回复1点体力，然后令一名其他角色弃置两张牌；</span>阳：你可以摸一张牌，然后对一名其他角色造成1点伤害。';
+					return '转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名其他角色弃置两张牌；<span class="bluetext">阳：你可以摸一张牌，然后对一名其他角色造成1点伤害。</span>';
 				}
 			},
 			mbzuoyou(player) {
@@ -19288,7 +19299,6 @@ game.import("character", function () {
 			zhengjing_info: "出牌阶段，你可以整理卡牌。然后，你将整理出的卡牌中的至少一张作为“经”置于一名角色的武将牌上，然后获得其余的牌。该角色的准备阶段获得这些牌，且跳过此回合的判定和摸牌阶段。",
 			zhengjing2: "整经",
 
-			mobile_yijiang: "将星独具",
 			yj_zhanghe: "☆张郃",
 			yj_zhanghe_prefix: "☆",
 			yj_zhangliao: "☆张辽",
@@ -19872,7 +19882,7 @@ game.import("character", function () {
 			mbxuetu_achieve: "血途·成功",
 			mbxuetu_achieve_info: "出牌阶段各限一次。⒈你可以令一名角色回复1点体力；⒉你可以令一名角色摸两张牌。",
 			mbxuetu_fail: "血途·失败",
-			mbxuetu_fail_info: "转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名角色弃置两张牌；阳：你可以摸一张牌，然后对一名角色造成1点伤害。",
+			mbxuetu_fail_info: "转换技。出牌阶段限一次，阴：你可以回复1点体力，然后令一名其他角色弃置两张牌；阳：你可以摸一张牌，然后对一名其他角色造成1点伤害。",
 			mbweiming: "威命",
 			mbweiming_info: "使命技，锁定技。①出牌阶段开始时，你记录一名未以此法记录过的其他角色。②成功：当你杀死一名未被〖威命①〗记录过的角色后，修改〖血途〗为成功版本。③失败：当一名被〖威命①〗记录过的角色死亡后，你修改〖血途〗为失败版本。",
 			lizhaojiaobo: "李昭焦伯",
@@ -19961,6 +19971,9 @@ game.import("character", function () {
 			mbjiwei: "济危",
 			mbjiwei_info: "锁定技。①其他角色的回合结束时，你摸X张牌（X为本回合满足的项数：1.至少[1]名角色失去过牌；2.至少[1]名角色受到过伤害）。②准备阶段，若你的手牌数不小于Y，你将手牌中颜色较多的牌分配给任意名其他角色（Y为存活人数与你体力值的最大值）。",
 
+			mobile_default: "袖里乾坤",
+			mobile_longxue: "龙血玄黄",
+			mobile_yijiang: "将星独具",
 			mobile_standard: "手杀异构·标准包",
 			mobile_shenhua_feng: "手杀异构·其疾如风",
 			mobile_shenhua_huo: "手杀异构·侵掠如火",
@@ -19973,12 +19986,11 @@ game.import("character", function () {
 			mobile_yijiang3: "手杀异构·将3",
 			mobile_yijiang4: "手杀异构·将4",
 			mobile_yijiang5: "手杀异构·将5",
-			mobile_yijiang67: "手杀异构·原创设计",
+			mobile_yijiang7: "手杀异构·原7",
 			mobile_sp: "手杀异构·SP",
-			mobile_default: "袖里乾坤",
-			mobile_longxue: "龙血玄黄",
-			mobile_others: "其他",
+			
 			mobile_changshi: "十常侍单体",
+			// mobile_others: "其他",
 		},
 	};
 });

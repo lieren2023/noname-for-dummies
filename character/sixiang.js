@@ -265,30 +265,36 @@ game.import("character", function () {
 				audio: "yinlang",
 				usable: 1,
 				enable: "phaseUse",
-				selectTarget: 2,
-				multitarget: true,
-				targetprompt: ["摸牌", "出杀目标"],
 				filterTarget: function (card, player, target) {
-					if (ui.selected.targets.length == 0) {
-						return player != target;
-					}
-					return player.inRange(target) && ui.selected.targets[0].canUse({ name: "sha", isCard: true }, target, false);
+					return player != target && target.countCards("he");
 				},
-				delay: false,
 				async content(event, trigger, player) {
-					const target = event.targets[0], target2 = event.targets[1];
-					await target.draw(2);
-					await target.useCard({ name: "sha", isCard: true }, target2, "noai");
+					const target = event.target;
+					await target.chooseToGive(1, "he", player, true);
+					let targets = game.filterPlayer(current => {
+						if (!target.canUse({ name: "sha", isCard: true }, current, false)) return false;
+						if (current == player) return true;
+						return player.inRange(current);
+					});
+					if (!targets.length) return;
+					const result = await target
+						.chooseTarget("选择使用杀的目标", true)
+						.set("useTargets", targets)
+						.set("filterTarget", (card, player, target) => {
+							let targets = get.event("useTargets");
+							return targets.includes(target);
+						})
+						.set("ai", target => {
+							return get.effect(target, { name: "sha", isCard: true }, get.player(), get.player());
+						})
+						.forResult();
+					if (result.bool) await target.useCard({ name: "sha", isCard: true }, result.targets);
 				},
 				ai: {
 					order: 8,
 					result: {
 						target(player, target) {
-							if (ui.selected.targets.length == 0) {
-								return 3;
-							} else {
-								return get.effect(target, { name: "sha" }, ui.selected.targets[0], target);
-							}
+							return target.countCards("he") > 2 ? 1 : 0;
 						},
 					},
 				},
@@ -1457,73 +1463,50 @@ game.import("character", function () {
 			},
 			stdjinjian: {
 				audio: "jinjian",
-				trigger: { source: "damageBegin1" },
-				logTarget: "player",
-				filter: function (event, player) {
-					return !event.stdjinjian_source2 && !player.hasSkill("stdjinjian_source2");
+				trigger: {
+					source: "damageBegin2",
+					player: "damageBegin4",
 				},
-				prompt2: "令即将对其造成的伤害+1",
+				filter: function (event, player, name) {
+					return !player.hasSkill(`stdjinjian_effect${name.slice(11)}`);
+				},
+				prompt2(event, player, name) {
+					return `防止即将${name == "damageBegin2" ? "造成" : "受到"}的伤害`;
+				},
 				check: function (event, player) {
-					return (
-						get.attitude(player, event.player) < 0 &&
-						!event.player.hasSkillTag("filterDamage", null, {
-							player: player,
-							card: event.card,
-						})
-					);
+					return get.damageEffect(event.player, event.source, player) < 0;
 				},
-				usable: 1,
-				content: function () {
-					trigger.stdjinjian_source = true;
-					trigger.num++;
-					player.addTempSkill("stdjinjian_source2");
+				async content(event, trigger, player) {
+					trigger.cancel();
+					player.addTempSkill(`stdjinjian_effect${event.triggername.slice(11)}`);
 				},
-				group: "stdjinjian_player",
 				subSkill: {
-					player: {
-						audio: "jinjian",
-						trigger: { player: "damageBegin4" },
-						filter: function (event, player) {
-							return !event.stdjinjian_player2 && !player.hasSkill("stdjinjian_player2");
-						},
-						prompt2: "令即将受到的伤害-1",
-						usable: 1,
-						content: function () {
-							trigger.stdjinjian_player = true;
-							trigger.num--;
-							player.addTempSkill("stdjinjian_player2");
-						},
-					},
-					source2: {
+					effect2: {
 						trigger: { source: "damageBegin1" },
 						forced: true,
 						charlotte: true,
-						filter: function (event, player) {
-							return !event.stdjinjian_source;
+						async content(event, trigger, player) {
+							trigger.num++;
+							player.tempBanSkill(event.name, null, false);
+							player.unmarkSkill(event.name);
 						},
-						content: function () {
-							trigger.num--;
-							trigger.stdjinjian_source2 = true;
-							player.removeSkill("stdjinjian_source2");
-						},
-						marktext: " -1 ",
+						mark: true,
+						marktext: "进",
 						intro: {
-							content: "下次造成的伤害-1",
+							content: "下次造成的伤害+1",
 						},
 					},
-					player2: {
+					effect4: {
 						trigger: { player: "damageBegin3" },
 						forced: true,
 						charlotte: true,
-						filter: function (event, player) {
-							return !event.stdjinjian_player;
-						},
-						content: function () {
+						async content(event, trigger, player) {
 							trigger.num++;
-							trigger.stdjinjian_player2 = true;
-							player.removeSkill("stdjinjian_player2");
+							player.tempBanSkill(event.name, null, false);
+							player.unmarkSkill(event.name);
 						},
-						marktext: " +1 ",
+						mark: true,
+						marktext: "谏",
 						intro: {
 							content: "下次受到的伤害+1",
 						},
@@ -1540,7 +1523,7 @@ game.import("character", function () {
 							if (count && count.stdjinjian_player && count.stdjinjian_player > 0) return;
 							if (_status.event.getParent("useCard", true) || _status.event.getParent("_wuxie", true)) return;
 							if (get.tag(card, "damage")) {
-								if (target.hasSkill("stdjinjian_player2")) {
+								if (target.hasSkill("stdjinjian_effect4")) {
 									return [1, -2];
 								} else {
 									if (get.attitude(player, target) > 0) {
@@ -2149,7 +2132,7 @@ game.import("character", function () {
 			stdmingfa: "明伐",
 			stdmingfa_info: "出牌阶段，你可以对一名体力值大于1的角色造成1点伤害，然后此技能失效直至其死亡或回复体力。",
 			stdjinjian: "进谏",
-			stdjinjian_info: "每回合每项各限一次，当你造成/受到伤害时，你可令此伤害+1/-1，然后你本回合内下一次造成的伤害-1/+1且不能触发〖进谏〗。",
+			stdjinjian_info: "每回合每项各限一次，当你造成/受到伤害时，你可防止此伤害，然后你本回合内下一次造成/受到的伤害+1。",
 			stdrenzheng: "仁政",
 			stdrenzheng_info: "锁定技，当有伤害被防止时，你令当前回合角色摸一张牌。",
 			stdxiongsuan: "凶算",
@@ -2210,7 +2193,7 @@ game.import("character", function () {
 			std_huaxin: "太阴华歆",
 			std_huaxin_prefix: "太阴",
 			stdwuyou: "武佑",
-			stdwuyou_info: "出牌阶段限一次，你可以与一名角色进行拼点，若你没赢，你本回合视为拥有〖武圣〗。然后拼点没赢的角色视为没赢的角色使用一张【决斗】。",
+			stdwuyou_info: "出牌阶段限一次，你可以与一名角色进行拼点，若你没赢，你本回合视为拥有〖武圣〗。然后拼点赢的角色视为对没赢的角色使用一张【决斗】。",
 			stdqiuyuan: "求援",
 			stdqiuyuan_info: "当你成为一名角色使用【杀】的目标时，你可以令另一名其他角色选择一项：1.交给你一张牌；2.成为此【杀】的额外目标。",
 			stdzhuikong: "惴恐",
@@ -2250,7 +2233,7 @@ game.import("character", function () {
 			stdjujian: "举荐",
 			stdjujian_info: "每回合限一次，你的【无懈可击】结算结束后可以交给一名其他角色。",
 			stdyinge: "引戈",
-			stdyinge_info: "出牌阶段限一次，你可以令一名其他角色摸两张牌，然后其视为对你攻击范围内的另一名角色使用一张【杀】。",
+			stdyinge_info: "出牌阶段限一次，你可以令一名其他角色交给你一张牌，然后其视为对你攻击范围内的另一名角色使用一张【杀】。",
 			stdshiren: "施仁",
 			stdshiren_info: "每回合限一次，当你成为其他角色使用【杀】的目标后，你可以摸两张牌，然后交给该角色一张牌。",
 			stdjuyi: "据益",

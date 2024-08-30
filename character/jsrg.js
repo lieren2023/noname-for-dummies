@@ -66,6 +66,7 @@ game.import("character", function () {
 					"jsrg_gaoxiang",
 					"jsrg_guozhao",
 				],
+				// jiangshanrugu_xing: [],
 				jiangshanrugu_shuai: ["jsrg_yuanshao", "jsrg_caojiewangfu", "jsrg_songhuanghou", "jsrg_zhangjiao", "jsrg_dongzhuo", "jsrg_yangqiu", "jsrg_zhanghuan", "jsrg_liubiao", "jsrg_yl_luzhi", "jsrg_chenfan", "jsrg_zhangju"],
 			},
 		},
@@ -2701,6 +2702,9 @@ game.import("character", function () {
 					player.popup(get.cnNumber(top.length) + "上" + get.cnNumber(bottom.length) + "下");
 					game.log(player, "将" + get.cnNumber(top.length) + "张牌置于牌堆顶");
 					game.asyncDelayx();
+				},
+				ai: {
+					combo: "jsrgtuigu"
 				},
 			},
 			jsrgtuigu: {
@@ -7311,6 +7315,9 @@ game.import("character", function () {
 				locked: false,
 				content: function () {
 					player.turnOver(false);
+				},
+				ai: {
+					combo: "jsrgguyin"
 				},
 				subSkill: {
 					jiu: {
@@ -11979,8 +11986,8 @@ game.import("character", function () {
 			jiangshanrugu_cheng: "江山如故·承",
 			jiangshanrugu_zhuan: "江山如故·转",
 			jiangshanrugu_he: "江山如故·合",
-			jiangshanrugu_shuai: "江山如故·衰",
 			// jiangshanrugu_xing: "江山如故·兴",
+			jiangshanrugu_shuai: "江山如故·衰",
 		},
 	};
 });

@@ -8601,6 +8601,9 @@ export const Content = {
 		"step 0";
 		game.log(player, "减少了" + get.cnNumber(num) + "点体力上限");
 		player.maxHp -= num;
+		if (isNaN(player.maxHp)) {
+			player.maxHp = 0;
+		}
 		event.loseHp = Math.max(0, player.hp - player.maxHp);
 		player.update();
 		"step 1";

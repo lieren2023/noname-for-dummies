@@ -757,7 +757,7 @@ game.import("card", function () {
 					if (result.bool) {
 						var card = player.getEquip("muniu");
 						result.targets[0].equip(card);
-						player.$give(card.cards, result.targets[0]);
+						player.$give(card, result.targets[0]);
 						player.line(result.targets, "green");
 						game.delay();
 					} else {

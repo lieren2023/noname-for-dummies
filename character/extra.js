@@ -14,10 +14,10 @@ game.import("character", function () {
 				extra_lei: ["shen_ganning", "shen_zhangliao"],
 				extra_ol: ["ol_zhangliao", "shen_caopi", "shen_zhenji", "shen_sunquan"],
 				extra_decade: ["shen_huangzhong", "shen_jiangwei", "shen_machao", "shen_zhangfei", "shen_zhangjiao", "shen_dengai", "shen_xuzhu", "dc_shen_huatuo"],
+				extra_mb: ["xin_simayi", "new_simayi"],
 				extra_mobilezhi: ["shen_guojia", "shen_xunyu"],
 				extra_mobilexin: ["shen_taishici", "shen_sunce"],
 				extra_mobileren: ["shen_huatuo", "shen_lusu"],
-				extra_mb: ["xin_simayi", "new_simayi"],
 				extra_tw: ["tw_shen_guanyu", "tw_shen_lvmeng"],
 				extra_offline: ["shen_diaochan", "boss_zhaoyun", "shen_dianwei", "le_shen_jiaxu"],
 			},
@@ -62,7 +62,7 @@ game.import("character", function () {
 			ol_zhangliao: ["male", "shen", 4, ["olduorui", "olzhiti"], ["wei", "die_audio:shen_zhangliao"]],
 			shen_caopi: ["male", "shen", 5, ["chuyuan", "dengji"], ["wei"]],
 			shen_zhenji: ["female", "shen", 3, ["shenfu", "qixian"], ["wei"]],
-			boss_zhaoyun: ["male", "shen", 1, ["boss_juejing", "xinlonghun", "zhanjiang"], ["shu"]],
+			boss_zhaoyun: ["male", "shen", 1, ["boss_juejing", "xinlonghun", "zhanjiang"], ["shu", "name:赵|云"]],
 		},
 		characterIntro: {
 			shen_guanyu:
@@ -328,7 +328,7 @@ game.import("character", function () {
 					const place = event.cost_data;
 					player.popup(place, "fire");
 					game.log(player, "击伤了", target, "的", "#y" + get.translation(place));
-					target.addSkill("1！5！_injury");
+					target.addTempSkill("1！5！_injury");
 					target.markAuto("1！5！_injury", [place]);
 					switch (parseInt(place.slice("1！5！_place".length))) {
 						case 1:
@@ -378,6 +378,7 @@ game.import("character", function () {
 				subSkill: {
 					injury: {
 						charlotte: true,
+						onremove: true,
 					},
 					maxhand: {
 						charlotte: true,
@@ -470,7 +471,7 @@ game.import("character", function () {
 					player: "phaseUseBegin",
 				},
 				async cost (event, trigger, player) {
-					let list = ["摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。", "摸已损失体力值张牌，此阶段造成伤害后，回复1点体力。"];
+					let list = ["摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。", "摸已损失体力值张牌，此阶段造成伤害后，回复等量体力。"];
 					let result = await player.chooseControlList(list).set("ai", function(){
 						//等157优化）
 						return Math.random();
@@ -519,8 +520,8 @@ game.import("character", function () {
 						filter:function(event, player){
 							return player.isDamaged();
 						},
-						content:async function (event, trigger, player) {
-							player.recover();
+						async content(event, trigger, player) {
+							player.recover(trigger.num);
 						}
 					},
 				}
@@ -831,6 +832,9 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "xinjilve"
+				},
 			},
 			xinbaiyin: {
 				audio: "sbaiyin",
@@ -1015,6 +1019,9 @@ game.import("character", function () {
 							if (skills.length) await player.addSkills(skills);
 						},
 					},
+				},
+				ai: {
+					notemp: true
 				},
 			},
 			//十周年神华佗
@@ -1552,7 +1559,7 @@ game.import("character", function () {
 					},
 					damage: {
 						audio: "zhuangpo",
-						trigger: { source: "damageBegin1" },
+						trigger: { global: "damageBegin1" },
 						filter(event, player) {
 							const card = event.card;
 							if (!card || !card.storage || !card.storage.zhuangpo) return false;
@@ -5614,7 +5621,6 @@ game.import("character", function () {
 				locked: false,
 				//global:'yingba_mark',
 				ai: {
-					combo: "scfuhai",
 					threaten: 3,
 					order: 11,
 					result: {
@@ -7201,7 +7207,9 @@ game.import("character", function () {
 					var cards = player.getExpansions(skill);
 					if (cards.length) player.loseToDiscardpile(cards);
 				},
-				ai: { combo: "dengji" },
+				ai: {
+					notemp: true
+				},
 			},
 			dengji: {
 				audio: 2,
@@ -8108,8 +8116,6 @@ game.import("character", function () {
 				trigger: { player: "damageEnd" },
 				forced: true,
 				group: "renjie2",
-				notemp: true,
-				//mark:true,
 				filter(event) {
 					return event.num > 0;
 				},
@@ -8124,7 +8130,7 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
-					combo: "sbaiyin",
+					combo: "jilue",
 					effect: {
 						target(card, player, target) {
 							if ((!target.hasSkill("sbaiyin") && !target.hasSkill("jilue")) || !target.hasFriend()) return;
@@ -8400,14 +8406,20 @@ game.import("character", function () {
 				selectCard: [1, Infinity],
 				prompt: "弃置一枚“忍”，然后弃置任意张牌并摸等量的牌。若弃置了所有的手牌，则可以多摸一张牌。",
 				check(card) {
-					var player = _status.event.player;
+					let player = _status.event.player;
 					if (
 						get.position(card) == "h" &&
-						!player.countCards("h", function (card) {
-							return get.value(card) >= 8;
-						})
-					) {
-						return 8 - get.value(card);
+						!player.countCards("h", "du") &&
+						(
+							player.hp > 2 ||
+							!player.countCards("h", i => {
+								return get.value(i) >= 8;
+							})
+						)
+					) return 1;
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
 					}
 					return 6 - get.value(card);
 				},
@@ -10049,7 +10061,7 @@ game.import("character", function () {
 					}
 				},
 				ai: {
-					combo: "nzry_junlve"
+					notemp: true
 				},
 			},
 			nzry_dinghuo: {
@@ -10309,6 +10321,7 @@ game.import("character", function () {
 						filter(event, player) {
 							if (!player.hasDisabledSlot()) return false;
 							const opposite = event.source;
+							if (!event.source.isDamaged()) return false;
 							return opposite && opposite.isIn() && opposite.inRangeOf(player);
 						},
 						content() {
@@ -11047,8 +11060,7 @@ game.import("character", function () {
 			drlt_duorui_info:
 				"当你于出牌阶段内对一名其他角色造成伤害后，你可以废除你装备区内的一个装备栏（若已全部废除则可以跳过此步骤），然后获得该角色的一个技能直到其的下回合结束或其死亡(觉醒技，限定技，主公技，隐匿技，使命技等特殊技能除外)。若如此做，该角色该技能失效且你不能再发动〖夺锐〗直到你失去以此法获得的技能。",
 			drlt_zhiti: "止啼",
-			drlt_zhiti_info:
-				"锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；②当你拼点或【决斗】胜利/或受到伤害后，若对方/伤害来源在你的攻击范围内，则你恢复一个装备栏。",
+			drlt_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；②当你拼点或【决斗】胜利/或受到已受伤角色造成的伤害后，若对方/伤害来源在你的攻击范围内，则你恢复一个装备栏。",
 
 			shen_zhaoyun: "神赵云",
 			shen_zhaoyun_prefix: "神",
@@ -11210,7 +11222,7 @@ game.import("character", function () {
 			huoxin_info:
 				"出牌阶段限一次，你可以展示两张花色相同的手牌并分别交给两名其他角色，然后令这两名角色拼点，没赢的角色获得1个“魅惑”标记。拥有2个或更多“魅惑”的角色回合即将开始时，该角色移去其所有“魅惑”，此回合改为由你操控。",
 			boss_zhaoyun: "高达一号",
-			boss_zhaoyun_ab: "神赵云",
+			// boss_zhaoyun_ab: "神赵云",
 			boss_zhaoyun_prefix: "神",
 			boss_juejing: "绝境",
 			boss_juejing2: "绝境",
@@ -11459,8 +11471,7 @@ game.import("character", function () {
 			zhengqing: "争擎",
 			zhengqing_info: "锁定技。一轮游戏开始时，你移去所有角色的“擎”标记，令上一轮于一回合内造成伤害值最高的角色获得此值数量枚“擎”，然后你与其各摸一张牌（多名角色则随机选择，优先为你）。若该角色为你且本次获得的“擎”数为本局游戏最多的一次，你改为摸X张牌（至多摸五张）。",
 			zhuangpo: "壮魄",
-			zhuangpo_info:
-				"你可以将牌名为【杀】或牌面信息中包含“【杀】”的牌当【决斗】使用，然后你获得如下效果：1.当此【决斗】指定目标后，若你有“擎”，你可以移去任意枚“擎”，令目标角色弃置等量的牌；2.当你造成渠道为此牌的伤害时，若此牌的所有目标角色中存在有“擎”的角色，此伤害+1。",
+			zhuangpo_info: "你可以将牌名为【杀】或牌面信息中包含“【杀】”的牌当【决斗】使用，然后你获得如下效果：1.当此【决斗】指定目标后，若你有“擎”，你可以移去任意枚“擎”，令目标角色弃置等量的牌；2.当此牌造成伤害时，若此牌的所有目标角色中存在有“擎”的角色，此伤害+1。",
 			dc_shen_huatuo: "神华佗",
 			dc_shen_huatuo_prefix: "神",
 			jingyu: "静域",
@@ -11522,14 +11533,14 @@ game.import("character", function () {
 			extra_shan: "神话再临·山",
 			extra_yin: "神话再临·阴",
 			extra_lei: "神话再临·雷",
-			extra_ol: "神话再临OL",
+			extra_ol: "OL神将",
+			extra_decade: "神·武",
+			extra_mb: "移动版神将",
 			extra_mobilezhi: "始计篇·智",
 			extra_mobilexin: "始计篇·信",
 			extra_mobileren: "始计篇·仁",
-			extra_offline: "神话再临·线下",
-			extra_decade: "神·武",
 			extra_tw: "海外服神将",
-			extra_mb: "移动版神将",
+			extra_offline: "线下版神将",
 		},
 	};
 });

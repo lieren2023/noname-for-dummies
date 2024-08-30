@@ -44,8 +44,8 @@ game.import("character", function () {
 					"yj_jiaxu",
 					"yj_zhenji",
 				],
-				offline_piracyE_zy: ["shen_jiaxu", "pe_wangyun", "pe_zhonghui", "pe_sunchen", "pe_mengda", "pe_wenqin", "ns_caoanmin", "jiangqing", "kongrong", "jiling", "tianfeng", "mateng"],
 				offline_piracyE: ["yj_zhouji", "yj_ehuan", "yj_tianchuan", "yj_zhonghui"],
+				offline_piracyE_zy: ["shen_jiaxu", "pe_wangyun", "pe_zhonghui", "pe_sunchen", "pe_mengda", "pe_wenqin", "ns_caoanmin", "jiangqing", "kongrong", "jiling", "tianfeng", "mateng"],
 				offline_piracyS: [
 					"ns_jiaxu",
 					"longyufei",
@@ -73,9 +73,8 @@ game.import("character", function () {
 				offline_longyutao: ["drag_guanyu", "drag_caoren", "drag_lvchang"],
 				offline_jingxiang: ["jx_shen_caoren", "jx_shen_liubiao", "jx_sunjian", "jx_zhouyu", "jx_guanyu"],
 				offline_taoyuan: ["ty_guanyu", "ty_sunquan", "ty_liubei", "ty_chenshi", "ty_chengjix", "ty_zhaorong", "ty_zhangnan", "ty_fengxí", "ty_liaohua", "ty_huangzhong", "ty_wuban", "ty_shicong", "ty_guanxing", "ty_shamoke", "ty_guanyinping", "ty_shen_liubei", "ty_luxun", "ty_ganning", "ty_buzhi", "ty_tanxiong", "ty_liue", "ty_zhangda", "ty_fanjiang", "ty_shen_zhangfei", "ty_shen_guanyu", "ty_anying", "ty_anyingx", "ty_wuque", "ty_yanque", "ty_wangque"],
-				offline_jiudin: ["jd_sb_xuhuang", "jd_jin_wangyuanji", "jd_ol_huaxin", "jd_sp_yangwan", "jd_sb_huangyueying", "jd_sb_zhaoyun", "jd_sb_ganning", "jd_sb_pangtong", "jd_hanlong", "jd_jin_xiahouhui", "jd_jin_simazhao", "jd_sb_caocao", "jd_sb_sp_zhugeliang", "jd_simayan", "yj_zhonghui", "jd_sb_sunquan", "jd_sb_xiaoqiao", "jd_sb_guanyu", "jd_sb_jiangwei", "jd_sb_daqiao", "jd_sb_menghuo", "jd_sb_yuanshao", "jd_sb_yujin", "jd_sb_sunshangxiang", "jd_sb_liubei", "jd_sb_fazheng", "jd_sb_zhangfei", "jd_jin_simashi"],
+				offline_jiudin: ["jd_sb_xuhuang", "jd_jin_wangyuanji", "jd_ol_huaxin", "jd_sp_yangwan", "jd_sb_huangyueying", "jd_sb_zhaoyun", "jd_sb_ganning", "jd_sb_pangtong", "jd_hanlong", "jd_jin_xiahouhui", "jd_jin_simazhao", "jd_sb_caocao", "jd_sb_sp_zhugeliang", "jd_simayan", "jd_sb_sunquan", "jd_sb_xiaoqiao", "jd_sb_guanyu", "jd_sb_jiangwei", "jd_sb_daqiao", "jd_sb_menghuo", "jd_sb_yuanshao", "jd_sb_yujin", "jd_sb_sunshangxiang", "jd_sb_liubei", "jd_sb_fazheng", "jd_sb_zhangfei", "jd_jin_simashi"],
 				offline_vtuber: ["vtb_xiaosha", "vtb_xiaoshan", "vtb_xiaotao", "vtb_xiaole", "vtb_xiaojiu"],
-				// offline_others:[],
 			},
 		},
 		character: {
@@ -1367,7 +1366,7 @@ game.import("character", function () {
 								}
 								else break;
 							}
-							player.removeTempSkill("tybianta_use");
+							player.removeSkill("tybianta_use");
 						},
 					},
 					use: {
@@ -1554,7 +1553,7 @@ game.import("character", function () {
 						},
 						async content(event, trigger, player) {
 							let card = get.autoViewAs({ name: "sha" }, event.cards);
-							await player.chooseUseTarget(card, event.cards, false);
+							await player.chooseUseTarget(card, event.cards, false, "nodistance");
 						},
 					},
 				},
@@ -2282,12 +2281,13 @@ game.import("character", function () {
 			},
 			//沙和尚
 			tymanyong: {
+				onremove: true,
 				trigger: {
 					player: ["phaseZhunbeiBegin", "phaseJieshuBegin"],
 				},
 				filter(event, player) {
 					let hasCard = player.getEquips("tiejili").length > 0;
-					if (event.name == "phaseZhunbei") return !hasCard;
+					if (event.name == "phaseZhunbei") return !hasCard && !player.storage.tymanyong;
 					return hasCard;
 				},
 				async content(event, trigger, player) {
@@ -2296,6 +2296,7 @@ game.import("character", function () {
 						if (card) {
 							player.$gain2(card);
 							await player.equip(card);
+							player.storage.tymanyong = true;
 						}
 					}
 					else {
@@ -2920,7 +2921,7 @@ game.import("character", function () {
 				group: "tyzhuan_draw",
 				subSkill: {
 					draw: {
-						audio: "qingbei",
+						audio: "tyzhuan",
 						trigger: { global: "useCardAfter" },
 						filter(event, player) {
 							return get.type(event.card, null, false) == "equip";
@@ -3995,7 +3996,6 @@ game.import("character", function () {
 					await player.give(event.cards, target);
 					const result = await target
 						.chooseCard(
-							player,
 							2,
 							"he",
 							card => {
@@ -4003,6 +4003,11 @@ game.import("character", function () {
 							},
 							"奇才：交给" + str + "两张非装备牌，或令" + str + "获得两张普通锦囊牌"
 						)
+						.set("ai", card => {
+							if (get.event("att") >= 0) return -1;
+							return 7 - get.value(card);
+						})
+						.set("att", get.attitude(target, player))
 						.forResult();
 					if (!result.bool) {
 						let gains = [];
@@ -4620,13 +4625,17 @@ game.import("character", function () {
 									}
 								})
 								.forResult();
-							if (result.bool) await player.addToExpansion(result.cards, player, "give").set("gaintag", ["jdkanpo"]);
+							if (result.bool) await player.addToExpansion(result.cards, player, "giveAuto").set("gaintag", ["jdkanpo"]);
 						}
 					}
 				},
 				marktext: "谋",
 				intro: {
-					content: "expansion",
+					mark(dialog, storage, player) {
+						var cards = player.getExpansions("jdkanpo");
+						if (player.isUnderControl(true)) dialog.addAuto(cards);
+						else return "共有" + get.cnNumber(cards.length) + "张牌";
+					},
 					markcount: "expansion",
 				},
 				onremove(player, skill) {
@@ -5654,6 +5663,18 @@ game.import("character", function () {
 			jdsbzhiheng: {
 				audio: "sbzhiheng",
 				inherit: "sbzhiheng",
+				check(card) {
+					let player = _status.event.player;
+					if (get.position(card) == "e") {
+						if (ui.selected.cards.some(i => {
+							return get.position(i) == "e";
+						})) return 0;
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return 2 * player.getHp() - get.value(card);
+						return 12 - get.value(card);
+					}
+					return 6 - get.value(card);
+				},
 				prompt() {
 					return "出牌阶段限一次。你可以弃置任意张牌并摸等量的牌，若你以此法弃置的牌包括你装备区的牌，则你多摸一张牌";
 				},
@@ -6702,6 +6723,7 @@ game.import("character", function () {
 						.set("ai", (card) => {
 							const player = get.event("player");
 							if (!game.hasPlayer((target) => get.attitude(player, target) < 0)) return 0;
+							if (get.suit(card, player) == "diamond") return 8 - get.value(card);
 							return 7.5 - get.value(card);
 						})
 						.set("logSkill", "dragchaojue")
@@ -8406,17 +8428,8 @@ game.import("character", function () {
 				preHidden: ["gzsuishi2"],
 				trigger: { global: "dying" },
 				forced: true,
-				//priority:6.5,
-				check: function () {
-					return false;
-				},
 				filter: function (event, player) {
-					return (
-						event.player != player &&
-						event.parent.name == "damage" &&
-						event.parent.source &&
-						event.parent.source.isFriendOf(player)
-					);
+					return event.player != player && event.parent.name == "damage" && event.parent.source && event.parent.source.group == player.group;
 				},
 				content: function () {
 					player.draw();
@@ -8430,11 +8443,8 @@ game.import("character", function () {
 				audio: "suishi",
 				trigger: { global: "dieAfter" },
 				forced: true,
-				check: function () {
-					return false;
-				},
 				filter: function (event, player) {
-					return event.player.isFriendOf(player);
+					return event.player.group == player.group;
 				},
 				content: function () {
 					player.loseHp();
@@ -8511,7 +8521,7 @@ game.import("character", function () {
 					content: "mark",
 				},
 				ai: {
-					combo: "pksanchen",
+					combo: "pkmiewu",
 					threaten: 3.6,
 				},
 			},
@@ -10443,6 +10453,9 @@ game.import("character", function () {
 					maxHandcard: function (player, num) {
 						return num + player.getExpansions("zyquanji").length;
 					},
+				},
+				ai: {
+					notemp: true
 				},
 			},
 			zypaiyi: {
@@ -15032,7 +15045,7 @@ game.import("character", function () {
 					/*
 					const card = get.autoViewAs(cardx);
 					card.subtypes = [result.control];
-					player.$give(card, target);
+					player.$give(card, target, false);
 					*/
 					
 					await target.equip(card);
@@ -15876,8 +15889,7 @@ game.import("character", function () {
 			drag_caoren_prefix: "龙",
 			drag_lvchang: "吕常",
 			dragchaojue: "超绝",
-			dragchaojue_info:
-				"准备阶段，你可以弃置一张手牌，然后令所有其他角色本回合不能使用或打出此花色的牌，然后这些角色依次选择一项：①正面朝上交给你一张牌；②本回合非锁定技失效。",
+			dragchaojue_info: "准备阶段，你可以弃置一张手牌，然后令所有其他角色本回合不能使用或打出此花色的牌，然后这些角色依次选择一项：①正面朝上交给你一张与此牌花色相同的手牌；②本回合非锁定技失效。",
 			dragjunshen: "军神",
 			dragjunshen_info:
 				"①你可以将一张红色牌当作【杀】使用或打出。②当你使用〖军神①〗转化的【杀】造成伤害时，你可以令受伤角色选择弃置装备区的所有牌或令此伤害+1。③你使用方片【杀】无距离限制，使用红桃【杀】可以额外选择一个目标。",
@@ -16035,7 +16047,7 @@ game.import("character", function () {
 			jdhuoji: "火计",
 			jdhuoji_info: "使命技。①使命：出牌阶段限一次，你可以对一名其他角色造成1点火焰伤害，然后你对所有与其势力相同的不为其的其他角色各造成1点火焰伤害。②成功：准备阶段，若你本局游戏已对其他角色造成的火焰伤害不小于本局游戏总角色数，则你失去〖火计〗和〖看破〗，然后获得〖观星〗和〖空城〗。③失败：使命成功前进入濒死状态。",
 			jdkanpo: "看破",
-			jdkanpo_info: "①游戏开始时，你摸三张牌，然后将三张牌置于武将牌上。②一名角色使用牌时，你可以移去武将牌上的一张与此牌牌名相同的“看破”牌，然后取消之并摸一张牌。",
+			jdkanpo_info: "①游戏开始时，你摸三张牌，然后可以将至多三张牌扣置于武将牌上。②一名角色使用牌时，你可以移去武将牌上的一张与此牌牌名相同的“看破”牌，然后取消之并摸一张牌。",
 			jdguanxing: "观星",
 			jdguanxing_info: "①准备阶段，你将所有“星”置入弃牌堆，然后将牌堆顶的X张牌置于你的武将牌上，称为“星”（X为7-此前发动〖观星①〗次数的3倍，且X至少为0）。②出牌阶段，你可以将任意张“星”置于牌堆顶。③你可以如手牌般使用或打出“星”。",
 			jd_sb_caocao: "九鼎曹操",
@@ -16142,7 +16154,7 @@ game.import("character", function () {
 			tydangxian: "当先",
 			tydangxian_info: "锁定技，回合开始时，你执行一个额外的出牌阶段并从弃牌堆中选择一张【杀】获得。",
 			tyfuli: "伏枥",
-			tyfuli_info: "限定技，当你处于濒死状态时，你可以回复体力至2点并将手牌模至两张。",
+			tyfuli_info: "限定技，当你处于濒死状态时，你可以回复体力至2点并将手牌摸至两张。",
 			ty_huangzhong: "桃黄忠",
 			ty_huangzhong_prefix: "桃",
 			tyyizhuang: "益壮",
@@ -16263,18 +16275,18 @@ game.import("character", function () {
 			offline_yijiang: "一将成名",
 			offline_luanwu: "文和乱武",
 			offline_yongjian: "用间篇",
-			offline_yongjian_prefix: "用间",
-			offline_feihongyingxue: "飞鸿映雪",
-			offline_piracyE_zy: "官盗E系列·战役篇",
 			offline_piracyE: "官盗E系列",
+			offline_piracyE_zy: "官盗E系列·战役篇",
 			offline_piracyS: "官盗S系列",
-			offline_vtuber: "天书乱斗·虚拟偶像",
 			offline_piracyK: "官盗K系列",
-			offline_others: "线下其他系列",
 			offline_longyutao: "龙起襄樊",
 			offline_jingxiang: "荆襄风云",
 			offline_taoyuan: "桃园挽歌",
-			offline_jiudin: "九鼎系列",
+			offline_jiudin: "九鼎",
+			offline_vtuber: "天书乱斗·虚拟偶像",/*S特别系列*/
+			
+			// offline_feihongyingxue: "飞鸿映雪",
+			// offline_others: "线下其他系列",
 		},
 	};
 });

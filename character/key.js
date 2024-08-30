@@ -5647,6 +5647,9 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "youlong"
+				},
 			},
 			//铃木央人
 			hiroto_huyu: {
@@ -8719,6 +8722,10 @@ game.import("character", function () {
 					if (get.position(card) == "h") {
 						return 8 - get.value(card);
 					}
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
+					}
 					return 6 - get.value(card);
 				},
 				content() {
@@ -9725,6 +9732,10 @@ game.import("character", function () {
 				content() {
 					trigger.source.draw();
 				},
+				ai: {
+					combo: "noda_xunxin",
+					halfneg: true
+				},
 			},
 			noda_xunxin: {
 				audio: 2,
@@ -10484,6 +10495,9 @@ game.import("character", function () {
 						return "当前性别：" + get.translation(player.sex);
 					},
 				},
+				ai: {
+					combo: "sunohara_jianren"
+				},
 			},
 			sunohara_chengshuang_phase: {
 				trigger: {
@@ -10688,8 +10702,7 @@ game.import("character", function () {
 				},
 				group: "shiina_retieji",
 				ai: {
-					notemp: true,
-					combo: "shiina_feiyan",
+					combo: "shiina_qingshen",
 				},
 			},
 			shiina_retieji: {
@@ -11516,6 +11529,9 @@ game.import("character", function () {
 					player.enableEquip(list);
 					if (!player.storage.kengo_guidui2) player.storage.kengo_guidui2 = [];
 					player.storage.kengo_guidui2.addArray(list);
+				},
+				ai: {
+					combo: "kengo_weishang"
 				},
 			},
 			kengo_guidui2: { onremove: true },
@@ -12665,21 +12681,6 @@ game.import("character", function () {
 			kanade: ["sp_key_kanade", "kanade"],
 		},
 		translate: {
-			key_one: "ONE ～辉之季节～",
-			key_kanon: "Kanon",
-			key_air: "AIR",
-			key_clannad: "Clannad",
-			key_littlebusters: "Little Busters!",
-			key_rewrite: "Rewrite",
-			key_angelbeats: "Angel Beats!",
-			key_charlotte: "Charlotte",
-			key_harmonia: "Harmonia",
-			key_summerpockets: "Summer Pockets",
-			key_kamisamaninattahi: "成神之日",
-			key_loopers: "Loopers",
-			key_lunaria: "LUNARiA",
-			key_heavenburnsred: "炽焰天穹",
-
 			key_kagari: "篝",
 			kagari_zongsi: "纵丝",
 			kagari_zongsi_info:
@@ -13424,6 +13425,20 @@ game.import("character", function () {
 				"每轮限一次。若你没有“米券”，则你可以将所有手牌当做任意基本牌或普通锦囊牌使用，然后摸等量的牌。",
 			minagi_tag: "米券",
 
+			key_one: "ONE ～辉之季节～",
+			key_kanon: "Kanon",
+			key_air: "AIR",
+			key_clannad: "Clannad",
+			key_littlebusters: "Little Busters!",
+			key_rewrite: "Rewrite",
+			key_angelbeats: "Angel Beats!",
+			key_charlotte: "Charlotte",
+			key_harmonia: "Harmonia",
+			key_summerpockets: "Summer Pockets",
+			key_kamisamaninattahi: "成神之日",
+			key_loopers: "Loopers",
+			key_lunaria: "LUNARiA",
+			key_heavenburnsred: "炽焰天穹",
 		},
 		pinyins: {
 			加藤うみ: ["Kato", "Umi"],

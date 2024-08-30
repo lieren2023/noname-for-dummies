@@ -141,6 +141,7 @@ game.import("character", function () {
 		},
 		characterSort: {
 			diy: {
+				diy_noname: ["noname"],
 				diy_yijiang: [
 					"ns_huangchengyan",
 					"ns_sunchensunjun",
@@ -194,15 +195,6 @@ game.import("character", function () {
 					"ns_xinnanhua",
 					"ns_luyusheng",
 				],
-				diy_fakenews: [
-					"diy_wenyang",
-					"ns_zhangwei",
-					"ns_caimao",
-					"ns_chengpu",
-					"ns_sundeng",
-					"ns_duji",
-					"ns_mengyou",
-				],
 				diy_xushi: [
 					"diy_feishi",
 					"diy_hanlong",
@@ -215,7 +207,15 @@ game.import("character", function () {
 					"diy_zaozhirenjun",
 				],
 				diy_default: ["diy_yuji", "diy_caiwenji", "diy_lukang", "diy_zhenji", "old_majun"],
-				diy_noname: ["noname"],
+				diy_fakenews: [
+					"diy_wenyang",
+					"ns_zhangwei",
+					"ns_caimao",
+					"ns_chengpu",
+					"ns_sundeng",
+					"ns_duji",
+					"ns_mengyou",
+				],
 				diy_trashbin: ["junk_guanyu", "junk_zhangjiao", "old_jiakui", "ol_guohuai", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan", "std_pengyang"],
 			},
 		},
@@ -6865,7 +6865,6 @@ game.import("character", function () {
 				usable: 1,
 				frequent: true,
 				locked: false,
-				notemp: true,
 				marktext: "功",
 				init(player) {
 					player.storage.jugong = [];
@@ -8496,6 +8495,9 @@ game.import("character", function () {
 					list = list.slice(0, Math.min(skills.length, list.length));
 					player.addSkills(list);
 				},
+				ai: {
+					combo: "junkyuheng"
+				},
 				derivation: ["junkshengzhi", "junkquandao", "junkchigang"],
 			},
 			junkshengzhi: {
@@ -9023,8 +9025,7 @@ game.import("character", function () {
 			nsqinxue_info:
 				"每个效果每回合只能使用一次。①当你使用一张基本牌时，你从牌堆随机获得一张锦囊牌；②当你使用一张锦囊牌时，你从牌堆随机获得一张装备牌；③当你使用一张装备牌时，你从牌堆随机获得一张基本牌。",
 			nsbaiyi: "白衣",
-			nsbaiyi_info:
-				"锁定技，若你本回合发动过勤学，你跳过弃牌阶段，改为弃置X张牌（X为本回合发动勤学次数）；若你弃置了3张类别不同的牌，你获得一个额外回合（不可连续获得回合），否则你观看牌堆顶的X张牌并获得其中一张。",
+			nsbaiyi_info: "锁定技，若你本回合发动过〖勤学〗，你跳过弃牌阶段，改为弃置X张牌（X为本回合发动〖勤学〗的次数）；若你弃置了3张类别不同的牌，你获得一个额外回合（不可连续获得回合），否则你观看牌堆顶的X张牌并获得其中一张。",
 			nsbaiming: "百鸣",
 			nsbaiming_info:
 				"当你使用【杀】时，你可以获得一项未获得过且与杀或伤害相关的技能，此【杀】结算完毕后，你失去以此法获得的技能。",
@@ -9398,13 +9399,13 @@ game.import("character", function () {
 			stdtuishi: "侻失",
 			stdtuishi_info: "锁定技，你不能使用【无懈可击】，你使用的字母牌无效。",
 
-			diy_tieba: "吧友设计",
-			diy_xushi: "玩点论杀·虚实篇",
-			diy_default: "常规",
 			diy_noname: "无名专属",
 			diy_yijiang: "设计比赛2020",
 			diy_yijiang2: "设计比赛2021",
 			diy_yijiang3: "设计比赛2022",
+			diy_tieba: "吧友设计",
+			diy_xushi: "玩点论杀·虚实篇",
+			diy_default: "常规",
 			diy_fakenews: "杀海流言",
 			diy_trashbin: "垃圾桶",
 		},

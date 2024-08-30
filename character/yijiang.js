@@ -1411,6 +1411,7 @@ game.import("character", function () {
 					return (
 						evtx.name == "useCard" &&
 						evtx.card.name == "sha" &&
+						evtx.card.isCard &&
 						event.cards.filterInD("d").length &&
 						game.hasPlayer2(current =>
 							current.hasHistory("sourceDamage", evtxx => {
@@ -3300,6 +3301,10 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "xinfuli",
+					halfneg: true
+				},
 			},
 			xinjunxing: {
 				inherit: "junxing",
@@ -4083,6 +4088,9 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "pingkou"
+				},
 			},
 			pingkou: {
 				audio: 2,
@@ -4120,6 +4128,7 @@ game.import("character", function () {
 							if (card.name == "lebu" || card.name == "bingliang") return 0.5;
 						},
 					},
+					combo: "fenli"
 				},
 			},
 			xinanguo: {
@@ -5013,6 +5022,9 @@ game.import("character", function () {
 					maxHandcard: function (player, num) {
 						return num + player.getExpansions("bizhuan").length;
 					},
+				},
+				ai: {
+					notemp: true
 				},
 			},
 			tongbo: {
@@ -10971,7 +10983,11 @@ game.import("character", function () {
 				content: function () {
 					"step 0";
 					player.draw();
-					player.chooseToDiscard("he", true);
+					player.chooseToDiscard("he", true).set("ai", card => {
+						let player = get.event("player");
+						if (get.color(card, player)) return 7 - get.value(card, player);
+						return 4 - get.value(card, player);
+					});
 					"step 1";
 					if (!result.bool) {
 						event.finish();
@@ -12053,7 +12069,6 @@ game.import("character", function () {
 				trigger: { player: "damageEnd" },
 				frequent: true,
 				locked: false,
-				notemp: true,
 				filter: function (event) {
 					return event.num > 0;
 				},
@@ -12099,6 +12114,7 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
+					notemp: true,
 					threaten: 0.8,
 					effect: {
 						target: function (card, player, target) {
@@ -12908,7 +12924,9 @@ game.import("character", function () {
 				},
 			},
 			zhichi2: {
+				audio: 'zhichi',
 				trigger: { target: "useCardToBefore" },
+				audioname: ["re_chengong"],
 				forced: true,
 				charlotte: true,
 				priority: 15,
@@ -15935,7 +15953,7 @@ game.import("character", function () {
 			duwang: "独往",
 			duwang_info: "锁定技。①游戏开始时，你从牌堆顶将五张不为【杀】的牌置于武将牌上，称为“刺”。②若你有牌名不为【杀】“刺”，你至其他角色或其他角色至你的距离+1。",
 			cibei: "刺北",
-			cibei_info: "①当一名角色使用【杀】造成伤害且此牌对应的实体牌进入弃牌堆后，你可以将一张不为【杀】的“刺”置入弃牌堆，并将这些牌置入“刺”，然后弃置一名角色区域里的一张牌。②一名角色的回合结束时，若你的“刺”均为【杀】，你获得所有“刺”，且这些牌不能被弃置，不计入手牌上限，且当你使用对应实体牌包含这些牌的牌时无次数和距离限制。",
+			cibei_info: "①当一名角色使用非转化【杀】造成伤害且此牌对应的实体牌进入弃牌堆后，你可以将一张不为【杀】的“刺”置入弃牌堆，并将这些牌置入“刺”，然后弃置一名角色区域里的一张牌。②一名角色的回合结束时，若你的“刺”均为【杀】，你获得所有“刺”，且这些牌不能被弃置，不计入手牌上限，且当你使用对应实体牌包含这些牌的牌时无次数和距离限制。",
 			wuanguo: "武安国",
 			diezhang: "叠嶂",
 			diezhang_info: "转换技。①出牌阶段，你使用【杀】的次数上限+1。②阴：当你使用牌被其他角色抵消后，你可以弃置一张牌，视为对其使用X张【杀】；阳：当其他角色使用牌被你抵消后，你可以摸X张牌，视为对其使用一张【杀】（X为1）。",

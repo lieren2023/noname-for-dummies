@@ -1691,7 +1691,7 @@ game.import("character", function () {
 					game.log(target, "展示了", event.card2);
 					event._result = {};
 					player
-						.chooseToDiscard({ color: get.color(event.card2) }, "he", function (card) {
+						.chooseToDiscard({ color: get.color(event.card2) }, "h", function (card) {
 							var evt = _status.event.getParent();
 							if (get.damageEffect(evt.target, evt.player, evt.player, "fire") > 0) {
 								return 7 - get.value(card, evt.player);
@@ -2284,6 +2284,9 @@ game.import("character", function () {
 					maxHandcard: function (player, num) {
 						return num + player.getExpansions("rebizhuan").length;
 					},
+				},
+				ai: {
+					notemp: true
 				},
 			},
 			retongbo: {
@@ -2952,6 +2955,9 @@ game.import("character", function () {
 						},
 					},
 				},
+				ai: {
+					combo: "repingkou"
+				},
 			},
 			repingkou: {
 				audio: 2,
@@ -3028,6 +3034,7 @@ game.import("character", function () {
 							if (card.name == "lebu" || card.name == "bingliang") return 0.5;
 						},
 					},
+					combo: "refenli"
 				},
 			},
 			//典韦
@@ -5472,8 +5479,13 @@ game.import("character", function () {
 					"step 0";
 					player.draw();
 					"step 1";
-					if (player.hasCard((card) => lib.filter.cardDiscardable(card, player, "reqianxi"), "he"))
-						player.chooseToDiscard("he", true);
+					if (player.hasCard(card => {
+						return lib.filter.cardDiscardable(card, player, "reqianxi");
+					}, "he")) player.chooseToDiscard("he", true).set("ai", card => {
+						let player = get.event("player");
+						if (get.color(card, player)) return 7 - get.value(card, player);
+						return 4 - get.value(card, player);
+					});
 					else event.finish();
 					"step 2";
 					if (
@@ -6793,6 +6805,7 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
+					notemp: true,
 					threaten: 0.8,
 					effect: {
 						target: function (card, player, target) {
@@ -8058,6 +8071,9 @@ game.import("character", function () {
 						return num + player.getExpansions("gzquanji").length;
 					},
 				},
+				ai: {
+					notemp: true
+				},
 			},
 			gzpaiyi: {
 				audio: 2,
@@ -8124,6 +8140,7 @@ game.import("character", function () {
 					result: {
 						player: 1,
 					},
+					combo: "gzquanji"
 				},
 			},
 			gzquanji2: { charlotte: true },
@@ -10910,6 +10927,8 @@ game.import("character", function () {
 						game.addVideo("judge2", null, event.videoId);
 						ui.arena.classList.remove("thrownhighlight");
 					}
+					let cards = [event.card].filterInD("od");
+					if(cards.length) game.cardsGotoPile(cards, "insert");
 				},
 				ai: {
 					effect: {
@@ -15267,16 +15286,20 @@ game.import("character", function () {
 				delay: false,
 				selectCard: [1, Infinity],
 				check: function (card) {
-					var player = _status.event.player;
+					let player = _status.event.player;
 					if (
 						get.position(card) == "h" &&
 						!player.countCards("h", "du") &&
-						(player.hp > 2 ||
-							!player.countCards("h", function (card) {
-								return get.value(card) >= 8;
-							}))
-					) {
-						return 1;
+						(
+							player.hp > 2 ||
+							!player.countCards("h", i => {
+								return get.value(i) >= 8;
+							})
+						)
+					) return 1;
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
 					}
 					return 6 - get.value(card);
 				},
@@ -18730,8 +18753,7 @@ game.import("character", function () {
 			dcjiushi_info:
 				"①当你需要使用【酒】时，若你的武将牌正面向上，你可以翻面，视为使用一张【酒】。②当你受到伤害后，若你的武将牌于受到伤害时背面向上，你可以翻面。③当你使用【酒】后，你使用【杀】的次数上限+1直到你的下个回合结束。",
 			olhuoji: "火计",
-			olhuoji_info:
-				"①你可以将一张红色牌当【火攻】使用。②你使用【火攻】的作用效果改为“目标角色随机展示一张手牌A，然后你可以弃置一张与A颜色相同的牌，对目标造成1点火属性伤害”。",
+			olhuoji_info: "①你可以将一张红色牌当【火攻】使用。②你使用【火攻】的作用效果改为“目标角色随机展示一张手牌A，然后你可以弃置一张与A颜色相同的手牌，对目标造成1点火属性伤害”。",
 			olkanpo: "看破",
 			olkanpo_info: "①你可以将一张黑色牌当【无懈可击】使用。②你使用的【无懈可击】不可被响应。",
 			xinwangxi: "忘隙",

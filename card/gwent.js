@@ -1426,7 +1426,7 @@ game.import("card", function () {
 				selectTarget: -1,
 				content: function () {
 					var list = get.gainableSkills(function (info, skill) {
-						return !info.notemp && info.ai && info.ai.maixie_hp && !player.hasSkill(skill);
+						return info.ai && info.ai.maixie_hp && !player.hasSkill(skill);
 					});
 					list.remove("guixin");
 					if (list.length) {

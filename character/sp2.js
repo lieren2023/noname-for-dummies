@@ -72,8 +72,6 @@ game.import("character", function () {
 			zhanggong: ["male", "wei", 3, ["xinfu_zhenxing", "xinfu_qianxin"], []],
 			weiwenzhugezhi: ["male", "wu", 4, ["xinfu_fuhai"], []],
 			beimihu: ["female", "qun", 3, ["zongkui", "guju", "baijia"]],
-			xurong: ["male", "qun", 4, ["xinfu_xionghuo", "xinfu_shajue"], []],
-			zhangqiying: ["female", "qun", 3, ["xinfu_falu", "xinfu_dianhua", "xinfu_zhenyi"], []],
 			sp_liuqi: ["male", "qun", 3, ["rewenji", "sptunjiang"]],
 			xf_tangzi: ["male", "wei", 4, ["xinfu_xingzhao"], []],
 			xf_huangquan: ["male", "shu", 3, ["xinfu_dianhu", "xinfu_jianji"], []],
@@ -95,8 +93,7 @@ game.import("character", function () {
 		},
 		characterSort: {
 			sp2: {
-				sp_whlw: [
-					"xurong",
+				sp2_whlw: [
 					"lijue",
 					"zhangji",
 					"fanchou",
@@ -109,10 +106,10 @@ game.import("character", function () {
 					"dongxie",
 					"liqueguosi",
 				],
-				sp_zlzy: ["zhangqiying", "lvkai", "zhanggong", "weiwenzhugezhi", "beimihu"],
-				sp_sbfm: ["lisu", "xinpi", "zhangwen"],
-				sp_qihuan: ["zhaozhong", "re_hejin", "fengfang", "mushun"],
-				sp_binglin: [
+				sp2_zlzy: ["lvkai", "zhanggong", "weiwenzhugezhi", "beimihu"],
+				sp2_sbfm: ["lisu", "xinpi", "zhangwen"],
+				sp2_qihuan: ["zhaozhong", "re_hejin", "fengfang", "mushun"],
+				sp2_binglin: [
 					"re_niujin",
 					"sp_mifangfushiren",
 					"licaiwei",
@@ -122,7 +119,7 @@ game.import("character", function () {
 					"sunhuan",
 					"dc_mengda",
 				],
-				sp_danqi: [
+				sp2_danqi: [
 					"dufuren",
 					"qinyilu",
 					"bianxi",
@@ -134,16 +131,17 @@ game.import("character", function () {
 					"guānning",
 					"dc_jsp_guanyu",
 				],
-				sp_fenghuo: ["re_nanhualaoxian", "tongyuan", "zhangning", "re_pangdegong"],
-				sp_zizouqi: ["mangyachang", "xugong", "zhangchangpu"],
+				sp2_fenghuo: ["re_nanhualaoxian", "tongyuan", "zhangning", "re_pangdegong"],
+				sp2_zizouqi: ["mangyachang", "xugong", "zhangchangpu"],
 				
-				sp_huangjin: ["liuhong", "zhujun", "re_hansui", "xushao"],
-				sp_fadong: ["ol_dingyuan", "wangrong", "re_quyi", "hanfu"],
-				sp_xuzhou: ["re_taoqian", "caosong", "zhangmiao", "qiuliju"],
-				sp_zhongyuan: ["re_hucheer", "re_zoushi", "caoanmin", "re_dongcheng"],
-				sp_xiaohu: ["haomeng", "yanfuren", "yanrou", "dc_zhuling"],
-				sp_qunxiong: ["chezhou", "hansong", "matie"],
-				sp_guandu: [
+				sp2_huangjin: ["liuhong", "zhujun", "re_hansui", "xushao"],
+				sp2_fadong: ["ol_dingyuan", "wangrong", "re_quyi", "hanfu"],
+				sp2_xuzhou: ["re_taoqian", "caosong", "zhangmiao", "qiuliju"],
+				sp2_zhongyuan: ["re_hucheer", "re_zoushi", "caoanmin", "re_dongcheng"],
+				sp2_xiaohu: ["haomeng", "yanfuren", "yanrou", "dc_zhuling"],
+				sp2_qunxiong: ["chezhou", "hansong", "matie"],
+				
+				sp2_guandu: [
 					"sp_zhanghe",
 					"xunchen",
 					"sp_shenpei",
@@ -154,7 +152,8 @@ game.import("character", function () {
 					"xinping",
 					"hanmeng",
 				],
-				sp_longzhou: ["xf_tangzi", "xf_huangquan", "xf_sufei", "sp_liuqi"],
+				sp2_longzhou: ["xf_tangzi", "xf_huangquan", "xf_sufei", "sp_liuqi"],
+				
 				sp2_waitforsort: ["caobuxing", "re_maliang", "dc_jikang"],
 			},
 		},
@@ -4208,6 +4207,7 @@ game.import("character", function () {
 				},
 				ai: {
 					combo: "dcjinjian",
+					halfneg: true
 				},
 			},
 			//赵俨
@@ -7999,6 +7999,9 @@ game.import("character", function () {
 					if (result.bool) {
 						var target = result.targets[0];
 						player.logSkill("kangge", target);
+						if (get.mode() != "identity" || player.identity != "nei") {
+							if (target.identityShown || typeof target.ai.expose == "number" && target.ai.expose > 0.5) player.addExpose(0.4);
+						}
 						player.addSkill("kangge_clear");
 						player.storage.kangge = target;
 						player.markSkill("kangge");
@@ -8593,6 +8596,10 @@ game.import("character", function () {
 				},
 				content: function () {
 					trigger.num++;
+				},
+				ai: {
+					combo: "lulve",
+					halfneg: true
 				},
 			},
 			//陶谦和曹嵩
@@ -9845,6 +9852,9 @@ game.import("character", function () {
 						player.loseMaxHp(4);
 						player.addSkill("tuxing2");
 					}
+				},
+				ai: {
+					combo: "yujue"
 				},
 			},
 			tuxing2: {
@@ -14146,6 +14156,7 @@ game.import("character", function () {
 						var target = result.targets[0];
 						player.line(target, "green");
 						game.log(target, "成为了", "【点虎】", "的目标");
+						if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.25);
 						target.storage.xinfu_dianhu2 = player;
 						target.addTempSkill("xinfu_dianhu2", { player: "die" });
 					}
@@ -14504,9 +14515,6 @@ game.import("character", function () {
 				"张恭（生卒年不详），三国时期魏国大臣，与子张就一同闻名于西域。官至西域戊己校尉、关内侯，赠执金吾。初为敦煌郡功曹。东汉末河西大乱，太守马艾卒官，他被众人推为代理长史，遂派儿子张就请曹操委任太守，直至新太守到任。魏文帝时拜西域戊己校尉。魏明帝时去世。",
 			weiwenzhugezhi:
 				"卫温 （？—231年），三国时期东吴将领，曾任将军职。诸葛直（？—231年），三国时期东吴将领。黄龙二年（230年）正月，孙权派卫温、诸葛直带领上万士兵出海寻找夷洲、亶洲，想要俘获那里的民众以充实东吴的人口，陆逊和全琮都谏言反对，孙权不听。230年和卫温一起登上台湾（当时的台湾叫做夷洲），他们是中国历史上记载的最早登陆台湾的人。卫温和诸葛直花费了约一年时间行军，士兵们因为疾病死去了十分之八到十分之九，因为亶洲太过遥远，卫温和诸葛直最终没能到达那里，只带了几千名夷洲的人返回。黄龙三年（231年），孙权认为诸葛直违背诏令，劳财伤民，无功而返，和卫温一同入狱被处死。",
-			xurong: "徐荣（？－192年），玄菟人（一说为辽东襄平人，《公孙度传》中说公孙度本辽东襄平人，迁居玄菟，为同郡徐荣所举，任辽东太守。同郡当是同“玄菟”郡），东汉末年将领。本为中郎将，曾向董卓推举同郡出身的公孙度出任辽东太守。于汴水之战中击败曹操的独立追击军，以及在梁东之战中击败孙坚的部队。在董卓死后，受司徒王允的命令与李傕、郭汜交战，因部将胡珍投降，寡不敌众，于新丰之战被击败，战死在乱军之中。",
-			zhangqiying:
-				"张琪瑛（196年－217年），字不详（或琪瑛为字，名不详），祖籍沛国丰县（今江苏省丰县）。她的曾祖父张陵是西汉留侯张良的十一世孙、天师道（五斗米道）教祖，她的父亲是东汉末年割据汉中的军阀张鲁。张琪瑛继承家说，是五斗米教的传人。",
 			beimihu:
 				"卑弥呼（ひみこ，约159年-约249年，有的史书也写成“俾弥呼”）是日本弥生时代邪马台国（今日本本州近畿地区）的女王，在《三国志·魏书·倭人传》中有关于她的记载。关于她的真实身份一直众说纷纭，是个极具神秘色彩的古代女性统治者。亦是日本古代宗教鬼道教的发源者。",
 			liuqi: "刘琦（？－209年）。兖州山阳郡高平县（今山东省济宁市微山县两城镇）人。荆州牧刘表的长子、谏议大夫刘琮兄。官至荆州刺史。建安十四年（209年）病逝。",
@@ -14690,8 +14698,6 @@ game.import("character", function () {
 			lvkai: "吕凯",
 			zhanggong: "张恭",
 			weiwenzhugezhi: "卫温诸葛直",
-			xurong: "徐荣",
-			zhangqiying: "张琪瑛",
 			sp_liuqi: "刘琦",
 			xf_tangzi: "唐咨",
 			gz_xf_huangquan: "黄权",
@@ -15453,26 +15459,28 @@ game.import("character", function () {
 			mpsixiao_info: "锁定技，游戏开始时，你选择一名其他角色。每回合限一次，当该角色需要使用或打出除【无懈可击】外的牌时，其可以观看你的手牌并可以使用或打出其中一张牌，然后你摸一张牌。",
 
 			// 南征北战
-			sp_whlw: "征战·文和乱武",
-			sp_zlzy: "征战·逐鹿天下",
-			sp_sbfm: "征战·上兵伐谋",
-			sp_qihuan: "征战·戚宦之争",
-			sp_binglin: "征战·兵临城下",
-			sp_danqi: "征战·千里单骑",
-			sp_fenghuo: "征战·烽火连天",
-			sp_zizouqi: "征战·自走棋",
+			sp2_whlw: "南征北战·文和乱武",
+			sp2_zlzy: "南征北战·逐鹿天下",
+			sp2_sbfm: "南征北战·上兵伐谋",
+			sp2_qihuan: "南征北战·戚宦之争",
+			sp2_binglin: "南征北战·兵临城下",
+			sp2_danqi: "南征北战·千里单骑",
+			sp2_fenghuo: "南征北战·烽火连天",
+			sp2_zizouqi: "南征北战·自走棋",
 			
 			// 武将列传
-			sp_huangjin: "列传·黄巾之乱",
-			sp_fadong: "列传·诸侯伐董",
-			sp_xuzhou: "列传·徐州风云",
-			sp_zhongyuan: "列传·中原狼烟",
-			sp_xiaohu: "列传·虓虎悲歌",
-			sp_qunxiong: "列传·群雄伺动",
+			sp2_huangjin: "武将列传·黄巾之乱",
+			sp2_fadong: "武将列传·诸侯伐董",
+			sp2_xuzhou: "武将列传·徐州风云",
+			sp2_zhongyuan: "武将列传·中原狼烟",
+			sp2_xiaohu: "武将列传·虓虎悲歌",
+			sp2_qunxiong: "武将列传·群雄伺动",
 			
-			// sp_shengun: "三国奇人传",
-			sp_guandu: "官渡之战",
-			sp_longzhou: "同舟共济",
+			// 活动场
+			sp2_guandu: "活动场·官渡之战",
+			sp2_longzhou: "活动场·同舟共济",
+			
+			// sp2_shengun: "三国奇人传",
 			sp2_waitforsort: "等待分包",
 		},
 		pinyins: {

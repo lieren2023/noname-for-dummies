@@ -2915,7 +2915,7 @@ game.import("character", function () {
 				},
 				group: ["nzry_mingren_1", "nzry_mingren_2"],
 				ai:{
-					combo: "nzry_zhenliang",
+					notemp: true
 				},
 				subSkill: {
 					1: {
@@ -4447,6 +4447,7 @@ game.import("character", function () {
 					},
 					nodiscard: true,
 					nolose: true,
+					notemp: true
 				},
 			},
 			zaoxian: {
@@ -5382,6 +5383,7 @@ game.import("character", function () {
 				group: ["huoshou1", "huoshou2"],
 				preHidden: ["huoshou1", "huoshou2"],
 				ai: {
+					halfneg: true,
 					effect: {
 						target(card, player, target) {
 							if (card.name == "nanman") return 0;
@@ -7274,6 +7276,9 @@ game.import("character", function () {
 							player.discardPlayerCard(result.targets[0], "j", true);
 						}
 					}
+				},
+				ai: {
+					combo: "moon_jushou"
 				},
 			},
 			releiji: {

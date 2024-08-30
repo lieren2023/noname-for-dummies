@@ -5,19 +5,6 @@ game.import("character", function () {
 		connect: true,
 		characterSort: {
 			tw: {
-				tw_sp: ["simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
-				tw_yunchouzhi: [
-					"tw_wangcan",
-					"tw_dongzhao",
-					"tw_bianfuren",
-					"tw_feiyi",
-					"tw_chenzhen",
-					"tw_xunchen",
-				],
-				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
-				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
-				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
-				tw_yunchouyan: ["tw_jiangqing"],
 				tw_zhu: ["tw_beimihu", "tw_ol_sunjian", "ol_liuyu", "tw_menghuo"],
 				tw_swordsman: [
 					"xia_yuzhenzi",
@@ -38,21 +25,29 @@ game.import("character", function () {
 					"xia_xiahouzie",
 				],
 				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
+				tw_sp: ["licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
 				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo"],
-				tw_mobile2: [
-					"tw_chengpu",
-					"tw_guohuai",
-					"old_quancong",
-					"tw_caoxiu",
-					"tw_guanqiujian",
-					"tw_re_fazheng",
-					"tw_madai",
-					"tw_zhangfei",
-					"tw_guyong",
-					"tw_handang",
-					"tw_xuezong",
-					"tw_yl_luzhi",
+				tw_standard: ["tw_zhangfei"],
+				tw_shenhua_yin: ['tw_yl_luzhi'],
+				tw_shenhua_lei: ["tw_guanqiujian"],
+				tw_yijiang1: ["tw_re_fazheng"],
+				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
+				tw_yijiang3: ["tw_guohuai"],
+				tw_yijiang4: ["tw_guyong"],
+				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
+				tw_yijiang7: ["tw_xuezong"],
+				tw_yunchouzhi: [
+					"tw_wangcan",
+					"tw_dongzhao",
+					"tw_bianfuren",
+					"tw_feiyi",
+					"tw_chenzhen",
+					"tw_xunchen",
 				],
+				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
+				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
+				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
+				tw_yunchouyan: ["tw_jiangqing"],
 				tw_yijiang: [
 					"tw_caoang",
 					"tw_caohong",
@@ -62,7 +57,8 @@ game.import("character", function () {
 					"tw_xiahouba",
 				],
 				tw_english: ["kaisa"],
-				tw_waitingforsort: ["licuilianzhaoquanding"],
+				
+				// tw_waitingforsort: [],
 			},
 		},
 		character: {
@@ -627,7 +623,7 @@ game.import("character", function () {
 						})
 						.set("num", num)
 						.forResult("index");
-					if (index == 0 && num > 0) await player.draw(3);
+					if (index == 0 && num > 0) await player.draw(num);
 					else if (ui.cardPile.childElementCount > num) {
 						const gains = Array.from(ui.cardPile.childNodes).slice(num).slice(0, 3);
 						if (gains.length > 0) await player.gain(gains, "gain2");
@@ -4087,6 +4083,7 @@ game.import("character", function () {
 				ai: {
 					order: 9,
 					result: { target: -1 },
+					combo: "twjieqiu"
 				},
 			},
 			//侠关羽
@@ -8131,25 +8128,29 @@ game.import("character", function () {
 				filterTarget: function (card, player, target) {
 					return target.countCards("h");
 				},
-				content: function () {
-					"step 0";
-					event.togive = target.getNext();
-					var cards = target.getCards("h", { name: "sha" });
+				async content(event, trigger, player) {
+					let togive = event.target.getNext();
+					let cards = event.target.getCards("h", { name: "sha" });
 					if (!cards.length) {
-						game.log("但", target, "没有", "#y杀", "！");
-						event.finish();
+						game.log("但", event.target, "没有", "#y杀", "！");
+						return;
 					}
-					"step 1";
-					var cards = target.getCards("h", { name: "sha" }),
-						card = cards.randomRemove(1)[0];
-					target.give(card, event.togive);
-					if (cards.length) {
-						event.togive = event.togive.getNext();
-						event.redo();
+					let gained;
+					while (true) {
+						let card = event.target.getCards("h", { name: "sha" }).randomGet();
+						if (togive == gained) break;
+						if (togive.isIn()) {
+							await event.target.give(card, togive);
+							gained = togive;
+						}
+						let num = togive == event.target ? 1 : 0;
+						if (event.target.countCards("h", { name: "sha" }) > num) togive = togive.getNext();
+						else break;
 					}
-					"step 2";
-					target.line(event.togive);
-					event.togive.damage(Math.min(2, event.togive.countCards("h", { name: "sha" })), target);
+					event.target.line(togive);
+					let num = togive.countCards("h", { name: "sha" });
+					if (!num) return;
+					await togive.damage(Math.min(2, num), event.target);
 				},
 				ai: {
 					order: 10,
@@ -11267,8 +11268,13 @@ game.import("character", function () {
 					"step 0";
 					player.draw();
 					"step 1";
-					if (player.hasCard((card) => lib.filter.cardDiscardable(card, player, "tweqianxi"), "he"))
-						player.chooseToDiscard("he", true);
+					if (player.hasCard(card => {
+						return lib.filter.cardDiscardable(card, player, "tweqianxi");
+					}, "he")) player.chooseToDiscard("he", true).set("ai", card => {
+						let player = get.event("player");
+						if (get.color(card, player)) return 7 - get.value(card, player);
+						return 4 - get.value(card, player);
+					});
 					else event.finish();
 					"step 2";
 					if (
@@ -20836,6 +20842,9 @@ game.import("character", function () {
 					if (player.hp <= trigger.player.hp) player.recover();
 					if (player.hp >= trigger.player.hp) player.draw();
 				},
+				ai: {
+					combo: "equan"
+				},
 			},
 			beini: {
 				audio: 2,
@@ -21933,6 +21942,9 @@ game.import("character", function () {
 						player.changeGroup(group);
 					}
 				},
+				ai: {
+					combo: "twbaobian"
+				},
 			},
 			twbaobian: {
 				audio: 2,
@@ -21999,6 +22011,9 @@ game.import("character", function () {
 						player.logSkill("chijie");
 						player.changeGroup(result.control);
 					}
+				},
+				ai: {
+					combo: "waishi"
 				},
 			},
 			waishi: {
@@ -23266,19 +23281,28 @@ game.import("character", function () {
 			twniwo: "逆涡",
 			twniwo_info: "出牌阶段开始时，你可选择一名其他角色，然后选择你与其等量的手牌。若如此做，直到本回合结束，你与其均无法使用或打出你以此法选择的牌。",
 
+			tw_zhu: "海外服·专属主公",
+			tw_swordsman: "海外服·武侠篇",
+			tw_beidingzhongyuan: "海外服·北定中原",
+			tw_sp: "海外服·SP",
 			tw_mobile: "海外服·稀有专属",
+			tw_standard: "外服异构·标准包",
+			tw_shenhua_yin: "外服异构·难知如阴",
+			tw_shenhua_lei: "外服异构·动如雷霆",
+			tw_yijiang1: "外服异构·将1",
+			tw_yijiang2: "外服异构·将2",
+			tw_yijiang3: "外服异构·将3",
+			tw_yijiang4: "外服异构·将4",
+			tw_yijiang5: "外服异构·将5",
+			tw_yijiang7: "外服异构·原7",
 			tw_yunchouzhi: "运筹帷幄·智",
 			tw_yunchouxin: "运筹帷幄·信",
 			tw_yunchouren: "运筹帷幄·仁",
 			tw_yunchouyong: "运筹帷幄·勇",
 			tw_yunchouyan: "运筹帷幄·严",
-			tw_zhu: "海外服·主公",
-			tw_sp: "海外服·SP",
-			tw_swordsman: "海外服·武侠篇",
-			tw_beidingzhongyuan: "海外服·北定中原",
-			tw_mobile2: "海外服·异构",
 			tw_yijiang: "一将成名TW",
 			tw_english: "英文版",
+			
 			tw_waitingforsort: "等待分包",
 		},
 		pinyins: {

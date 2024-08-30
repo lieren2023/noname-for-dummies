@@ -9,11 +9,13 @@ window.noname_package = {
 		extra: "神将",
 		//OL服
 		onlyOL: "OL专属",
+		sbfm: "上兵伐谋",
 		sp: "璀璨星河",
 		clan: "门阀士族",
 		yingbian: "文德武备",
 		//十周年服
 		xinghuoliaoyuan: "星火燎原",
+		mdtx: "谋定天下",
 		huicui: "群英荟萃",
 		xianding: "限定专属",
 		sp2: "系列专属",

@@ -69,6 +69,7 @@ game.import("character", function () {
 				],
 				sb_yu: ["sb_yujin", "sb_lvmeng", "sb_huangzhong", "sb_huanggai", "sb_zhouyu", "sb_caoren", "sb_yl_luzhi", "sb_huangyueying", "sb_luxun"],
 				sb_neng: ["sb_huaxiong", "sb_sunshangxiang", "sb_jiangwei", "sb_yuanshao", "sb_menghuo", "sb_guanyu", "sb_gaoshun", "sb_gongsunzan"],
+				
 				// sb_waitforsort: [],
 			},
 		},
@@ -688,7 +689,7 @@ game.import("character", function () {
 					},
 				},
 				ai: {
-					combo: "sbqiaomeng"
+					notemp: true
 				},
 			},
 			sbqiaomeng: {
@@ -998,9 +999,9 @@ game.import("character", function () {
 					const player = event.player;
 					const chosen = player
 						.getAllHistory("useSkill", (evt) => evt.skill === "sbganglie")
-						.map((evt) => {
-							return evt.targets[0];
-						});
+						.reduce((list, evt) => {
+							if (evt.targets) return list.addArray(evt.targets);
+						}, []);
 					let targets = player
 						.getAllHistory("damage", (evt) => evt.source && evt.source.isIn())
 						.map((evt) => evt.source)
@@ -1011,8 +1012,9 @@ game.import("character", function () {
 				filterTarget(card, player, target) {
 					return get.event("sbganglie_enabledTargets").includes(target);
 				},
+				selectTarget: [1, Infinity],
 				async content(event, trigger, player) {
-					await event.targets[0].damage(2);
+					await event.target.damage(2);
 				},
 				ai: {
 					order: 6,
@@ -1562,14 +1564,9 @@ game.import("character", function () {
 						.set("ai", (card) => {
 							if (get.event("nope")) return 0;
 							if (ui.selected.cards.length >= get.event("num")) return 0;
-							return 6 - get.value(card);
+							return 9 - get.value(card);
 						})
-						.set(
-							"nope",
-							get.attitude(target, player) *
-								get.effect(player, { name: "losehp" }, player, target) >=
-								0
-						)
+						.set("nope", get.effect(player, { name: "losehp" }, player, target) >= 0)
 						.set("num", num);
 					if (!bool || cards.length < num) player.loseHp();
 				},
@@ -1760,7 +1757,6 @@ game.import("character", function () {
 					},
 				},
 				ai: {
-					combo: "sbxingshang",
 					order: 8,
 					result: {
 						player(player) {
@@ -1812,7 +1808,7 @@ game.import("character", function () {
 					{
 						cost: 1,
 						prompt: () => "令一名其他角色于手牌中只能使用基本牌直到其回合结束",
-						filter: player => get.mode() != "doudizhu" && game.hasPlayer(target => target != player && !target.getStorage("sbfangzhu_ban").includes("basic")),
+						filter: player => game.hasPlayer(target => target != player && !target.getStorage("sbfangzhu_ban").includes("basic")),
 						filterTarget: (card, player, target) => target != player && !target.getStorage("sbfangzhu_ban").includes("basic"),
 						async content(player, target) {
 							target.addTempSkill("sbfangzhu_ban", { player: "phaseEnd" });
@@ -1879,7 +1875,7 @@ game.import("character", function () {
 					{
 						cost: 2,
 						prompt: () => "令一名其他角色不能响应除其外的角色使用的牌直到其回合结束",
-						filter: player => get.mode() != "doudizhu" && game.hasPlayer(target => target != player && !target.hasSkill("sbfangzhu_kill")),
+						filter: player => game.hasPlayer(target => target != player && !target.hasSkill("sbfangzhu_kill")),
 						filterTarget: lib.filter.notMe,
 						async content(player, target) {
 							target.addTempSkill("sbfangzhu_kill", { player: "phaseEnd" });
@@ -3529,6 +3525,9 @@ game.import("character", function () {
 						},
 						content: function () {
 							trigger.getParent().customArgs.default.customSource = player;
+						},
+						ai: {
+							halfneg: true
 						},
 					},
 					nanmaned: {
@@ -6902,7 +6901,7 @@ game.import("character", function () {
 					"step 4";
 					if (event.cards2.length < cards.length) target.damage();
 					"step 5";
-					if (player.countMark("sbjianxiong") < 2 && player.hasSkill("sbjianxiong")) {
+					if (player.countMark("sbjianxiong") < 2 && (player.hasSkill("sbjianxiong") || player.hasSkill("jdjianxiong"))) {
 						player
 							.chooseBool("是否获得1枚“治世”？")
 							.set("ai", () => (Math.random() < 0.5 ? 0 : 1));
@@ -7762,16 +7761,20 @@ game.import("character", function () {
 					return str;
 				},
 				check: function (card) {
-					var player = _status.event.player;
+					let player = _status.event.player;
 					if (
 						get.position(card) == "h" &&
 						!player.countCards("h", "du") &&
-						(player.hp > 2 ||
-							!player.countCards("h", function (card) {
-								return get.value(card) >= 8;
-							}))
-					) {
-						return 1;
+						(
+							player.hp > 2 - player.countMark("sbtongye") ||
+							!player.countCards("h", i => {
+								return get.value(i) >= 8 + player.countMark("sbtongye");
+							})
+						)
+					) return 1;
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
 					}
 					return 6 - get.value(card);
 				},
@@ -8167,6 +8170,9 @@ game.import("character", function () {
 								player.logSkill("sbjieyin_init", target);
 								target.addSkill("sbjieyin_mark");
 								target.addMark("sbjieyin_mark", 1);
+								if (player != target && target.identityShown) {
+									if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.3);
+								}
 							}
 							"step 2";
 							game.delayx();
@@ -8787,6 +8793,7 @@ game.import("character", function () {
 				group: "splveying_add",
 				subSkill: {
 					add: {
+						audio: "splveying",
 						trigger: { player: "useCardToPlayered" },
 						forced: true,
 						usable: 2,
@@ -8821,6 +8828,7 @@ game.import("character", function () {
 				ai: { combo: "splveying" },
 				subSkill: {
 					add: {
+						audio: 'spyingwu',
 						trigger: { player: "useCardToPlayered" },
 						forced: true,
 						locked: false,
@@ -9604,7 +9612,7 @@ game.import("character", function () {
 			sb_xiahoudun: "谋夏侯惇",
 			sb_xiahoudun_prefix: "谋",
 			sbganglie: "刚烈",
-			sbganglie_info: "出牌阶段限一次。你可以选择一名本局游戏对你造成过伤害且你未以此法选择过的角色，你对其造成2点伤害。",
+			sbganglie_info: "出牌阶段限一次。你可以选择任意名本局游戏对你造成过伤害且你未以此法选择过的角色，你对其造成2点伤害。",
 			sbqingjian: "清俭",
 			sbqingjian_info:
 				"①当有一张牌不因使用而进入弃牌堆后，若你的“清俭”数小于X，你将此牌置于你的武将牌上，称为“清俭”（X为你的体力值-1，且至少为1）。②出牌阶段结束时，你将所有“清俭”分配给任意角色。",
@@ -9651,6 +9659,7 @@ game.import("character", function () {
 			sb_tong: "谋攻篇·同",
 			sb_yu: "谋攻篇·虞",
 			sb_neng: "谋攻篇·能",
+			
 			sb_waitforsort: "等待分包",
 		},
 	};

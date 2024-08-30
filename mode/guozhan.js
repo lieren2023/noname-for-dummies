@@ -638,7 +638,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_yuanshu",
 					"gz_zhangxiu",
 				],
-				guozhan_jun: ["gz_jun_caocao", "gz_jun_sunquan", "gz_jun_liubei", "gz_jun_zhangjiao"],
 				guozhan_single: [
 					"gz_re_xushu",
 					"gz_yanbaihu",
@@ -663,6 +662,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_wenqin",
 					"gz_pengyang",
 				],
+				guozhan_jun: ["gz_jun_caocao", "gz_jun_sunquan", "gz_jun_liubei", "gz_jun_zhangjiao"],
 				guozhan_yexinjia: ["gz_zhonghui", "gz_simazhao", "gz_gongsunyuan", "gz_sunchen"],
 				guozhan_jin: [
 					"gz_jin_simayi",
@@ -1952,6 +1952,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return num + player.getExpansions("fakequanji").length;
 					},
 				},
+				ai: {
+					notemp: true
+				},
 			},
 			fakepaiyi: {
 				audio: "gzpaiyi",
@@ -2065,6 +2068,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							});
 						},
 					},
+					combo: "fakequanji"
 				},
 			},
 			fakeshilu: {
@@ -19857,9 +19861,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				audio: "suishi",
 				trigger: { global: "dieAfter" },
 				forced: true,
-				check: function () {
-					return false;
-				},
 				filter: function (event, player) {
 					return event.player.isFriendOf(player);
 				},
@@ -24076,17 +24077,17 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			guozhan_shi: "君临天下·势",
 			guozhan_bian: "君临天下·变",
 			guozhan_quan: "君临天下·权",
-			guozhan_jun: "君主武将",
-			guozhan_jin: "文德武备",
 			guozhan_single: "君临天下EX",
 			guozhan_double: "双势力武将",
+			guozhan_jun: "君主武将",
 			guozhan_yexinjia: "野心家武将",
+			guozhan_jin: "文德武备",
 			guozhan_zongheng: "纵横捭阖",
-			guozhan_tw: "海外服专属",
+			guozhan_decade: "十年踪迹十年心",
 			guozhan_mobile: "移动版",
 			guozhan_qunxiong: "群雄割据",
-			guozhan_decade: "十年踪迹十年心",
-			guozhan_others: "其他",
+			guozhan_tw: "海外服专属",
+			guozhan_others: "线下版",
 		},
 		junList: ["liubei", "zhangjiao", "sunquan", "caocao"],
 		guozhanPile_yingbian: [

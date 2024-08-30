@@ -159,6 +159,7 @@ var pinyin_dict_polyphone = {
 	"朝凤": "cháo ",
 	"朝争": "cháo ",
 	"令法": "lìng ",
+	"令戮": "lìng ",
 	"耀令": " lìng",
 	"冠绝": "guàn ",
 	"先著": " zhuó",
@@ -170,6 +171,7 @@ var pinyin_dict_polyphone = {
 	"媵予": " yǔ",
 	"天予": " yǔ",
 	"累卵": "lěi ",
+	"印卡": " kǎ",
 	
 	"蒙斥": "méng ",
 	

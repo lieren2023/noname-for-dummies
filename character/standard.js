@@ -1591,7 +1591,11 @@ game.import("character", function () {
 						get.position(card) == "h" &&
 						!player.countCards("h", (card) => get.value(card) >= 8)
 					) {
-						return 8 - get.value(card);
+						return 1;
+					}
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
 					}
 					return 6 - get.value(card);
 				},
@@ -1665,6 +1669,11 @@ game.import("character", function () {
 				selectCard: [1, Infinity],
 				prompt: "弃置任意张牌并摸等量的牌",
 				check(card) {
+					let player = _status.event.player;
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
+					}
 					return 6 - get.value(card);
 				},
 				async content(event, trigger, player) {
@@ -2902,7 +2911,7 @@ game.import("character", function () {
 			stdshushen_info:
 				"当你回复1点体力时，你可以令一名其他角色摸一张牌（若其没有手牌则改为摸两张牌）。",
 			old_re_lidian: "李典",
-			
+
 			standard_2008: "2008版标准包",
 			standard_2013: "2013版标准包",
 			standard_2019: "2019版标准包",

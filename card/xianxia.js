@@ -28,7 +28,6 @@ game.import("card", function () {
 				onEquip() {
 					if (!card.storage.tiejili_skill) card.storage.tiejili_skill = 2;
 					player.storage.tiejili_skill = card.storage.tiejili_skill;
-					player.markSkill("tiejili_skill");
 				},
 			},
 			lx_huoshaolianying: {
@@ -104,7 +103,7 @@ game.import("card", function () {
 						value: [3, 1],
 						useful: 0.6,
 					},
-					wuxie: function (target, card, player, viewer, status) {
+					wuxie(target, card, player, viewer, status) {
 						if (get.attitude(viewer, player._trueMe || player) > 0) return 0;
 						if (
 							status *
@@ -116,7 +115,7 @@ game.import("card", function () {
 						if (_status.event.getRand("huogong_wuxie") * 4 > player.countCards("h")) return 0;
 					},
 					result: {
-						player: function (player) {
+						player(player) {
 							var nh = player.countCards("h");
 							if (nh <= player.hp && nh <= 4 && _status.event.name == "chooseToUse") {
 								if (
@@ -137,7 +136,7 @@ game.import("card", function () {
 							}
 							return 0;
 						},
-						target: function (player, target) {
+						target(player, target) {
 							if (target.hasSkill("huogong2") || target.countCards("h") == 0) return 0;
 							if (player.countCards("h") <= 1) return 0;
 							if (_status.event.player == player) {
@@ -222,6 +221,7 @@ game.import("card", function () {
 								if (att > 0) return player.getNext().getUseValue(button.link) - player.getUseValue(button.link);
 								return 6 - get.value(button.link);
 							});
+
 					}
 					else event.goto(2);
 					"step 1"
@@ -329,7 +329,6 @@ game.import("card", function () {
 			},
 		},
 		skill: {
-			//12345
 			tiejili_skill: {
 				trigger: {
 					player: "phaseZhunbeiBegin",
@@ -348,9 +347,19 @@ game.import("card", function () {
 				filter(event, player) {
 					return player.storage.tiejili_skill != player.hp;
 				},
+				prompt2(event, player) {
+					return "将【铁蒺藜骨朵】本回合的攻击范围改为" + player.hp;
+				},
 				async content(event, trigger, player) {
 					player.storage.tiejili_skill = player.hp;
 					player.markSkill(event.name);
+					player.when("phaseAfter").then(() => {
+						let card = player.getEquip("tiejili");
+						if (card) {
+							player.storage.tiejili_skill = card.storage.tiejili_skill;
+							player.markSkill("tiejili_skill");
+						}
+					});
 				},
 			},
 			ty_feilongduofeng_skill: {
@@ -478,65 +487,65 @@ game.import("card", function () {
 				},
 			},
 			mengchong_skill: {
-				trigger:{
-					player:"useCardAfter",
+				trigger: {
+					player: "useCardAfter",
 				},
-				locked:true,
-				async cost(event,trigger,player){
-					if(!player.storage.mengchong_skill) player.storage.mengchong_skill=0;
-					let num=player.storage.mengchong_skill;
-					const result=await player
-						.chooseControl("+1","-1")
-						.set("prompt",`艨艟：请修改与其他角色计算距离（当前：${num>0?"+":""}${num}）`)
-						.set("ai",()=>{
-							const player=get.player();
-							const num=player.countCards(card=>{
-								return player.hasUseTarget(card,true,true)&&player.hasUseValue(card,true,true);
+				locked: true,
+				async cost(event, trigger, player) {
+					if (!player.storage.mengchong_skill) player.storage.mengchong_skill = 0;
+					let num = player.storage.mengchong_skill;
+					const result = await player
+						.chooseControl("+1", "-1")
+						.set("prompt", `艨艟：请修改与其他角色计算距离（当前：${num > 0 ? "+" : ""}${num}）`)
+						.set("ai", () => {
+							const player = get.player();
+							const num = player.countCards(card => {
+								return player.hasUseTarget(card, true, true) && player.hasUseValue(card, true, true);
 							});
-							return num>2?"-1":"+1";
+							return num > 2 ? "-1" : "+1";
 						})
 						.forResult();
-					event.result={
-						bool:true,
-						cost_data:result.index,
+					event.result = {
+						bool: true,
+						cost_data: result.index,
 					}
 				},
-				async content(event,trigger,player){
-					if(event.cost_data==1&&player.storage.mengchong_skill>-2) player.storage.mengchong_skill--;
-					if(event.cost_data==0&&player.storage.mengchong_skill<2) player.storage.mengchong_skill++;
+				async content(event, trigger, player) {
+					if (event.cost_data == 1 && player.storage.mengchong_skill > -2) player.storage.mengchong_skill--;
+					if (event.cost_data == 0 && player.storage.mengchong_skill < 2) player.storage.mengchong_skill++;
 					player.markSkill(event.name);
 				},
-				intro:{
-					content(storage){
-						if(!storage) return "无距离变化";
-						return "与其他角色互相计算距离"+(storage>0?"+":"")+storage;
+				intro: {
+					content(storage) {
+						if (!storage) return "无距离变化";
+						return "与其他角色互相计算距离" + (storage > 0 ? "+" : "") + storage;
 					},
 				},
-				equipSkill:true,
+				equipSkill: true,
 				mod: {
-					globalFrom(from,to,distance){
-						const num=from.storage.mengchong_skill;
-						if(typeof num == "number") return distance+num;
+					globalFrom(from, to, distance) {
+						const num = from.storage.mengchong_skill;
+						if (typeof num == "number") return distance + num;
 					},
-					globalTo(from,to,distance){
-						const num=to.storage.mengchong_skill;
-						if(typeof num == "number") return distance+num;
+					globalTo(from, to, distance) {
+						const num = to.storage.mengchong_skill;
+						if (typeof num == "number") return distance + num;
 					},
-					canBeReplaced: function (card, player) {
+					canBeReplaced(card, player) {
 						if (player.getEquips("mengchong").includes(card)) return false;
 					},
 				},
-				group:"mengchong_skill_clear",
-				subSkill:{
-					clear:{
-						equipSkill:true,
-						forced:true,
-						direct:true,
-						trigger:{
-							player:"phaseBegin",
+				group: "mengchong_skill_clear",
+				subSkill: {
+					clear: {
+						equipSkill: true,
+						forced: true,
+						direct: true,
+						trigger: {
+							player: "phaseBegin",
 						},
-						content:function(){
-							player.storage.mengchong_skill=0;
+						content: function () {
+							player.storage.mengchong_skill = 0;
 							player.unmarkSkill("mengchong_skill");
 						},
 					},
@@ -545,9 +554,9 @@ game.import("card", function () {
 		},
 		translate: {
 			tiejili: "铁蒺藜骨朵",
-			tiejili_info: "准备阶段，你可以将此牌本回合的攻击范围改为x，直到此牌离开你的装备区（x为你的体力值）。",
+			tiejili_info: "准备阶段，你可以将此牌的攻击范围改为x，直到回合结束或此牌离开你的装备区（x为你的体力值）。",
 			tiejili_skill: "铁蒺藜骨朵",
-			tiejili_skill_info: "准备阶段，你可以将此牌本回合的攻击范围改为x，直到此牌离开你的装备区（x为你的体力值）。",
+			tiejili_skill_info: "准备阶段，你可以将此牌的攻击范围改为x，直到回合结束或此牌离开你的装备区（x为你的体力值）。",
 			lx_huoshaolianying: "火烧连营",
 			lx_huoshaolianying_info: "出牌阶段，对一名角色使用。你展示目标角色的一张牌，然后你可以弃置一张与展示的牌花色相同的手牌。若如此做，你弃置其被展示的牌并对其造成一点火焰伤害，然后若其处于横置状态，你获得弃置堆中的此牌。",
 			suibozhuliu: "随波逐流",

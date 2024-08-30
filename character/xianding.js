@@ -4,32 +4,18 @@ game.import("character", function () {
 		name: "xianding",
 		connect: true,
 		character: {
-			dc_jiangqing: ["male", "wu", 4, ["dcshangyi", "dcniaoxiang"]],
-			dc_tianfeng: ["male", "qun", 3, ["sijian", "dcsuishi"]],
-			dc_zhangren: ["male", "qun", 4, ["dcchuanxin", "dcfengshi"]],
-			dc_sb_jushou: ["male", "qun", 3, ["dcsbzuojun", "dcsbmuwang"]],
-			dc_sb_chengyu: ["male", "wei", 3, ["dcshizha", "dcgaojian"]],
+			dc_jiangqing: ["male", "wu", 4, ["dcshangyi", "dcniaoxiang"], ["die_audio:gz_jiangqing"]],
+			dc_tianfeng: ["male", "qun", 3, ["sijian", "dcsuishi"], ["die_audio:tianfeng"]],
+			dc_zhangren: ["male", "qun", 4, ["dcchuanxin", "dcfengshi"], ["die_audio:zhangren"]],
 			dc_lingcao: ["male", "wu", "3/5", ["dcdufeng"]],
 			zhugejing: ["male", "qun", 3, ["dcyanzuo", "dczuyin", "dcpijian"]],
 			liutan: ["female", "shu", 3, ["dcjingyin", "dcchixing"]],
-			yj_sb_guojia: ["male", "wei", 3, ["xianmou", "lunshi"]],
 			bianyue: ["female", "wei", 3, ["dcbizu", "dcwuxie"]],
 			zhupeilan: ["female", "wu", 3, ["dccilv", "dctongdao"]],
-			dc_sb_zhangxiu: ["male", "qun", 4, ["dcsbfuxi", "dcsbhaoyi"]],
-			dc_sb_guanping: ["male", "shu", 4, ["dcsbwuwei"]],
-			dc_sb_caoang: ["male", "wei", 4, ["dcsbfengmin", "dcsbzhiwang"]],
-			dc_sb_dianwei: ["male", "wei", "4/5", ["dcsbkuangzhan", "dcsbkangyong"]],
-			dc_caoshuang: ["male", "wei", 4, ["dcjianzhuan", "dcfanshi"]],
-			dc_simashi: ["male", "wei", 3, ["dcsanshi", "dczhenrao", "dcchenlve"]],
-			dc_wangling: ["male", "wei", 4, ["dcjichou", "dcmouli"], ["clan:太原王氏"]],
-			dc_jiangji: ["male", "wei", 3, ["dcshiju", "dcyingshi"]],
-			dc_sb_zhugejin: ["male", "wu", 3, ["dcsbtaozhou", "dcsbhoude"]],
-			dc_sb_jiaxu: ["male", "qun", 3, ["dcsbsushen", "dcsbfumou"]],
 			guanyue: ["male", "shu", 4, ["dcshouzhi", "dcfenhui"]],
 			sp_zhenji: ["female", "qun", 3, ["dcjijie", "dchuiji"]],
 			wu_guanyu: ["male", "shu", 5, ["dcjuewu", "dcwuyou", "dcyixian"]],
 			caofang: ["male", "wei", 4, ["dczhimin", "dcjujian"], ["zhu"]],
-			dc_sb_simayi: ["male", "wei", 3, ["dcsbquanmou", "dcsbpingliao"]],
 			chendong: ["male", "wu", 4, ["dcduanxie", "fenming"]],
 			lvfan: ["male", "wu", 3, ["diaodu", "diancai"]],
 			cuimao: ["male", "wei", 3, ["zhengbi", "fengying"]],
@@ -38,9 +24,9 @@ game.import("character", function () {
 			bailingyun: ["female", "wei", 3, ["dclinghui", "dcxiace", "dcyuxin"]],
 			dc_qinghegongzhu: ["female", "wei", 3, ["dczhangji", "dczengou"]],
 			caoxian: ["female", "wei", 3, ["dclingxi", "dczhifou"]],
-			dc_sb_zhouyu: ["male", "wu", 4, ["dcsbronghuo", "dcsbyingmou"]],
-			dc_sb_lusu: ["male", "wu", 3, ["dcsbmingshi", "dcsbmengmou"]],
-			zhangjian: ["male", "qun", 105, ["dc_zj_a", "dc_zj_b"], ["unseen"]],
+			// 解放张臶（但AI禁选）
+			zhangjian: ["male", "qun", 105, ["dc_zj_a", "dc_zj_b"], ["forbidai"]],
+			// zhangjian: ["male", "qun", 105, ["dc_zj_a", "dc_zj_b"], ["unseen"]],
 			zhugeruoxue: ["female", "wei", 3, ["dcqiongying", "dcnuanhui"]],
 			caoyi: ["female", "wei", 4, ["dcmiyi", "dcyinjun"]],
 			malingli: ["female", "shu", 3, ["dclima", "dcxiaoyin", "dchuahuo"]],
@@ -49,6 +35,8 @@ game.import("character", function () {
 			dc_zhaoxiang: ["female", "shu", 4, ["refanghun", "refuhan"]],
 			dc_guansuo: ["male", "shu", 4, ["xinzhengnan", "xiefang"]],
 			xin_baosanniang: ["female", "shu", 3, ["decadewuniang", "decadexushen"]],
+			xurong: ["male", "qun", 4, ["xinfu_xionghuo", "xinfu_shajue"], []],
+			zhangqiying: ["female", "qun", 3, ["xinfu_falu", "xinfu_dianhua", "xinfu_zhenyi"], []],
 			dc_shixie: ["male", "qun", 3, ["rebiluan", "ollixia"]],
 			dc_sp_machao: ["male", "qun", 4, ["zhuiji", "dc_olshichou"]],
 			old_huangfusong: ["male", "qun", 4, ["xinfenyue"]],
@@ -136,16 +124,11 @@ game.import("character", function () {
 				sp2_doukou: ["re_xinxianying", "huaman", "xuelingyun", "dc_ruiji", "duanqiaoxiao", "tianshangyi", "malingli", "bailingyun"],
 				sp2_jichu: ["zhaoang", "dc_liuye", "dc_wangyun", "yanghong", "huanfan", "xizheng", "lvfan", "dc_tianfeng"],
 				sp2_yuxiu: ["dongguiren", "dc_tengfanglan", "zhangjinyun", "zhoubuyi", "dc_xujing", "guanyue", "zhugejing"],
-				sp2_qifu: ["dc_guansuo", "xin_baosanniang", "dc_zhaoxiang"],
-				sp2_gaoshan: ["wanglang", "liuhui", "zhangjian"],
+				sp2_qifu: ["dc_guansuo", "xin_baosanniang", "dc_zhaoxiang", "xurong", "zhangqiying"],
+				sp2_gaoshan: ["wanglang", "liuhui"],
 				sp2_wumiao: ["wu_zhugeliang", "wu_luxun", "wu_guanyu"],
-				sp2_mouding: ["dc_sb_jiaxu", "dc_sb_lusu", "dc_sb_zhouyu", "dc_sb_simayi", "yj_sb_guojia"],
-				sp2_zhonghu: ["dc_jiangji", "dc_wangling", "dc_simashi", "dc_caoshuang"],
-				sp2_zijing: ["dc_sb_zhugejin", "dc_sb_guanping"],
-				sp2_dushi: ["dc_sb_caoang", "dc_sb_zhangxiu", "dc_sb_dianwei"],
-				sp2_zhoulang: ["dc_sb_chengyu"],
-				sp2_qizuo: ["dc_sb_jushou"],
-				// xianding_waitforsort: [],
+				
+				xianding_waitforsort: ["zhangjian"],
 			},
 		},
 		characterSubstitute: {
@@ -168,7 +151,7 @@ game.import("character", function () {
 		skill: {
 			//蒋钦
 			dcshangyi: {
-				audio: 2,
+				audio: "shangyi",
 				enable: "phaseUse",
 				usable: 1,
 				filter: function (event, player) {
@@ -204,7 +187,7 @@ game.import("character", function () {
 				},
 			},
 			dcniaoxiang: {
-				audio: 2,
+				audio: "zniaoxiang",
 				trigger: { player: "useCardToPlayered" },
 				forced: true,
 				filter(event, player) {
@@ -232,7 +215,7 @@ game.import("character", function () {
 			},
 			//田丰
 			dcsuishi: {
-				audio: 2,
+				audio: "suishi",
 				trigger: {
 					global: ["dying", "dieAfter"],
 				},
@@ -265,7 +248,7 @@ game.import("character", function () {
 			},
 			//张任
 			dcchuanxin: {
-				audio: 2,
+				audio: "chuanxin",
 				trigger: { source: "damageBegin2" },
 				filter(event, player) {
 					if (_status.currentPhase != player) return false;
@@ -309,7 +292,7 @@ game.import("character", function () {
 				},
 			},
 			dcfengshi: {
-				audio: 2,
+				audio: "zfengshi",
 				trigger: { player: "useCardToPlayered" },
 				filter: function (event, player) {
 					if (event.card.name != "sha" || event.target.inRange(player)) return false;
@@ -460,7 +443,7 @@ game.import("character", function () {
 					} else cards = trigger.cards.filterInD("d");
 					cards = cards.filter(card => ["basic", "trick"].includes(get.type(card)));
 					if (cards.length) {
-						const next = player.gain(cards, "gain2");
+						const next = player.gain(cards.randomGet(), "gain2");
 						next.gaintag.add("dcsbmuwang_tag");
 						await next;
 						player.addTempSkill("dcsbmuwang_lose");
@@ -817,6 +800,7 @@ game.import("character", function () {
 						})
 						.forResult();
 				},
+				usable: 1,
 				async content(event, trigger, player) {
 					const target = event.targets[0];
 					target.addSkill("dcjingyin_tag");
@@ -5603,6 +5587,7 @@ game.import("character", function () {
 				},
 				ai: {
 					threaten: 4,
+					combo: "dcxiongmu"
 				},
 				subSkill: {
 					all: {
@@ -8448,6 +8433,7 @@ game.import("character", function () {
 					const gains = game
 						.getAllGlobalHistory("everything", evt => {
 							if (evt.name == "lose" || evt.name == "loseAsync") {
+								if(!evt.getl) return false;
 								if (evt.type != "discard" || evt.getlx === false) return false;
 								// 临时修改（by 棘手怀念摧毁）
 								// return evt.getl(player)?.cards2?.length > 0;
@@ -8455,9 +8441,8 @@ game.import("character", function () {
 								return evtx && evtx.cards2 && evtx.cards2.length > 0;
 							}
 							// 临时修改（by 棘手怀念摧毁）
-							// if (evt.name == "useCard") return evt.cards?.length > 0;
-							if (evt.name == "useCard") return evt.cards && evt.cards.length > 0;
-							return false;
+							return evt.name == "useCard" && evt.player == player && evt.cards && evt.cards.length > 0;
+							// return evt.name == "useCard" && evt.player == player && evt.cards?.length > 0;
 						})
 						.reduce((list, evt) => {
 							if (evt.name == "useCard") return list.addArray(evt.cards);
@@ -10068,9 +10053,12 @@ game.import("character", function () {
 						const list = nameList.slice().randomSort();
 						for (const name of list) {
 							const card = new lib.element.VCard({ name });
-							if (player.canUse(card, target)) {
-								await player.useCard(card, target);
+							let targets = [player, target].filter(current => player.canUse(card, current));
+							if (targets.length) {
+								await player.useCard(card, targets);
+								// 临时修改（by 棘手怀念摧毁）
 								await game.asyncDelayx();
+								// await game.delayx();
 								break;
 							}
 						}
@@ -10620,6 +10608,7 @@ game.import("character", function () {
 						}
 						target.markSkill("dcwumei_wake");
 						if (!trigger._finished) {
+							player.phaseNumber--;
 							trigger.finish();
 							trigger.untrigger(true);
 							trigger._triggered = 5;
@@ -11248,6 +11237,7 @@ game.import("character", function () {
 				},
 				ai: {
 					combo: "dclingfang",
+					neg: true
 				},
 			},
 			//袁姬
@@ -13769,6 +13759,9 @@ game.import("character", function () {
 				content: function () {
 					trigger.player.recover();
 					trigger.player.draw();
+				},
+				ai: {
+					combo: "dcsushou"
 				},
 			},
 			dcsushou: {
@@ -18761,7 +18754,7 @@ game.import("character", function () {
 					"step 0";
 					event.count = 0;
 					"step 1";
-					player.draw("visible");
+					player.draw();
 					"step 2";
 					if (Array.isArray(result)) {
 						event.count += result.length;
@@ -18969,6 +18962,9 @@ game.import("character", function () {
 			},
 		},
 		characterIntro: {
+			xurong: "徐荣（？－192年），玄菟人（一说为辽东襄平人，《公孙度传》中说公孙度本辽东襄平人，迁居玄菟，为同郡徐荣所举，任辽东太守。同郡当是同“玄菟”郡），东汉末年将领。本为中郎将，曾向董卓推举同郡出身的公孙度出任辽东太守。于汴水之战中击败曹操的独立追击军，以及在梁东之战中击败孙坚的部队。在董卓死后，受司徒王允的命令与李傕、郭汜交战，因部将胡珍投降，寡不敌众，于新丰之战被击败，战死在乱军之中。",
+			zhangqiying:
+				"张琪瑛（196年－217年），字不详（或琪瑛为字，名不详），祖籍沛国丰县（今江苏省丰县）。她的曾祖父张陵是西汉留侯张良的十一世孙、天师道（五斗米道）教祖，她的父亲是东汉末年割据汉中的军阀张鲁。张琪瑛继承家说，是五斗米教的传人。",
 			liutan: "柳氏，姜维之妻。唯一的记载来自《大唐敕修烈山四岳天水郡姜姓古谱总世系》：“维字伯约，初仕魏中郎将，后归蜀汉，封大将军、平襄侯，夫人柳氏。”",
 			cuimao: "请分别查看「崔琰」和「毛玠」的武将介绍。",
 			bailingyun: "柏灵筠，女，是电视剧《大军师司马懿之军师联盟》、《虎啸龙吟》中的主要角色之一，由张钧甯饰演。20岁，是曹丕赏赐司马懿的美人，也是曹丕的眼线，被送入司马府中为妾室。柔弱美貌、心机极深。",
@@ -19649,6 +19645,8 @@ game.import("character", function () {
 			dc_guansuo_prefix: "新杀",
 			dc_zhaoxiang: "新杀赵襄",
 			dc_zhaoxiang_prefix: "新杀",
+			xurong: "徐荣",
+			zhangqiying: "张琪瑛",
 			dc_xujing: "许靖",
 			dcshangyu: "赏誉",
 			dcshangyu_tag: "赏誉",
@@ -19682,10 +19680,10 @@ game.import("character", function () {
 			dcnuanhui: "暖惠",
 			dcnuanhui_info: "结束阶段，你可以选择一名装备区有牌的角色，其可以视为依次使用X张基本牌（X为其装备区牌数且至少为1）。若其此次以此法使用了同名牌，其弃置装备区里的所有牌。",
 			zhangjian: "张臶",
-			dc_zj_a: "技能",
+			dc_zj_a: "技一",
 			dc_zj_a_info: "锁定技。当你受到牌造成的伤害时，若此牌有点数，则你将此伤害值改为此牌点数，否则你防止此伤害。",
-			dc_zj_b: "技能",
-			dc_zj_b_info: "结束阶段，你可以弃置所有牌并令一名其他角色获得〖技能〗直到你的下个回合开始。",
+			dc_zj_b: "技二",
+			dc_zj_b_info: "结束阶段，你可以弃置所有牌并令一名其他角色获得〖技一〗直到你的下个回合开始。",
 			dc_sb_lusu: "新杀谋鲁肃",
 			dc_sb_lusu_prefix: "新杀谋",
 			dcsbmingshi: "明势",
@@ -19841,7 +19839,7 @@ game.import("character", function () {
 			lunshi_info: "一名角色对其以外的角色使用普通锦囊牌的结算中，若你手牌中两种颜色的牌数量相同，你可将一张手牌当作不可被响应的【无懈可击】使用。",
 			liutan: "柳婒",
 			dcjingyin: "经音",
-			dcjingyin_info: "一名角色于回合外使用【杀】结算完毕后，你可以令一名使用者外的角色获得此【杀】对应的所有实体牌，且其使用这些牌无次数限制。",
+			dcjingyin_info: "每回合限一次，一名角色于其回合外使用【杀】结算完毕后，你可以令一名使用者外的角色获得此【杀】对应的所有实体牌，且其使用这些牌无次数限制。",
 			dcchixing: "迟行",
 			dcchixing_info: "一名角色的出牌阶段结束时，若本阶段有【杀】进入弃牌堆，则你可以摸X张牌（X为本阶段进入弃牌堆的【杀】数），若你以此法获得了【杀】，则你可以使用其中的一张。",
 			zhugejing: "诸葛京",
@@ -19867,7 +19865,7 @@ game.import("character", function () {
 			dcsbzuojun: "佐军",
 			dcsbzuojun_info: "出牌阶段限一次，你可以令一名角色摸三张牌并令其选择一项：1.直到其下个回合结束，其不能使用这些牌且这些牌不计入手牌上限；2.失去1点体力，摸一张牌并使用因此获得的任意张牌，然后弃置其余牌。",
 			dcsbmuwang: "暮往",
-			dcsbmuwang_info: "锁定技，当你每回合首次失去的基本牌或普通锦囊牌进入弃牌堆时，你获得之。当你本回合再次失去这些牌后，你弃置一张牌。",
+			dcsbmuwang_info: "锁定技，当你每回合首次失去的基本牌或普通锦囊牌进入弃牌堆时，你获得其中一张。当你本回合再次失去这张牌后，你弃置一张牌。",
 			dc_zhangren: "新杀张任",
 			dc_zhangren_prefix: "新杀",
 			dc_tianfeng: "新杀田丰",
@@ -19885,26 +19883,21 @@ game.import("character", function () {
 			dcsuishi: "随势",
 			dcsuishi_info: "锁定技，其他角色进入濒死时，若伤害来源与你势力相同，你摸一张牌；其他角色死亡时，若其势力与你相同，你弃置至少1张手牌。",
 
-			sp2_yinyu: "隐山之玉",
 			sp2_huben: "百战虎贲",
 			sp2_shengun: "奇人异士",
+			sp2_bizhe: "笔舌如椽",
 			sp2_huangjia: "皇家贵胄",
 			sp2_zhangtai: "章台春望",
 			sp2_jinse: "锦瑟良缘",
-			sp2_bizhe: "笔舌如椽",
-			sp2_wangzhe: "往者可荐",
+			sp2_yinyu: "隐山之玉",
+			sp2_wangzhe: "往者可谏",
 			sp2_doukou: "豆蔻梢头",
 			sp2_jichu: "计将安出",
 			sp2_yuxiu: "钟灵毓秀",
-			sp2_wumiao: "武庙",
-			sp2_gaoshan: "高山仰止",
 			sp2_qifu: "祈福",
-			sp2_mouding: "谋定天下",
-			sp2_zhonghu: "冢虎狼顾",
-			sp2_zijing: "子敬邀刀",
-			sp2_dushi: "毒士鸩计",
-			sp2_zhoulang: "周郎将计",
-			sp2_qizuo: "奇佐论胜",
+			sp2_gaoshan: "高山仰止",
+			sp2_wumiao: "武庙",
+			
 			xianding_waitforsort: "等待分包",
 		},
 	};

@@ -4,7 +4,7 @@ game.import("character", function () {
 		name: "huicui",
 		connect: true,
 		character: {
-			dc_mateng: ["male", "qun", 4, ["mashu", "dcxiongyi"]],
+			dc_mateng: ["male", "qun", 4, ["mashu", "dcxiongyi"], ["die_audio:mateng"]],
 			dc_sp_zhurong: ["female", "qun", 4, ["dcmanhou"]],
 			yue_zhugeguo: ["female", "shu", 3, ["dcxidi", "dcchengyan"]],
 			yue_zoushi: ["female", "qun", 3, ["dcyunzheng", "dchuoxin"]],
@@ -176,6 +176,7 @@ game.import("character", function () {
 				sp_raoting: ["dc_huanghao", "dc_sunziliufang", "dc_sunchen", "dc_jiachong"],
 				sp_yijun: ["gongsundu", "mengyou", "dc_sp_menghuo", "gongsunxiu", "dc_sp_zhurong", "dc_mateng"],
 				sp_zhengyin: ["yue_caiwenji", "yue_zhoufei", "yue_caiyong", "yue_xiaoqiao", "yue_daqiao", "yue_miheng", "yue_zoushi", "yue_zhugeguo"],
+				
 				// huicui_waitforsort: [],
 			},
 		},
@@ -187,7 +188,7 @@ game.import("character", function () {
 				animationColor: "gray",
 				unique: true,
 				enable: "phaseUse",
-				audio: 2,
+				audio: "xiongyi",
 				limited: true,
 				filterTarget: lib.filter.notMe,
 				async content(event,trigger,player) {
@@ -564,9 +565,6 @@ game.import("character", function () {
 						inherit: "fengyin",
 					},
 				},
-				ai: {
-					combo: "dchuoxin"
-				},
 			},
 			dchuoxin: {
 				audio: 2,
@@ -587,12 +585,12 @@ game.import("character", function () {
 						)
 						.set("ai", target => {
 							let att = get.attitude(get.player(), target);
-							if (att >= 0) return att;
+							if (att > 0) return 0;
 							if (!target.hasSkill("dcyunzheng_block")) att *= (target.getSkills(null, false, false)
 								.filter(i => {
 									return lib.skill.dcyunzheng_block.skillBlocker(i, target);
 								}).length + 1);
-							return att;
+							return 1 - att;
 						})
 						.forResult();
 				},
@@ -650,7 +648,7 @@ game.import("character", function () {
 							source: "damageSource",
 						},
 						filter(event, player) {
-							return player.countCards("e") == player.countCards("h", card => card.hasGaintag("dcjigu")) && player.getRoundHistory("useSkill", evt => evt.skill == "dcjigu_temp").length < game.roundNumber;
+							return player.countCards("e") == player.countCards("h", card => card.hasGaintag("dcjigu"));
 						},
 						prompt2(event, player) {
 							return (
@@ -669,6 +667,11 @@ game.import("character", function () {
 									.map((_, i) => i + 1)
 									.reduce((sum, i) => sum + player.countEmptySlot(i), 0)
 							);
+							let num1 = player.getRoundHistory("useSkill", evt => evt.skill == "dcjigu_temp").length;
+							let num2 = game.countPlayer2(current => {
+								return current.actionHistory.some(i => i.isMe && !i.isSkipped);
+							});
+							if (num1 >= num2) player.tempBanSkill(event.name, "roundStart");
 						},
 					},
 				},
@@ -2012,6 +2015,7 @@ game.import("character", function () {
 					await player.loseHp();
 				},
 				ai: {
+					combo: "dckuizhen",
 					halfneg: true
 				},
 			},
@@ -5580,6 +5584,7 @@ game.import("character", function () {
 				},
 				ai: {
 					combo: "dcjizhong",
+					halfneg: true
 				},
 			},
 			dcguangshi: {
@@ -6483,6 +6488,9 @@ game.import("character", function () {
 						player.line(targets);
 						for (var i = 0; i < targets.length; i++) {
 							targets[i].addMark(event.marks[i]);
+							if (player != targets[i] && targets[i].identityShown) {
+								if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.3);
+							}
 						}
 					}
 					event.goto(5);
@@ -6520,6 +6528,9 @@ game.import("character", function () {
 					if (result.bool) {
 						var marks = result.links;
 						for (var mark of marks) target.addMark(mark, 1);
+						if (player != target && target.identityShown) {
+							if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.3);
+						}
 						event.marks.removeArray(marks);
 						for (var mark of event.marks) player.addMark(mark, 1);
 					}
@@ -6712,6 +6723,9 @@ game.import("character", function () {
 							player.line2(targets, mark == "dcyinlu_zhangqi" ? "fire" : "green");
 							targets[0].removeMark(mark, count);
 							targets[1].addMark(mark, count);
+							if (player != targets[1] && targets[1].identityShown) {
+								if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.3);
+							}
 							event.finish();
 							"step 3";
 							player
@@ -6736,6 +6750,9 @@ game.import("character", function () {
 								var count = trigger.player.countMark(event.marks[0]);
 								trigger.player.removeMark(event.marks[0], count, false);
 								target.addMark(event.marks[0], count);
+								if (player != target && target.identityShown) {
+									if (get.mode() != "identity" || player.identity != "nei") player.addExpose(0.3);
+								}
 							}
 							"step 5";
 							event.marks.shift();
@@ -8710,8 +8727,8 @@ game.import("character", function () {
 						.set("choiceList", ["失去1点体力，本阶段使用牌不可被响应", "减1点体力上限，本阶段使用牌不可被响应", "失去〖夙仇〗"])
 						.set("ai", () => {
 							const player = get.event("player");
-							if (player.isHealthy()) return player.maxHp <= 2 ? 3 : 0;
-							return 2;
+							if (player.isHealthy()) return player.maxHp <= 2 ? 2 : 0;
+							return 1;
 						})
 						.forResult("index");
 					switch (index) {
@@ -10246,6 +10263,9 @@ game.import("character", function () {
 						if (num > 0) return distance - (num > 2 ? 2 : 1);
 					},
 				},
+				ai: {
+					combo: "midu"
+				},
 			},
 			//刘巴
 			dczhubi: {
@@ -11492,7 +11512,7 @@ game.import("character", function () {
 						for (var j of lib.character[i][3]) {
 							var skill = lib.skill[j];
 							if (!skill || skill.zhuSkill || banned.includes(j)) continue;
-							if (skill.ai && (skill.ai.combo || skill.ai.notemp || skill.ai.neg)) continue;
+							if (skill.ai && (skill.ai.combo || skill.ai.neg)) continue;
 							var info = get.translation(j);
 							for (var ix = 0; ix < info.length; ix++) {
 								if (/仁|义|礼|智|信/.test(info[ix]) == true) {
@@ -11747,7 +11767,7 @@ game.import("character", function () {
 					},
 				},
 				ai: {
-					combo: "zhishi"
+					notemp: true
 				},
 			},
 			zhishi: {
@@ -11842,7 +11862,6 @@ game.import("character", function () {
 								return get.order(button.link);
 							});
 					} else {
-						event.finish();
 						if (cards.length) player.loseToDiscardpile(cards);
 						if (
 							target.isIn() &&
@@ -11851,6 +11870,7 @@ game.import("character", function () {
 							})
 						)
 							player.loseHp();
+						event.finish();
 					}
 					"step 1";
 					player.useCard(result.links[0], target, false);
@@ -15808,6 +15828,9 @@ game.import("character", function () {
 					}
 				},
 				intro: { content: "mark" },
+				ai: {
+					halfneg: true
+				},
 			},
 			zhuangdan: {
 				audio: 2,
@@ -15820,7 +15843,7 @@ game.import("character", function () {
 					player.addTempSkill("zhuangdan_mark", { player: "phaseEnd" });
 				},
 				ai: {
-					combo: "zhuangdan",
+					combo: "liedan",
 				},
 			},
 			zhuangdan_mark: {
@@ -15843,6 +15866,9 @@ game.import("character", function () {
 						"recangchu",
 						Math.min(3, game.countPlayer() - player.countMark("recangchu"))
 					);
+				},
+				ai: {
+					notemp: true
 				},
 				intro: { content: "mark", name: "粮" },
 				mod: {
@@ -17220,7 +17246,7 @@ game.import("character", function () {
 			yue_miheng: "乐祢衡",
 			yue_miheng_prefix: "乐",
 			dcjigu: "激鼓",
-			dcjigu_info: "锁定技。①游戏开始时，你将所有手牌标记为“激鼓”。②你的“激鼓”牌不计入手牌上限。③当你造成或受到伤害后，若你的“激鼓”牌数等于你的装备区牌数且你本轮〖激鼓〗发动次数小于游戏轮数，则你可以摸X张牌（X为你的空缺装备栏数）。",
+			dcjigu_info: "锁定技。①游戏开始时，你将所有手牌标记为“激鼓”。②你的“激鼓”牌不计入手牌上限。③当你造成或受到伤害后，若你的“激鼓”牌数等于你的装备区牌数且你本轮〖激鼓〗发动次数小于已进行过回合的角色数，则你可以摸X张牌（X为你的空缺装备栏数）。",
 			dcsirui: "思锐",
 			dcsirui_info: "出牌阶段限一次，你可以将一张牌当作与其字数相同的一张无距离和次数限制的基本牌或普通锦囊牌使用。",
 			yue_zoushi: "乐邹氏",
@@ -17251,16 +17277,17 @@ game.import("character", function () {
 			sp_baigei: "无双上将",
 			sp_caizijiaren: "才子佳人",
 			sp_zhilan: "芝兰玉树",
-			sp_zongheng: "纵横捭阖",
 			sp_guixin: "天下归心",
-			sp_jianghu: "江湖之远",
 			sp_daihan: "代汉涂高",
+			sp_jianghu: "江湖之远",
+			sp_zongheng: "纵横捭阖",
 			sp_taiping: "太平甲子",
 			sp_yanhan: "匡鼎炎汉",
 			sp_jishi: "悬壶济世",
 			sp_raoting: "绕庭之鸦",
 			sp_yijun: "异军突起",
 			sp_zhengyin: "正音雅乐",
+			
 			huicui_waitforsort: "等待分包",
 		},
 	};

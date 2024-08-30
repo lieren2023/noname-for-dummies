@@ -146,6 +146,7 @@ game.import("character", function () {
 							return [1, -1];
 						},
 					},
+					combo: "oltousui",
 					halfneg: true
 				},
 				subSkill: {

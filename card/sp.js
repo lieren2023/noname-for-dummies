@@ -275,7 +275,7 @@ game.import("card", function () {
 				singleCard: true,
 				type: "trick",
 				complexTarget: true,
-				multitarget: true,
+				// multitarget: true,
 				targetprompt: ["给一张牌", "得两张牌"],
 				filterTarget: function (card, player, target) {
 					return target !== player;

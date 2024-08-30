@@ -1583,12 +1583,13 @@ game.import("character", function () {
 						},
 						content: function () {
 							"step 0";
-							if (player != trigger.player && trigger.player.isIn())
-								game.asyncDraw([player, trigger.player].sortBySeat());
-							else {
-								player.draw();
-								event.finish();
-							}
+							let sources = game.filterPlayer(cur => {
+								return cur.hasHistory("sourceDamage", evt => {
+									return evt.card == trigger.card;
+								});
+							});
+							sources.push(player);
+							game.asyncDraw(sources.sortBySeat());
 							"step 1";
 							game.delayx();
 						},
@@ -1626,6 +1627,10 @@ game.import("character", function () {
 						)
 							return false;
 					},
+				},
+				ai: {
+					combo: "spxizhan",
+					halfneg: true
 				},
 			},
 			spxizhan: {
@@ -1739,6 +1744,9 @@ game.import("character", function () {
 							}
 						},
 					},
+				},
+				ai: {
+					halfneg: true
 				},
 			},
 			//高览
@@ -7079,7 +7087,7 @@ game.import("character", function () {
 					content: "mark",
 				},
 				ai: {
-					combo: "spsanchen",
+					combo: "spmiewu",
 					threaten: 3.6,
 				},
 			},
@@ -7100,7 +7108,7 @@ game.import("character", function () {
 					player.addSkills("spmiewu");
 				},
 				ai: {
-					combo: "wuku",
+					combo: "spwuku",
 				},
 				derivation: "spmiewu",
 			},
@@ -8358,8 +8366,7 @@ game.import("character", function () {
 				"当你使用【杀】指定目标后，或成为【杀】的目标后，若使用者和目标的体力值相等，则你摸一张牌。",
 			sp_huaman: "手杀花鬘",
 			spxiangzhen: "象阵",
-			spxiangzhen_info:
-				"锁定技。①【南蛮入侵】对你无效。②当有角色使用的【南蛮入侵】结算结束后，若有角色因此牌受到过伤害，则你和使用者各摸一张牌。",
+			spxiangzhen_info: "锁定技。①【南蛮入侵】对你无效。②当有角色使用的【南蛮入侵】结算结束后，若有角色因此牌受到过伤害，则你与伤害来源各摸一张牌。",
 			spfangzong: "芳踪",
 			spfangzong_info:
 				"锁定技。①你不能于回合内使用具有伤害标签的牌指定攻击范围内的角色为目标。②攻击范围内包含你的角色不能使用具有伤害标签的牌指定你为目标。③结束阶段，你将手牌摸至X张（X为场上存活人数且至多为8）。",
@@ -8441,9 +8448,9 @@ game.import("character", function () {
 			tongduo: "统度",
 			tongduo_info: "每回合限一次。当你成为其他角色使用牌的唯一目标后，你可令一名角色重铸一张牌。",
 
-			mobile_shijiren: "始计篇·仁",
 			mobile_shijizhi: "始计篇·智",
 			mobile_shijixin: "始计篇·信",
+			mobile_shijiren: "始计篇·仁",
 			mobile_shijiyong: "始计篇·勇",
 			mobile_shijiyan: "始计篇·严",
 		},

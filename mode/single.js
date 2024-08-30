@@ -2143,7 +2143,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 									info.groupSkill
 								)
 									continue;
-								if (info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
+								if (info.ai && (info.ai.combo || info.ai.neg)) continue;
 								list.add(name);
 								if (!map[name]) map[name] = [];
 								map[name].push(skills2[j]);

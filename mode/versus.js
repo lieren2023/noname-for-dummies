@@ -276,7 +276,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (lib.skill[i].changeSeat) {
 						lib.skill[i] = {};
 						if (lib.translate[i + "_info"]) {
-							lib.translate[i + "_info"] = "此模式下不可用";
+							lib.translate[i + "_info"] = "固定位置时不可用";
 						}
 					}
 				}
@@ -2198,7 +2198,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						if (lib.skill[i].seatRelated) {
 							lib.skill[i] = {};
 							if (lib.translate[i + "_info"]) {
-								lib.translate[i + "_info"] = "固定位置时不可用";
+								lib.translate[i + "_info"] = "此模式下不可用";
 							}
 						}
 					}
@@ -2694,7 +2694,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							if (lib.skill[i].seatRelated) {
 								lib.skill[i] = {};
 								if (lib.translate[i + "_info"]) {
-									lib.translate[i + "_info"] = "固定位置时不可用";
+									lib.translate[i + "_info"] = "此模式下不可用";
 								}
 							}
 						}

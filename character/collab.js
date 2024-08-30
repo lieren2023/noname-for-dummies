@@ -592,11 +592,20 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { player: "drawBegin" },
 				filter(event, player) {
-					return lib.inpile.some(name => {
-						const type = get.type(name);
-						if (type != "basic" && type != "trick") return false;
-						return !player.getStorage("dchuiwan_used").includes(name);
-					});
+					// 临时修改（by 棘手怀念摧毁）
+					return lib.skill.dchuiwan.gainCards(player) && lib.skill.dchuiwan.gainCards(player).length;
+					// return lib.skill.dchuiwan.gainCards(player)?.length;
+				},
+				gainCards(player) {
+					const cards = Array.from(ui.cardPile.childNodes).slice(0);
+					const list = [];
+					for (const card of cards) {
+						const name = get.name(card);
+						const type = get.type(card);
+						if (type != "basic" && type != "trick") continue;
+						if (!player.getStorage("dchuiwan_used").includes(name)) list.add(name);
+					}
+					return list;
 				},
 				async cost(event, trigger, player) {
 					let result = await player
@@ -604,11 +613,7 @@ game.import("character", function () {
 							[
 								get.prompt2("dchuiwan"),
 								[
-									lib.inpile.filter(name => {
-										const type = get.type(name);
-										if (type != "basic" && type != "trick") return false;
-										return !player.getStorage("dchuiwan_used").includes(name);
-									}),
+									lib.skill.dchuiwan.gainCards(player),
 									"vcard",
 								],
 							],
@@ -625,7 +630,7 @@ game.import("character", function () {
 					event.result = result;
 				},
 				async content(event, trigger, player) {
-					trigger.cancel();
+					trigger.num -= event.cost_data.length;
 					if (!player.storage.dchuiwan_used) {
 						player.when({ global: "phaseAfter" }).then(() => delete player.storage.dchuiwan_used);
 					}
@@ -1741,16 +1746,20 @@ game.import("character", function () {
 					);
 				},
 				check(card) {
-					var player = _status.event.player;
+					let player = _status.event.player;
 					if (
 						get.position(card) == "h" &&
 						!player.countCards("h", "du") &&
-						(player.hp > 2 ||
-							!player.countCards("h", function (card) {
-								return get.value(card) >= 8;
-							}))
-					) {
-						return 1;
+						(
+							player.hp > 2 ||
+							!player.countCards("h", i => {
+								return get.value(i) >= 8;
+							})
+						)
+					) return 1;
+					if (get.position(card) == "e") {
+						let subs = get.subtypes(card);
+						if (subs.includes("equip2") || subs.includes("equip3")) return player.getHp() - get.value(card);
 					}
 					return 6 - get.value(card);
 				},
@@ -2604,7 +2613,7 @@ game.import("character", function () {
 			},
 			dcruyi: {
 				audio: 2,
-				derivation: "ruyijingubang",
+				derivation: "ruyijingubang_skill",
 				trigger: {
 					global: "phaseBefore",
 					player: "enterGame",
@@ -3407,6 +3416,7 @@ game.import("character", function () {
 			ruyijingubang_effect: "如意金箍棒",
 			ruyijingubang_info:
 				"出牌阶段限一次。你可以将此牌的实际攻击范围调整为1~4内的任意整数。你根据此牌的实际攻击范围拥有对应的效果：<br><li>⑴你使用【杀】无次数限制。<br><li>⑵你使用的【杀】伤害+1。<br><li>⑶你使用的【杀】不可被响应。<br><li>⑷你使用【杀】选择目标后，可以增加一个额外目标。",
+			ruyijingubang_skill_info: "出牌阶段限一次。你可以将此牌的实际攻击范围调整为1~4内的任意整数。你根据此牌的实际攻击范围拥有对应的效果：<br><li>⑴你使用【杀】无次数限制。<br><li>⑵你使用的【杀】伤害+1。<br><li>⑶你使用的【杀】不可被响应。<br><li>⑷你使用【杀】选择目标后，可以增加一个额外目标。",
 			longwang: "龙王",
 			dclonggong: "龙宫",
 			dclonggong_info:
@@ -3481,7 +3491,7 @@ game.import("character", function () {
 			xin_sunquan: "会玩孙权",
 			xin_sunquan_prefix: "会玩",
 			dchuiwan: "会玩",
-			dchuiwan_info: "每回合每种牌名限一次，当你摸牌时，你可以放弃摸牌并改为选择至多等同于摸牌数的基本牌或锦囊牌的牌名，然后你从牌堆中获得这些牌名的牌。",
+			dchuiwan_info: "每回合每种牌名限一次，当你摸牌时，你可以选择至多等同于摸牌数的基本牌或锦囊牌的牌名并从牌堆中获得，然后你少摸等量张牌。",
 			dchuanli: "唤理",
 			dchuanli_info: "结束阶段，若你本回合：使用牌至少指定三次自己为目标，则你可以令一名其他角色的所有技能失效，然后其获得〖直谏〗和〖固政〗，直到其下回合结束；使用牌至少指定三次一名其他角色为目标，则你可以令其所有技能失效，然后其获得〖英姿〗和〖反间〗，直到其下回合结束。然后若你两项均执行，你获得〖制衡〗直到你的下个回合结束。",
 			dc_noname: "无名",
@@ -4551,7 +4561,7 @@ game.import("character", function () {
 			"#key_hinata:die": "呜哇啊啊啊啊啊啊啊啊——————————",
 			"#shiki_omusubi1": "始めるんだ…神山識",
 			"#shiki_omusubi2": "大切な人を守るために！",
-			"#key_shiki:die": "ありがとう…羽伊里くん…",
+			"#key_shiki:die": "ありがとう…羽依里くん…",
 			"#saya_shouji1": "じゃあ…Game Start!",
 			"#saya_shouji2": "いくつかポイントがあるの",
 			"#saya_powei1": "決して任務には失敗しないんだ！",
@@ -7890,18 +7900,6 @@ game.import("character", function () {
 			"#baijia1": "以邪马台的名义！",
 			"#baijia2": "我要摧毁你的一切，然后建立我的国度。",
 			"#beimihu:die": "我还会从黄泉比良坂回来的……",
-			"#xinfu_xionghuo1": "此镬加之于你，定有所伤！",
-			"#xinfu_xionghuo2": "凶镬沿袭，怎会轻易无伤？",
-			"#xinfu_shajue1": "杀伐决绝，不留后患。",
-			"#xinfu_shajue2": "吾即出，必绝之！",
-			"#xurong:die": "此生无悔，心中无愧……",
-			"#xinfu_falu1": "求法之道，以司箓籍。",
-			"#xinfu_falu2": "取舍有法，方得其法。",
-			"#xinfu_dianhua1": "大道无形，点化无为。",
-			"#xinfu_dianhua2": "得此点化，必得大道。",
-			"#xinfu_zhenyi1": "紫薇星辰，斗数之仪。",
-			"#xinfu_zhenyi2": "不疾不徐，自爱自重。",
-			"#zhangqiying:die": "米碎面散，我心欲绝……",
 			"#spwenji1": "还望先生救我！",
 			"#spwenji2": "言出子口，入于吾耳，可以言未？",
 			"#sptunjiang1": "江夏冲要之地，孩儿愿往守之。",
@@ -8505,6 +8503,18 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+			"#xinfu_xionghuo1": "此镬加之于你，定有所伤！",
+			"#xinfu_xionghuo2": "凶镬沿袭，怎会轻易无伤？",
+			"#xinfu_shajue1": "杀伐决绝，不留后患。",
+			"#xinfu_shajue2": "吾即出，必绝之！",
+			"#xurong:die": "此生无悔，心中无愧……",
+			"#xinfu_falu1": "求法之道，以司箓籍。",
+			"#xinfu_falu2": "取舍有法，方得其法。",
+			"#xinfu_dianhua1": "大道无形，点化无为。",
+			"#xinfu_dianhua2": "得此点化，必得大道。",
+			"#xinfu_zhenyi1": "紫薇星辰，斗数之仪。",
+			"#xinfu_zhenyi2": "不疾不徐，自爱自重。",
+			"#zhangqiying:die": "米碎面散，我心欲绝……",
 			"#dcsbzuojun1": "彼不得安，我取其逸，则大局可定。",
 			"#dcsbzuojun2": "义者无敌，骄者先败，今非用兵之时。",
 			"#dcsbmuwang1": "授熟读十万书，腹中唯无降字。",
@@ -9635,6 +9645,7 @@ game.import("character", function () {
 			"#pozhu2": "势如破竹，铁锁横江亦难挡！",
 			
 			// guozhan
+			"#gz_jiangqing:die": "竟……破我阵法……",
 			"#gz_zhonghui:die": "吾机关算尽，却还是棋错一着……",
 			"#gzzhaoxin1": "行明动正，何惧他人讥毁。",
 			"#gzzhaoxin2": "大业之举，岂因宵小而动？",

@@ -6235,7 +6235,6 @@ game.import("character", function () {
 			},
 			yishan: {
 				group: "yishan2",
-				notemp: true,
 				trigger: { player: "damageEnd" },
 				filter: function (event, player) {
 					var content = player.storage.yishan;
@@ -11006,7 +11005,7 @@ game.import("character", function () {
 				"限定技，出牌阶段，若你没有黑色手牌，你可以展示并弃置所有手牌，每弃置一张牌视为使用一张火【杀】，随机指定两名敌人为目标。",
 			zhuyu_info: "每当一名横置的角色即将受到伤害时，你可以弃置一张红色牌令此伤害+1并变为火属性。",
 			ningshuang_info:
-				"每当你成为黑色牌的目标，你可以弃置一张黑色牌将其横置，并摸一张牌，若其已经模置则改为将其翻面。",
+				"每当你成为黑色牌的目标，你可以弃置一张黑色牌将其横置，并摸一张牌，若其已经横置则改为将其翻面。",
 			zaowu_old_info: "出牌阶段，你可以弃置三张不同类型的牌，创造任意两张牌并获得之。",
 			xielv_info:
 				"弃牌阶段结束后，若你的所有手牌（至少两张）颜色均相同，你可以展示所有手牌，然后回复1点体力并弃置场上的所有判定牌。",
