@@ -1,17 +1,10 @@
-import { Uninstantable } from "../util/index.js";
-import { game, Game } from "./index.js";
+import { game } from "../../noname.js";
 
-export class GamePromises extends Uninstantable {
+export class GamePromises {
 	/**
 	 * 模仿h5的prompt，用于显示可提示用户进行输入的对话框
 	 *
 	 * 注: 由于参数列表是随意的，在这里我准备限制一下这个函数的参数顺序
-	 *
-	 * @type {{
-	 *  (title: string): Promise<string | false>;
-	 *	(title: string, forced: true): Promise<string>;
-	 *	(alertOption: 'alert', title: string): Promise<true>;
-	 * }}
 	 *
 	 * @param { string } [title] 设置prompt标题与input内容
 	 * @param { boolean } [forced] 为true的话将没有"取消按钮"
@@ -25,10 +18,22 @@ export class GamePromises extends Uninstantable {
 	 * ```
 	 * @returns { Promise<string> }
 	 */
+	/**
+	 * @overload
+	 * @param { string } title
+	 * @returns { Promise<string | false> }
+	 */
+	/**
+	 * @overload
+	 * @param { string } title
+	 * @param { boolean } [forced]
+	 * @returns { Promise<string> }
+	 *
+	 */
 	// @ts-ignore
-	static prompt(alertOption, title, forced) {
+	prompt(alertOption, title, forced) {
 		return new Promise((resolve, reject) => {
-			if (alertOption !== 'alert') {
+			if (alertOption !== "alert") {
 				// @ts-ignore
 				forced = title || false;
 				title = alertOption;
@@ -48,31 +53,39 @@ export class GamePromises extends Uninstantable {
 	 * ```
 	 * @returns { Promise<true> }
 	 */
-	static alert(title) {
+	alert(title) {
 		return new Promise((resolve, reject) => {
-			game.prompt(title, 'alert', resolve);
+			game.prompt(title, "alert", resolve);
 		});
 	}
 	// 读写函数promises化(不用考虑其对应函数是否存在)
-	static download(url, folder, dev, onprogress) {
+	download(url, folder, dev, onprogress) {
 		return new Promise((resolve, reject) => {
+			// @ts-ignore
 			game.download(url, folder, resolve, reject, dev, onprogress);
 		});
 	}
-	static readFile(filename) {
+	/**
+	 * @param {string} filename
+	 * @returns {Promise<ArrayBuffer | Buffer>}
+	 */
+	readFile(filename) {
 		return new Promise((resolve, reject) => {
+			// @ts-ignore
 			game.readFile(filename, resolve, reject);
 		});
 	}
-	static readFileAsText(filename) {
+	readFileAsText(filename) {
 		return new Promise((resolve, reject) => {
+			// @ts-ignore
 			game.readFileAsText(filename, resolve, reject);
 		});
 	}
-	static writeFile(data, path, name) {
-		return (new Promise((resolve, reject) => {
+	writeFile(data, path, name) {
+		return new Promise((resolve, reject) => {
+			// @ts-ignore
 			game.writeFile(data, path, name, resolve);
-		})).then(result => {
+		}).then((result) => {
 			return new Promise((resolve, reject) => {
 				if (result instanceof Error) {
 					reject(result);
@@ -82,22 +95,48 @@ export class GamePromises extends Uninstantable {
 			});
 		});
 	}
-	static ensureDirectory(list, callback, file) {
+	ensureDirectory(list, callback, file) {
 		return new Promise((resolve, reject) => {
-			game.ensureDirectory(list, callback, file).then(resolve).catch(reject);
+			// @ts-ignore
+			game.ensureDirectory(list, resolve, file);
 		});
 	}
-	static createDir(directory) {
+	createDir(directory) {
 		return new Promise((resolve, reject) => {
+			// @ts-ignore
 			game.createDir(directory, resolve, reject);
 		});
 	}
-	static removeFile(filename) {
-		return /** @type {Promise<void>} */(new Promise((resolve, reject) => {
-			game.removeFile(filename, err => {
-				if (err) reject(err);
-				else resolve();
-			});
-		}));
+	removeFile(filename) {
+		return /** @type {Promise<void>} */ (
+			new Promise((resolve, reject) => {
+				// @ts-ignore
+				game.removeFile(filename, (err) => {
+					if (err) reject(err);
+					else resolve();
+				});
+			})
+		);
+	}
+	removeDir(directory) {
+		return /** @type {Promise<void>} */ (
+			new Promise((resolve, reject) => {
+				// @ts-ignore
+				game.removeDir(directory, resolve, reject);
+			})
+		);
+	}
+
+	/**
+	 * 获取文件列表
+	 *
+	 * @param { string } dir 目录
+	 * @returns { Promise<[string[], string[]]> } 返回一个数组，第一个元素是文件夹列表，第二个元素是文件列表
+	 */
+	getFileList(dir) {
+		return new Promise((resolve, reject) => {
+			// @ts-ignore
+			game.getFileList(dir, (folders, files) => resolve([folders, files]), reject);
+		});
 	}
 }

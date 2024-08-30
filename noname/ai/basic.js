@@ -1,23 +1,20 @@
-import { Get as get } from '../get/index.js';
-import { Game as game } from '../game/index.js';
-import { status as _status } from '../status/index.js';
-import { UI as ui } from '../ui/index.js';
-import { Library as lib } from '../library/index.js';
-import { GNC as gnc } from '../gnc/index.js';
-import { Uninstantable } from "../util/index.js";
-import { CacheContext } from '../library/cache/cacheContext.js';
-
-export class Basic extends Uninstantable {
+import { get } from "../get/index.js";
+import { game } from "../game/index.js";
+import { _status } from "../status/index.js";
+import { ui } from "../ui/index.js";
+import { CacheContext } from "../library/cache/cacheContext.js";
+export class Basic {
 	/**
 	 * @param { (
-	 * 	button: Button, 
+	 * 	button: Button,
 	 * 	buttons?: Button[]
 	 * ) => number } check
 	 */
-	static chooseButton(check) {
+	chooseButton(check) {
 		const event = _status.event;
 		let i, j, range, buttons, buttons2;
-		let ok = false, forced = event.forced;
+		let ok = false,
+			forced = event.forced;
 		let iwhile = 100;
 		while (iwhile--) {
 			range = get.select(event.selectButton);
@@ -33,7 +30,7 @@ export class Basic extends Uninstantable {
 				}
 				CacheContext.setInCacheEnvironment(false);
 				CacheContext.removeCacheContext();
-				return (j > 0);
+				return j > 0;
 			}
 			buttons = get.selectableButtons();
 			if (buttons.length == 0) {
@@ -63,7 +60,7 @@ export class Basic extends Uninstantable {
 			}
 			CacheContext.setInCacheEnvironment(false);
 			CacheContext.removeCacheContext();
-			buttons[ix].classList.add('selected');
+			buttons[ix].classList.add("selected");
 			ui.selected.buttons.add(buttons[ix]);
 			game.check();
 			if (ui.selected.buttons.length >= range[0]) {
@@ -81,11 +78,12 @@ export class Basic extends Uninstantable {
 	 * ) => number } check
 	 * @returns { boolean | undefined }
 	 */
-	static chooseCard(check) {
+	chooseCard(check) {
 		const event = _status.event;
-		if (event.filterCard == undefined) return (check() > 0);
+		if (event.filterCard == undefined) return check() > 0;
 		let i, j, range, cards, cards2, skills, effect;
-		let ok = false, forced = event.forced;
+		let ok = false,
+			forced = event.forced;
 		let iwhile = 100;
 		while (iwhile--) {
 			range = get.select(event.selectCard);
@@ -104,7 +102,7 @@ export class Basic extends Uninstantable {
 				}
 				CacheContext.setInCacheEnvironment(false);
 				CacheContext.removeCacheContext();
-				return (j > 0);
+				return j > 0;
 			}
 			cards = get.selectableCards();
 			// @ts-ignore
@@ -139,19 +137,17 @@ export class Basic extends Uninstantable {
 			}
 			CacheContext.setInCacheEnvironment(false);
 			CacheContext.removeCacheContext();
-			if (typeof cards[ix] == 'string') {
+			if (typeof cards[ix] == "string") {
 				ui.click.skill(cards[ix]);
 				var info = get.info(event.skill);
 				if (info.filterCard) {
 					check = info.check || get.unuseful2;
-					return (Basic.chooseCard(check));
-				}
-				else {
+					return this.chooseCard(check);
+				} else {
 					return true;
 				}
-			}
-			else {
-				cards[ix].classList.add('selected');
+			} else {
+				cards[ix].classList.add("selected");
 				ui.selected.cards.add(cards[ix]);
 				game.check();
 				if (ui.selected.cards.length >= range[0]) {
@@ -167,13 +163,14 @@ export class Basic extends Uninstantable {
 	 * @param { (
 	 * target?: Player,
 	 * targets?: Player[]
-	 * ) => number } check 
+	 * ) => number } check
 	 */
-	static chooseTarget(check) {
+	chooseTarget(check) {
 		const event = _status.event;
-		if (event.filterTarget == undefined) return (check() > 0);
+		if (event.filterTarget == undefined) return check() > 0;
 		let i, j, range, targets, targets2, effect;
-		let ok = false, forced = event.forced;
+		let ok = false,
+			forced = event.forced;
 		let iwhile = 100;
 		while (iwhile--) {
 			range = get.select(event.selectTarget);
@@ -191,10 +188,9 @@ export class Basic extends Uninstantable {
 				}
 				CacheContext.setInCacheEnvironment(false);
 				CacheContext.removeCacheContext();
-				return (j > 0);
-			}
-			else if (range[1] == 0) {
-				return check() > 0
+				return j > 0;
+			} else if (range[1] == 0) {
+				return check() > 0;
 			}
 			targets = get.selectableTargets();
 			if (targets.length == 0) {
@@ -224,7 +220,7 @@ export class Basic extends Uninstantable {
 			}
 			CacheContext.setInCacheEnvironment(false);
 			CacheContext.removeCacheContext();
-			targets[ix].classList.add('selected');
+			targets[ix].classList.add("selected");
 			ui.selected.targets.add(targets[ix]);
 			game.check();
 			if (ui.selected.targets.length >= range[0]) {

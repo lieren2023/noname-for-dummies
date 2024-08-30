@@ -1,4 +1,3 @@
-
 export class DynamicStyle {
 	/**
 	 * Object of style
@@ -56,9 +55,11 @@ export class DynamicStyle {
 	 * @returns {string} 样式的字符串形式
 	 */
 	translate(style) {
-		return Object.entries(style).map(item =>
-			`${item[0].replace(/([A-Z])/g, match =>
-				`-${match.toLowerCase()}`)}: ${item[1]};`).join(" ");
+		return Object.entries(style)
+			.map(
+				(item) => `${item[0].replace(/([A-Z])/g, (match) => `-${match.toLowerCase()}`)}: ${item[1]};`
+			)
+			.join(" ");
 	}
 
 	/**
@@ -81,7 +82,7 @@ export class DynamicStyle {
 	 * @returns {boolean}
 	 */
 	has(name) {
-		return this.#cache.rules.some(item => item[0] === name);
+		return this.#cache.rules.some((item) => item[0] === name);
 	}
 
 	/**
@@ -92,7 +93,7 @@ export class DynamicStyle {
 	 * @returns {?StyleObject}
 	 */
 	get(name) {
-		const result = this.find(item => item[0] === name);
+		const result = this.find((item) => item[0] === name);
 		return result ? result[1] : null;
 	}
 
@@ -157,7 +158,7 @@ export class DynamicStyle {
 	 * @returns {boolean[]} 添加的结果，为`true`则添加成功，为`false`则添加失败
 	 */
 	addObject(object) {
-		return Object.entries(object).map(item => this.add(item[0], item[1]));
+		return Object.entries(object).map((item) => this.add(item[0], item[1]));
 	}
 
 	/**
@@ -171,8 +172,7 @@ export class DynamicStyle {
 			this.#cache.rules.splice(index, 1);
 			this.#cache.sheet.deleteRule(index);
 			return true;
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(e);
 			return false;
 		}
@@ -186,7 +186,7 @@ export class DynamicStyle {
 	removeStyles(name, styles) {
 		if (!this.has(name)) return false;
 		const style = this.get(name);
-		styles.forEach(styleName => {
+		styles.forEach((styleName) => {
 			delete style[styleName];
 		});
 		return this.update(name, style);
@@ -212,8 +212,7 @@ export class DynamicStyle {
 				this.#cache.sheet.insertRule(this.generate(name, style), index);
 			}
 			return true;
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(e);
 			return false;
 		}

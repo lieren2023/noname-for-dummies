@@ -1,26 +1,63 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="format-detection" content="telephone=no">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="user-scalable=no, viewport-fit=cover">
+	<meta charset="UTF-8" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="user-scalable=no, viewport-fit=cover" />
 	<title>无名杀</title>
 	<script>
+		if (
+			typeof window.require == "function" &&
+			typeof window.process == "object" &&
+			typeof window.__dirname == "string"
+		) {
+			// 使importMap解析node内置模块
+			const builtinModules = require("module").builtinModules;
+			if (Array.isArray(builtinModules)) {
+				const importMap = {
+					imports: {},
+				};
+				for (const module of builtinModules) {
+					importMap.imports[module] = importMap.imports[`node:${module}`] =
+						`./noname-builtinModules/${module}`;
+				}
+				const im = document.createElement("script");
+				im.type = "importmap";
+				im.textContent = JSON.stringify(importMap);
+				document.currentScript.after(im);
+			}
+		}
+	</script>
+	<script>
+		"use strict";
 		(() => {
 			window.onerror = function (msg, src, line, column, err) {
-				let str = `错误文件: ${typeof src == 'string' && src.length > 0 ? decodeURI(src) : '未知文件'}`;
+				let str = `错误文件: ${typeof src == "string" && src.length > 0 ? decodeURI(src) : "未知文件"}`;
 				str += `\n错误信息: ${msg}`;
 				str += `\n行号: ${line}`;
 				str += `\n列号: ${column}`;
-				if (err && err.stack) str += '\n' + decodeURI(err.stack);
+				if (err && err.stack) str += "\n" + decodeURI(err.stack);
 				console.error(str);
 				alert(str);
 			};
 			const STACK_REGEXP = /^\s*at .*(\S+:\d+|\(native\))/m;
 			const errorList = [];
-			window.onunhandledrejection = async event => {
-				event.promise.catch(error => {
+			function extractLocation(urlLike) {
+				// 不存在地址信息的字符串
+				if (!/:/.test(urlLike)) {
+					return [urlLike];
+				}
+
+				// 捕获位置用到的正则
+				const regExp = /(.+?)(?::(\d+))?(?::(\d+))?$/;
+				const parts = regExp.exec(urlLike.replace(/[()]/g, ""));
+
+				// @ts-ignore
+				return [parts[1], parts[2] || void 0, parts[3] || void 0];
+			}
+			window.onunhandledrejection = async (event) => {
+				event.promise.catch((error) => {
 					console.log(error);
 					// 如果`error`是个错误，则继续处理
 					if (error instanceof Error) {
@@ -28,11 +65,10 @@
 						if (errorList.includes(error)) return;
 						errorList.push(error);
 						// 如果`error`拥有字符串形式的报错栈堆，且报错栈堆确实符合v8的stack
-						if (typeof error.stack === 'string' && STACK_REGEXP.test(error.stack)) {
+						if (typeof error.stack === "string" && STACK_REGEXP.test(error.stack)) {
 							// 获取符合栈堆信息的字符串，一般来说就是从第二行开始的所有行
 							// 为了处理eval的情况，故必须获取完行数
-							let lines = error.stack.split('\n').filter((line) =>
-								STACK_REGEXP.test(line));
+							let lines = error.stack.split("\n").filter((line) => STACK_REGEXP.test(line));
 
 							// 提供类型信息防止vscode报错
 							/**
@@ -54,14 +90,19 @@
 							for (let currentLine = 0; currentLine < lines.length; ++currentLine) {
 								if (/\(eval /.test(lines[currentLine])) continue;
 
-								let formatedLine = lines[currentLine].replace(/^\s+/, '').replace(/\(eval code/g, '(').replace(/^.*?\s+/, '');
+								let formatedLine = lines[currentLine]
+									.replace(/^\s+/, "")
+									.replace(/\(eval code/g, "(")
+									.replace(/^.*?\s+/, "");
 
 								const location = formatedLine.match(/ (\(.+\)$)/);
-								if (location) formatedLine = formatedLine.replace(location[0], '');
+								if (location) formatedLine = formatedLine.replace(location[0], "");
 
 								const locationParts = extractLocation(location ? location[1] : formatedLine);
 
-								fileName = ['eval', '<anonymous>'].includes(locationParts[0]) ? void 0 : locationParts[0];
+								fileName = ["eval", "<anonymous>"].includes(locationParts[0])
+									? void 0
+									: locationParts[0];
 								line = Number(locationParts[1]);
 								column = Number(locationParts[2]);
 								break;
@@ -74,13 +115,14 @@
 						else {
 							try {
 								// @ts-ignore
-								let [_, src = void 0, line = void 0, column = void 0] = /at\s+.*\s+\((.*):(\d*):(\d*)\)/i.exec(error.stack.split('\n')[1])
-								if (typeof line == 'string') line = Number(line);
-								if (typeof column == 'string') column = Number(column);
+								let [_, src = void 0, line = void 0, column = void 0] =
+									/at\s+.*\s+\((.*):(\d*):(\d*)\)/i.exec(error.stack.split("\n")[1]);
+								if (typeof line == "string") line = Number(line);
+								if (typeof column == "string") column = Number(column);
 								// @ts-ignore
 								window.onerror(error.message, src, line, column, error);
 							} catch (e) {
-								window.onerror(error.message, '', 0, 0, error);
+								window.onerror(error.message, "", 0, 0, error);
 							}
 						}
 					}
@@ -89,87 +131,84 @@
 		})();
 	</script>
 	<script>
-		if (location.href.startsWith('http') && typeof window.initReadWriteFunction != 'function' && !window.require && !window.__dirname) {
+		"use strict";
+		if (
+			location.href.startsWith("http") &&
+			typeof window.initReadWriteFunction != "function" &&
+			!window.require &&
+			!window.__dirname
+		) {
 			window.initReadWriteFunction = async function (game) {
 				return new Promise((resolve, reject) => {
 					fetch(`./readFile?fileName=noname.js`)
-						.then(response => {
+						.then((response) => {
 							return response.json();
 						})
-						.then(result => {
+						.then((result) => {
 							if (result && result.success) callback();
-							else reject(result.errorMsg)
+							else reject(result.errorMsg);
 						})
 						.catch(reject);
 
 					function callback() {
-						game.createDir = function (dir, success = () => { }, error = () => { }) {
-							fetch(`./createDir?dir=${dir}`)
-								.then(response => {
-									return response.json();
-								})
-								.then(result => {
-									if (result && result.success) success();
-									else error();
-								})
-								.catch(error);
-						};
-
-						game.readFile = function (fileName, callback = () => { }, error = () => { }) {
+						game.readFile = function (fileName, callback = () => {}, error = () => {}) {
 							fetch(`./readFile?fileName=${fileName}`)
-								.then(response => {
+								.then((response) => {
 									return response.json();
 								})
-								.then(result => {
-									if (result && result.success) callback(new Uint8Array(result.data).buffer);
+								.then((result) => {
+									if (result && result.success)
+										callback(new Uint8Array(result.data).buffer);
 									else error(result && result.errorMsg);
 								})
 								.catch(error);
 						};
 
-						game.readFileAsText = function (fileName, callback = () => { }, error = () => { }) {
+						game.readFileAsText = function (fileName, callback = () => {}, error = () => {}) {
 							fetch(`./readFileAsText?fileName=${fileName}`)
-								.then(response => {
+								.then((response) => {
 									return response.json();
 								})
-								.then(result => {
+								.then((result) => {
 									if (result && result.success) callback(result.data);
 									else error(result && result.errorMsg);
 								})
 								.catch(error);
 						};
 
-						game.writeFile = function (data, path, name, callback = () => { }) {
+						game.writeFile = function (data, path, name, callback = () => {}) {
 							game.ensureDirectory(path, function () {
-								if (Object.prototype.toString.call(data) == '[object File]') {
+								if (Object.prototype.toString.call(data) == "[object File]") {
 									const fileReader = new FileReader();
 									fileReader.onload = function (e) {
 										game.writeFile(e.target.result, path, name, callback);
 									};
 									fileReader.readAsArrayBuffer(data, "UTF-8");
-								}
-								else {
+								} else {
 									let filePath = path;
-									if (path.endsWith('/')) {
+									if (path.endsWith("/")) {
 										filePath += name;
 									} else if (path == "") {
 										filePath += name;
 									} else {
-										filePath += '/' + name;
+										filePath += "/" + name;
 									}
 
 									fetch(`./writeFile`, {
-										method: 'post',
+										method: "post",
 										headers: { "Content-Type": "application/json" },
 										body: JSON.stringify({
-											data: typeof data == 'string' ? data : Array.prototype.slice.call(new Uint8Array(data)),
-											path: filePath
-										})
+											data:
+												typeof data == "string"
+													? data
+													: Array.prototype.slice.call(new Uint8Array(data)),
+											path: filePath,
+										}),
 									})
-										.then(response => {
+										.then((response) => {
 											return response.json();
 										})
-										.then(result => {
+										.then((result) => {
 											if (result && result.success) {
 												callback();
 											} else {
@@ -180,35 +219,78 @@
 							});
 						};
 
-						game.removeFile = function (fileName, callback = () => { }) {
+						game.removeFile = function (fileName, callback = () => {}) {
 							fetch(`./removeFile?fileName=${fileName}`)
-								.then(response => {
+								.then((response) => {
 									return response.json();
 								})
-								.then(result => {
+								.then((result) => {
 									callback(result.errorMsg);
 								})
 								.catch(error);
 						};
 
-						game.getFileList = function (dir, callback = () => { }) {
+						game.getFileList = function (dir, callback = () => {}, onerror) {
 							fetch(`./getFileList?dir=${dir}`)
-								.then(response => {
+								.then((response) => {
 									return response.json();
 								})
-								.then(result => {
-									if (result && result.success) {
-										callback(result.data.dirs, result.data.files);
+								.then((result) => {
+									if (!result) {
+										throw new Error("Cannot get available resource.");
+									}
+
+									if (result.success) {
+										callback(result.data.folders, result.data.files);
+									} else if (onerror) {
+										onerror(new Error(result.errorMsg));
 									}
 								});
 						};
 
-						game.ensureDirectory = function (list, callback = () => { }, file = false) {
+						game.ensureDirectory = function (list, callback = () => {}, file = false) {
 							let pathArray = typeof list == "string" ? list.split("/") : list;
 							if (file) {
 								pathArray = pathArray.slice(0, -1);
 							}
 							game.createDir(pathArray.join("/"), callback, console.error);
+						};
+
+						game.createDir = (
+							directory,
+							successCallback = () => {},
+							errorCallback = () => {}
+						) => {
+							fetch(`./createDir?dir=${directory}`)
+								.then((response) => {
+									return response.json();
+								})
+								.then((result) => {
+									if (result && result.success) {
+										successCallback();
+									} else {
+										errorCallback(new Error("创建文件夹失败"));
+									}
+								})
+								.catch(errorCallback);
+						};
+						game.removeDir = (
+							directory,
+							successCallback = () => {},
+							errorCallback = () => {}
+						) => {
+							fetch(`./removeDir?dir=${directory}`)
+								.then((response) => {
+									return response.json();
+								})
+								.then((result) => {
+									if (result && result.success) {
+										successCallback();
+									} else {
+										errorCallback(new Error("创建文件夹失败"));
+									}
+								})
+								.catch(errorCallback);
 						};
 
 						resolve();

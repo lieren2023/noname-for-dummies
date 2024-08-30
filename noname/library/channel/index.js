@@ -1,4 +1,3 @@
-
 /**
  * @template T
  */
@@ -21,7 +20,7 @@ export class Channel {
 
 	/**
 	 * 向该频道发送消息，在消息未被接受前将等待
-	 * 
+	 *
 	 * @param {T} value - 要发送的消息
 	 * @returns {Promise<void>}
 	 */
@@ -54,7 +53,7 @@ export class Channel {
 
 	/**
 	 * 接收频道所发送的消息，若无消息发送则等待
-	 * 
+	 *
 	 * @returns {Promise<T>} 接收到的消息
 	 */
 	receive() {

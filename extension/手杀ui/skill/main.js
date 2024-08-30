@@ -2,7 +2,9 @@ app.import(function(lib, game, ui, get, ai, _status, app) {
   var plugin = {
     name: 'skill',
     filter: function() {
-      return !['chess', 'tafang', 'stone'].contains(get.mode());
+		// 解除战棋/塔防/炉石模式不显示的限制
+		return true
+      // return !['chess', 'tafang', 'stone'].contains(get.mode());
     },
     content: function(next) {
       // app.waitAllFunction([

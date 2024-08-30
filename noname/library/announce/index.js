@@ -55,9 +55,11 @@ export class Announce {
 	 * @returns {T}
 	 */
 	publish(name, values) {
-		this.#eventTarget.dispatchEvent(new CustomEvent(name, {
-			detail: [values, name]
-		}));
+		this.#eventTarget.dispatchEvent(
+			new CustomEvent(name, {
+				detail: [values, name],
+			})
+		);
 		return values;
 	}
 
@@ -75,13 +77,12 @@ export class Announce {
 	 */
 	subscribe(name, method) {
 		let subscriber;
-		if (this.#records.has(method))
-			subscriber = this.#records.get(method);
+		if (this.#records.has(method)) subscriber = this.#records.get(method);
 		else {
 			subscriber = new this.#SubscriberType(method, this.#eventTarget);
 			this.#records.set(method, subscriber);
 		}
-		if (!subscriber) throw new Error()
+		if (!subscriber) throw new Error();
 		subscriber.subscribe(name);
 		return method;
 	}
@@ -99,10 +100,9 @@ export class Announce {
 	unsubscribe(name, method) {
 		if (this.#records.has(method)) {
 			const subscriber = this.#records.get(method);
-			if (!subscriber) throw new Error()
+			if (!subscriber) throw new Error();
 			subscriber.unsubscribe(name);
-			if (subscriber.isEmpty)
-				this.#records.delete(method);
+			if (subscriber.isEmpty) this.#records.delete(method);
 		}
 		return method;
 	}
@@ -120,7 +120,7 @@ export class AnnounceSubscriber {
 	/**
 	 * @type {string[]}
 	 */
-	#listening
+	#listening;
 
 	/**
 	 *
@@ -130,7 +130,7 @@ export class AnnounceSubscriber {
 	constructor(content, target) {
 		this.#content = function (event) {
 			content(event.detail[0], event.detail[1]);
-		}
+		};
 		this.#listening = [];
 
 		vm.set(this, target);

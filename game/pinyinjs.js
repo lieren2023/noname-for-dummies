@@ -6,9 +6,12 @@
 var pinyin_dict_polyphone = {
 	// noname's pinyin
 	// START
-	// 武将名
+	// 名词
 	"用间": " jiàn",
+	"少阴": "shào ",
+	"少阳": "shào ",
 	
+	// 武将名
 	"乐进": "yuè ",
 	"乐就": "yuè ",
 	"乐綝": "yuè chēn",
@@ -40,6 +43,7 @@ var pinyin_dict_polyphone = {
 	
 	"凯撒": " sà",
 	
+	"尉迟": "yù ",
 	"乐无异": "yuè ",
 	"端蒙": " méng",
 	"妹喜": "mò ",
@@ -62,10 +66,13 @@ var pinyin_dict_polyphone = {
 	"卡玛": "kǎ ",
 	"梼杌": "táo ",
 	"亚煞极": " shà ",
+	"枣祗任峻": "  rén ",
+	"加尔鲁什": "   shí",
 	
 	"库特莉亚芙卡": "     kǎ",
 	"露娜": "lù ",
 	// 技能名
+	"弹雀": "tán què",
 	"重身": "chóng ",
 	"畜鸣": "chù ",
 	"聆乐": " yuè",
@@ -76,19 +83,25 @@ var pinyin_dict_polyphone = {
 	"血诏": "xuè ",
 	"血偿": "xuè ",
 	"血拼": "xuè ",
+	"血途": "xuè ",
+	"血焰": "xuè ",
 	"行殇": "xíng ",
 	"节行": "jié xíng",
 	"天行": " xíng",
 	"神行": " xíng",
 	"镇行": " xíng",
 	"行图": "xíng ",
+	"绝行": " xíng",
+	"迟行": " xíng",
 	"好施": "hào ",
 	"荐降": " xiáng",
 	"破降": " xiáng",
 	"拒降": " xiáng",
+	"奔降": "bēn xiáng",
 	"应势": "yìng ",
 	"应援": "yìng ",
 	"应机": "yìng ",
+	"应天": "yìng ",
 	"节应": "jié yìng",
 	"驰应": " yìng",
 	"断发": " fà",
@@ -121,8 +134,10 @@ var pinyin_dict_polyphone = {
 	"辟田": "pì ",
 	"辟撰": "pì ",
 	"辟境": "pì ",
+	"辟剑": "pì ",
 	"斗阵": "dòu ",
 	"斗缠": "dòu ",
+	"覆斗": " dòu",
 	"冯河": "píng ",
 	"势吓": " hè",
 	"虚吓": " hè",
@@ -137,17 +152,26 @@ var pinyin_dict_polyphone = {
 	"调归": "diào ",
 	"款塞": " sài",
 	"父荫": "fù yìn",
+	"祖荫": " yìn",
 	"穆荫": " yìn",
+	"慈荫": " yìn",
 	"长姬": "zhǎng ",
 	"朝凤": "cháo ",
 	"朝争": "cháo ",
 	"令法": "lìng ",
+	"令戮": "lìng ",
 	"耀令": " lìng",
 	"冠绝": "guàn ",
 	"先著": " zhuó",
 	"量反": "liàng ",
 	"复难": " nàn",
 	"膴仕": "wǔ ",
+	"骜肆": "ào ",
+	"犷骜": " ào",
+	"媵予": " yǔ",
+	"天予": " yǔ",
+	"累卵": "lěi ",
+	"印卡": " kǎ",
 	
 	"蒙斥": "méng ",
 	
@@ -155,7 +179,7 @@ var pinyin_dict_polyphone = {
 	"血凰": "xuè ",
 	"血戮": "xuè ",
 	"血刃": "xuè ",
-	"血契": "xuè ",
+	"血契": "xuè qì",
 	"血逐": "xuè ",
 	"血咒": "xuè ",
 	"血殇": "xuè ",
@@ -166,7 +190,7 @@ var pinyin_dict_polyphone = {
 	"劫行": " xíng",
 	"割发": " fà",
 	"落梅": "luò ",
-	"落石": "luò ",
+	"落石": "luò shí",
 	"落刀": "luò ",
 	"星落": " luò",
 	"奈落": " luò",
@@ -180,10 +204,15 @@ var pinyin_dict_polyphone = {
 	"冥煞": " shà",
 	"虎煞": " shà",
 	"煞魂": "shà ",
+	
+	"四乘粮舆": " shèng  ",
 	// END
+	// 增补
 	"撒贝宁": "sà  ",
 	"卡比": "kǎ ",
+	"桀骜": " ào",
 	
+	// 原版（含修复）
 	"阿Ｑ": "ā ",
 	"阿爸": "ā ",
 	"阿鼻": "ā ",
@@ -41586,6 +41615,10 @@ var pinyin_dict_withtone = "yī,dīng zhēng,kǎo qiǎo yú,qī,shàng,xià,hǎn
 	 * @param splitter 返回结果拼接字符
 	 */
 	function parsePolyphone(chinese, result, splitter, withtone) {
+		// 先删除中文字符之外的所有字符（包括英文字母、数字、标点符号、空格和其他非中文字符），然后再查找多音字
+		chinese = chinese.replace(/[^\u4e00-\u9fa5]/g, '');
+		if(chinese.length == 0) return result;
+		
 		var poly = window.pinyin_dict_polyphone;
 		var max = 7; // 最多只考虑7个汉字的多音字词，虽然词库里面有10个字的，但是数量非常少，为了整体效率暂时忽略之
 		var temp = poly[chinese];
@@ -41602,10 +41635,6 @@ var pinyin_dict_withtone = "yī,dīng zhēng,kǎo qiǎo yú,qī,shàng,xià,hǎn
 		for (var i = 0; i < chinese.length;(i++,m++)) {
 			temp = '';
 			for (var j = 0; j < max && (i + j) < chinese.length; j++) {
-				if (!dict.withtone[chinese[i]]) {
-					i+=(result[m].length-1);
-					break;
-				} // 如果碰到非汉字直接停止本次查找
 				temp += chinese[i + j];
 				var res = poly[temp];
 				if (res) // 如果找到了多音字词语

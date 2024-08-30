@@ -214,7 +214,10 @@
 	transition: none;
 }
 
-
+/* 适配战棋/塔防/炉石模式 */
+.player.minskin>.camp-wrap {
+	display: none !important;
+}
 
 .player>.camp-wrap[data-camp='jin']>.camp-back {
 	background: linear-gradient(to bottom, rgb(17, 178, 160), rgb(160,130,108));
@@ -302,6 +305,13 @@
 	-webkit-writing-mode: vertical-rl;
 }
 
+/* 挑战模式界面修复 */
+.player.bossplayer>.camp-wrap>.avatar-name {
+    top: 36px;
+    left: 29px; 
+    font-size: 16px;
+}
+
 
 .player>.camp-wrap>.avatar-name-default,
 .player>.camp-wrap>.camp-back {
@@ -339,6 +349,26 @@
 	font-size: 14px;
 	width: 174px;
 	height: 183px;
+	display: flex;
+	text-align: center;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	transition: none;
+}
+
+/* 挑战模式界面修复 */
+.player.bossplayer>.camp-wrap>.camp-name {
+	font-family: shousha;
+	font-display: swap;
+	top: 7px;
+    left: 9px;
+	font-size: 14px;
+	width: 174px;
+	height: 220px;
 	display: flex;
 	text-align: center;
 	align-items: center;
@@ -431,7 +461,7 @@
 /*玩家血量显示*/
 .player>.hp-wrap {
 	display: block;
-	right: 112.8px;
+	left: -76.5px;
 	bottom: 8.5px;
 	width: 12px;
 	height: 50px;
@@ -445,7 +475,11 @@
 	z-index: 88;
 }
 
-
+/* 挑战模式界面修复 */
+.player.bossplayer>.hp-wrap {
+	left: -78.5px;
+	bottom: -3px;
+}
 
 .player.connect>div:not(.avatar):not(.name):not(.nameol):not(.hp):not(.room):not(.gaming):not(.identity).hp-wrap {
 	display: block !important;
@@ -454,7 +488,7 @@
 
 
 .player[data-position='0']>.hp-wrap{
-	bottom:-10px;
+	bottom:-7px;
 }
 
 .player>.hp-wrap>.hp,
@@ -491,9 +525,21 @@
 	transform: none !important;
 }
 
-/*玩家武将显示*/
+/* 乱斗模式界面修复 */
 .player>.avatar,
-.player>.avatar2,
+.player>.avatar2 {
+	left: 24px !important;
+	top: auto !important;
+	bottom: 2px;
+	width: 91% !important;
+	height: 98% !important;
+	box-shadow: none;
+	background-image: none;
+	background-repeat: no-repeat;
+	border-radius: 8px;
+}
+
+/*玩家武将显示*/
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin:not(*[data-player_height=''])>.avatar,
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin2:not(*[data-player_height=''])>.avatar2 {
 	left: 24px !important;
@@ -507,13 +553,34 @@
 	border-radius: 8px;
 }
 
+/* 挑战模式界面修复 */
+.player.bossplayer>.avatar {
+	left: 24px !important;
+	top: auto !important;
+	bottom: 2px;
+	width: 83.5% !important;
+	height: 98% !important;
+	box-shadow: none;
+	background-image: none;
+	background-repeat: no-repeat;
+	border-radius: 8px;
+}
+
+/* 适配战棋/塔防/炉石模式 */
+.player.minskin>.avatar {
+	left: 4px !important;
+	top: 4px !important;
+	width: 112px !important;
+	height: 112px !important;
+}
+
 .player.fullskin.fullskin2>.avatar,
 #arena>.player.fullskin2:not(.minskin):not(.unseen2)>.avatar,
 #arena>.player.fullskin2:not(.minskin).unseen2[data-position='0']>.avatar,
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin.fullskin2:not(*[data-player_height=''])>.avatar,
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin.fullskin2.unseen:not(*[data-player_height=''])>.avatar,
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin.fullskin2.unseen2:not(*[data-player_height=''])>.avatar {
-	width: 40.79% !important;
+	width: 41% !important;
 	height: 98% !important;
 	background-position: top !important;
 	border-radius: 8px 0 0 8px !important;
@@ -526,8 +593,7 @@
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin.fullskin2:not(*[data-player_height=''])>.avatar2,
 #arena.decadeUI:not(*[data-player_height=''])>.player.fullskin.fullskin2.unseen2:not(*[data-player_height=''])>.avatar2 {
 	left: 58.6% !important;
-	top: auto !important;
-	width: 40.79% !important;
+	width: 41% !important;
 	height: 98% !important;
 	background-position: top !important;
 	border-radius: 0 8px 8px 0 !important;
@@ -708,10 +774,10 @@
 .player>.avatar>.action {
     display: block;
     position: absolute;
-    left: 0;
+    left: -13px;
     top: auto;
     right: 0;
-    bottom: 0;
+    bottom: -1px;
     width: 100%;
     margin: 0;
     text-align: center;
@@ -730,6 +796,11 @@
     padding-bottom: 0;
     z-index: 88;
 	transition-property: opacity, transform, background;
+}
+
+/* 挑战模式界面修复 */
+.player.bossplayer>.dui-marks {
+    display: none;
 }
 
 .player>.dui-marks>.mark {
@@ -1062,14 +1133,14 @@
 /*玩家手牌数显示*/
 .player>.card-count {
 	position: absolute;
-	left: -3px;
+	left: -2px;
 	top: auto;
 	right: auto;
-	bottom: -5px;
+	bottom: -6px;
 	padding: 0px;
 	line-height: normal;
-	width: 27px;
-	height: 27px;
+	width: 27.7px;
+	height: 27.7px;
 	background: url("image/decoration/card_count.png");
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
@@ -1105,12 +1176,12 @@
 
 
 /*玩家身份标记*/
+/* 挑战模式界面修复 */
 #bosslist>.player>.identity {
-	height: 100%;
+	display: none !important;
 }
-
 #bosslist>.player>.identity>div {
-	text-align: left;
+	display: none !important;
 }
 
 .player>.identity,
@@ -1164,24 +1235,43 @@
 
 
 /*人物弹出文字*/
+/* 修复左右显示位置问题（如神貂蝉的targetprompt） */
 .player>.damage {
-    width: 100%;
-	text-shadow: none;
+    width: 120%;
+	left: -10%;
 	transition: none;
 	z-index: 89;
+	text-shadow: 
+		#803B02 1px 1px 1px,
+		#803B02 1px -1px 1px,
+		#803B02 -1px 1px 1px,
+		#803B02 -1px -1px 1px,
+		#803B02 0px 1px 1px,
+		#803B02 0px -1px 1px,
+		#803B02 1px 0px 1px,
+		#803B02 -1px 0px 1px,
+		#803B02 0 0 2px,
+		#803B02 0 0 2px,
+		#803B02 0 0 2px,
+		#803B02 0 0 2px,
+		#803B02 0 0 3px,
+		#803B02 0 0 3px,
+		#803B02 0 0 3px,
+		#803B02 0 0 3px;
 }
 
-.player>.damage::before {
-	content: attr(data-text);
-    position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	color: transparent;
-	-webkit-text-stroke: 4px #803B02;
-    z-index: -1;
-	white-space: pre;
-}
+/* 改用阴影来模拟描边的效果 */
+/* .player>.damage::before { */
+	/* content: attr(data-text); */
+    /* position: absolute; */
+	/* left: 0; */
+	/* top: 0; */
+	/* width: 100%; */
+	/* color: transparent; */
+	/* -webkit-text-stroke: 4px #803B02; */
+    /* z-index: -1; */
+	/* white-space: pre; */
+/* } */
 
 /* .player>.damage[data-nature='metal']::before { */
 	/* -webkit-text-stroke: 4px #FFCB00; */
@@ -1286,6 +1376,7 @@
 	transform: none;
 	opacity: 0;
 	z-index: 61;
+	pointer-events: none; /* 点击事件会穿透到下层元素上，修复阵亡复活后无法点资料卡的bug */
 }
 
 .player.opposite-camp>.died-identity {
@@ -1299,6 +1390,7 @@
 	animation-delay: 0.5s;
 	-webkit-animation: fade-in 0.5s forwards;
 	-webkit-animation-delay: 0.5s;
+	pointer-events: none; /* 点击事件会穿透到下层元素上，修复阵亡后无法点资料卡的bug */
 }
 
 /*玩家获得的技能显示*/
@@ -1386,6 +1478,34 @@
 .player>.identity-mark-box>.identity-mark-item:active {
 	transform: scale(0.9);
 }
-.player[data-position='0']>.card-count  {
+
+/* 挑战模式界面修复 */
+.player.bossplayer>.card-count,
+.player[data-position='0']>.card-count {
 	display: none !important;
+}
+
+/* 其他角色阵亡后手牌数变灰、阵亡后副将名变灰 */
+.player.dead>.card-count,
+.player.dead>.name.name2 {
+	color: #E2E2E2;
+}
+
+/* 挑战模式界面修复 */
+.player.bossplayer {
+	margin: 15px !important;
+	width: 158px !important;
+}
+#bosslist {
+	top: 5px !important;
+}
+@media screen and (min-height: 800px) {
+	.dialog.bosscharacter {
+		height: 317px !important;
+		bottom: calc(50% - 235px) !important;
+	}
+	
+	#bosslist {
+		top: 5px !important;
+	}
 }

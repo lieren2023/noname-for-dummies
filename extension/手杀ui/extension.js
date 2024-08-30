@@ -8,6 +8,9 @@ game.import('extension', function(lib, game, ui, get, ai, _status) {
   return {
     name: "手杀ui",
     content: function(config, pack) {
+		// 新增lib.noGlobalSkillBtn，用于临时修复无按钮发动技能（无global的global技能），例如古剑奇谭食物牌（鲈鱼羹、蜜汁藕）
+		lib.noGlobalSkillBtn=["luyugeng", "mizhilianou_use"];
+		
 		// 初始启动页设置
 		if (!lib.config["extension_手杀ui_splash_styleinit"]) {
 			if(lib.device){
@@ -662,7 +665,8 @@ if (document.getElementById("jindutiao")) {
 			firstDo: true,
 			priority: Infinity,
 			filter: function (event, player) {
-				return player==game.me&&(lib.config.ssuispzdpx=='shunxu1'||lib.config.ssuispzdpx=='shunxu2'||lib.config.ssuispzdpx=='shunxu3'||lib.config.ssuispzdpx=='shunxu4'||lib.config.ssuispzdpx=='shunxu5'||lib.config.ssuispzdpx=='shunxu6')
+				// 适配新版本体
+				return player==game.me&&!player.hasSkillTag("noSortCard")&&(lib.config.ssuispzdpx=='shunxu1'||lib.config.ssuispzdpx=='shunxu2'||lib.config.ssuispzdpx=='shunxu3'||lib.config.ssuispzdpx=='shunxu4'||lib.config.ssuispzdpx=='shunxu5'||lib.config.ssuispzdpx=='shunxu6')
 			},
 			content: function () {
 				var compare = {
@@ -894,7 +898,7 @@ if (document.getElementById("jindutiao")) {
 		if(zhu4>0) str+='<font color="#0075FF">'+'帅'+'</font> x '+zhu4+'  ';
 		if(zhong4>0) str+='<font color="#0075FF">'+'锋'+'</font> x '+zhong4+'  ';
     }
-	else if(lib.config.mode=='versus'&&get.config('versus_mode')=='four'){
+	else if(lib.config.mode=='versus'&&(get.config('versus_mode')=='four'||get.config('versus_mode')=='guandu')){
 		// 暖色
 		var zhu1=game.countPlayer(function(current){
         return game.me.side&&current.isFriendOf(game.me)&&current.identity=='zhu';
@@ -992,7 +996,7 @@ if (document.getElementById("jindutiao")) {
     }
   }
   lib.arenaReady.push(function(){
-    if(lib.config.mode=='identity'||lib.config.mode=='doudizhu'||lib.config.mode=='single'||lib.config.mode=='boss'||lib.config.mode=='guozhan'||(lib.config.mode=='versus'&&get.config('versus_mode')=='two')||(lib.config.mode=='versus'&&get.config('versus_mode')=='three')||(lib.config.mode=='versus'&&get.config('versus_mode')=='four')||(lib.config.mode=='versus'&&get.config('versus_mode')=='siguo')||(lib.config.mode=='versus'&&get.config('versus_mode')=='jiange')||lib.config.mode=='brawl'){
+    if(lib.config.mode=='identity'||lib.config.mode=='doudizhu'||lib.config.mode=='single'||lib.config.mode=='boss'||lib.config.mode=='guozhan'||(lib.config.mode=='versus'&&get.config('versus_mode')=='two')||(lib.config.mode=='versus'&&get.config('versus_mode')=='three')||(lib.config.mode=='versus'&&(get.config('versus_mode')=='four'||get.config('versus_mode')=='guandu'))||(lib.config.mode=='versus'&&get.config('versus_mode')=='siguo')||(lib.config.mode=='versus'&&get.config('versus_mode')=='jiange')||lib.config.mode=='brawl'){
       if(lib.config.mode=='doudizhu'){
         //斗地主
         var translate={
@@ -1073,8 +1077,8 @@ if (document.getElementById("jindutiao")) {
           zhong:'保护己方主帅<br>抢先击败对方主帅',
         }
       }
-	  else if(lib.config.mode=='versus'&&get.config('versus_mode')=='four'){
-        //对决-对抗
+	  else if(lib.config.mode=='versus'&&(get.config('versus_mode')=='four'||get.config('versus_mode')=='guandu')){
+        //对决-对抗、官渡
         var translate={
           zhu:'协同己方忠臣<br>击败对方主公',
           zhong:'保护己方主公<br>击败对方主公',
@@ -1104,6 +1108,7 @@ if (document.getElementById("jindutiao")) {
           fan:'找出反贼队友<br>全力击败主公',
           nei:'找出反贼忠臣<br>最后击败主公',
 		  mingzhong:'保护主公<br>取得最后胜利',
+		  commoner:'保护好自己<br>共同取得胜利',
           rZhu:'击败冷方主帅<br>与所有野心家',
           rZhong:'保护暖方主帅<br>击败冷方主帅<br>与所有野心家',
           rYe:'联合冷方野心家<br>击败其他角色',
@@ -1326,7 +1331,7 @@ game.as_removeImage=function(){
 					'<br>- 进度条与阶段提示（更新搬运）功能完善，包括增加烧条结束后是否托管选项（开启后可在游戏中切换，即时生效）、进度条会暂停烧条了（游戏暂停时、呼出菜单时、点击触屏按钮后、查看武将资料卡时、长按/右键弹出菜单显示信息时等）、进度条与阶段提示触发时机调整、阶段提示适配界面缩放等。'+
 					'<br>- 新增FPS显示开关，搬运自扩展ol（作者Aurora表示代码是公开的，谁都可以借用，无需征得修改许可），FPS字体上色。'+
 					'<br>- 初始启动页设置（手机端：选项-外观-启动页-样式二，电脑端：选项-外观-启动页-样式一）。'+
-					'<br>- 完善身份提示功能，包括国战模式势力着色，身份-明忠、身份-3v3v2、对决-对抗、对决-统率、对决-欢乐（含替补模式）、对决-剑阁、对决-四国（同舟共济）、挑战、斗地主、单挑、乱斗（待完善，需先根据乱斗的子游戏模式选择并设置好对应的身份/国战/对决的子游戏模式）等模式的存活角色身份数量提示和胜利条件提示，其他扩展新增的游戏模式可参考魔改记录自行添加身份提示。'+
+					'<br>- 完善身份提示功能，包括国战模式势力着色，身份启用平民，身份-明忠、身份-3v3v2、对决-对抗、对决-统率、对决-欢乐（含替补模式）、对决-官渡、对决-剑阁、对决-四国（同舟共济）、挑战、斗地主、单挑、乱斗（待完善，需先根据乱斗的子游戏模式选择并设置好对应的身份/国战/对决的子游戏模式）等模式的存活角色身份数量提示和胜利条件提示，其他扩展新增的游戏模式可参考魔改记录自行添加身份提示。'+
 					'<br>- 右下角点击切换托管的聊天按钮（聊天气泡图标）在游戏托管后会变灰了。'+
 					'<br>- 重写布局、CSS样式修改：增加识别手机端和电脑端设备判断，从而调整位置，适配不同客户端的不同缩放比例；适配出牌记录栏、改善图层显示效果等；包括问号图片、加号图片、进度条、阶段提示、FPS显示等。'+
 					'<br>- 参考SJ Settings扩展实现避免提示是否下载图片和字体素材（后续一步到位懒人包更新无需再魔改本体）。'+

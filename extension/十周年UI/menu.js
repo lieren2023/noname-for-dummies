@@ -1,7 +1,27 @@
 'use strict';
 decadeModule.import(function(lib, game, ui, get, ai, _status){
+	// 临时修复扩展的武将包在武将界面不显示的bug
+	// 活动武将
+	// if (lib.config.extensions && lib.config.extensions.contains('活动武将') && lib.config['extension_活动武将_enable']) {
+		// lib.config.all.characters.push('FaDongCharacter');
+		// lib.config.all.characters.push('NianShouCharacter');
+		// lib.config.all.characters.push('hezongkangqincharacter');
+		// lib.config.all.characters.push('decadeQiHuan');
+		// lib.config.all.characters.push('decadeZhuoGui');
+		// lib.config.all.characters.push('decadeKuiBa');
+		// lib.config.all.characters.push('HD_chaoshikong');
+		// lib.config.all.characters.push('MiNikill');
+		// lib.config.all.characters.push('WeChatkill');
+		// lib.config.all.characters.push('MX_feihongyinxue');
+		// lib.config.all.characters.push('huodongcharacter');
+	// }
+	
 	// 修改game.js的函数menu:function(connectMenu){
 	// 将所有出现的 game.documentZoom 或 1.3 字符串替换为 1
+	
+	// 注：暂时先用旧代码，未适配新本体代码
+	// game.menuZoom = 1;
+	
 	ui.create.menu=function(connectMenu){
 		var menuTimeout = null;
 		if (!connectMenu && !game.syncMenu) {
@@ -1011,12 +1031,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							list.sort(function (a, b) {
 								a = a[0]; b = b[0];
 								var aa = a, bb = b;
-								if (aa.includes('_')) {
-									aa = aa.slice(aa.indexOf('_') + 1);
+								var firstUnderscoreIndexAA = aa.indexOf('_');
+								var firstUnderscoreIndexBB = bb.indexOf('_');
+								var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+								var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+								
+								if (secondUnderscoreIndexAA != -1) {
+									aa = aa.slice(secondUnderscoreIndexAA + 1);
+								} else if (firstUnderscoreIndexAA != -1) {
+									aa = aa.slice(firstUnderscoreIndexAA + 1);
 								}
-								if (bb.includes('_')) {
-									bb = bb.slice(bb.indexOf('_') + 1);
+								
+								if (secondUnderscoreIndexBB != -1) {
+									bb = bb.slice(secondUnderscoreIndexBB + 1);
+								} else if (firstUnderscoreIndexBB != -1) {
+									bb = bb.slice(firstUnderscoreIndexBB + 1);
 								}
+								
 								if (aa != bb) {
 									return aa > bb ? 1 : -1;
 								}
@@ -1403,7 +1434,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 													if (directoryList.length) {
 														var dir = directoryList.shift();
 														var filelist = directories[dir];
-														window.resolveLocalFileSystemURL(nonameInitialized + dir, function (entry) {
+														window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + dir, function (entry) {
 															var writeFile = function () {
 																if (filelist.length) {
 																	var filename = filelist.shift();
@@ -1494,7 +1525,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							unlink();
 						}
 						else {
-							window.resolveLocalFileSystemURL(nonameInitialized + page.currentpath, function (entry) {
+							window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + page.currentpath, function (entry) {
 								var unlink = function () {
 									if (selected.length) {
 										entry.getFile(selected.shift().filename, { create: false }, function (fileEntry) {
@@ -1549,7 +1580,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 									}
 								}
 								else {
-									window.resolveLocalFileSystemURL(nonameInitialized + this.path, function (entry) {
+									window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + this.path, function (entry) {
 										entry.removeRecursively(function () {
 											enterDirectory(page, page.currentpath);
 										});
@@ -1661,7 +1692,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 								lib.node.fs.mkdir(__dirname + '/' + path + '/' + str, refresh);
 							}
 							else {
-								window.resolveLocalFileSystemURL(nonameInitialized + path, function (entry) {
+								window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + path, function (entry) {
 									entry.getDirectory(str, { create: true }, refresh);
 								});
 							}
@@ -1892,7 +1923,21 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				for (var i = 0; i < start.firstChild.childNodes.length; i++) {
 					var node = start.firstChild.childNodes[i];
 					if (node.mode) {
-						if (node.mode.startsWith('mode_')) continue;
+						if (node.mode.startsWith("mode_")) {
+							// 扩展武将包开启逻辑
+							if (node.mode.startsWith("mode_extension")) {
+								const extName = node.mode.slice(15);
+								if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) continue;
+								if (lib.config[`extension_${extName}_characters_enable`] == true) {
+									node.classList.remove("off");
+									if (node.link) node.link.firstChild.classList.add("on");
+								} else {
+									node.classList.add("off");
+									if (node.link) node.link.firstChild.classList.remove("on");
+								}
+							}
+							continue;
+						}
 						if (node.mode == 'custom') continue;
 						if (connectMenu) {
 							if (!lib.config.connect_characters.includes(node.mode)) {
@@ -1919,23 +1964,32 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			};
 			var togglePack = function (bool) {
 				var name = this._link.config._name;
-				if (connectMenu) {
-					if (!bool) {
-						lib.config.connect_characters.add(name);
-					}
-					else {
-						lib.config.connect_characters.remove(name);
-					}
-					game.saveConfig('connect_characters', lib.config.connect_characters);
+				// 扩展武将包开启逻辑
+				if (name.startsWith("mode_extension")) {
+					const extName = name.slice(15);
+					if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+					game.saveExtensionConfig(extName, "characters_enable", bool);
 				}
+				// 原逻辑
 				else {
-					if (bool) {
-						lib.config.characters.add(name);
+					if (connectMenu) {
+						if (!bool) {
+							lib.config.connect_characters.add(name);
+						}
+						else {
+							lib.config.connect_characters.remove(name);
+						}
+						game.saveConfig('connect_characters', lib.config.connect_characters);
 					}
 					else {
-						lib.config.characters.remove(name);
+						if (bool) {
+							lib.config.characters.add(name);
+						}
+						else {
+							lib.config.characters.remove(name);
+						}
+						game.saveConfig('characters', lib.config.characters);
 					}
-					game.saveConfig('characters', lib.config.characters);
 				}
 				updateNodes();
 			};
@@ -1982,13 +2036,30 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					}
 					alterableCharacters.sort();
 					// 武将顺序按自定义列表排（本人扩展：三国24名将），检测到吕布时不排序
-					if(!list.contains("wms_z_lvbu"))
+					if(!list.includes("wms_z_lvbu"))
 					list.sort(lib.sort.character);
 					var list2 = list.slice(0);
 					var cfgnode = createConfig({
 						name: '开启',
 						_name: mode,
-						init: connectMenu ? (!lib.config.connect_characters.includes(mode)) : (lib.config.characters.includes(mode)),
+						init: (() => {
+							// 扩展武将包开启逻辑
+							if (mode.startsWith("mode_extension")) {
+								const extName = mode.slice(15);
+								if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+								// 这块或许应该在加载扩展时候写
+								if (lib.config[`extension_${extName}_characters_enable`] === undefined) {
+									game.saveExtensionConfig(extName, "characters_enable", true);
+								}
+								return lib.config[`extension_${extName}_characters_enable`] === true;
+							}
+							// 原逻辑
+							else {
+								return connectMenu
+									? !lib.config.connect_characters.includes(mode)
+									: lib.config.characters.includes(mode);
+							}
+						})(),
 						onclick: togglePack
 					});
 					var cfgnodeAI = createConfig({
@@ -2041,6 +2112,16 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						}
 					}
 					else if (mode.startsWith('mode_extension')) {
+						// 扩展武将包开启逻辑
+						// 排除4个基本扩展，再排除剑阁武将包
+						// 给扩展的武将包加一个开启关闭的功能
+						if (
+							!lib.config.all.stockextension.includes(mode.slice(15)) &&
+							mode != "mode_extension_jiange"
+						) {
+							page.appendChild(cfgnode);
+							cfgnodeAI.style.marginTop = '0px';
+						}
 						page.appendChild(cfgnodeAI);
 					}
 					else {
@@ -2310,39 +2391,60 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			rightPane.appendChild(active.link);
 
 			if (!connectMenu) {
+				// 扩展武将包开启逻辑
+				// 非联机框架武将包全部开启true、非联机框架武将包全部关闭false
+				var extcharacters = function (bool) {
+					Object.keys(lib.characterPack).forEach(key => {
+						if (key.startsWith('mode_extension')) {
+							const extName = key.slice(15);
+							if (!(!game.hasExtension(extName) || !game.hasExtensionLoaded(extName))) {
+								game.saveExtensionConfig(extName, "characters_enable", bool);
+							}
+						}
+					});
+				};
+				
 				lib.config.nocharacters=[];
-				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','old'];
-				lib.config.notdefaultcharacters=['diy','ddd','yxs','hearth','gwent','mtg','ow','swd','gujian','xianjian'];
+				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','sixiang','sbfm','mdtx','old'];
+				lib.config.notdefaultcharacters=['diy','ddd','key','yxs','hearth','gwent','mtg','ow','swd','gujian','xianjian'];
 				lib.config.benticharacters=lib.config.defaultcharacters.concat(lib.config.notdefaultcharacters);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
+					extcharacters(true);
 					game.saveConfig('characters', lib.config.all.characters);
 					updateNodes();
 				});
 				var node2 = ui.create.div('.lefttext', '恢复默认', start.firstChild, function () {
+					extcharacters(false);
 					game.saveConfig('characters', lib.config.defaultcharacters);
 					updateNodes();
 				});
 				var node3=ui.create.div('.lefttext','全部关闭',start.firstChild,function(){
+					extcharacters(false);
 					game.saveConfig('characters',lib.config.nocharacters);
 					updateNodes();
 				});
 				var node4=ui.create.div('.lefttext','默认&扩展',start.firstChild,function(){
+					extcharacters(true);
 					game.saveConfig('characters',lib.config.all.characters.filter(item=>!lib.config.notdefaultcharacters.includes(item)));
 					updateNodes();
 				});
 				var node5=ui.create.div('.lefttext','全部扩展',start.firstChild,function(){
+					extcharacters(true);
 					game.saveConfig('characters',lib.config.all.characters.filter(item=>!lib.config.benticharacters.includes(item)));
 					updateNodes();
 				});
 				var node6=ui.create.div('.lefttext','全部本体',start.firstChild,function(){
+					extcharacters(false);
 					game.saveConfig('characters',lib.config.benticharacters);
 					updateNodes();
 				});
 				var node7=ui.create.div('.lefttext','本体非默认',start.firstChild,function(){
+					extcharacters(false);
 					game.saveConfig('characters',lib.config.notdefaultcharacters);
 					updateNodes();
 				});
 				var node8=ui.create.div('.lefttext','全部非默认',start.firstChild,function(){
+					extcharacters(true);
 					game.saveConfig('characters',lib.config.all.characters.filter(item=>!lib.config.defaultcharacters.includes(item)));
 					updateNodes();
 				});
@@ -2472,6 +2574,8 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 
 			var createModeConfig = function (mode, position) {
 				var info = lib.cardPack[mode];
+				let cardPack = lib.cardPackInfo[mode];
+				if (!lib.cardPile[mode] && cardPack && cardPack.list && Array.isArray(cardPack.list)) lib.cardPile[mode]=cardPack.list;
 				var page = ui.create.div('');
 				var node = ui.create.div('.menubutton.large', lib.translate[mode + '_card_config'], position, clickMode);
 				// 更改菜单按钮字体
@@ -2517,6 +2621,8 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							default: return 6;
 						}
 					};
+					// 卡牌顺序按自定义列表排（本人扩展：怪物猎人），检测到大剑时不排序
+					if(list[0] && list[0][2] && !(list[0][2].includes("m_h_dajian") || list[0][2].includes("wms_z_deluge")))
 					list.sort(function (a, b) {
 						var sort1 = sortCard(a);
 						var sort2 = sortCard(b);
@@ -2536,7 +2642,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						init: lib.config.cards.includes(mode),
 						onclick: togglePack
 					});
-					if (!mode.startsWith('mode_')) {
+					if (!mode.startsWith('mode_') || (cardPack && cardPack.closeable)) {
 						page.appendChild(cfgnode);
 					}
 					else {
@@ -2601,7 +2707,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							game.saveConfig('hiddenCardPack', lib.config.hiddenCardPack);
 						});
 					}
-					if (!mode.startsWith('mode_') && lib.cardPile[mode]) {
+					if ((!mode.startsWith('mode_') || (cardPack && cardPack.closeable)) && lib.cardPile[mode]) {
 						var cardpileNodes = [];
 						var cardpileexpanded = false;
 						if (!lib.config.bannedpile[mode]) {
@@ -2918,7 +3024,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			if (!connectMenu) {
 				lib.config.nocards=[];
 				lib.config.defaultcards=['standard','extra'];
-				lib.config.notdefaultcards=['sp','guozhan','zhulu','yingbian','yongjian','zhenfa','yunchou','swd','gujian','hearth','gwent','mtg','huanlekapai'];
+				lib.config.notdefaultcards=['sp','guozhan','zhulu','yingbian','yongjian','zhenfa','yunchou','swd','gujian','hearth','gwent','mtg','huanlekapai','xianxia'];
 				lib.config.benticards=lib.config.defaultcards.concat(lib.config.notdefaultcards);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
 					game.saveConfig('cards', lib.config.all.cards);
@@ -3727,11 +3833,11 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 										};
 										img.src = data;
 									};
-									if (game.download) {
+									if (game.readFile) {
 										var url = lib.assetURL + 'extension/' + name + '/' + file;
 										createButton(i, url);
 										if (lib.device == 'ios' || lib.device == 'android') {
-											window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + name, function (entry) {
+											window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + 'extension/' + name, function (entry) {
 												entry.getFile(file, {}, function (fileEntry) {
 													fileEntry.file(function (fileToLoad) {
 														var fileReader = new FileReader();
@@ -3915,12 +4021,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}
@@ -4263,11 +4380,11 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 										};
 										img.src = data;
 									};
-									if (game.download) {
+									if (game.readFile) {
 										var url = lib.assetURL + 'extension/' + name + '/' + file;
 										createButton(i, url, fullskin);
 										if (lib.device == 'ios' || lib.device == 'android') {
-											window.resolveLocalFileSystemURL(nonameInitialized + 'extension/' + name, function (entry) {
+											window.resolveLocalFileSystemURL(localStorage.getItem('noname_inited') + 'extension/' + name, function (entry) {
 												entry.getFile(file, {}, function (fileEntry) {
 													fileEntry.file(function (fileToLoad) {
 														var fileReader = new FileReader();
@@ -4421,12 +4538,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}
@@ -5004,12 +5132,23 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						list.sort(function (a, b) {
 							a = a[0]; b = b[0];
 							var aa = a, bb = b;
-							if (aa.includes('_')) {
-								aa = aa.slice(aa.indexOf('_') + 1);
+							var firstUnderscoreIndexAA = aa.indexOf('_');
+							var firstUnderscoreIndexBB = bb.indexOf('_');
+							var secondUnderscoreIndexAA = firstUnderscoreIndexAA != -1 ? aa.indexOf('_', firstUnderscoreIndexAA + 1) : -1;
+							var secondUnderscoreIndexBB = firstUnderscoreIndexBB != -1 ? bb.indexOf('_', firstUnderscoreIndexBB + 1) : -1;
+							
+							if (secondUnderscoreIndexAA != -1) {
+								aa = aa.slice(secondUnderscoreIndexAA + 1);
+							} else if (firstUnderscoreIndexAA != -1) {
+								aa = aa.slice(firstUnderscoreIndexAA + 1);
 							}
-							if (bb.includes('_')) {
-								bb = bb.slice(bb.indexOf('_') + 1);
+							
+							if (secondUnderscoreIndexBB != -1) {
+								bb = bb.slice(secondUnderscoreIndexBB + 1);
+							} else if (firstUnderscoreIndexBB != -1) {
+								bb = bb.slice(firstUnderscoreIndexBB + 1);
 							}
+							
 							if (aa != bb) {
 								return aa > bb ? 1 : -1;
 							}
@@ -5397,8 +5536,8 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							fileReader.onerror = reject;
 							fileReader.onload = resolve;
 							fileReader.readAsArrayBuffer(fileToLoad, "UTF-8");
-						}).then(progressEvent => {
-							if (game.importExtension(progressEvent.target.result, () => {
+						}).then(async (progressEvent) => {
+							if (await game.importExtension(progressEvent.target.result, () => {
 								extensionNode.innerHTML = '导入成功，3秒后将重启';
 								new Promise(resolve => setTimeout(resolve, 1)).then(() => {
 									extensionNode.innerHTML = '导入成功，2秒后将重启';
@@ -6763,7 +6902,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 								const game=window.game;
 								const ui=window.ui;
 								const get=window.get;
-								const ai=window.ai;
+								const ai=window.nonameAI;
 								const cheat=window.lib.cheat;
 								//使用正则匹配绝大多数的普通obj对象，避免解析成代码块。
 								const reg=${/^\{([^{}]+:\s*([^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\)))(?:,\s*([^{}]+:\s*(?:[^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\))))*\}$/};

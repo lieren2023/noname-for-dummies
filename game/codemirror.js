@@ -61,6 +61,10 @@ var sawReadOnlySpans = false, sawCollapsedSpans = false;
 // You can find some technical background for some of the code below
 // at http://marijnhaverbeke.nl/blog/#cm-internals .
 
+/**
+ * @type { typeof import('codemirror/index') }
+ */
+// @ts-ignore
 var CodeMirror = (function () {
 
   // A CodeMirror instance represents an editor. This is the object

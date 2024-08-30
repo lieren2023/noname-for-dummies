@@ -2,7 +2,9 @@ app.import(function (lib, game, ui, get, ai, _status, app) {
   var plugin = {
     name: 'lbtn',
     filter: function () {
-      return !['chess', 'tafang', 'stone'].contains(get.mode());
+		// 解除战棋/塔防/炉石模式不显示的限制
+		return true
+      // return !['chess', 'tafang', 'stone'].contains(get.mode());
     },
     content: function (next) {
     
@@ -157,13 +159,13 @@ ui.click.menubut = function() {
           ok: confirm.firstChild,
           cancel: confirm.lastChild,
         };
-        if(_status.event.endButton){						
-        	_status.event.endButton.close();
-							//	delete event.endButton;		
-							}
+		if(_status.event.endButton){
+			_status.event.endButton.close();
+			// delete event.endButton;
+		}
         confirm.node.ok.link = 'ok';
         confirm.node.ok.classList.add('primary');
-        confirm.node.cancel.classList.add('primary2');
+        // confirm.node.cancel.classList.add('primary2');
         confirm.custom = plugin.click.confirm;
         app.reWriteFunction(confirm, {
           close: [function() {       
@@ -190,9 +192,21 @@ ui.click.menubut = function() {
             }
           });
         }
-
-        if (ui.skills2 && ui.skills2.skills.length) {
-          var skills = ui.skills2.skills;
+		
+		// 新增lib.noGlobalSkillBtn，用于临时修复无按钮发动技能（无global的global技能），例如古剑奇谭食物牌（鲈鱼羹、蜜汁藕）
+		if (
+			(ui.skills2 && ui.skills2.skills.length)
+			|| (ui.skills && ui.skills.skills.length && lib.noGlobalSkillBtn.some(item => ui.skills.skills.includes(item)))
+		) {
+			var skills = (ui.skills2 && ui.skills2.skills.length) ? ui.skills2.skills : [];
+			if (ui.skills && ui.skills.skills.length){
+				for (var j = 0; j < lib.noGlobalSkillBtn.length; j++) {
+					if (ui.skills.skills.includes(lib.noGlobalSkillBtn[j])) skills.push(lib.noGlobalSkillBtn[j]);
+				}
+			}
+		
+        // if (ui.skills2 && ui.skills2.skills.length) {
+          // var skills = ui.skills2.skills;
           confirm.skills2 = [];
           for (var i = 0; i < skills.length; i++) {
             var item = document.createElement('div');
@@ -210,6 +224,11 @@ ui.click.menubut = function() {
         }
 
         confirm.update = function() {
+			// 结束回合按钮重复显示修复（例：战棋/塔防模式-移动）
+			if(_status.event.endButton){
+				_status.event.endButton.close();
+				// delete event.endButton;
+			}
           if (confirm.skills2) {
             if (_status.event.skill && _status.event.skill !== confirm.dataset.skill) {
               confirm.dataset.skill = _status.event.skill;
@@ -241,6 +260,25 @@ ui.click.menubut = function() {
 		node4.setAttribute('id', 'tuoguanButton');
 		// 定义全局变量
 		window.xianshiliaotiantupian = false;
+		
+		setInterval(function() {
+			// 聊天按钮（聊天气泡图标）在游戏托管后会变灰了
+			// 新办法：嵌入游戏时间的更新函数中，随游戏时间更新而更新
+			// 笨办法（已放弃）：穷举触发时机lib.skill._liaotianbianhui = {
+			if(_status.auto == true && window.xianshiliaotiantupian == false){
+				// if (document.getElementById("tuoguanButton")) {
+					document.getElementById("tuoguanButton").setBackgroundImage('extension/手杀ui/lbtn/images/liaotian.png');
+					window.xianshiliaotiantupian = true;
+				// }
+			}
+			if(_status.auto == false && window.xianshiliaotiantupian == true){
+				// if (document.getElementById("tuoguanButton")) {
+					document.getElementById("tuoguanButton").setBackgroundImage('extension/手杀ui/lbtn/images/auto.png');
+					window.xianshiliaotiantupian = false;
+				// }
+			}
+		}, 200);
+		
 var node5 = ui.create.div('.menuButton', ui.arena, ui.click.menubut);
 var node6= ui.create.div('.shenfenpic', ui.arena);       
         
@@ -315,7 +353,8 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
         };
 
         ui.time4 = node.node.time;
-        ui.time4.sec = 0;
+		// 修复游戏时间显示少1s的bug
+        ui.time4.sec = 1;
         ui.time4.interval = setInterval(function() {
           var min = Math.floor(ui.time4.sec / 60);
           var sec = ui.time4.sec % 60;
@@ -323,21 +362,6 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
           if (sec < 10) sec = '0' + sec;
           ui.time4.innerHTML = '<span>' + min + ':' + sec + '</span>';
           ui.time4.sec++;
-			// 聊天按钮（聊天气泡图标）在游戏托管后会变灰了
-			// 新办法：嵌入游戏时间的更新函数中，随游戏时间更新而更新
-			// 笨办法（已放弃）：穷举触发时机lib.skill._liaotianbianhui = {
-			if(_status.auto == true && window.xianshiliaotiantupian == false){
-				// if (document.getElementById("tuoguanButton")) {
-					document.getElementById("tuoguanButton").setBackgroundImage('extension/手杀ui/lbtn/images/liaotian.png');
-					window.xianshiliaotiantupian = true;
-				// }
-			}
-			if(_status.auto == false && window.xianshiliaotiantupian == true){
-				// if (document.getElementById("tuoguanButton")) {
-					document.getElementById("tuoguanButton").setBackgroundImage('extension/手杀ui/lbtn/images/auto.png');
-					window.xianshiliaotiantupian = false;
-				// }
-			}
         }, 1000);
         game.addVideo('createCardRoundTime');
         return node;
@@ -358,7 +382,8 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
 	    },
       
       paixu: function() {
-        if (!game.me) return;
+		// 适配新版本体
+        if (!game.me || game.me.hasSkillTag("noSortCard")) return;
         var cards = game.me.getCards('h').reverse();
         if (!cards.length) return;
 

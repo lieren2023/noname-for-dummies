@@ -1,12 +1,11 @@
-import { AI as ai } from '../../ai/index.js';
-import { Get as get } from '../../get/index.js';
-import { Game as game } from '../../game/index.js';
-import { Library as lib } from "../index.js";
-import { status as _status } from '../../status/index.js';
-import { UI as ui } from '../../ui/index.js';
+import { get } from "../../get/index.js";
+import { lib } from "../index.js";
+import { _status } from "../../status/index.js";
+import { ui } from "../../ui/index.js";
 
 export class Dialog extends HTMLDivElement {
 	/** @type { HTMLDivElement } */
+	// eslint-disable-next-line no-unreachable
 	contentContainer;
 	/** @type { HTMLDivElement } */
 	content;
@@ -37,112 +36,113 @@ export class Dialog extends HTMLDivElement {
 		let noForceButton = false;
 		/** @type { this } */
 		// @ts-ignore
-		const dialog = ui.create.div('.dialog');
+		const dialog = ui.create.div(".dialog");
 		Object.setPrototypeOf(dialog, (lib.element.Dialog || Dialog).prototype);
-		dialog.contentContainer = ui.create.div('.content-container', dialog);
-		dialog.content = ui.create.div('.content', dialog.contentContainer);
-		dialog.bar1 = ui.create.div('.bar.top', dialog);
-		dialog.bar2 = ui.create.div('.bar.bottom', dialog);
+		dialog.contentContainer = ui.create.div(".content-container", dialog);
+		dialog.content = ui.create.div(".content", dialog.contentContainer);
+		dialog.bar1 = ui.create.div(".bar.top", dialog);
+		dialog.bar2 = ui.create.div(".bar.bottom", dialog);
 		dialog.buttons = [];
-		Array.from(args).forEach(argument => {
-			if (typeof argument == 'boolean') dialog.static = argument;
-			else if (argument == 'hidden') hidden = true;
-			else if (argument == 'notouchscroll') noTouchScroll = true;
-			else if (argument == 'forcebutton') forceButton = true;
-			else if (argument == 'noforcebutton') noForceButton = true;
+		Array.from(args).forEach((argument) => {
+			if (typeof argument == "boolean") dialog.static = argument;
+			else if (argument == "hidden") hidden = true;
+			else if (argument == "notouchscroll") noTouchScroll = true;
+			else if (argument == "forcebutton") forceButton = true;
+			else if (argument == "noforcebutton") noForceButton = true;
 			else dialog.add(argument);
 		});
 		//if (!hidden) dialog.open();
-		if (!lib.config.touchscreen) dialog.contentContainer.onscroll = ui.update;
+		if (!lib.config.touchscreen)
+			dialog.contentContainer.onscroll = ui.update;
 		if (!noTouchScroll) {
 			dialog.contentContainer.ontouchstart = ui.click.dialogtouchStart;
 			dialog.contentContainer.ontouchmove = ui.click.touchScroll;
 			// @ts-ignore
-			dialog.contentContainer.style.webkitOverflowScrolling = 'touch';
+			dialog.contentContainer.style.webkitOverflowScrolling = "touch";
 			dialog.ontouchstart = ui.click.dragtouchdialog;
 		}
 		if (noForceButton) dialog.noforcebutton = true;
 		else if (forceButton) {
 			dialog.forcebutton = true;
-			dialog.classList.add('forcebutton');
+			dialog.classList.add("forcebutton");
 		}
 		// @ts-ignore
 		dialog._args = args;
 		return dialog;
 	}
 	/**
-	 * 
-	 * @param { string | HTMLDivElement | Card[] | Player[] } item 
-	 * @param {*} [noclick] 
-	 * @param { boolean } [zoom] 
+	 *
+	 * @param { string | HTMLDivElement | Card[] | Player[] } item
+	 * @param {*} [noclick]
+	 * @param { boolean } [zoom]
 	 */
 	add(item, noclick, zoom) {
-		if (typeof item == 'string') {
-			if (item.startsWith('###')) {
-				const items = item.slice(3).split('###');
+		if (typeof item == "string") {
+			if (item.startsWith("###")) {
+				const items = item.slice(3).split("###");
 				this.add(items[0], noclick, zoom);
 				this.addText(items[1], items[1].length <= 20, zoom);
-			}
-			else if (noclick) {
+			} else if (noclick) {
 				const strstr = item;
-				item = ui.create.div('', this.content);
+				item = ui.create.div("", this.content);
 				item.innerHTML = strstr;
-			}
-			else {
+			} else {
 				item = ui.create.caption(item, this.content);
 			}
 		}
 		// @ts-ignore
-		else if (['div', 'fragment'].includes(get.objtype(item))) {
+		else if (["div", "fragment"].includes(get.objtype(item))) {
 			// @ts-ignore
 			this.content.appendChild(item);
 		}
 		// @ts-ignore
-		else if (get.itemtype(item) == 'cards') {
-			const buttons = ui.create.div('.buttons', this.content);
-			if (zoom) buttons.classList.add('smallzoom');
+		else if (get.itemtype(item) == "cards") {
+			const buttons = ui.create.div(".buttons", this.content);
+			if (zoom) buttons.classList.add("smallzoom");
 			// @ts-ignore
-			this.buttons = this.buttons.concat(ui.create.buttons(item, 'card', buttons, noclick));
+			this.buttons = this.buttons.concat(
+				ui.create.buttons(item, "card", buttons, noclick)
+			);
 		}
 		// @ts-ignore
-		else if (get.itemtype(item) == 'players') {
-			var buttons = ui.create.div('.buttons', this.content);
-			if (zoom) buttons.classList.add('smallzoom');
+		else if (get.itemtype(item) == "players") {
+			var buttons = ui.create.div(".buttons", this.content);
+			if (zoom) buttons.classList.add("smallzoom");
 			// @ts-ignore
-			this.buttons = this.buttons.concat(ui.create.buttons(item, 'player', buttons, noclick));
-		}
-		else if (item[1] == 'textbutton') {
+			this.buttons = this.buttons.concat(
+				ui.create.buttons(item, "player", buttons, noclick)
+			);
+		} else if (item[1] == "textbutton") {
 			ui.create.textbuttons(item[0], this, noclick);
-		}
-		else {
-			var buttons = ui.create.div('.buttons', this.content);
-			if (zoom) buttons.classList.add('smallzoom');
+		} else {
+			var buttons = ui.create.div(".buttons", this.content);
+			if (zoom) buttons.classList.add("smallzoom");
 			// @ts-ignore
-			this.buttons = this.buttons.concat(ui.create.buttons(item[0], item[1], buttons, noclick));
+			this.buttons = this.buttons.concat(
+				ui.create.buttons(item[0], item[1], buttons, noclick)
+			);
 		}
 		if (this.buttons.length) {
 			if (this.forcebutton !== false) this.forcebutton = true;
 			if (this.buttons.length > 3 || (zoom && this.buttons.length > 5)) {
-				this.classList.remove('forcebutton-auto');
-			}
-			else if (!this.noforcebutton) {
-				this.classList.add('forcebutton-auto');
+				this.classList.remove("forcebutton-auto");
+			} else if (!this.noforcebutton) {
+				this.classList.add("forcebutton-auto");
 			}
 		}
 		ui.update();
 		return item;
 	}
 	/**
-	 * @param { string } str 
-	 * @param { boolean } [center] 
+	 * @param { string } str
+	 * @param { boolean } [center]
 	 */
 	addText(str, center) {
-		if (str && str.startsWith('<div')) this.add(str);
+		if (str && str.startsWith("<div")) this.add(str);
 		else if (center !== false) {
-			this.add('<div class="text center">' + str + '</div>');
-		}
-		else {
-			this.add('<div class="text">' + str + '</div>');
+			this.add('<div class="text center">' + str + "</div>");
+		} else {
+			this.add('<div class="text">' + str + "</div>");
 		}
 		return this;
 	}
@@ -150,12 +150,11 @@ export class Dialog extends HTMLDivElement {
 	addSmall(item, noclick) {
 		return this.add(item, noclick, true);
 	}
-	addAuto(content) {	
+	addAuto(content) {
 		// @ts-ignore
 		if (content && content.length > 4 && !this._hovercustomed) {
 			this.addSmall(content);
-		}
-		else {
+		} else {
 			this.add(content);
 		}
 	}
@@ -175,29 +174,45 @@ export class Dialog extends HTMLDivElement {
 		}
 		ui.dialog = this;
 		let translate;
-		if (lib.config.remember_dialog && lib.config.dialog_transform && !this.classList.contains('fixed')) {
+		if (
+			lib.config.remember_dialog &&
+			lib.config.dialog_transform &&
+			!this.classList.contains("fixed")
+		) {
 			translate = lib.config.dialog_transform;
 			this._dragtransform = translate;
-			this.style.transform = 'translate(' + translate[0] + 'px,' + translate[1] + 'px) scale(0.8)';
+			this.style.transform =
+				"translate(" +
+				translate[0] +
+				"px," +
+				translate[1] +
+				"px) scale(0.8)";
+		} else {
+			this.style.transform = "scale(0.8)";
 		}
-		else {
-			this.style.transform = 'scale(0.8)';
-		}
-		this.style.transitionProperty = 'opacity,transform';
-		this.style.opacity = '0';
+		this.style.transitionProperty = "opacity,transform";
+		this.style.opacity = "0";
 		ui.arena.appendChild(this);
 		ui.dialogs.unshift(this);
 		ui.update();
 		ui.refresh(this);
-		if (lib.config.remember_dialog && lib.config.dialog_transform && !this.classList.contains('fixed')) {
-			this.style.transform = 'translate(' + translate[0] + 'px,' + translate[1] + 'px) scale(1)';
+		if (
+			lib.config.remember_dialog &&
+			lib.config.dialog_transform &&
+			!this.classList.contains("fixed")
+		) {
+			this.style.transform =
+				"translate(" +
+				translate[0] +
+				"px," +
+				translate[1] +
+				"px) scale(1)";
+		} else {
+			this.style.transform = "scale(1)";
 		}
-		else {
-			this.style.transform = 'scale(1)';
-		}
-		this.style.opacity = '1';
+		this.style.opacity = "1";
 		setTimeout(() => {
-			this.style.transitionProperty = '';
+			this.style.transitionProperty = "";
 		}, 500);
 		return this;
 	}
@@ -216,12 +231,11 @@ export class Dialog extends HTMLDivElement {
 		return this;
 	}
 	/**
-	 * @param { string } str 
+	 * @param { string } str
 	 */
 	setCaption(str) {
-		
 		// @ts-ignore
-		this.querySelector('.caption').innerHTML = str;
+		this.querySelector(".caption").innerHTML = str;
 		return this;
 	}
 }
