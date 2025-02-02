@@ -8009,6 +8009,10 @@ content:function(config, pack){
 		if(lib.skill.sbyangwei != undefined){
 			lib.skill.sbyangwei.subSkill.effect.marktext = "扬威";
 		}
+		// 李密难全标记修改
+		if(lib.skill.jsrgnanquan != undefined){
+			lib.skill.jsrgnanquan.subSkill.fengyin.marktext = "难全";
+		}
 		// 起孙坚平讨标记修改
 		if(lib.skill.jsrgpingtao != undefined){
 			lib.skill.jsrgpingtao.subSkill.sha.marktext = "平讨";
@@ -8782,6 +8786,7 @@ content:function(config, pack){
 			group:["wuhun2","wuhun4","wuhun5"],
 	};
 	lib.skill.wuhun2={
+		sourceSkill: "wuhun",
 		trigger:{
 		player:'dieBegin',
 		},
@@ -8832,6 +8837,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun3={
+		sourceSkill: "wuhun",
 		audio:3,
 		trigger:{
 			global:'dieAfter',
@@ -8851,6 +8857,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun4={
+		sourceSkill: "wuhun",
 		trigger:{
 			player:'dieAfter',
 		},
@@ -8866,6 +8873,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun5={
+		sourceSkill: "wuhun",
 		trigger:{player:'dieBegin'},
 		forced:true,
 		popup:false,
@@ -8893,6 +8901,7 @@ content:function(config, pack){
 		}
 	};
 	lib.skill.wuhun6={
+		sourceSkill: "wuhun",
 		audio:3,
 		trigger:{global:'dieAfter'},
 		forced:true,
@@ -9023,6 +9032,8 @@ content:function(config, pack){
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
 		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
 		// 凌人、整肃、蛊惑、军令、协力、五禽戏、暴虐值点数卡牌显示修复
+		lib.card.black = {fullskin:true};
+		lib.card.red = {fullskin:true};
 		lib.card.basic = {fullskin:true};
 		lib.card.equip = {fullskin:true};
 		lib.card.trick = {fullskin:true};

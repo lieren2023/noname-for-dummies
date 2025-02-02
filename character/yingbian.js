@@ -696,6 +696,7 @@ game.import("character", function () {
 				group: "jianhui_draw",
 				subSkill: {
 					draw: {
+						audio: "jianhui",
 						trigger: { source: "damageSource" },
 						forced: true,
 						logTarget: "player",
@@ -805,6 +806,7 @@ game.import("character", function () {
 						},
 					},
 					die: {
+						audio: "huaiyuan",
 						trigger: { player: "die" },
 						direct: true,
 						forceDie: true,
@@ -960,6 +962,7 @@ game.import("character", function () {
 				group: "weishu_discard",
 				subSkill: {
 					discard: {
+						audio: "weishu",
 						trigger: {
 							player: "loseAfter",
 							global: "loseAsyncAfter",
@@ -1469,6 +1472,7 @@ game.import("character", function () {
 			recaiwang_hand: {
 				audio: "caiwang",
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "recaiwang",
 				viewAsFilter: function (player) {
 					var js = player.getCards("h");
 					return js.length == 1 && game.checkMod(js[0], player, "unchanged", "cardEnabled2", player);
@@ -1490,6 +1494,7 @@ game.import("character", function () {
 			recaiwang_equip: {
 				audio: "caiwang",
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "recaiwang",
 				viewAsFilter: function (player) {
 					var js = player.getCards("e");
 					return js.length == 1 && game.checkMod(js[0], player, "unchanged", "cardEnabled2", player);
@@ -1507,6 +1512,7 @@ game.import("character", function () {
 			recaiwang_judge: {
 				audio: "caiwang",
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "recaiwang",
 				viewAsFilter: function (player) {
 					var js = player.getCards("j");
 					return js.length == 1 && game.checkMod(js[0], player, "unchanged", "cardEnabled2", player);
@@ -2146,6 +2152,7 @@ game.import("character", function () {
 					global: ["equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter"],
 				},
 				forced: true,
+				sourceSkill: "zhongyun",
 				filter: function (event, player) {
 					var cards1 = event.getl(player).hs,
 						cards2 = [];
@@ -2681,6 +2688,7 @@ game.import("character", function () {
 					},
 				},
 				trigger: { player: "dieAfter" },
+				sourceSkill: "ciwei",
 				filter: () => {
 					return !game.hasPlayer(i => i.hasSkill("ciwei"), true);
 				},
@@ -2852,6 +2860,7 @@ game.import("character", function () {
 					global: "roundStart",
 				},
 				silent: true,
+				sourceSkill: "zhuosheng",
 				filter: function (event, player) {
 					if (event.name == "gain") return event.getParent(2).name != "zhuosheng_equip";
 					return game.roundNumber > 1;
@@ -2940,6 +2949,7 @@ game.import("character", function () {
 				silent: true,
 				firstDo: true,
 				charlotte: true,
+				sourceSkill: "xinquanbian",
 				filter: function (event, player) {
 					if (event.name === "phaseUse") return true;
 					return player.isPhaseUsing() && lib.skill.quanbian.hasHand(event) && get.type(event.card) != "equip";
@@ -3040,6 +3050,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "yimie",
 				filter: function (event, player) {
 					return typeof event.yimie_num == "number";
 				},
@@ -3119,7 +3130,7 @@ game.import("character", function () {
 						player.recover(num);
 					}
 					"step 1";
-					if (player.countCards("h") < player.maxHp) player.drawTo(Math.min(player.maxHp, 5 + player.countCards("h"))).gaintag = ["tairan"];
+					if (player.countCards("h") < player.maxHp) player.drawTo(player.maxHp).gaintag = ["tairan"];
 				},
 			},
 			tairan2: {
@@ -3142,6 +3153,7 @@ game.import("character", function () {
 				charlotte: true,
 				forced: true,
 				onremove: true,
+				sourceSkill: "tairan",
 				content: function () {
 					var map = player.storage.tairan2;
 					if (map > 0) player.loseHp(map);
@@ -3286,6 +3298,7 @@ game.import("character", function () {
 				trigger: { global: "phaseEnd" },
 				direct: true,
 				charlotte: true,
+				sourceSkill: "tuishi",
 				filter: function (event, player) {
 					var target = _status.currentPhase;
 					return (
@@ -3425,6 +3438,7 @@ game.import("character", function () {
 			zhaoran2: {
 				audio: "zhaoran",
 				group: "zhaoran3",
+				sourceSkill: "zhaoran",
 				init: (player, skill) => {
 					if (!player.storage[skill]) player.storage[skill] = [];
 				},
@@ -3509,6 +3523,7 @@ game.import("character", function () {
 				charlotte: true,
 				firstDo: true,
 				silent: true,
+				sourceSkill: "zhaoran",
 				content: function () {
 					if (event.triggername == "gainBegin") {
 						trigger.gaintag.add("visible_zhaoran");
@@ -3744,6 +3759,7 @@ game.import("character", function () {
 			pozhu2: {
 				trigger: { player: "useCardAfter" },
 				silent: true,
+				sourceSkill: "pozhu",
 				filter: function (event, player) {
 					return (
 						event.skill == "pozhu" &&
@@ -3792,6 +3808,7 @@ game.import("character", function () {
 				audio: "xijue",
 				trigger: { player: "phaseEnd" },
 				forced: true,
+				sourceSkill: "xijue",
 				filter: function (event, player) {
 					var stat = player.getStat();
 					return stat.damage && stat.damage > 0;
@@ -4010,6 +4027,7 @@ game.import("character", function () {
 				trigger: { player: "damageBegin4" },
 				forced: true,
 				popup: false,
+				sourceSkill: "xuanmu",
 				content: function () {
 					trigger.cancel();
 				},
@@ -4174,7 +4192,7 @@ game.import("character", function () {
 			ruilve_info: "主公技，其他晋势力角色的出牌阶段限一次，该角色可以将一张带有伤害标签的基本牌或锦囊牌交给你。",
 			tairan: "泰然",
 			tairan2: "泰然",
-			tairan_info: "锁定技，回合结束时，你将体力回复至体力上限，并将手牌摸至体力上限（称为“泰然”牌，且至多摸五张）。然后你的下一个出牌阶段开始时，你失去上一次以此法回复的体力值的体力，弃置所有“泰然”牌。",
+			tairan_info: "锁定技，回合结束时，你将体力回复至体力上限，并将手牌摸至体力上限（称为“泰然”牌）。然后你的下一个出牌阶段开始时，你失去上一次以此法回复的体力值的体力，弃置所有“泰然”牌。",
 			gz_jin_simayi: "司马懿",
 			gz_jin_zhangchunhua: "张春华",
 			gz_jin_simazhao: "司马昭",

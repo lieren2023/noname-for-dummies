@@ -1046,7 +1046,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 											numx = num(player);
 										}
 										if (player._hSeat > 6) player.changeLingli(1);
-										player.directgain(get.cards(numx));
+										let cards = get.cards(numx);
+										player.directgain(cards);
+										player._start_cards = cards;
 										player = player.next;
 									} while (player != end);
 								},

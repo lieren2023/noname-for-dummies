@@ -120,6 +120,7 @@ game.import("card", function () {
 		},
 		skill: {
 			monkey: {
+				equipSkill: true,
 				trigger: {
 					global: "useCardToBegin",
 				},

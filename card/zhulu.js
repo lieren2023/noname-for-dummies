@@ -893,6 +893,7 @@ game.import("card", function () {
 				},
 			},
 			wufengjian_skill: {
+				equipSkill: true,
 				trigger: { player: "useCard" },
 				forced: true,
 				filter: function (event, player) {
@@ -912,14 +913,10 @@ game.import("card", function () {
 				},
 			},
 			yajiaoqiang_skill: {
+				equipSkill: true,
 				trigger: { player: "useCardAfter" },
 				filter: function (event, player) {
-					if (
-						_status.currentPhase == player ||
-						get.color(event.card) != "black" ||
-						event.cards.filterInD().length == 0
-					)
-						return false;
+					if (_status.currentPhase == player || get.color(event.card) != "black" || event.cards.filterInD().length == 0) return false;
 					return (
 						player
 							.getHistory("useCard", function (evt) {

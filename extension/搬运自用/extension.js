@@ -331,6 +331,7 @@ content:function(config,pack){
 		lib.characterTitle.yanjun = "志存补益";
 		lib.characterTitle.liuyao = "宗英外镇";
 		lib.characterTitle.liuyan = "裂土之宗";
+		lib.characterTitle.star_xunyu = "怀忠念治";
 		lib.characterTitle.star_zhangzhao = "";
 		lib.characterTitle.star_sunjian = "破虏将军";
 		lib.characterTitle.star_zhangchunhua = "皑雪皎月";
@@ -340,10 +341,12 @@ content:function(config,pack){
 		lib.characterTitle.star_caoren = "伏波四方";
 		lib.characterTitle.star_sunshangxiang = "鸳袖衔剑珮";
 		// mdtx: "谋定天下",
+		lib.characterTitle.dc_sb_chenlin = "文翻云海";
 		lib.characterTitle.dc_sb_jushou = "忠不逢时";
 		lib.characterTitle.dc_sb_chengyu = "沐风知秋";
 		lib.characterTitle.yj_sb_guojia = "翼谋奇佐";
 		lib.characterTitle.dc_sb_zhangxiu = "凌枪破宛";
+		lib.characterTitle.dc_sb_hucheer = "有力逮戟";
 		lib.characterTitle.dc_sb_guanping = "百战烈烈";
 		lib.characterTitle.dc_sb_caoang = "两全忠孝";
 		lib.characterTitle.dc_sb_dianwei = "狂战怒莽";
@@ -370,6 +373,7 @@ content:function(config,pack){
 		lib.characterTitle.liuyong = "甘陵王";
 		lib.characterTitle.zhangxuan = "玉宇嫁蔷";
 		// xianding:'限定专属',
+		lib.characterTitle.wu_huangfusong = "";
 		lib.characterTitle.sp_zhenji = "善言贤女";
 		lib.characterTitle.wu_guanyu = "义武千秋";
 		lib.characterTitle.caofang = "迷瞑终觉";
@@ -407,6 +411,7 @@ content:function(config,pack){
 		lib.characterTitle.mb_wangjing = "青云孤竹";
 		lib.characterTitle.re_xugong = "独计击流";
 		// sb:'谋攻篇',
+		lib.characterTitle.sb_zhugejin = "";
 		lib.characterTitle.sb_jiaxu = "计深似海";
 		lib.characterTitle.sb_handang = lib.characterTitle.handang;
 		lib.characterTitle.sb_gongsunzan = "劲震幽土";
@@ -597,6 +602,11 @@ content:function(config,pack){
 		lib.characterTitle.jsrg_yl_luzhi = "眸宿渊渟";
 		lib.characterTitle.jsrg_chenfan = "不畏强御";
 		lib.characterTitle.jsrg_zhangju = "草头天子";
+		lib.characterTitle.jsrg_jiananfeng = "";
+		lib.characterTitle.jsrg_wenyang = "";
+		lib.characterTitle.jsrg_zhugedan = "";
+		lib.characterTitle.jsrg_wangjun = "";
+		lib.characterTitle.jsrg_limi = "";
 		// sixiang: "四象封印",
 		lib.characterTitle.std_sunhao = "";
 		lib.characterTitle.std_mateng = "勇冠西州";
@@ -639,8 +649,10 @@ content:function(config,pack){
 		lib.characterTitle.dc_wuyi = lib.characterTitle.wuyi;
 		lib.characterTitle.mp_wangrong = "善发谈端";
 		lib.characterTitle.mp_liuling = "醉侯";
+		lib.characterTitle.mp_xiangxiu = "";
 		// old:'怀旧',
 		lib.characterTitle.old_shen_huangzhong = lib.characterTitle.shen_huangzhong;
+		lib.characterTitle.junk_zhangjiao = lib.characterTitle.shen_zhangjiao;
 		lib.characterTitle.old_shen_zhaoyun = lib.characterTitle.shen_zhaoyun;
 		lib.characterTitle.old_caocao = lib.characterTitle.shen_caocao;
 		// lib.characterTitle.junk_sunquan = lib.characterTitle.shen_sunquan;
@@ -14807,11 +14819,11 @@ config:{
 				gameplayers3.node.avatar.setBackgroundImage("image/skin/" + name3 + "/" + num3 + ".jpg");
 				var name4="sp_huaman",num4=3;
 				gameplayers4.node.avatar.setBackgroundImage("image/skin/" + name4 + "/" + num4 + ".jpg");
-				var name5="sunluban",num5=10;
+				var name5="sunluban",num5=11;
 				gameplayers5.node.avatar.setBackgroundImage("image/skin/" + name5 + "/" + num5 + ".jpg");
 				var name6="wanniangongzhu",num6=4;
 				gameplayers6.node.avatar.setBackgroundImage("image/skin/" + name6 + "/" + num6 + ".jpg");
-				var name7="sunshangxiang",num7=12;
+				var name7="sunshangxiang",num7=13;
 				gameplayers7.node.avatar.setBackgroundImage("image/skin/" + name7 + "/" + num7 + ".jpg");
 			}
 			if(item == '6'){
@@ -15031,7 +15043,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 来自群友的需求：悔棋功能、武将胜率
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
-// 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；牌库增添-自定义牌堆；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本；奇妙工具-卡牌创造（开启后在可以创造卡牌）、添加技能（开启后在游戏进行时给自己加技能）等
+// 其他优秀功能搬运（并魔改）：体力翻倍；牌库增添-自定义牌堆；天牢令/笨蛋插件-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本；奇妙工具-卡牌创造（开启后在可以创造卡牌）、添加技能（开启后在游戏进行时给自己加技能）等
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -15074,7 +15086,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 露头皮肤效果图、其他选项先关露头皮肤？
 // 双击武将切换双形态？
 // 特殊处理武将（张郃、神赵云、神关羽等）的资料卡试听技能配音
-// 一将成名、神将、OL专属、上兵伐谋、星火燎原、群英荟萃、限定专属、外服武将、四象封印等武将称号待补充
+// 一将成名、神将、OL专属、上兵伐谋、星火燎原、群英荟萃、限定专属、谋攻篇、外服武将、江山如故、四象封印、联动卡等武将称号待补充
 // 处理〖妙剑·改〗〖绝情·改〗等技能？：lib.notShowSkillNamePinyin、台词显示
 // 阵亡配音待适配写法"die:yujin.mp3"（例：于禁）、旧版台词函数适配"die:xxx"写法；还要改noname/library/element/content.js的die: function () {函数？
 // 资料卡点击查看武将信息增加其他rank信息（武将、技能）、场上技能和技能ID查看
@@ -15085,3 +15097,4 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 控制台从牌堆&弃牌堆获得牌不能选择多名角色
 // 绘制效果图获得牌bug fix：改async函数，await game.asyncDelay()？
 // 选将时查看资料卡功能，方案一：开启后，在选将时长按/右击武将头像，可查看资料卡；关闭后，恢复原有的长按/右击弹出菜单功能。方案二：双击武将头像，可查看资料卡
+// 禁用卡牌功能（类似禁用武将功能）

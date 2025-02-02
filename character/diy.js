@@ -109,23 +109,14 @@ game.import("character", function () {
 			old_majun: ["male", "wei", 3, ["xinfu_jingxie1", "xinfu_qiaosi"]],
 			ns_mengyou: ["male", "qun", 4, ["nsmanzhi"]],
 
-			old_jiakui: ["male", "wei", 4, ["tongqu", "xinwanlan"]],
-			ol_guohuai: ["male", "wei", 3, ["rejingce"]],
 			junk_zhangrang: ["male", "qun", 3, ["junktaoluan"], ["sex:male_castrated"]],
 			old_bulianshi: ["female", "wu", 3, ["anxu", "zhuiyi"]],
 			ol_maliang: ["male", "shu", 3, ["zishu", "xinyingyuan"]],
 			junk_liubei: ["male", "shu", 4, ["junkrende", "jijiang"], ["zhu"]],
 			junk_huangyueying: ["female", "shu", 3, ["junkjizhi", "junkqicai"]],
 			junk_lidian: ["male", "wei", 3, ["xunxun", "junkwangxi"]],
-			junk_duanwei: ["male", "qun", 4, ["junklangmie"]],
+			junk_duanwei: ["male", "qun", 4, ["langmie"]],
 			junk_xuyou: ["male", "qun", 3, ["nzry_chenglve", "junkshicai", "nzry_cunmu"]],
-			junk_zhangjiao: [
-				"male",
-				"shen",
-				3,
-				["yizhao", "junksijun", "tianjie"],
-				["qun", "die_audio:shen_zhangjiao"],
-			],
 			junk_guanyu: ["male", "shu", 4, ["olsbfumeng", "olsbguidao"]],
 			junk_liuyan: ["male", "qun", "4/6", ["olpianan", "olyinji", "olkuisi"]],
 			
@@ -216,7 +207,7 @@ game.import("character", function () {
 					"ns_duji",
 					"ns_mengyou",
 				],
-				diy_trashbin: ["junk_guanyu", "junk_zhangjiao", "old_jiakui", "ol_guohuai", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan", "std_pengyang"],
+				diy_trashbin: ["junk_guanyu", "junk_zhangrang", "old_bulianshi", "ol_maliang", "junk_liubei", "junk_huangyueying", "junk_lidian", "junk_duanwei", "junk_xuyou", "junk_liuyan", "std_pengyang"],
 			},
 		},
 		characterIntro: {
@@ -320,19 +311,25 @@ game.import("character", function () {
 					var source = cards[0].storage.nsfuzhou_source;
 					if (!source || !source.isIn()) return;
 					source.line(player, "thunder");
-					if (result.color == "black") {
-						player.damage(source, source.storage.nsfuzhou_damage ? 2 : 1, "thunder");
-						player.chooseToDiscard("he", true);
-					} else {
-						source.draw(2);
-						if (typeof player.storage.nsfuzhou_num != "number") player.storage.nsfuzhou_num = 0;
-						if (source.storage.nsfuzhou_draw) {
-							player.recover();
-							player.draw();
-							player.storage.nsfuzhou_num++;
-						} else player.storage.nsfuzhou_num--;
-						player.addTempSkill("nsfuzhou_num");
-						player.markSkill("nsfuzhou_num");
+					switch (result.color) {
+						case "black":
+							player.damage(source, source.storage.nsfuzhou_damage ? 2 : 1, "thunder");
+							player.chooseToDiscard("he", true);
+							break;
+						case "red":
+							source.draw(2);
+							if (typeof player.storage.nsfuzhou_num != "number") player.storage.nsfuzhou_num = 0;
+							if (source.storage.nsfuzhou_draw) {
+								player.recover();
+								player.draw();
+								player.storage.nsfuzhou_num++;
+							} else player.storage.nsfuzhou_num--;
+							player.addTempSkill("nsfuzhou_num");
+							player.markSkill("nsfuzhou_num");
+							break;
+
+						default:
+							break;
 					}
 				},
 				ai: {
@@ -1509,12 +1506,14 @@ game.import("character", function () {
 							var judging = _status.event.judging;
 							var result = trigger.judge(card) - trigger.judge(judging);
 							var attitude = get.attitude(player, trigger.player);
+							let val = get.value(card);
+							if (get.subtype(card) == "equip2") val /= 2;
+							else val /= 6;
 							if (attitude == 0 || result == 0) return 0;
 							if (attitude > 0) {
-								return result;
-							} else {
-								return -result;
+								return result - val;
 							}
+							return -result - val;
 						})
 						.set("judging", trigger.player.judging[0]);
 					"step 1";
@@ -1645,6 +1644,7 @@ game.import("character", function () {
 			nsweiyuan_use: {
 				enable: "phaseUse",
 				charlotte: true,
+				sourceSkill: "nsweiyuan",
 				mod: {
 					cardUsable() {
 						if (_status.event.skill == "nsweiyuan_use_backup") return Infinity;
@@ -1776,6 +1776,7 @@ game.import("character", function () {
 				trigger: { player: "phaseDrawBefore" },
 				forced: true,
 				charlotte: true,
+				sourceSkill: "nsjuxian",
 				content() {
 					player.removeSkill("nsjuxian2");
 					trigger.cancel();
@@ -1933,6 +1934,7 @@ game.import("character", function () {
 				},
 				trigger: { player: "phaseJieshuBegin" },
 				forced: true,
+				sourceSkill: "nsguolie",
 				filter(event, player) {
 					var cards = [];
 					game.getGlobalHistory("cardMove", function (evt) {
@@ -2491,6 +2493,7 @@ game.import("character", function () {
 			nszhihuang_damage: {
 				trigger: { source: "damageBegin1" },
 				forced: true,
+				sourceSkill: "nszhihuang",
 				filter(event, player) {
 					var zhu = get.zhu(player);
 					return (
@@ -3061,6 +3064,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "junktaoluan",
 				filter(event, player) {
 					if (!game.hasPlayer((current) => current != player)) return false;
 					return event.skill == "junktaoluan_backup";
@@ -3124,6 +3128,7 @@ game.import("character", function () {
 				trigger: { player: "phaseEnd" },
 				forced: true,
 				popup: false,
+				sourceSkill: "junktaoluan",
 				content() {
 					player.loseHp();
 				},
@@ -3195,6 +3200,7 @@ game.import("character", function () {
 				},
 				direct: true,
 				charlotte: true,
+				sourceSkill: "nsfengli",
 				filter(event, player, name) {
 					if (event.name == "hideShownCards") {
 						const hs = player.countCards("h");
@@ -3256,6 +3262,7 @@ game.import("character", function () {
 			nsfengli_clear: {
 				trigger: { player: "phaseBegin" },
 				forced: true,
+				sourceSkill: "nsfengli",
 				filter(event, player) {
 					return player.hasSkill("nsfengli2");
 				},
@@ -3286,6 +3293,7 @@ game.import("character", function () {
 				enable: ["chooseToUse", "chooseToRespond"],
 				charlotte: true,
 				onremove: true,
+				sourceSkill: "nsfengli",
 				filter(event, player) {
 					if (player == _status.currentPhase) return false;
 					var target = player.storage.nsfengli_use;
@@ -3485,6 +3493,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				popup: false,
+				sourceSkill: "ns_chuanshu",
 				filter(event, player) {
 					return player.storage.ns_chuanshu2 && player.storage.ns_chuanshu2.isIn() && event.num > 0;
 				},
@@ -3507,6 +3516,7 @@ game.import("character", function () {
 				},
 				silent: true,
 				onremove: true,
+				sourceSkill: "ns_chuanshu",
 				filter(event, player) {
 					return player.storage.ns_chuanshu2 && player.storage.ns_chuanshu2.isIn();
 				},
@@ -4392,6 +4402,7 @@ game.import("character", function () {
 				priority: 10,
 				mark: "card",
 				popup: false,
+				sourceSkill: "nsfuhuo",
 				filter(event, player) {
 					return (
 						event.card &&
@@ -5008,6 +5019,7 @@ game.import("character", function () {
 			},
 			nscangxi2: {
 				trigger: { player: "phaseDiscardEnd" },
+				sourceSkill: "nscangxi",
 				filter(event, player) {
 					if (!event.cards || event.cards.length <= 1) return false;
 					if (player.group != "wu") return false;
@@ -5045,26 +5057,26 @@ game.import("character", function () {
 						event.goto(1);
 					}
 					"step 3";
-					if (result.color == "black") {
-						var name = get.translation(event.current.name);
-						var att = 0;
-						if (event.current.needsToDiscard()) {
-							att = 1;
-						}
-						player
-							.chooseControlList(
-								[
-									"令" + name + "摸一张牌展示",
-									"令" + name + "手牌上永久+1",
-									"弃置一张牌并令" + name + "获得一张本回合进入弃牌堆的牌",
-								],
-								function () {
+					switch (key) {
+						case "black":
+							var name = get.translation(event.current.name);
+							var att = 0;
+							if (event.current.needsToDiscard()) {
+								att = 1;
+							}
+							player
+								.chooseControlList(["令" + name + "摸一张牌展示", "令" + name + "手牌上永久+1", "弃置一张牌并令" + name + "获得一张本回合进入弃牌堆的牌"], function () {
 									return _status.event.att;
-								}
-							)
-							.set("att", att);
-					} else {
-						event.goto(1);
+								})
+								.set("att", att);
+							break;
+
+						case "red":
+							event.goto(1);
+							break;
+
+						default:
+							break;
 					}
 					"step 4";
 					switch (result.index) {
@@ -7015,6 +7027,7 @@ game.import("character", function () {
 			liangce2: {
 				trigger: { global: "wuguRemained" },
 				direct: true,
+				sourceSkill: "liangce",
 				filter(event) {
 					return event.remained.filterInD().length > 0;
 				},
@@ -7352,6 +7365,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				trigger: { global: "phaseAfter" },
+				sourceSkill: "fuchou",
 				filter(event, player) {
 					for (var i = 0; i < player.storage.fuchou2.length; i++) {
 						if (player.storage.fuchou2[i].isAlive()) return true;
@@ -7599,6 +7613,7 @@ game.import("character", function () {
 			},
 			zhucheng2: {
 				trigger: { target: "shaBefore" },
+				sourceSkill: "zhucheng",
 				check(event, player) {
 					if (get.attitude(event.player, player) <= 0) return true;
 					return get.effect(player, event.card, event.player, player) <= 0;
@@ -7749,6 +7764,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 1,
 				discard: false,
+				sourceSkill: "diyduanliang",
 				filter(event, player) {
 					var cards = player.getCards("he", { color: "black" });
 					for (var i = 0; i < cards.length; i++) {
@@ -7860,6 +7876,7 @@ game.import("character", function () {
 			luweiyan2: {
 				trigger: { player: "useCardAfter" },
 				direct: true,
+				sourceSkill: "luweiyan",
 				filter(event, player) {
 					if (event.skill != "luweiyan") return false;
 					for (var i = 0; i < event.targets.length; i++) {
@@ -8055,6 +8072,7 @@ game.import("character", function () {
 			},
 			tiangong2: {
 				trigger: { source: "damageAfter" },
+				sourceSkill: "tiangong",
 				filter(event) {
 					if (event.nature == "thunder") return true;
 				},
@@ -9347,10 +9365,6 @@ game.import("character", function () {
 				"当你使用牌结束完毕后，若此牌与你本回合使用的牌类型均不同，则你可以将此牌置于牌堆顶，然后摸一张牌。",
 			junk_zhangrang: "新杀张让",
 			junk_zhangrang_prefix: "新杀",
-			old_jiakui: "手杀贾逵",
-			old_jiakui_prefix: "手杀",
-			ol_guohuai: "OL郭淮",
-			ol_guohuai_prefix: "OL",
 			old_bulianshi: "RE步练师",
 			old_bulianshi_prefix: "RE",
 			ol_maliang: "OL马良",
@@ -9382,8 +9396,6 @@ game.import("character", function () {
 			ns_duji: "画饼杜畿",
 			ns_duji_prefix: "画饼",
 			ns_duji_ab: "杜畿",
-			junk_zhangjiao: "OL神张角",
-			junk_zhangjiao_prefix: "OL神",
 			junksijun: "肆军",
 			junksijun_info:
 				"准备阶段，若“黄”数大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得任意张点数之和为36的牌（若牌堆没有点数和为36的组合则获得牌堆顶点数和刚好超过36的牌组）。",

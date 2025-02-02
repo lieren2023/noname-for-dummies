@@ -1853,11 +1853,15 @@ game.import("card", function () {
 								}
 							}
 						}
+						if (target.countCards("h") * Math.max(target.hp, 5) > 6) return 0;
 					},
 					basic: {
 						order: 7,
 						useful: 4.5,
-						value: 9.2,
+						value(card, player) {
+							if (player.hp > 2) return 9.2;
+							return 9.2 - 0.7 * Math.min(3, player.countCards("hs"));
+						},
 					},
 					result: {
 						target: 2,

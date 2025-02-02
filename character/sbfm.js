@@ -31,7 +31,7 @@ game.import("character", function () {
 				sbfm_sb_wudong: ["ol_sb_guanyu"],
 				sbfm_sb_fenwu: ["ol_sb_taishici", "ol_sb_yuanshao", "ol_sb_sunjian"],
 				sbfm_sb_shiren: ["ol_sb_kongrong"],
-				sbfm_sb_jichu: ["ol_sb_yuanshu"],
+				sbfm_sb_daquan: ["ol_sb_yuanshu"],
 				
 				// sbfm_waitingforsort: [],
 			},
@@ -65,7 +65,7 @@ game.import("character", function () {
 			sbfm_sb_wudong: "上兵伐谋·武动乾坤",
 			sbfm_sb_fenwu: "上兵伐谋·奋武扬威",
 			sbfm_sb_shiren: "上兵伐谋·施仁布泽",
-			sbfm_sb_jichu: "上兵伐谋·计出万全",
+			sbfm_sb_daquan: "上兵伐谋·达权通变",
 			
 			sbfm_waitingforsort: "等待分包",
 		},

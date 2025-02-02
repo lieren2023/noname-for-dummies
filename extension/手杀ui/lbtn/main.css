@@ -247,3 +247,161 @@ text-align: center;
   color: #CCBBAB;
   /*font-size: 0px;*/
 }
+
+/*记牌器#1837*/
+.popupContainer.deckMonitor {
+    width: 100%;
+    height: 100%;
+    /* background-color: rgb(44 39 39 / 38%); */
+    z-index: 9;
+	background-color: rgba(0, 0, 0, 0.35);
+}
+
+.popupContainer.deckMonitor * {
+    text-shadow: none;
+    box-sizing: border-box;
+}
+
+.popupContainer.deckMonitor .deckMonitor {
+    /* --bgColor: rgb(87 151 164); */
+    width: 80%;
+    height: 75%;
+    /* background-color: var(--bgColor); */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.popupContainer.deckMonitor .deckMonitor .title {
+    width: 100%;
+    height: 10%;
+    top: 0%;
+    /* background-color: var(--bgColor); */
+    font-size: 1.5em;
+    /* color: #fff5f5; */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	background: rgba(0, 0, 0, 0.2);
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px;
+	border-radius: 6px 6px 0 0;
+}
+
+.popupContainer.deckMonitor .deckMonitor .title span {
+    text-decoration: underline;
+    font-size: 0.8em;
+    /* color: yellow; */
+    font-weight: lighter;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer {
+    width: 100%;
+    height: 90%;
+    bottom: 0%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    box-sizing: border-box;
+	background: rgba(0, 0, 0, 0.2);
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px;
+	border-radius: 0 0 6px 6px;
+
+    /* 滚动方案开启，压缩方案关闭 */
+    overflow-x: scroll;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer * {
+    position: relative;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer {
+    background: rgba(0, 0, 0, 0.2);
+    height: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100px;
+    margin: 0 5px;
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    max-width: calc(100% / 6);
+    /* 滚动方案开启，压缩方案关闭 */
+    min-width: calc(100% / 6.42);
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .subtitle {
+    width: 100%;
+    text-align: center;
+    flex-grow: 0;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    flex-shrink: 0;
+
+    overflow: scroll;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    overflow: auto;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer .itemCount {
+    display: flex;
+    flex: 1 3 30px;
+    flex-shrink: 0;
+    overflow: visible;
+    font-size: 0.9em;
+    justify-content: center;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer .item {
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    width: 98%;
+    margin-top: 4px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer .item:hover {
+    box-shadow: 0 0 2px 1.5px yellow;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer .item .itemName {
+    background: rgba(128,128,128, 0.95);
+    margin: 5px 2px;
+    border-radius: 5px;
+    color: white;
+    text-shadow: none;
+    padding: 2px;
+    font-size: 0.9em;
+    flex: 1 5 50px;
+    justify-content: center;
+    display: flex;
+	min-width: 66%;
+}
+
+.popupContainer.deckMonitor .deckMonitor .contentContainer .columnContainer .itemContainer .item .tip {
+    position: absolute;
+    background: rgba(128,128,128, 0.95);
+    width: 100%;
+    height: fit-content;
+    z-index: 1;
+    padding: 6px;
+    color: white;
+    border: 2px solid #45B729;
+    border-radius: 2px;
+    left: 0;
+    display: none;
+}

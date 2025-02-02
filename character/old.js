@@ -34,7 +34,7 @@ game.import("character", function () {
 				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
 				old_yijiang6: ["ol_zhangrang", "old_huanghao", "old_liyan"],
 				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
-				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong"],
+				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
 				old_sp: [
 					"old_shixie",
 					"panfeng",
@@ -51,7 +51,8 @@ game.import("character", function () {
 		},
 		character: {
 			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu"]],
-			
+			junk_zhangjiao: ["male", "shen", 3, ["yizhao", "junksijun", "tianjie"], ["qun", "die_audio:shen_zhangjiao"]],
+
 			old_shixie: ["male", "qun", 3, ["biluan", "lixia"]],
 			panfeng: ["male", "qun", 4, ["kuangfu"]],
 			old_shen_zhaoyun: ["male", "shen", 2, ["oldjuejing", "oldlonghun"], ["shu"]],
@@ -491,6 +492,11 @@ game.import("character", function () {
 				},
 				mod: {
 					maxHandcard: (player, num) => num + 2,
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || !get.tag(card, "recover")) return num;
+						if (player.needsToDiscard() > 1) return num;
+						return 0;
+					},
 				},
 			},
 			oldlonghun: {
@@ -1244,6 +1250,7 @@ game.import("character", function () {
 				popup: false,
 				firstDo: true,
 				charlotte: true,
+				sourceSkill: "old_guhuo",
 				filter: function (event, player) {
 					return event.skill && event.skill.indexOf("old_guhuo_") == 0;
 				},
@@ -1864,6 +1871,8 @@ game.import("character", function () {
 			"old_1！5！_place7_info": "令其不能使用【闪】和【桃】直到其下个回合结束。",
 			old_chiren: "赤刃",
 			old_chiren_info: "锁定技，结束阶段，若你的“赤”标记数大于等于你的已损失体力值，则你将体力值回复至4点，然后移去所有“赤”标记并摸等量的牌。",
+			junk_zhangjiao: "OL神张角",
+			junk_zhangjiao_prefix: "OL神",
 
 			old_standard: "标准包",
 			old_shenhua_feng: "神话再临·风",

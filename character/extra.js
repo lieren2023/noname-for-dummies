@@ -23,9 +23,9 @@ game.import("character", function () {
 			},
 		},
 		character: {
-			shen_huangzhong: ["male", "shen", 4, ["1！5！", 'chiren'], ["shu"]],
+			shen_huangzhong: ["male", "shen", 4, ["1！5！", "chiren"], ["shu"]],
 			new_simayi: ["male", "shen", 4, ["jilin", "yingyou", "yingtian"], ["wei"]],
-			xin_simayi: ["male", "shen", 4, ["xinrenjie", "xinbaiyin", "xinlianpo"], ["tempname:shen_simayi", "wei"]],
+			xin_simayi: ["male", "shen", 4, ["xinrenjie", "xinbaiyin", "xinlianpo"], ["tempname:shen_simayi", "wei", "die_audio:shen_simayi"]],
 			dc_shen_huatuo: ["male", "shen", 3, ["jingyu", "lvxin", "huandao"], ["qun"]],
 			shen_xuzhu: ["male", "shen", 5, ["zhengqing", "zhuangpo"], ["wei"]],
 			shen_lusu: ["male", "shen", 3, ["tamo", "dingzhou", "zhimeng"], ["wu"]],
@@ -118,6 +118,8 @@ game.import("character", function () {
 				filter(event, player) {
 					return event.player.isIn() && event.source != event.player;
 				},
+				// 临时修改（by 棘手怀念摧毁）
+				// frequent: true,
 				logTarget: "player",
 				prompt2: (event, player) => ("击伤其一个部位"),
 				async cost(event, trigger, player) {
@@ -280,7 +282,15 @@ game.import("character", function () {
 								if(bool){
 									a.target.style.backgroundImage = "url(" + lib.assetURL + "image/card/yiwu_click_chosen.png)";
 									if(event.control) event.control.close();
-									if(event.control2) event.control2.open();
+									// 临时修改（by 棘手怀念摧毁）
+									// if (!lib.config.autoskilllist.includes("1！5！")) {
+										// event.dialog.close();
+										// game.resume();
+										// _status.imchoosing = false;
+										// resolve(event._result);
+									// }
+									// else
+									if (event.control2) event.control2.open();
 								}
 							});
 							list.push(num_px);
@@ -404,16 +414,14 @@ game.import("character", function () {
 						marktext: "伤",
 						intro: {
 							name: "中伤 - 下肢",
-							content: "体力值大于1时，受到的伤害+1",
+							content: "下次受到的伤害+1",
 						},
 						trigger: { player: "damageBegin2" },
-						filter(event, player) {
-							return player.getHp() > 1;
-						},
 						forced: true,
 						popup: false,
 						content() {
 							trigger.num++;
+							player.removeSkill(event.name);
 						},
 					},
 					use: {
@@ -423,24 +431,15 @@ game.import("character", function () {
 						marktext: "伤",
 						intro: {
 							name: "中伤 - 胸部",
-							content: (_, player) => (_status.currentPhase === player ? "" : "下回合") + "使用下一张伤害牌造成的伤害-1",
+							content: (_, player) => (_status.currentPhase === player ? "" : "下回合") + "使用的下一张牌无效",
 						},
 						trigger:{
-							source: "damageBegin2",
-						},
-						filter(event, player){
-							if (event.card&&get.tag(event.card, "damage")) return true;
-							return false;
+							player: "useCard",
 						},
 						async content(event, trigger, player) {
-							let evt=trigger.getParent("useCard",true);
-							if(evt&&!evt.yiwuMarked){
-								evt.yiwuMarked=true;
-								player.when("useCardAfter").filter(evtx=>evtx.yiwuMarked).then(()=>{
-									player.removeSkill("1！5！_use");
-								});
-							}
-							trigger.num -= 1;
+							trigger.all_excluded = true;
+							trigger.targets.length = 0;
+							player.removeSkill("1！5！_use");
 						}
 					},
 					respond: {
@@ -471,10 +470,42 @@ game.import("character", function () {
 					player: "phaseUseBegin",
 				},
 				async cost (event, trigger, player) {
-					let list = ["摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。", "摸已损失体力值张牌，此阶段造成伤害后，回复等量体力。"];
+					const hps = [player.getHp(), player.getDamagedHp()];
+					let list = [(hps[0] > 0 ? "摸" + get.cnNumber(hps[0]) + "张牌，" : "") + "此阶段使用的下一张【杀】无距离限制且不能被响应。", (hps[1] > 0 ? "摸" + get.cnNumber(hps[1]) + "张牌" : "") + "此阶段下一次造成伤害后，回复等量体力。"];
 					let result = await player.chooseControlList(list).set("ai", function(){
-						//等157优化）
-						return Math.random();
+						let player = get.event("player"), damaged = player.getDamagedHp();
+						if (damaged) damaged += 0.6 * (player.countCards("hs", card => {
+							if (card.name == "sha" || !get.tag(card, "damage")) return 0;
+							let info = get.info(card);
+							if (!info || info.type != "trick") return false;
+							if (info.notarget) return false;
+							if (info.selectTarget != undefined) {
+								if (Array.isArray(info.selectTarget)) {
+									if (info.selectTarget[1] == -2) return 1;
+									if (info.selectTarget[1] == -1) {
+										let func = info.filterTarget;
+										if (typeof func != "function") func = () => true;
+										return game.countPlayer(cur => {
+											return func(card, player, cur);
+										});
+									}
+									return Math.max(1, info.selectTarget[0], info.selectTarget[1]);
+								} else {
+									if (info.selectTarget == -2) return 1;
+									if (info.selectTarget == -1) {
+										let func = info.filterTarget;
+										if (typeof func != "function") func = () => true;
+										return game.countPlayer(cur => {
+											return func(card, player, cur);
+										});
+									}
+									return Math.max(1, info.selectTarget);
+								}
+							}
+							return 1;
+						}) + Math.max(player.getCardUsable("sha"), player.countCards("hs", "sha")));
+						if (damaged > player.hp) return "选项二";
+						return "选项一";
 					}).forResult();
 					event.result = {
 						bool: result.control != "cancel2",
@@ -517,17 +548,15 @@ game.import("character", function () {
 						},
 						forced:true,
 						charlotte:true,
-						filter:function(event, player){
-							return player.isDamaged();
-						},
 						async content(event, trigger, player) {
-							player.recover(trigger.num);
+							if(player.isDamaged()) player.recover(trigger.num);
+							player.removeSkill(event.name);
 						}
 					},
 				}
 			},
 			//手杀神司马？
-			//应天司马懿！肯定又要修改
+			//应天司马懿！别肘
 			jilin: {
 				audio: 5,
 				trigger: {
@@ -632,6 +661,7 @@ game.import("character", function () {
 							}
 						},
 						async content(event, trigger, player) {
+							await player.showCards(event.cost_data, get.translation(player) + "发动了【戢鳞】");
 							event.cost_data[0].storage.jilin = true;
 							trigger.getParent().excluded.add(player);
 						},
@@ -724,6 +754,7 @@ game.import("character", function () {
 					};
 				},
 				async content(event, trigger, player) {
+					await player.showCards(event.cost_data, get.translation(player) + "发动了【英猷】");
 					event.cost_data[0].storage.jilin = true;
 					const num = player.getExpansions("jilin").filter(card => card.storage.jilin).length;
 					await player.draw(num);
@@ -799,19 +830,10 @@ game.import("character", function () {
 				audio: "renjie2",
 				trigger: {
 					player: ["chooseToUseAfter", "chooseToRespondAfter"],
-					global: "useCardAfter",
 				},
 				filter(event, player) {
 					if (player.getRoundHistory("useSkill", evt => evt.skill == "xinrenjie").length >= 4) return false;
-					if (event.name == "useCard") {
-						//......
-						if (event.player == player || get.type(event.card) != "trick") return false;
-						const history = game.getGlobalHistory("everything", evt => evt.player == player && ["useCard", "respond"].includes(evt.name));
-						return !history.some(evt => Array.isArray(evt.respondTo) && evt.respondTo[1] == event.card && evt.card.name == "wuxie");
-					}
-					const evt = event.getParent(2);
-					if (!evt || evt.name != "useCard" || evt.player == player) return false;
-					return event.respondTo && !event.result.bool;
+					return event.respondTo && event.respondTo[0] !==player && !event.result.bool;
 				},
 				forced: true,
 				async content(event, trigger, player) {
@@ -822,18 +844,11 @@ game.import("character", function () {
 					content: "mark",
 				},
 				marktext: "忍",
-				global: "xinrenjie_global",
-				subSkill: {
-					global: {
-						hiddenCard: () => true,
-						ai: {
-							respondSha: true,
-							respondShan: true,
-						},
-					},
-				},
+				hiddenCard: () => true,
 				ai: {
-					combo: "xinjilve"
+					combo: "xinjilve",
+					respondSha: true,
+					respondShan: true,
 				},
 			},
 			xinbaiyin: {
@@ -907,7 +922,7 @@ game.import("character", function () {
 				},
 			},
 			xinjilve: {
-				audio: "jilue",
+				audio: 2,
 				trigger: {
 					player: "phaseUseBegin",
 				},
@@ -920,7 +935,7 @@ game.import("character", function () {
 						length: limit,
 					}).map((_, i) => [i, get.cnNumber(i + 1, true)]);
 					const history = game.getAllGlobalHistory("everything", evt => evt.name == "xinjilve" && evt.player == player && Array.isArray(evt.cost_data) && get.info("xinbaiyin").derivation.includes(evt.cost_data[0]));
-					const num = history.length + 1;
+					const num = Math.max(2, history.length + 1);
 					const skills = get
 						.info("xinbaiyin")
 						.derivation.removeArray(["xinjilve", "reguicai"])
@@ -988,7 +1003,7 @@ game.import("character", function () {
 						await player.draw(choice + 1);
 					} else if (get.info("xinbaiyin").derivation.includes(choice[0])) {
 						const history = game.getAllGlobalHistory("everything", evt => evt.name == "xinjilve" && evt.player == player && Array.isArray(evt.cost_data) && get.info("xinbaiyin").derivation.includes(evt.cost_data[0]));
-						const num = history.length;
+						const num = Math.max(2, history.length);
 						player.removeMark("xinrenjie", num);
 						await player.addSkills(choice[0]);
 					} else {
@@ -999,6 +1014,7 @@ game.import("character", function () {
 				group: "xinjilve_gain",
 				subSkill: {
 					gain: {
+						audio: "xinjilve",
 						trigger: {
 							player: "changeSkillsAfter",
 						},
@@ -1470,7 +1486,9 @@ game.import("character", function () {
 					storage: { zhuangpo: true },
 				},
 				viewAsFilter() {
-					return get.event("zhuangpo_cards").length > 0;
+					// 临时修改（by 棘手怀念摧毁）
+					return get.event("zhuangpo_cards") && get.event("zhuangpo_cards").length;
+					// return get.event("zhuangpo_cards")?.length;
 				},
 				prompt: "将一张牌面信息包含“【杀】”的牌当【决斗】使用",
 				filterCard(card, player) {
@@ -3133,12 +3151,14 @@ game.import("character", function () {
 					effect: {
 						mod: {
 							targetInRange(card, player, target) {
+								if (get.suit(card) == "unsure") return true;
 								if (!card.cards) return;
 								for (var i of card.cards) {
 									if (i.hasGaintag("dctuoyu_qingqu_tag")) return true;
 								}
 							},
 							cardUsable(card, player, num) {
+								if (get.suit(card) == "unsure") return Infinity;
 								if (!card.cards) return;
 								for (var i of card.cards) {
 									if (i.hasGaintag("dctuoyu_qingqu_tag")) return Infinity;
@@ -4012,8 +4032,10 @@ game.import("character", function () {
 						},
 					},
 				},
+				mark: true,
 				intro: {
-					content: "发动次数上限+#",
+					markcount: (storage = 0) => storage + 1,
+					content: (storage = 0) => "当前最大发动次数：" + (storage + 1),
 				},
 			},
 			xunshi: {
@@ -5686,6 +5708,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					usea: {
+						audio: "scfuhai",
 						trigger: { player: "useCardAfter" },
 						forced: true,
 						filter(event, player) {
@@ -5709,6 +5732,7 @@ game.import("character", function () {
 						},
 					},
 					die: {
+						audio: "scfuhai",
 						trigger: { global: "die" },
 						forced: true,
 						filter(event, player) {
@@ -5822,7 +5846,7 @@ game.import("character", function () {
 				group: "tianzuo_remove",
 				subSkill: {
 					remove: {
-						audio: 2,
+						audio: "tianzuo",
 						trigger: { target: "useCardToBefore" },
 						forced: true,
 						priority: 15,
@@ -5977,14 +6001,17 @@ game.import("character", function () {
 					global: {
 						ai: {
 							effect: {
-								player: (card, player, target) => {
+								player_use(card, player, target) {
+									if (typeof card !== "object") return;
 									let num = 0,
 										nohave = true;
 									game.countPlayer((i) => {
 										if (i.hasSkill("lingce", null, null, false)) {
 											nohave = false;
-											if (i.isIn() && lib.skill.lingce.filter({ card: card }, i))
-												num += get.sgnAttitude(player, i);
+											if (i.isIn() && lib.skill.lingce.filter({
+												card: card,
+												cards: card.cards ? card.cards : [card]
+											}, i)) num += get.sgnAttitude(player, i);
 										}
 									}, true);
 									if (nohave) game.removeGlobalSkill("lingce_global");
@@ -6779,6 +6806,7 @@ game.import("character", function () {
 			},
 			boss_juejing2: {
 				audio: "juejing",
+				sourceSkill: "boss_juejing",
 				audioname2: {
 					dc_zhaoyun: "dcjuejing",
 				},
@@ -6956,6 +6984,7 @@ game.import("character", function () {
 				audio: "huoxin",
 				forced: true,
 				trigger: { global: "phaseBeginStart" },
+				sourceSkill: "huoxin",
 				filter(event, player) {
 					return (
 						player != event.player &&
@@ -6987,6 +7016,7 @@ game.import("character", function () {
 				forceDie: true,
 				forced: true,
 				silent: true,
+				sourceSkill: "huoxin",
 				content() {
 					player.removeSkill("huoxin2");
 				},
@@ -8173,6 +8203,7 @@ game.import("character", function () {
 					global: "loseAsyncAfter",
 				},
 				forced: true,
+				sourceSkill: "renjie",
 				filter(event, player) {
 					if (event.type != "discard" || event.getlx === false) return false;
 					var evt = event.getParent("phaseDiscard"),
@@ -8239,12 +8270,14 @@ game.import("character", function () {
 						var player = _status.event.player;
 						var result = trigger.judge(card) - trigger.judge(trigger.player.judging[0]);
 						var attitude = get.attitude(player, trigger.player);
+						let val = get.value(card);
+						if (get.subtype(card) == "equip2") val /= 2;
+						else val /= 4;
 						if (attitude == 0 || result == 0) return 0;
 						if (attitude > 0) {
-							return result - get.value(card) / 2;
-						} else {
-							return -result - get.value(card) / 2;
+							return result - val;
 						}
+						return -result - val;
 					};
 					"step 1";
 					if (result.bool) {
@@ -8782,6 +8815,7 @@ game.import("character", function () {
 			qixing2: {
 				trigger: { player: "phaseDrawAfter" },
 				direct: true,
+				sourceSkill: "qixing",
 				filter(event, player) {
 					return player.getExpansions("qixing").length > 0 && player.countCards("h") > 0;
 				},
@@ -8904,6 +8938,7 @@ game.import("character", function () {
 			},
 			dawu3: {
 				trigger: { global: "damageBegin4" },
+				sourceSkill: "dawu",
 				filter(event, player) {
 					return !event.hasNature("thunder") && event.player.getStorage("dawu2").includes(player);
 				},
@@ -8978,6 +9013,7 @@ game.import("character", function () {
 			},
 			kuangfeng3: {
 				trigger: { global: "damageBegin3" },
+				sourceSkill: "kuangfeng",
 				filter(event, player) {
 					return event.hasNature("fire") && event.player.getStorage("kuangfeng2").includes(player);
 				},
@@ -9162,6 +9198,28 @@ game.import("character", function () {
 			},
 			longhun: {
 				audio: 4,
+				mod: {
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num - 3.6;
+					},
+					aiValue(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3.6;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1.8;
+					},
+					aiUseful(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1;
+					},
+				},
+				locked: false,
 				group: ["longhun1", "longhun2", "longhun3", "longhun4"],
 				ai: {
 					fireAttack: true,
@@ -9206,6 +9264,7 @@ game.import("character", function () {
 			longhun1: {
 				audio: true,
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "longhun",
 				prompt() {
 					return "将" + get.cnNumber(Math.max(1, _status.event.player.hp)) + "张红桃牌当作桃使用";
 				},
@@ -9228,6 +9287,7 @@ game.import("character", function () {
 			longhun2: {
 				audio: true,
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "longhun",
 				prompt() {
 					return (
 						"将" + get.cnNumber(Math.max(1, _status.event.player.hp)) + "张方片当作火杀使用或打出"
@@ -9252,6 +9312,7 @@ game.import("character", function () {
 			longhun3: {
 				audio: true,
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "longhun",
 				prompt() {
 					return (
 						"将" + get.cnNumber(Math.max(1, _status.event.player.hp)) + "张黑桃牌当作无懈可击使用"
@@ -9276,6 +9337,7 @@ game.import("character", function () {
 			longhun4: {
 				audio: true,
 				enable: ["chooseToUse", "chooseToRespond"],
+				sourceSkill: "longhun",
 				prompt() {
 					return (
 						"将" + get.cnNumber(Math.max(1, _status.event.player.hp)) + "张梅花牌当作闪使用或打出"
@@ -9302,6 +9364,11 @@ game.import("character", function () {
 					maxHandcard(player, num) {
 						return 2 + num;
 					},
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || !get.tag(card, "recover")) return num;
+						if (player.needsToDiscard() > 1) return num;
+						return 0;
+					},
 				},
 				audio: true,
 				trigger: { player: "phaseDrawBegin2" },
@@ -9316,6 +9383,28 @@ game.import("character", function () {
 			},
 			relonghun: {
 				audio: 2,
+				mod: {
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num - 3.6;
+					},
+					aiValue(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3.6;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1.8;
+					},
+					aiUseful(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1;
+					},
+				},
+				locked: false,
 				//技能发动时机
 				enable: ["chooseToUse", "chooseToRespond"],
 				//发动时提示的技能描述
@@ -9552,6 +9641,28 @@ game.import("character", function () {
 			},
 			xinlonghun: {
 				audio: "longhun",
+				mod: {
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num - 3.6;
+					},
+					aiValue(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3.6;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1.8;
+					},
+					aiUseful(player, card, num) {
+						if (num <= 0) return num;
+						let suit = get.suit(card, player);
+						if (suit === "heart") return num + 3;
+						if (suit === "club") return num + 1;
+						if (suit === "spade") return num + 1;
+					},
+				},
+				locked: false,
 				enable: ["chooseToUse", "chooseToRespond"],
 				prompt: "将♦手牌当做火【杀】，♥手牌当做【桃】，♣手牌当做【闪】，♠手牌当做【无懈可击】使用或打出",
 				viewAs(cards, player) {
@@ -9714,6 +9825,11 @@ game.import("character", function () {
 				mod: {
 					maxHandcard(player, num) {
 						return 2 + num;
+					},
+					aiOrder(player, card, num) {
+						if (num <= 0 || !player.isPhaseUsing() || !get.tag(card, "recover")) return num;
+						if (player.needsToDiscard() > 1) return num;
+						return 0;
 					},
 				},
 				audio: 2,
@@ -10277,8 +10393,9 @@ game.import("character", function () {
 						},
 						forced: true,
 						filter(event, player) {
-							if (event.turn === player || !player.hasDisabledSlot()) return false;
+							if (!event.turn || event.turn === player || !player.hasDisabledSlot()) return false;
 							const opposite = event.player === player ? event.target : event.player;
+							if (!opposite.isDamaged()) return false;
 							return opposite && opposite.isIn() && opposite.inRangeOf(player);
 						},
 						content() {
@@ -10307,6 +10424,7 @@ game.import("character", function () {
 									return false;
 								}
 							}
+							if (!opposite.isDamaged()) return false;
 							return opposite && opposite.isIn() && opposite.inRangeOf(player);
 						},
 						forced: true,
@@ -10321,7 +10439,7 @@ game.import("character", function () {
 						filter(event, player) {
 							if (!player.hasDisabledSlot()) return false;
 							const opposite = event.source;
-							if (!event.source.isDamaged()) return false;
+							if (!opposite.isDamaged()) return false;
 							return opposite && opposite.isIn() && opposite.inRangeOf(player);
 						},
 						content() {
@@ -11060,7 +11178,7 @@ game.import("character", function () {
 			drlt_duorui_info:
 				"当你于出牌阶段内对一名其他角色造成伤害后，你可以废除你装备区内的一个装备栏（若已全部废除则可以跳过此步骤），然后获得该角色的一个技能直到其的下回合结束或其死亡(觉醒技，限定技，主公技，隐匿技，使命技等特殊技能除外)。若如此做，该角色该技能失效且你不能再发动〖夺锐〗直到你失去以此法获得的技能。",
 			drlt_zhiti: "止啼",
-			drlt_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；②当你拼点或【决斗】胜利/或受到已受伤角色造成的伤害后，若对方/伤害来源在你的攻击范围内，则你恢复一个装备栏。",
+			drlt_zhiti_info: "锁定技。①你攻击范围内已受伤的其他角色手牌上限-1；②当你和已受伤的角色拼点或【决斗】胜利/受到已受伤角色造成的伤害后，若对方/伤害来源在你的攻击范围内，则你恢复一个装备栏。",
 
 			shen_zhaoyun: "神赵云",
 			shen_zhaoyun_prefix: "神",
@@ -11081,8 +11199,7 @@ game.import("character", function () {
 			xinjuejing: "绝境",
 			xinjuejing_info: "锁定技。①你的手牌上限+2。②当你进入或脱离濒死状态时，你摸一张牌。",
 			relonghun: "龙魂",
-			relonghun_info:
-				"你可以将同花色的一至两张牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当普【无懈可击】。若你以此法使用了两张红色牌，则此牌回复值或伤害值+1。若你以此法使用了两张黑色牌，则你弃置当前回合角色一张牌。",
+			relonghun_info: "你可以将同花色的一至两张牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当普【无懈可击】。若你以此法转化了两张：红色牌，则此牌回复值或伤害值+1；黑色牌，则你弃置当前回合角色一张牌。",
 			xinlonghun: "龙魂",
 			xinlonghun_info:
 				"你可以将你的手牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当【无懈可击】。",
@@ -11493,14 +11610,13 @@ game.import("character", function () {
 			xinlianpo: "连破",
 			xinlianpo_info: "当你杀死一名角色后，你可以选择一项：1.于此回合结束后获得一个额外回合；2.若你拥有〖极略〗，你获得一个你未拥有的〖极略〗技能。",
 			xinjilve: "极略",
-			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1）；2.弃置至多2枚“忍”标记并摸等量张牌。",
+			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
 			new_simayi: "应天神司马懿",
 			// new_simayi_ab: "手杀神司马懿",
 			// new_simayi_prefix: "手杀神",
 			new_simayi_prefix: "应天神",
 			jilin: "戢鳞",
 			jilin_info: "①游戏开始时，你将牌堆顶两张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
-			//太幽默了我超
 			jilin_info_doudizhu: "①游戏开始时，你将牌堆顶一张牌暗置于你的武将牌上，称为“志”。②当你成为其他角色使用牌的目标时，你可以明置一张暗置的“志”令此牌对你无效。③回合开始时，你可用任意张手牌替换等量暗置的“志”。",
 			yingyou: "英猷",
 			yingyou_info: "①出牌阶段开始时，你可明置一张“志”然后摸X张牌（X为明置的“志”的数量）。②当你失去与明置的“志”其中一张花色相同的牌时，你摸一张牌。",
@@ -11509,7 +11625,7 @@ game.import("character", function () {
 			shen_huangzhong: "神黄忠",
 			shen_huangzhong_prefix: "神",
 			"1！5！": "毅武",
-			"1！5！_info": "当你对一名其他角色造成伤害后，你可以在任意部位中选择一个“击伤”；若你击伤了一名角色，则再次击伤该角色时出现“头部”选项。",
+			"1！5！_info": "当你对一名其他角色造成伤害后，你可以在任意部位中选择一个“击伤”；若你击伤了一名角色，则本回合再次击伤该角色时出现“头部”选项。",
 			"1！5！_place1": "头部",
 			"1！5！_place1_info": "令其失去所有体力，若其因此死亡，你增加1点体力上限。",
 			//"1！5！_place2": "肩部",
@@ -11519,13 +11635,13 @@ game.import("character", function () {
 			"1！5！_place4": "上肢",
 			"1！5！_place4_info": "令其随机弃置一半手牌（向上取整）。",
 			"1！5！_place5": "下肢",
-			"1！5！_place5_info": "令其体力值大于1时受到的伤害+1直到其下个回合结束。",
+			"1！5！_place5_info": "令其下一次受到的伤害+1直到其下个回合结束。",
 			"1！5！_place6": "胸部",
-			"1！5！_place6_info": "令其使用的下一张伤害牌造成伤害-1直到其回合结束。",
+			"1！5！_place6_info": "令其使用的下一张牌无效直到其回合结束。",
 			"1！5！_place7": "腹部",
 			"1！5！_place7_info": "令其不能使用或打出红桃牌直到其下个回合结束。",
 			chiren: "赤刃",
-			chiren_info: "出牌阶段开始时，你可以选择一项：1.摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。2.摸已损失体力值张牌，此阶段造成伤害后，回复1点体力。",
+			chiren_info: "出牌阶段开始时，你可以选择一项：1.摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。2.摸已损失体力值张牌，此阶段下一次造成伤害后，回复等量体力。",
 
 			extra_feng: "神话再临·风",
 			extra_huo: "神话再临·火",

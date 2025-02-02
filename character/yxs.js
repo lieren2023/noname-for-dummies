@@ -2910,10 +2910,17 @@ game.import("character", function () {
 					"step 0";
 					player.judge();
 					"step 1";
-					if (result.color == "red") {
-						trigger.directHit = true;
-					} else {
-						player.discardPlayerCard(trigger.target);
+					switch (result.color) {
+						case "red":
+							trigger.directHit = true;
+							break;
+
+						case "black":
+							player.discardPlayerCard(trigger.target);
+							break;
+
+						default:
+							break;
 					}
 				},
 				ai: {

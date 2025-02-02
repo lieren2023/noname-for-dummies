@@ -528,17 +528,19 @@ game.import("card", function () {
 				equipSkill: true,
 				trigger: { source: "damageBegin1" },
 				forced: true,
+				logTarget: "player",
 				filter: function (event) {
-					return event.card && event.card.name == "sha" && event.player.isHealthy();
+					return event.card && event.card.name == "sha" && event.player.isHealthy() && event.notLink();
 				},
 				content: function () {
 					trigger.num++;
 				},
 				ai: {
 					effect: {
-						player: function (card, player, target) {
+						player: function (card, player, target, current, isLink) {
 							if (
 								card.name == "sha" &&
+								!isLink &&
 								target.isHealthy() &&
 								get.attitude(player, target) > 0
 							) {

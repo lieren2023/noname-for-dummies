@@ -33,4 +33,3 @@
 - [ ] 如果此次PR需要扩展跟进，我已在`扩展适配`中写入详细文档
 - [ ] 如果这个PR解决了一个issue，我在`诱因和背景`中明确链接到该issue
 - [ ] 我保证该PR中没有随意修改换行符等内容，没有制造出大量的Diff
-- [ ] 我保证该PR遵循项目中`.editorconfig`、`eslint.config.mjs`和`prettier.config.mjs`所规定的代码样式，并且已经通过`prettier`格式化过代码

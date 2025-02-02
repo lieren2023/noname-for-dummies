@@ -685,105 +685,215 @@ export const Content = {
 		}
 		"step 1";
 		var red = [],
-			black = [];
+			black = [],
+			others = [];
+		event.opinions = ["red", "black"];
 		event.videoId = lib.status.videoId++;
 		for (var i = 0; i < event.targets.length; i++) {
 			var card = result[i].cards[0],
 				target = event.targets[i];
-			if (get.color(card, target) == "red") red.push([target, card]);
-			else black.push([target, card]);
+			if (card == "red" || get.color(card, target) == "red") red.push([target, card]);
+			else if (card == "black" || get.color(card, target) == "black") black.push([target, card]);
+			else others.push([target, card]);
+		}
+		if(event.fixedResult) {
+			for (var i = 0; i < event.fixedResult.length; i++) {
+				var list = event.fixedResult[i];
+				if (list[1] == "red" || get.color(list[1], list[0]) == "red") red.push(list);
+				else if (list[1] == "black" || get.color(list[1], list[0]) == "black") black.push(list);
+				else others.push(list);
+				event.targets.push(list[0]);
+			}
 		}
 		event.red = red;
 		event.black = black;
+		event.others = others;
+		if (event.debateIgnore !== false) {
+			event.opinions.add("others");
+		} else {
+			var colors = {};
+			for (var list of others) {
+				var color = typeof list[1] == "string" ? list[1] : get.color(list[1], list[0]);
+				if (!colors[color]) colors[color] = [];
+				colors[color].push(list);
+			}
+			for (var color in colors) {
+				event.opinions.add(color);
+				event[color] = colors[color];
+			}
+		}
 		event.trigger("debateShowOpinion");
 		"step 2";
-		var red = event.red,
-			black = event.black;
-		if (red.length) {
-			game.log(
-				red.map(function (i) {
-					return i[0];
-				}),
-				'意见为<span class="firetext">红色</span>，展示了',
-				red.map(function (i) {
-					return i[1];
-				})
-			);
-		} else game.log("#b无人", '意见为<span class="firetext">红色</span>');
-		if (black.length) {
-			game.log(
-				black.map(function (i) {
-					return i[0];
-				}),
-				"意见为",
-				"#g黑色",
-				"，展示了",
-				black.map(function (i) {
-					return i[1];
-				})
-			);
-		} else game.log("#b无人", "意见为", "#g黑色");
+		for (var color of event.opinions) {
+			if (event[color].length) {
+				let cards = event[color].filter(i => get.itemtype(i[1]) == "card");
+				game.log(
+					event[color]
+						.map(function (i) {
+							return i[0];
+						})
+						.unique(),
+					// 临时修改（by 棘手怀念摧毁）
+					color == "other" ? "没有意见" : '意见为<span class="firetext">' + (get.translation(color) == "others" ? "其他颜色" : get.translation(color)) + "</span>",
+					// color == "other" ? "没有意见" : '意见为<span class="firetext">' + get.translation(color) + "</span>",
+					cards.length ? "，展示了" : "",
+					cards.map(i => i[1])
+				);
+			}
+		}
+		
+		// 临时修改（by 棘手怀念摧毁）
+		/*
 		game.broadcastAll(
-			function (name, id, redArgs, blackArgs) {
+			function (name, id, event) {
 				var dialog = ui.create.dialog(name + "发起了议事", "hidden", "forcebutton");
 				dialog.videoId = id;
 				dialog.classList.add("scroll1");
 				dialog.classList.add("scroll2");
 				dialog.classList.add("fullwidth");
-				dialog.classList.add("fullheight");
-				dialog.buttonss = [];
-
-				var list = ["意见为红色的角色", "意见为黑色的角色"];
-				for (var i = 0; i < list.length; i++) {
-					dialog.add('<div class="text center">' + list[i] + "</div>");
-					var buttons = ui.create.div(".buttons", dialog.content);
-					dialog.buttonss.push(buttons);
-					buttons.classList.add("popup");
-					buttons.classList.add("guanxing");
-				}
 				var func = function (target) {
 					if (target._tempTranslate) return target._tempTranslate;
 					var name = target.name;
 					if (lib.translate[name + "_ab"]) return lib.translate[name + "_ab"];
 					return get.translation(name);
 				};
+				if (event.opinions.includes("others")) {
+					if (event.others.length > 2) {
+						dialog.classList.add("fullheight");
+					}
+					for (var color of event.opinions) {
+						if (color == "others" && !event.others.length) continue;
+						dialog.addNewRow(
+							{ item: get.translation(color), ratio: 1 },
+							{
+								item: event[color].slice().map(list => {
+									let element = get.copy(list[1]);
+									if (typeof element == "string") {
+										if (!lib.card["debate_" + element]) {
+											lib.card["debate_" + element] = {};
+											lib.translate["debate_" + element] = get.translation(element);
+										}
+										element = new lib.element.VCard(game.createCard("debate_" + element, " ", " "));
+									}
+									element._custom = button => {
+										button.querySelector(".info").innerHTML = func(list[0]);
+									};
+									return element;
+								}),
+								ratio: 8,
+							}
+						);
+					}
+				} else {
+					dialog.buttonss = [];
+					dialog.add('<div class="text center">意见</div>');
+					var buttons = ui.create.div(".buttons", dialog.content);
+					dialog.buttonss.push(buttons);
+					buttons.classList.add("popup");
+					buttons.classList.add("guanxing");
+					for (var color of event.opinions) {
+						for (var list of event[color]) {
+							var button;
+							if (typeof list[1] == "string") {
+								button = ui.create.button(["", "", list[1]], "vcard", dialog.buttonss[0]);
+							} else button = ui.create.button(list[1], "card", dialog.buttonss[0]);
+							button.querySelector(".info").innerHTML = func(list[0]);
+						}
+					}
+				}
+				dialog.open();
+			},
+			get.translation(player),
+			event.videoId,
+			event
+		);
+		*/
+		var red = event.red,
+			black = event.black,
+			others = event.others;
+		game.broadcastAll(
+			function (name, id, redArgs, blackArgs, othersArgs) {
+				var dialog = ui.create.dialog(name + "发起了议事", "hidden", "forcebutton");
+				dialog.videoId = id;
+				dialog.classList.add("scroll1");
+				dialog.classList.add("scroll2");
+				dialog.classList.add("fullwidth");
+				dialog.classList.add("fullheight");
+
+				var func = function (target) {
+					if (target._tempTranslate) return target._tempTranslate;
+					var name = target.name;
+					if (lib.translate[name + "_ab"]) return lib.translate[name + "_ab"];
+					return get.translation(name);
+				};
+				
+				dialog.buttonss = [];
+				var list = ["意见为红色的角色", "意见为黑色的角色", "意见为其他颜色的角色"];
+				for (var i = 0; i < list.length; i++) {
+					if (i == 2 && !event.others.length) continue;
+					dialog.add('<div class="text center">' + list[i] + "</div>");
+					var buttons = ui.create.div(".buttons", dialog.content);
+					dialog.buttonss.push(buttons);
+					buttons.classList.add("popup");
+					buttons.classList.add("guanxing");
+				}
 				for (var i = 0; i < redArgs.length; i++) {
-					var list = redArgs[i];
-					var button = ui.create.button(list[1], "card", dialog.buttonss[0]);
+					var list = redArgs[i], button;
+					if (typeof list[1] == 'string') {
+						button = ui.create.button(["", "", list[1]], "vcard", dialog.buttonss[0]);
+					}
+					else button = ui.create.button(list[1], "card", dialog.buttonss[0]);
 					button.querySelector(".info").innerHTML = func(list[0]);
 				}
 				for (var i = 0; i < blackArgs.length; i++) {
-					var list = blackArgs[i];
-					var button = ui.create.button(list[1], "card", dialog.buttonss[1]);
+					var list = blackArgs[i], button;
+					if (typeof list[1] == 'string') {
+						button = ui.create.button(["", "", list[1]], "vcard", dialog.buttonss[1]);
+					}
+					else button = ui.create.button(list[1], "card", dialog.buttonss[1]);
 					button.querySelector(".info").innerHTML = func(list[0]);
+				}
+				if (dialog.buttonss[2]) {
+					for (var i = 0; i < othersArgs.length; i++) {
+						var list = othersArgs[i], button;
+						if (typeof list[1] == 'string') {
+							button = ui.create.button(["", "", list[1]], "vcard", dialog.buttonss[2]);
+						}
+						else button = ui.create.button(list[1], "card", dialog.buttonss[2]);
+						button.querySelector(".info").innerHTML = func(list[0]);
+					}
 				}
 				dialog.open();
 			},
 			get.translation(player),
 			event.videoId,
 			red,
-			black
+			black,
+			others
 		);
+		
 		game.delay(4);
 		"step 3";
 		game.broadcastAll("closeDialog", event.videoId);
-		var opinion = null;
-		if (event.red.length > event.black.length) opinion = "red";
-		else if (event.red.length < event.black.length) opinion = "black";
-		if (opinion)
-			game.log(
-				player,
-				"本次发起的议事结果为",
-				opinion == "red" ? '<span class="firetext">红色</span>' : "#g黑色"
-			);
+		var opinion = event.opinions
+			.slice()
+			// 临时修改（by 棘手怀念摧毁）
+			// .filter(i => i != "others")
+			.sort((a, b) => event[b].length - event[a].length);
+		opinion = event[opinion[0]].length > event[opinion[1]].length ? opinion[0] : null;
+		// 临时修改（by 棘手怀念摧毁）
+		if (opinion) game.log(player, "本次发起的议事结果为", opinion == "red" ? '<span class="firetext">红色</span>' : "#g" + (get.translation(opinion) == "others" ? "其他颜色" : get.translation(opinion)));
+		// if (opinion) game.log(player, "本次发起的议事结果为", opinion == "red" ? '<span class="firetext">红色</span>' : "#g" + get.translation(opinion));
 		else game.log(player, "本次发起的议事无结果");
 		event.result = {
 			bool: true,
 			opinion: opinion,
-			red: event.red,
-			black: event.black,
+			opinions: event.opinions,
 			targets: event.targets,
 		};
+		for (var color of event.opinions) {
+			event.result[color] = event[color];
+		}
 		"step 4";
 		if (event.callback) {
 			var next = game.createEvent("debateCallback", false);
