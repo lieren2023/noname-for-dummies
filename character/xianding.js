@@ -3295,8 +3295,8 @@ game.import("character", function () {
 						const player = get.player(),
 							target = get.event().getParent().result.targets[0];
 						const link = button.link;
-						const att = Math.sgn(get.attitude(player, target));
-						const drawWugu = target.countCards("h") + 2 > game.countPlayer();
+						const att = Math.sign(get.attitude(player, target));
+						const drawWugu = target.countCards("h") + 2 >= game.countPlayer();
 						if (link === "draw") return (drawWugu ? -1 : 2) * att;
 						return 1;
 					},

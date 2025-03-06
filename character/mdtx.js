@@ -65,7 +65,7 @@ game.import("character", function () {
 				multiline: true,
 				multitarget: true,
 				chooseCard(boss, current) {
-					const next = current.chooseCard("h");
+					const next = current.chooseCard("he");
 					next.set("prompt", "是否交给" + get.translation(boss) + "一张牌？");
 					next.set("_global_waiting", true);
 					next.set("ai", card => {
@@ -179,6 +179,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					effect: {
+						audio: "dcsbyaozuo",
 						onremove: true,
 						charlotte: true,
 						mark: true,
@@ -227,14 +228,11 @@ game.import("character", function () {
 						game.log(target, "没有手牌");
 						return;
 					}
-					let cards = game.cardsGotoOrdering(get.cards(target.countCards("h"))).cards;
+					let cards = game.cardsGotoOrdering(get.cards(Math.min(5, target.countCards("h")))).cards;
 					await player.showCards(cards, get.translation(player) + "发动了〖撰文〗");
 					let damages = cards.filter(card => get.tag(card, "damage") && player.canUse(card, target, false)),
 						nodamages = cards.filter(card => !get.tag(card, "damage"));
-					const list = [
-						`依次对${get.translation(target)}使用${damages.length ? get.translation(damages) : "空气"}`,
-						`令${get.translation(target)}获得${nodamages.length ? get.translation(nodamages) : "空气"}`,
-					];
+					const list = [`依次对${get.translation(target)}使用${damages.length ? get.translation(damages) : "空气"}`, `令${get.translation(target)}获得${nodamages.length ? get.translation(nodamages) : "空气"}`];
 					const result = await player
 						.chooseControl("使用伤害牌", "获得非伤害牌")
 						.set("choiceList", list)

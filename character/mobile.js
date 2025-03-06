@@ -2644,9 +2644,6 @@ game.import("character", function () {
 						return `###血途###<div class="text center">${str}</div>`;
 					},
 				},
-				subSkill: {
-					backup: {},
-				},
 				mark: true,
 				marktext: "☯",
 				intro: {
@@ -2676,6 +2673,7 @@ game.import("character", function () {
 						charlotte: true,
 						onremove: true,
 					},
+					backup: {},
 				},
 			},
 			mbweiming: {

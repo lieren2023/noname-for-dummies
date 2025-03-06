@@ -11,6 +11,52 @@ game.import("extension",function(lib,game,ui,get,ai,_status){
 return {
 name:"搬运自用",
 content:function(config,pack){
+	// 特效/界面错位解决方案
+	// 扩展：特效修复，作者：梨花喵🐱，魔改：棘手怀念摧毁
+	// 手机端经群友测试通过（新版Android System WebView导致，据反馈是127以上版本有此问题）
+	// 电脑端暂未测试
+	// if (lib.device) {
+		// 手机端
+		function getChromeVersion() {
+			const userAgent = navigator.userAgent;
+			if (userAgent.indexOf("Chrome") > -1) {
+				const versionMatch = userAgent.match(/Chrome\/(\d+)/);
+				if (versionMatch && versionMatch[1]) {
+					return parseInt(versionMatch[1]);
+				}
+			}
+			return 0;
+		}
+		if (getChromeVersion() >= 128) {
+			const gBC = HTMLElement.prototype.getBoundingClientRect;
+			HTMLElement.prototype.getBoundingClientRect = function getBoundingClientRect() {
+				let {bottom, height, left, right, top, width, x, y} = gBC.call(this);
+				bottom /= game.documentZoom;
+				height /= game.documentZoom;
+				left /= game.documentZoom;
+				right /= game.documentZoom;
+				top /= game.documentZoom;
+				width /= game.documentZoom;
+				x /= game.documentZoom;
+				y /= game.documentZoom;
+				return {
+					bottom,
+					height,
+					left,
+					right,
+					top,
+					width,
+					x,
+					y
+				};
+			}
+		}
+	// }
+	// else {
+			// 电脑端
+			
+	// }
+	
 	// 临时修复塔防等模式的武将显示问题
 	if(!['chess', 'tafang', 'stone'].includes(get.mode())){
 		// 按钮宽度调整（武将/卡牌的全部禁用/全部启用）
@@ -12777,6 +12823,9 @@ config:{
 				'<br>※ 禁用武将切换功能<br>- 原作者为157，搬运自官将重修扩展<br>- 默认关闭此选项，开启后将在选将时禁用武将切换功能'+
 				'<br>'+
 				'<br>▷ 其他<br>- 参考将灵重置版扩展、群英荟萃乀摧林扩展，实现选项菜单的折叠'+
+				'<br>'+
+				'<br>▷ 特效/界面错位解决方案'+
+				'<br>※ 特效/界面错位修复<br>- 原作者为梨花喵🐱，搬运自特效修复扩展'+
 				'<br>'
 				);
 				this.parentNode.insertBefore(more,this.nextSibling);

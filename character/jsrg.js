@@ -8784,7 +8784,7 @@ game.import("character", function () {
 											trigger.triggername,
 											trigger.indexedData
 										);
-										if (get.itemtype(logTarget).indexOf("player") == 0)
+										if (get.itemtype(logTarget) && get.itemtype(logTarget).indexOf("player") == 0)
 											str = get.prompt(event.skill, logTarget, player);
 									} else {
 										str = get.prompt(event.skill, null, player);

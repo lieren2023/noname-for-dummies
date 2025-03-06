@@ -7689,10 +7689,6 @@ content:function(config, pack){
 		if(lib.skill.yinbing != undefined){
 			lib.skill.yinbing.marktext = "引兵";
 		}
-		// 界刘禅思蜀标记修改
-		if(lib.skill.sishu2 != undefined){
-			lib.skill.sishu2.marktext = "思蜀";
-		}
 		// 旧皇甫嵩奋钺标记修改
 		if(lib.skill.fenyue2 != undefined){
 			lib.skill.fenyue2.marktext = "奋钺";
@@ -8238,10 +8234,13 @@ content:function(config, pack){
 		if(lib.skill.dczecai != undefined){
 			lib.skill.dczecai.subSkill.effect.marktext = "择才";
 		}
-		// 濮阳兴征建标记修改
+		// 濮阳兴征建、众斥标记修改
 		if(lib.skill.twzhengjian != undefined){
 			lib.skill.twzhengjian.subSkill.eff0.marktext = "征建";
 			lib.skill.twzhengjian.subSkill.eff1.marktext = "征建";
+		}
+		if(lib.skill.twzhongchi != undefined){
+			lib.skill.twzhongchi.subSkill.effect.marktext = "众斥";
 		}
 		// 孙瑜劝守标记修改
 		if(lib.skill.dcquanshou != undefined){
@@ -8258,6 +8257,14 @@ content:function(config, pack){
 			lib.skill.xinfu_xionghuo.marktext = "暴戾";
 			lib.skill.xinfu_xionghuo.subSkill.disable.marktext = "凶镬";
 			lib.skill.xinfu_xionghuo.subSkill.low.marktext = "凶镬";
+		}
+		// 界刘禅思蜀标记修改
+		if(lib.skill.sishu2 != undefined){
+			lib.skill.sishu2.marktext = "思蜀";
+		}
+		// 幻刘禅任贤标记修改
+		if(lib.skill.twrenxian != undefined){
+			lib.skill.twrenxian.subSkill.mark.marktext = "任贤";
 		}
 		// 神曹丕储、行动标记修改
 		if(lib.skill.chuyuan != undefined){

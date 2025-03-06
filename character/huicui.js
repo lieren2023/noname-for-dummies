@@ -5546,7 +5546,7 @@ game.import("character", function () {
 					if (!target.hasMark("dcjizhong")) {
 						const result = await target
 							.chooseBool(`集众：令${get.translation(player)}获得你三张牌，或点击“取消”获得“信众”标记`)
-							.set("choice", get.attitude(target, player) >= 0)
+							.set("ai", () => false)
 							.forResult();
 						if (!result.bool) {
 							target.addMark("dcjizhong", 1);
@@ -5569,7 +5569,7 @@ game.import("character", function () {
 						target: function (player, target) {
 							var num = target.countCards("h");
 							if (num <= 1) return -num;
-							if (get.attitude(player, target) > 0) return 1;
+							if (get.attitude(player, target) > 0 && !target.hasMark("dcjizhong")) return 1;
 							return -1 / (num / 2 + 1);
 						},
 					},
@@ -5628,7 +5628,6 @@ game.import("character", function () {
 				},
 				ai: {
 					combo: "dcjizhong",
-					halfneg: true
 				},
 			},
 			dcguangshi: {
@@ -5644,6 +5643,7 @@ game.import("character", function () {
 				},
 				ai: {
 					combo: "dcjizhong",
+					halfneg: true,
 				},
 			},
 			//董绾
@@ -9540,7 +9540,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				usable: 2,
 				filter: function (event, player) {
-					return !player.getStorage("dcquanjian_used").includes(button.link);
+					return game.hasPlayer(current => current != player);
 				},
 				chooseButton: {
 					dialog: function (event, player) {
@@ -9558,7 +9558,7 @@ game.import("character", function () {
 						return dialog;
 					},
 					filter: function (button, player) {
-						return !player.hasSkill("dcquanjian_" + button.link, null, null, false);
+						return !player.getStorage("dcquanjian_used").includes(button.link);
 					},
 					check: () => 1 + Math.random(),
 					backup: function (links) {
@@ -9878,9 +9878,9 @@ game.import("character", function () {
 						target.addSkill("dcyongbi_eff1");
 					}
 					if (list.length >= 3) {
-						player.addMark("dcyongbi_eff2", 1, false);
+						player.addMark("dcyongbi_eff2", 2, false);
 						player.addSkill("dcyongbi_eff2");
-						target.addMark("dcyongbi_eff2", 1, false);
+						target.addMark("dcyongbi_eff2", 2, false);
 						target.addSkill("dcyongbi_eff2");
 					}
 				},
@@ -9888,7 +9888,7 @@ game.import("character", function () {
 					order(item, player) {
 						if (player.hasUnknown()) return 0;
 						let list = [];
-						for (let i of cards) {
+						for (let i of player.getCards("h")) {
 							list.add(get.suit(i, player));
 							if (list.length >= 3) return 10;
 						}
@@ -16936,7 +16936,7 @@ game.import("character", function () {
 				"准备阶段开始时，你可以展示两名角色的各一张手牌。若这两张牌的花色不同，则你可以令一名角色获得另一名角色的展示牌。",
 			dcyongbi: "拥嬖",
 			dcyongbi_info:
-				"限定技。出牌阶段，你可以将所有手牌交给一名其他男性角色。你将〖媵予〗的发动时机改为“准备阶段和结束阶段开始时”。然后若这些牌中包含的花色数：大于1，则你与其本局游戏的手牌上限+2；大于2，则当你或其于本局游戏内受到大于1的伤害时，此伤害-1。",
+				"限定技。出牌阶段，你可以将所有手牌交给一名其他男性角色。你将〖媵予〗的发动时机改为“准备阶段和结束阶段开始时”。然后若这些牌中包含的花色数：大于1，则你与其本局游戏的手牌上限+2；大于2，则当你或其于本局游戏内受到大于1的伤害时，此伤害-2。",
 			dc_huangquan: "黄权",
 			dcquanjian: "劝谏",
 			dcquanjian_info:
