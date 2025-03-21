@@ -15821,7 +15821,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				selectTarget: 2,
 				multitarget: true,
-				targetprompt: ["受到伤害</br>然后摸牌", "回复体力"],
+				targetprompt: ["受伤摸牌", "回复体力"],
 				content: function () {
 					"step 0";
 					targets[0].damage(player);

@@ -185,8 +185,6 @@ https://github.com/nonameShijian/noname-server
 
 GitHub： https://github.com/libccy/noname/releases/tag/chromium77-client
 
-docker: [docker.md](./docker/docker.md)
-
 网页端推荐使用 Chrome 系内核浏览器游玩，不推荐使用低版本 Firefox 浏览器
 
 请尽量保证游玩的 Chrome 系浏览器或手机 Webview 的`内核版本大于等于77`

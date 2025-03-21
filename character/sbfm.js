@@ -63,8 +63,8 @@ game.import("character", function () {
 
 			sbfm_sb_mouding: "上兵伐谋·谋定天下",
 			sbfm_sb_wudong: "上兵伐谋·武动乾坤",
-			sbfm_sb_fenwu: "上兵伐谋·奋武扬威",
-			sbfm_sb_shiren: "上兵伐谋·施仁布泽",
+			sbfm_sb_fenwu: "上兵伐谋·奋勇扬威",
+			sbfm_sb_shiren: "上兵伐谋·施仁布德",
 			sbfm_sb_daquan: "上兵伐谋·达权通变",
 			
 			sbfm_waitingforsort: "等待分包",

@@ -6482,9 +6482,10 @@ export const Content = {
 		event.dialog.close();
 		"step 2";
 		event.resume();
-		setTimeout(function () {
+		// 临时修改（by 棘手怀念摧毁）
+		// setTimeout(function () {
 			ui.arena.classList.remove("gain-player-card");
-		}, 500);
+		// }, 500);
 		if (game.online || !event.result.bool) {
 			event.finish();
 		}
