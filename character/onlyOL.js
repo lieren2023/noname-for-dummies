@@ -1196,6 +1196,28 @@ game.import("character", function () {
 				},
 			},
 			//OL界李儒
+			xinjuece: {
+		audio: 2,
+		trigger: { player: "phaseJieshuBegin" },
+		filter(event, player) {
+			return game.hasPlayer(target => target !== player && player.countCards("h") >= target.countCards("h"));
+		},
+		async cost(event, trigger, player) {
+			event.result = await player
+				.chooseTarget(get.prompt2("xinjuece"), function (card, player, target) {
+					return target !== player && player.countCards("h") >= target.countCards("h");
+				})
+				.set("ai", target => {
+					const player = get.player();
+					return get.damageEffect(target, player, player);
+				})
+				.forResult();
+		},
+		async content(event, trigger, player) {
+			await event.targets[0].damage();
+		},
+	},
+
 			olmieji: {
 				audio: 2,
 				inherit: "xinmieji",
