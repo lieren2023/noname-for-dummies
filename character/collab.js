@@ -3926,7 +3926,7 @@ game.import("character", function () {
 			"#qiexie2": "吾乃典韦是也，谁敢向前，谁敢向前！",
 			"#cuijue1": "当锋摧决，贯遐洞坚！",
 			"#cuijue2": "殒身不恤，死战成仁！",
-			"#shen_dianwei:die": "主公快走！",
+			"#shen_dianwei:die": "战死沙场，快哉快哉！",
 			"#dctuoyu1": "本尊目之所及，皆为麾下王土。",
 			"#dctuoyu2": "擎五丁之神力，碎万仞之高山。",
 			"#dcxianjin1": "大风！大雨！大景！！",
