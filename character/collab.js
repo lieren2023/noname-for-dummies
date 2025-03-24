@@ -5267,8 +5267,7 @@ game.import("character", function () {
             "#yjgongqiao2": "机巧用尽，方化腐朽为神奇！",
             "#yjjingyi1": "精益求精，工如道，途无穷。",
             "#yjjingyi2": "木可伐，石可破，技不可失。",
-            "#yj_majun:die":"衡石不用，美玉见诬啊！",
-
+            "#yj_majun:die": "龙骨坍夜陌，水尽百戏枯。",
 			"#xinfu_daigong1": "不急，只等敌军士气渐殆。",
 			"#xinfu_daigong2": "敌谋吾已尽料，可以长策縻之。",
 			"#xinfu_zhaoxin1": "吾心昭昭，何惧天下之口！",
