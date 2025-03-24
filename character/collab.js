@@ -10231,7 +10231,7 @@ game.import("character", function () {
 			"#gz_zhongyan:die": "嗟尔姜任，邈不我留……",
 			"#gz_yangyan:die": "一旦殂损，痛悼伤怀……",
 			"#gz_zuofen:die": "惨怆愁悲……",
-			"#xuangongzhu:die": "元凯，我去也……",
+			"#gz_xuangongzhu:die": "元凯，我去也……",
 			"#gz_xinchang:die": "宪英，救我！",
 			"#gz_yangzhi:die": "贾氏……构陷……",
 			"#gz_liaohua:die": "今后，就靠你们啦……",
