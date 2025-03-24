@@ -8385,7 +8385,7 @@ game.import("character", function () {
 	        "#beiyu2": "宜选步骑二万，为讨贼之备。",
 	        "#duchi1": "今督众将临战，当使敌入寇无功。",
 	        "#duchi2": "吴军远道而来，彼疲军也。",
-			"#yj_simafu:die": "身辅六公，亦难报此恩……",
+			"#yj_simafu:die": "臣死之日，固大魏之纯臣也。",
 			"#twduwang1": "阿瞒聚众来犯，吾一人可挡万敌！",
 			"#twduwang2": "勇绝河北，吾足以一柱擎天！",
 			"#twylyanshi1": "今破曹军，明日当直取许都！",
