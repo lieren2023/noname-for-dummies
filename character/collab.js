@@ -9760,7 +9760,7 @@ game.import("character", function () {
 			"#ybzhuiji1": "不过是些微代价罢了。",
 			"#ybzhuiji2": "哼，以为这就能难倒我吗？",
 			"#yjqimei1": "此生愿作比翼鸟，双宿双飞不分离。",
-	        z"#yjqimei2": "与君共度晨昏，此生之所愿。",
+	        "#yjqimei2": "与君共度晨昏，此生之所愿。",
 	        "#yjzhuiji1": "此生与君相遇，足以含笑九泉。",
 	        "#yjzhuiji2": "夫君珍重，万望保重身体。",
 			"#yj_xuangongzhu:die":  "夫君，妾身先行一步",
