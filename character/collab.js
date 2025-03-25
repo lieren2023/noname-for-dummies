@@ -9450,7 +9450,7 @@ game.import("character", function () {
 	        "#olganlu2": "今见玄德，真佳婿也。",
             "#olbuyi1": "今植桑芜，可荫来者。",
 	        "#olbuyi2": "补气凝神，百邪不侵。",
-            "#ol_wuguotai:die": "卿等，务必用心辅佐仲谋……",
+            "#ol_wuguotai:die": "竖子，何以胞妹为饵乎？",
 			"#wuguotai:die": "卿等，务必用心辅佐仲谋……",
 			"#xuanfeng1": "伤敌于千里之外！",
 			"#xuanfeng2": "索命于须臾之间！",
