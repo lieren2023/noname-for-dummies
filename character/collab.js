@@ -5408,7 +5408,7 @@ game.import("character", function () {
 	        "#olmieji2": "我欲借陛下性命一用。",
 	        "#dcfencheng_ol_liru1": "愿这火光，照亮董公西行之路！",
 	        "#dcfencheng_ol_liru2": "诸公且看，此火可戏天下诸侯否？",
-            "#ol_liru:die": "如遇明主，大业必成……",
+            "#ol_liru:die": "火熄人亡，都结束了。",
 			"#yj_liru:die": "如遇明主，大业必成……",
 			"#zhaolie1": "不灭东吴，誓不归蜀！",
 			"#zhaolie2": "汝等勿劝，此战势在必行！",
