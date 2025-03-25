@@ -5402,8 +5402,6 @@ game.import("character", function () {
 			"#gzpaiyi2": "非吾友，则必敌也！",
 			"#chenggong1": "吾与主公患难之交也！",
 			"#chenggong2": "我豫州人才济济，元皓之辈，不堪大用。",
-			"#xinjuece1": "汝为孤家寡人，生死自当由我。",
-	        "#xinjuece2": "我以拳殴帝，帝可有还手之力？",
 	        "#olmieji1": "喝了这杯酒，别再理这世间事！",
 	        "#olmieji2": "我欲借陛下性命一用。",
 	        "#dcfencheng_ol_liru1": "愿这火光，照亮董公西行之路！",
