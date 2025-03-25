@@ -9759,6 +9759,7 @@ game.import("character", function () {
 			"#qimei2": "情投意合，相濡以沫。",
 			"#ybzhuiji1": "不过是些微代价罢了。",
 			"#ybzhuiji2": "哼，以为这就能难倒我吗？",
+			"#xuangongzhu:die":  "元凯，我去也……",
 			"#yjqimei1": "此生愿作比翼鸟，双宿双飞不分离。",
 	        "#yjqimei2": "与君共度晨昏，此生之所愿。",
 	        "#yjzhuiji1": "此生与君相遇，足以含笑九泉。",
