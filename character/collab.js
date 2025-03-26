@@ -3876,6 +3876,11 @@ game.import("character", function () {
 			// diy
 			
 			// extra
+			"#1！5！1": "横眉蔑风雨，引弓狩天狼。",
+	        "#1！5！2": "一箭出，万军毙！",
+	        "#chiren1": "流不尽的英雄血，斩不尽的逆贼头！",
+	        "#chiren2": "长刀渴血，当饲英雄胆！",
+            "#shen_huangzhong:die": "箭雨曾蔽日，今夕却成绝响。",
 			"#xinjilve1": "运筹成略，统军持国！",
 			"#xinjilve2": "英雄皆殁，天命终归吾司马一族！",
 			"#wansha_new_simayi1": "连诛其族，剪其党羽，以夷后患！",
