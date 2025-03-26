@@ -4719,10 +4719,6 @@ game.import("character", function () {
 			"#yj_sb_guojia_shadow:die": "江湖路远，诸君，某先行一步……",
 			
 			// mobile
-			"#buqu1": "哼，这点小伤算什么！",
-			"#buqu2": "战如熊虎，不惜躯命！",
-			"#fenji1": "百战之身，奋勇趋前！",
-			"#fenji2": "两肋插刀，愿赴此躯！",
             "#xin_zhoutai:die": "敌众我寡，无力回天……",
 			"#xingtu1": "制图之体有六，缺一不可言精。",
 	        "#xingtu2": "图设分率，则宇内地域皆可绘于一尺。",
