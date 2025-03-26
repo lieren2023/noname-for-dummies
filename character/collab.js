@@ -3876,6 +3876,11 @@ game.import("character", function () {
 			// diy
 			
 			// extra
+			"#1！5！1": "横眉蔑风雨，引弓狩天狼。",
+	        "#1！5！2": "一箭出，万军毙！",
+	        "#chiren1": "流不尽的英雄血，斩不尽的逆贼头！",
+	        "#chiren2": "长刀渴血，当饲英雄胆！",
+            "#shen_huangzhong:die": "箭雨曾蔽日，今夕却成绝响。",
 			"#xinjilve1": "运筹成略，统军持国！",
 			"#xinjilve2": "英雄皆殁，天命终归吾司马一族！",
 			"#wansha_new_simayi1": "连诛其族，剪其党羽，以夷后患！",
@@ -3926,7 +3931,7 @@ game.import("character", function () {
 			"#qiexie2": "吾乃典韦是也，谁敢向前，谁敢向前！",
 			"#cuijue1": "当锋摧决，贯遐洞坚！",
 			"#cuijue2": "殒身不恤，死战成仁！",
-			"#shen_dianwei:die": "主公快走！",
+			"#shen_dianwei:die": "战死沙场，快哉快哉！",
 			"#dctuoyu1": "本尊目之所及，皆为麾下王土。",
 			"#dctuoyu2": "擎五丁之神力，碎万仞之高山。",
 			"#dcxianjin1": "大风！大雨！大景！！",
@@ -4714,6 +4719,17 @@ game.import("character", function () {
 			"#yj_sb_guojia_shadow:die": "江湖路远，诸君，某先行一步……",
 			
 			// mobile
+            "#re_jikang:die": "多少遗恨，俱随琴音去……",
+            "#xin_sunliang:die": "今日欲诛逆臣而不得，方知机事不密则害成……",
+            "#xin_zhangfei:die": "桃园一拜，此生……无憾……",
+            "#xin_xiahoudun:die": "诸多败绩，有负丞相重托……",
+            "#re_guanqiujian:die": "峥嵘一生，然被平民所击射！",
+			"#xin_zhoutai:die": "敌众我寡，无力回天……",
+			"#xingtu1": "制图之体有六，缺一不可言精。",
+	        "#xingtu2": "图设分率，则宇内地域皆可绘于一尺。",
+	        "#juezhi1": "复设五等之制，以解天下土崩之势。",
+	        "#juezhi2": "表为建爵五等，实则藩卫帝室。",
+	        "#peixiu:die": "既食寒石散，便不可饮冷酒啊……",
 			"#mbbojian1": "闻古者贤女，未有不学前事成败而以为己诫。",
 			"#mbbojian2": "视字辄识，方知何为礼义。",
 			"#mbjiwei1": "乱世之宝，非金银田产，而在仁心。",
@@ -5323,6 +5339,7 @@ game.import("character", function () {
 			"#scschihe1": "想见圣上？哼哼，你怕是没这个福分了！",
 			"#scsniqu1": "离心离德，为吾等所不容！",
 			"#scsanruo1": "小伤无碍，安心修养便可。",
+			"#shichangshi:die": "（魂魄散去的声音）",
 			"#wangzun_old_yuanshu1": "这玉玺，当然是能者居之。",
 			"#wangzun_old_yuanshu2": "我就是皇帝，我就是天！",
 			"#sbqingzheng_mb_caomao1": "朕虽不德，昧于大道，思与宇内共臻兹路。",
@@ -5473,6 +5490,16 @@ game.import("character", function () {
 			"#huangzhong:die": "不得不服老啦~",
 			
 			// onlyOL
+			"#olmieji1": "喝了这杯酒，别再理这世间事！",
+	        "#olmieji2": "我欲借陛下性命一用。",
+	        "#dcfencheng_ol_liru1": "愿这火光，照亮董公西行之路！",
+	        "#dcfencheng_ol_liru2": "诸公且看，此火可戏天下诸侯否？",
+            "#ol_liru:die": "火熄人亡，都结束了。",
+			"#olganlu1": "吾家有女，当择良婿。",
+	        "#olganlu2": "今见玄德，真佳婿也。",
+            "#olbuyi1": "今植桑芜，可荫来者。",
+	        "#olbuyi2": "补气凝神，百邪不侵。",
+            "#ol_wuguotai:die": "竖子，何以胞妹为饵乎？",
 			"#jueqing_ol_zhangchunhua1": "情丝如雪，难当暖阳。",
 			"#jueqing_ol_zhangchunhua2": "有情总被无情负，绝情方无软肋生。",
 			"#shangshi_ol_zhangchunhua1": "伤我最深的，竟是你司马懿。",
@@ -8178,6 +8205,7 @@ game.import("character", function () {
 			"#star_sunshangxiang:die": "秋风冷，江水寒……",
 			
 			// standard
+			"#lidian:die": "报国杀敌，虽死犹荣……",
 			"#ganfuren:die": "请替我照顾好阿斗……",
 			"#std_panfeng:die": "潘凤又被华雄斩了……",
 			"#jianxiong1": "宁教我负天下人，休教天下人负我！",
@@ -9315,6 +9343,21 @@ game.import("character", function () {
 			"#xinfu_zhanji2": "功曹之恩，吾必有展骥之机。",
 			
 			// yijiang
+			"#yjqimei1": "此生愿作比翼鸟，双宿双飞不分离。",
+	        "#yjqimei2": "与君共度晨昏，此生之所愿。",
+	        "#yjzhuiji1": "此生与君相遇，足以含笑九泉。",
+	        "#yjzhuiji2": "夫君珍重，万望保重身体。",
+			"#yj_xuangongzhu:die":  "夫君，妾身先行一步",
+			"#beiyu1": "备预不虞，善之大者也。",
+	        "#beiyu2": "宜选步骑二万，为讨贼之备。",
+	        "#duchi1": "今督众将临战，当使敌入寇无功。",
+	        "#duchi2": "吴军远道而来，彼疲军也。",
+			"#yj_simafu:die": "臣死之日，固大魏之纯臣也。",
+			"#yjgongqiao1": "怀兼爱之心，琢世间百器。",
+            "#yjgongqiao2": "机巧用尽，方化腐朽为神奇！",
+            "#yjjingyi1": "精益求精，工如道，途无穷。",
+            "#yjjingyi2": "木可伐，石可破，技不可失。",
+            "#yj_majun:die": "龙骨坍夜陌，水尽百戏枯。",
 			"#xvzhi1": "鹿复现于野，孰不可射乎？",
 			"#xvzhi2": "天下之士合纵，欲复攻于秦。",
 			"#linghuyu:die": "咳咳……我欲谋大事，奈何命不由己……",
