@@ -4719,6 +4719,11 @@ game.import("character", function () {
 			"#yj_sb_guojia_shadow:die": "江湖路远，诸君，某先行一步……",
 			
 			// mobile
+			"#xingtu1": "制图之体有六，缺一不可言精。",
+	        "#xingtu2": "图设分率，则宇内地域皆可绘于一尺。",
+	        "#juezhi1": "复设五等之制，以解天下土崩之势。",
+	        "#juezhi2": "表为建爵五等，实则藩卫帝室。",
+	        "#peixiu:die": "既食寒石散，便不可饮冷酒啊……",
 			"#mbbojian1": "闻古者贤女，未有不学前事成败而以为己诫。",
 			"#mbbojian2": "视字辄识，方知何为礼义。",
 			"#mbjiwei1": "乱世之宝，非金银田产，而在仁心。",
