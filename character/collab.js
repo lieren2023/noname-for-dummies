@@ -5333,6 +5333,7 @@ game.import("character", function () {
 			"#scschihe1": "想见圣上？哼哼，你怕是没这个福分了！",
 			"#scsniqu1": "离心离德，为吾等所不容！",
 			"#scsanruo1": "小伤无碍，安心修养便可。",
+			"#shichangshi:die": "（魂魄散去的声音）",
 			"#wangzun_old_yuanshu1": "这玉玺，当然是能者居之。",
 			"#wangzun_old_yuanshu2": "我就是皇帝，我就是天！",
 			"#sbqingzheng_mb_caomao1": "朕虽不德，昧于大道，思与宇内共臻兹路。",
