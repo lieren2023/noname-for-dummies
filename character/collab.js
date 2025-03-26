@@ -4719,7 +4719,12 @@ game.import("character", function () {
 			"#yj_sb_guojia_shadow:die": "江湖路远，诸君，某先行一步……",
 			
 			// mobile
-            "#xin_zhoutai:die": "敌众我寡，无力回天……",
+            "#re_jikang:die": "多少遗恨，俱随琴音去……",
+            "#xin_sunliang:die": "今日欲诛逆臣而不得，方知机事不密则害成……",
+            "#xin_zhangfei:die": "桃园一拜，此生……无憾……",
+            "#xin_xiahoudun:die": "诸多败绩，有负丞相重托……",
+            "#re_guanqiujian:die": "峥嵘一生，然被平民所击射！",
+			"#xin_zhoutai:die": "敌众我寡，无力回天……",
 			"#xingtu1": "制图之体有六，缺一不可言精。",
 	        "#xingtu2": "图设分率，则宇内地域皆可绘于一尺。",
 	        "#juezhi1": "复设五等之制，以解天下土崩之势。",
