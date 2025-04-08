@@ -3876,6 +3876,15 @@ game.import("character", function () {
 			// diy
 			
 			// extra
+			"#1！5！1": "横眉蔑风雨，引弓狩天狼。", // 旧版神黄忠，特别提醒
+	        "#1！5！2": "一箭出，万军毙！", // 旧版神黄忠，特别提醒
+	        "#chiren1": "流不尽的英雄血，斩不尽的逆贼头！", // 旧版神黄忠，特别提醒
+	        "#chiren2": "长刀渴血，当饲英雄胆！", // 旧版神黄忠，特别提醒
+            "#dclieqiong1": "横眉蔑风雨，引弓狩天狼。", // 新版神黄忠
+	        "#dclieqiong2": "一箭出，万军毙！", // 新版神黄忠
+	        "#dczhanjue1": "流不尽的英雄血，斩不尽的逆贼头！", // 新版神黄忠
+	        "#dczhanjue2": "长刀渴血，当饲英雄胆！", // 新版神黄忠
+	        "#shen_huangzhong:die": "箭雨曾蔽日，今夕却成绝响。",
 			"#xinjilve1": "运筹成略，统军持国！",
 			"#xinjilve2": "英雄皆殁，天命终归吾司马一族！",
 			"#wansha_new_simayi1": "连诛其族，剪其党羽，以夷后患！",
@@ -3926,7 +3935,7 @@ game.import("character", function () {
 			"#qiexie2": "吾乃典韦是也，谁敢向前，谁敢向前！",
 			"#cuijue1": "当锋摧决，贯遐洞坚！",
 			"#cuijue2": "殒身不恤，死战成仁！",
-			"#shen_dianwei:die": "主公快走！",
+			"#shen_dianwei:die": "战死沙场，快哉快哉！",
 			"#dctuoyu1": "本尊目之所及，皆为麾下王土。",
 			"#dctuoyu2": "擎五丁之神力，碎万仞之高山。",
 			"#dcxianjin1": "大风！大雨！大景！！",
@@ -4714,6 +4723,23 @@ game.import("character", function () {
 			"#yj_sb_guojia_shadow:die": "江湖路远，诸君，某先行一步……",
 			
 			// mobile
+            "#re_xugong:die": "终究……还是被其所害……",
+            "#old_yuanshu:die": "可恶！就差……一步了……",
+            "#re_wangyun:die": "努力谢关东诸公，勤以国家为念！",
+            "#re_weiwenzhugezhi:die": "吾皆海岱清士，岂料生死易逝……",
+            "#mb_sunluyu:die": "姐姐，你且好自为之……",
+            "#re_baosanniang:die": "我还想与你，共骑这雪花驹……",
+            "#re_jikang:die": "多少遗恨，俱随琴音去……",
+            "#xin_zhoucang:die": "九泉之下，仓陪将军再走一遭……",
+            "#re_guanqiujian:die": "峥嵘一生，然被平民所击射！",
+            "#xin_sunliang:die": "今日欲诛逆臣而不得，方知机事不密则害成……",
+            "#re_sp_zhugeliang:die": "我的计谋竟被……",
+            "#xin_zhoutai:die": "敌众我寡，无力回天……",
+            "#xin_xiahoudun:die": "诸多败绩，有负丞相重托……",
+            "#xin_zhangfei:die": "桃园一拜，此生……无憾……",
+            "#shichangshi:die": "（魂魄散去的声音）",
+            "#xin_wuban:die": "恨，杀不尽吴狗！",
+            "#tw_huojun:die": "恨，不能与使君共成霸业……",
 			"#mbbojian1": "闻古者贤女，未有不学前事成败而以为己诫。",
 			"#mbbojian2": "视字辄识，方知何为礼义。",
 			"#mbjiwei1": "乱世之宝，非金银田产，而在仁心。",
@@ -6954,6 +6980,20 @@ game.import("character", function () {
 			"#spmiewu2": "吾军势如破竹，江东六郡唾手可得。",
 			
 			// sp
+			"#olhunjiang1": "边野有豪强，敢执干戈动玄黄！",
+	        "#olhunjiang2": "漫天浑雪，弥散八荒。",
+	        "#mawan:die": "曹贼势大，唯避其锋芒。",
+            "#olrenxia1": "俊毅如风，任胸中长虹惊云。",
+            "#olrenxia2": "侠之大者，为国为民。",
+            "#wangkuang:die": "人心不古，世态炎凉。",
+            "#oljieyan1": "父高居殿陛，德当配其位。",
+	        "#oljieyan2": "君子慎行，阿耶固君子，应有所不为。",
+	        "#oljinghua1": "白驹失蹄，踏断谁家黄花？",
+	        "#oljinghua2": "镜中花败，万般皆是虚影。",
+	        "#olshuiyue1": "灵犀失乌角，奔于野，触山壁。",
+	        "#olshuiyue2": "水中捧明月，月碎万点星光。",
+	        "#ol_yuanji:die": "空捧冰心抱玉壶。",
+            "#ol_zhangchangpu:die": "我还是小看了，孙氏的伎俩……",
 			"#olpingduan1": "草原儿郎，张弓善射，勇不可当。",
 			"#olpingduan2": "策马逐雄鹰，孤当与尔等共分天下。",
 			"#ol_kebineng:die": "未驱青马饮于黄河，死难瞑目……",
@@ -7755,6 +7795,11 @@ game.import("character", function () {
 			"#yadan:die": "多谢丞相不杀之恩……",
 			
 			// sp2
+            "#dc_jikang:die": "多少遗恨，俱随琴音去……",
+            "#re_quyi:die": "为主公戎马一生，主公为何如此对我！",
+            "#dc_jsp_guanyu:die": "樊城一去，死亦无惧！",
+            "#re_niujin:die": "这酒有毒！",
+            "#re_hejin:die": "不能遗祸世间……",
 			"#staranshu1": "与民休养生息，则国可得安泰。",
 			"#staranshu2": "春种其粟，秋得其实。",
 			"#starkuangzuo1": "吾辈向汉，当矢志不渝，不可坐视神州陆沉。",
@@ -8178,6 +8223,7 @@ game.import("character", function () {
 			"#star_sunshangxiang:die": "秋风冷，江水寒……",
 			
 			// standard
+            "#lidian:die": "报国杀敌，虽死犹荣……",
 			"#ganfuren:die": "请替我照顾好阿斗……",
 			"#std_panfeng:die": "潘凤又被华雄斩了……",
 			"#jianxiong1": "宁教我负天下人，休教天下人负我！",
@@ -8706,6 +8752,40 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+            "#dc_guansuo:die": "只恨天下未平，空留遗志……",
+            "#dc_zhaoxiang:die": "遁入阴影之中……",
+            "#xin_baosanniang:die": "我还想与你，共骑这雪花驹……",
+            "#dcyanzuo1": "提笔欲续出师表，何日重登蜀道？",
+	        "#dcyanzuo2": "我族以诗书传家，苑中未绝琅琅。",
+	        "#dczuyin1": "蒙先祖之佑，未觉春秋之寒。",
+	        "#dczuyin2": "我本孺子，幸得父祖遮风挡雨。",
+	        "#dcpijian1": "神思凝慧剑，当悬宵小之颈。",
+	        "#dcpijian2": "仗剑凌天下，汝忘武侯否！",
+	        "#zhugejing:die": "子孙不肖，徒遗泪胡尘。",
+            "#re_xinxianying:die": "吾一生明鉴，竟错看于你……",
+            "#dc_sp_machao:die": "西凉，回不去了……",
+            "#dckengqiang1": "女子着征袍，战意越关山。",
+	        "#dckengqiang2": "兴武效妇好，挥钺断苍穹！",
+	        "#dckuichi1": "久战沙场，遗伤无数。",
+	        "#dckuichi2": "人无完人，千虑亦有一失。",
+	        "#dckunli1": "回首万重山，难阻轻舟一叶。",
+	        "#dckunli2": "已过山穷水尽，前有柳暗花明。",
+	        "#dcshangjue1": "伯约，奈何桥畔，再等我片刻。",
+	        "#dcshangjue2": "与君同生共死，岂可空待黄泉！",
+	        "#wenyuan:die": "伯约，回家了。",
+            "#dczhangji1": "功赏过惩，此魏武所教我者。",
+            "#dczhangji2": "长公主之言，谁敢不从？",
+            "#dczengou1": "既已同床异梦，休怪妾身无情。",
+            "#dczengou2": "我所恨者，唯夏侯子林一人耳。",
+            "#dc_qinghegongzhu:die": "夏侯楙，不能和好，为何不和离？",
+            "#dc_shixie:die": "我这一生，足矣……",
+            "#dc_ganfuren:die": "请替我照顾好阿斗……",
+            "#re_zhangbao:die": "黄天……为何？！",
+            "#old_huangfusong:die": "吾只恨黄巾未平，不能报效朝廷……",
+             "#dcdufeng1": "不畏死者，都随我来！",
+            "#dcdufeng2": "大功当前，小损又何妨！",
+            "#dc_lingcao:die": "甘宁小儿，为何暗箭伤人！",
+            "#dc_xiahouba:die": "弃魏投蜀，死而无憾……",
 			"#dcsbkongwu1": "莫说兵器，取汝首级也易如反掌。",
 			"#dcsbkongwu2": "臂有千斤力，何惧万人敌。",
 			"#dc_sb_hucheer:die": "典……典将军，您还没睡啊……",
@@ -9315,6 +9395,21 @@ game.import("character", function () {
 			"#xinfu_zhanji2": "功曹之恩，吾必有展骥之机。",
 			
 			// yijiang
+			"#yjgongqiao1": "怀兼爱之心，琢世间百器。",
+	        "#yjgongqiao2": "机巧用尽，方化腐朽为神奇！",
+	        "#yjjingyi1": "精益求精，工如道，途无穷。",
+	        "#yjjingyi2": "木可伐，石可破，技不可失。",
+	        "#yj_majun:die": "龙骨坍夜陌，水尽百戏枯。",
+	        "#yjqimei1": "此生愿作比翼鸟，双宿双飞不分离。",
+	        "#yjqimei2": "与君共度晨昏，此生之所愿。",
+	        "#yjzhuiji1": "此生与君相遇，足以含笑九泉。",
+	        "#yjzhuiji2": "夫君珍重，万望保重身体。",
+	        "#yj_xuangongzhu:die": "夫君，妾身先行一步。",
+            "#beiyu1": "备预不虞，善之大者也。",
+	        "#beiyu2": "宜选步骑二万，为讨贼之备。",
+	        "#duchi1": "今督众将临战，当使敌入寇无功。",
+	        "#duchi2": "吴军远道而来，彼疲军也。",
+	        "#yj_simafu:die": "臣死之日，固大魏之纯臣也。",
 			"#xvzhi1": "鹿复现于野，孰不可射乎？",
 			"#xvzhi2": "天下之士合纵，欲复攻于秦。",
 			"#linghuyu:die": "咳咳……我欲谋大事，奈何命不由己……",
