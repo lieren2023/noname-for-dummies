@@ -1174,6 +1174,40 @@ content:function(config,pack){
 	
 	// 右键菜单修改
 	if(config.youjiancaidan){
+		// 修复滚轮滚动问题（右键菜单更改皮肤）
+		ui.click.mousewheel=function(evt) {
+			if (
+				this.firstChild &&
+				this.firstChild.classList.contains("handcards") &&
+				!this.classList.contains("scrollh")
+			)
+				return;
+			var node = this;
+			var num = this._scrollnum || 6;
+			var speed = this._scrollspeed || 16;
+			
+			// 阻止默认行为（防止滚轮事件冒泡到父元素触发垂直滚动）
+			evt.preventDefault();
+			
+			clearInterval(node.interval);
+			if (evt.detail > 0 || evt.wheelDelta < 0) {
+				node.interval = setInterval(function () {
+					if (num-- && Math.abs(node.scrollLeft + node.clientWidth - node.scrollWidth) > 0) {
+						node.scrollLeft += speed;
+					} else {
+						clearInterval(node.interval);
+					}
+				}, 16);
+			} else {
+				node.interval = setInterval(function () {
+					if (num-- && node.scrollLeft > 0) {
+						node.scrollLeft -= speed;
+					} else {
+						clearInterval(node.interval);
+					}
+				}, 16);
+			}
+		};
 		// 修复三板斧不能正常显示的bug
 		function addBrAndSpace(str) {
 			// 如果字符串长度小于等于2，则原样返回

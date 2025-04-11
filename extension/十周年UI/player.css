@@ -1509,3 +1509,87 @@
 		top: 5px !important;
 	}
 }
+
+/* 国战围攻队列标记美化 */
+/*国战围*/
+.guozhanwei{
+	display: block;
+	position: absolute;
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_wei.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}
+/*国战魏队*/
+.guozhanweidui{
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_weidui.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}
+/*国战蜀队*/
+.guozhanshudui{
+	display: block;
+	position: absolute;
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_shudui.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}
+/*国战吴队*/
+.guozhanwudui{
+	display: block;
+	position: absolute;
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_wudui.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}
+/*国战群队*/
+.guozhanqundui{
+	display: block;
+	position: absolute;
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_qundui.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}
+/*国战晋队*/
+.guozhanjindui{
+	display: block;
+	position: absolute;
+	background-color: none;
+	background-repeat: no-repeat;
+	background-image: url('assets/image/game_gz_jindui.png');
+	background-size: 100% 100%;
+	width:30px;
+	height:30px;
+	left: 118px;
+	bottom: 152px;
+	z-index:150 !important;
+}

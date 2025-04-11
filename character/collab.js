@@ -764,6 +764,7 @@ game.import("character", function () {
 						},
 						charlotte: true,
 						skillBlocker(skill) {
+							if (lib.skill[skill].persevereSkill) return false;
 							return !["zhijian", "guzheng"].includes(skill) && skill != "dchuanli_zhangzhang" && !lib.skill[skill].charlotte;
 						},
 					},
@@ -777,6 +778,7 @@ game.import("character", function () {
 						},
 						charlotte: true,
 						skillBlocker(skill) {
+							if (lib.skill[skill].persevereSkill) return false;
 							return !["reyingzi", "refanjian"].includes(skill) && skill != "dchuanli_zhouyu" && !lib.skill[skill].charlotte;
 						},
 					},

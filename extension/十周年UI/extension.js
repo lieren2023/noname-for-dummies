@@ -1692,6 +1692,70 @@ content:function(config, pack){
 			}
 		};
 	}
+	// 国战围攻队列标记美化（默认关闭，搬运自标记补充扩展）
+	if (config.szn_weigongduilie) {
+		//国战阵法
+		lib.skill._guozhan_duiweibiaoji_gua_ = {
+			trigger: { global: ['showCharacterAfter', 'dieAfter', 'phaseZhunbeiAfter'] },
+			forced: true,
+			silent: true,
+			filter: function (event, player) {
+				return lib.config.mode == 'guozhan';
+			},
+			content: function () {
+				var shang = player.getPrevious()?get.translation(player.getPrevious().group):'未知';
+				var xia = player.getNext()?get.translation(player.getNext().group):'未知';
+				var ziji = get.translation(player.group);
+				if ((xia == ziji && xia != '未知' && ziji != '未知') || (shang == ziji && shang != '未知' && ziji != '未知')) {
+					if (ziji == '魏') { ui.create.div('.guozhanweidui', player); }
+					if (ziji == '蜀') { ui.create.div('.guozhanshudui', player); }
+					if (ziji == '吴') { ui.create.div('.guozhanwudui', player); }
+					if (ziji == '群') { ui.create.div('.guozhanqundui', player); }
+					if (ziji == '晋') { ui.create.div('.guozhanjindui', player); }
+				}
+				//围
+				if (shang == xia && shang != ziji && xia != ziji && shang != '未知' && xia != '未知' && player.getPrevious() != player.getNext()) {
+					ui.create.div('.guozhanwei', player);
+				}
+			},
+		};
+		//删除阵法
+		lib.skill._guozhan_duiweibiaoji_gua_gua_ = {
+			trigger: { global: ['showCharacterEnd', 'dieEnd', 'phaseZhunbeiEnd'] },
+			forced: true,
+			silent: true,
+			forceDie: true,
+			filter: function (event, player) {
+				return lib.config.mode == 'guozhan';
+			},
+			content: function () {
+				//有时候player.getPrevious()这些会出现null值，暂改修复
+				var shang = player.getPrevious()?get.translation(player.getPrevious().group):false;
+				var xia = player.getNext()?get.translation(player.getNext().group):false;
+				var ziji = get.translation(player.group);
+				//if(xia!=ziji&&xia!='未知'&&ziji!='未知'&&shang!=ziji&&shang!='未知'){     
+				for (var i = 0; i < 3; i++) {
+					var scweidui = document.querySelector('.guozhanweidui');
+					if (scweidui) { scweidui.parentNode.removeChild(scweidui); }
+					var scwudui = document.querySelector('.guozhanwudui');
+					if (scwudui) { scwudui.parentNode.removeChild(scwudui); }
+					var scshudui = document.querySelector('.guozhanshudui');
+					if (scshudui) { scshudui.parentNode.removeChild(scshudui); }
+					var scqundui = document.querySelector('.guozhanqundui');
+					if (scqundui) { scqundui.parentNode.removeChild(scqundui); }
+					var scjindui = document.querySelector('.guozhanjindui');
+					if (scjindui) { scjindui.parentNode.removeChild(scjindui); }
+				}
+				// }           
+				// if(shang!=xia && shang!=ziji && xia!=ziji && shang!='未知' && xia!='未知'){
+				for (var i = 0; i < 3; i++) {
+					var scwei = document.querySelector('.guozhanwei');
+					if (scwei) { scwei.parentNode.removeChild(scwei); }
+				}
+				//  }        
+			},
+		};
+	}
 	
 	if(lib.config.mode=='versus'){
 		// 修复对决-自由模式选将时按钮偏上的异常
@@ -7764,6 +7828,10 @@ content:function(config, pack){
 		if(lib.skill.sptuji2 != undefined){
 			lib.skill.sptuji2.marktext = "突骑";
 		}
+		// 星荀彧匡祚标记修改
+		if(lib.skill.starchengfeng != undefined){
+			lib.skill.starchengfeng.marktext = "匡祚";
+		}
 		// ☆曹植流殇标记修改
 		if(lib.skill.psliushang != undefined){
 			lib.skill.psliushang.marktext = "流殇";
@@ -7984,10 +8052,13 @@ content:function(config, pack){
 		if(lib.skill.yechou2 != undefined){
 			lib.skill.yechou2.marktext = "业仇";
 		}
-		// 承许贡表召标记修改
+		// 承许贡表召、业仇标记修改
 		if(lib.skill.jsrgbiaozhao != undefined){
 			lib.skill.jsrgbiaozhao.subSkill.A.marktext = "表召";
 			lib.skill.jsrgbiaozhao.subSkill.B.marktext = "表召";
+		}
+		if(lib.skill.jsrgyechou != undefined){
+			lib.skill.jsrgyechou.subSkill.effect.marktext = "业仇";
 		}
 		// 界曹真司标记修改
 		if(lib.skill.residi != undefined){
@@ -17546,6 +17617,7 @@ config:{
 				'<br>③ 新增旧版配音系统开关选项，开启后，将启用旧版配音系统，支持.ogg格式配音播放（默认开启），若遇冲突请关闭本选项！'+
 				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效；开启后，非国战模式选项-外观-体力条样式-勾玉无法更改。'+
 				'<br>- 国战其他魔改：国战隐匿美化（搬运自零二魔改版，修复邹氏等武将暗置武将牌后的显示问题、修复换人/重新选将后的显示问题等）、适配露头；鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
+				'<br>- 新增国战围攻队列标记美化开关选项，默认关闭，搬运自标记补充扩展。'+
 				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
 				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
 				'<br>- 新增富甲天下配置选项，开启富甲天下扩展后，可对toast提示和音效进行设置，即时生效（默认配置为toast提示：关闭、音效：开启）。'+
@@ -18091,6 +18163,11 @@ config:{
 			if (window.decadeUI) ui.arena.dataset.playerMarkStyle = lib.config['extension_十周年UI_playerMarkStyle'];
 		}
     },
+	"szn_weigongduilie": {
+		name: '国战围攻队列标记美化',
+		init: false,
+		intro: '开启后，在国战模式，对围攻队列标记进行美化。',
+	},
 	szn_fenjiexian27:{
 		clear:true,
 		name:"<font size='3'><li>手牌数/上限显示</font>",
