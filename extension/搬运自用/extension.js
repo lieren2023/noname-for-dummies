@@ -11,6 +11,46 @@ game.import("extension",function(lib,game,ui,get,ai,_status){
 return {
 name:"搬运自用",
 content:function(config,pack){
+	// 特效/界面错位解决方案
+	// 扩展：特效修复，作者：梨花喵🐱，魔改：棘手怀念摧毁
+	// 注1：特效错位已修复——手机端测试通过（新版Android System WebView导致，据反馈是127以上版本有此问题）；电脑端测试通过
+	// 注2：界面错位已修复——菜单蓝色光标、子菜单位置，结合棘手懒人包的十周年UI/menu.js修复（3处界面错位修复）
+	// 特效错位修复
+	game.getChromeVersion = function () {
+		const userAgent = navigator.userAgent;
+		if (userAgent.indexOf("Chrome") > -1) {
+			const versionMatch = userAgent.match(/Chrome\/(\d+)/);
+			if (versionMatch && versionMatch[1]) {
+				return parseInt(versionMatch[1]);
+			}
+		}
+		return 0;
+	};
+	if (game.getChromeVersion() >= 128) {
+		const gBC = HTMLElement.prototype.getBoundingClientRect;
+		HTMLElement.prototype.getBoundingClientRect = function getBoundingClientRect() {
+			let {bottom, height, left, right, top, width, x, y} = gBC.call(this);
+			bottom /= game.documentZoom;
+			height /= game.documentZoom;
+			left /= game.documentZoom;
+			right /= game.documentZoom;
+			top /= game.documentZoom;
+			width /= game.documentZoom;
+			x /= game.documentZoom;
+			y /= game.documentZoom;
+			return {
+				bottom,
+				height,
+				left,
+				right,
+				top,
+				width,
+				x,
+				y
+			};
+		}
+	}
+	
 	// 临时修复塔防等模式的武将显示问题
 	if(!['chess', 'tafang', 'stone'].includes(get.mode())){
 		// 按钮宽度调整（武将/卡牌的全部禁用/全部启用）
@@ -146,7 +186,7 @@ content:function(config,pack){
 		lib.characterTitle.handang = "石城侯";
 		lib.characterTitle.fuhuanghou = "孤注一掷";
 		lib.characterTitle.zhonghui = "桀骜的野心家";
-		lib.characterTitle.jianyong = "优游风议";
+		lib.characterTitle.jianyong = "悠游风议";
 		lib.characterTitle.old_madai = "临危受命";
 		lib.characterTitle.liufeng = "骑虎之殇";
 		lib.characterTitle.manchong = "政法兵谋";
@@ -196,15 +236,15 @@ content:function(config,pack){
 		lib.characterTitle.xuezong = "彬彬之玊";
 		lib.characterTitle.old_huaxiong = "魔将";
 		lib.characterTitle.yujin = "讨暴坚垒";
-		lib.characterTitle.linghuyu = "";
-		lib.characterTitle.yj_simafu = "";
-		lib.characterTitle.yj_xuangongzhu = "";
+		lib.characterTitle.linghuyu = "名愚性浚";
+		lib.characterTitle.yj_simafu = "仁孝忠德";
+		lib.characterTitle.yj_xuangongzhu = "高陵翩蝶";
 		lib.characterTitle.xukun = "平虏击逆";
-		lib.characterTitle.yj_majun = "";
+		lib.characterTitle.yj_majun = "名巧天下";
 		// extra:'神将',
 		lib.characterTitle.shen_huangzhong = "战意破苍穹";
-		lib.characterTitle.new_simayi = "";
-		lib.characterTitle.xin_simayi = "";
+		lib.characterTitle.new_simayi = "晋国之祖";
+		lib.characterTitle.xin_simayi = lib.characterTitle.new_simayi;
 		lib.characterTitle.dc_shen_huatuo = "灵魂的医者";
 		lib.characterTitle.shen_xuzhu = "嗜战的熊罴";
 		lib.characterTitle.shen_lusu = "兴吴之邓禹";
@@ -229,7 +269,7 @@ content:function(config,pack){
 		lib.characterTitle.shen_zhugeliang = "赤壁的妖术师";
 		lib.characterTitle.shen_lvmeng = "圣光之国士";
 		lib.characterTitle.shen_zhouyu = "赤壁的火神";
-		lib.characterTitle.shen_simayi = "晋国之祖";
+		lib.characterTitle.shen_simayi = lib.characterTitle.new_simayi;
 		lib.characterTitle.shen_caocao = "超世之英杰";
 		lib.characterTitle.shen_lvbu = "修罗之道";
 		lib.characterTitle.shen_liubei = "誓守桃园义";
@@ -241,30 +281,35 @@ content:function(config,pack){
 		lib.characterTitle.shen_zhenji = "洛水凌波";
 		lib.characterTitle.boss_zhaoyun = "天龙乘云";
 		// onlyOL:'OL专属',
-		lib.characterTitle.ol_caozhang = "";
-		lib.characterTitle.ol_jianyong = "";
-		lib.characterTitle.ol_lingtong = "";
-		lib.characterTitle.ol_gaoshun = "";
-		lib.characterTitle.ol_yufan = "";
-		lib.characterTitle.ol_chengpu = "";
-		lib.characterTitle.ol_wangyi = "";
-		lib.characterTitle.ol_fazheng = "";
-		lib.characterTitle.ol_caifuren = "";
-		lib.characterTitle.ol_liru = "";
-		lib.characterTitle.ol_liubiao = "";
-		lib.characterTitle.ol_wuguotai = "";
-		lib.characterTitle.ol_zhangchunhua = "";
-		lib.characterTitle.ol_caochong = "";
-		lib.characterTitle.caiyang = "";
+		lib.characterTitle.ol_caozhang = lib.characterTitle.caozhang;
+		lib.characterTitle.ol_jianyong = lib.characterTitle.jianyong;
+		lib.characterTitle.ol_lingtong = lib.characterTitle.lingtong;
+		lib.characterTitle.ol_gaoshun = lib.characterTitle.gaoshun;
+		lib.characterTitle.ol_yufan = lib.characterTitle.yufan;
+		lib.characterTitle.ol_chengpu = lib.characterTitle.chengpu;
+		lib.characterTitle.ol_wangyi = lib.characterTitle.wangyi;
+		lib.characterTitle.ol_fazheng = lib.characterTitle.xin_fazheng;
+		lib.characterTitle.ol_caifuren = lib.characterTitle.caifuren;
+		lib.characterTitle.ol_liru = lib.characterTitle.xin_liru;
+		lib.characterTitle.ol_liubiao = lib.characterTitle.liubiao;
+		lib.characterTitle.ol_wuguotai = lib.characterTitle.wuguotai;
+		lib.characterTitle.ol_zhangchunhua = lib.characterTitle.zhangchunhua;
+		lib.characterTitle.ol_caochong = lib.characterTitle.caochong;
+		lib.characterTitle.ol_caozhi = lib.characterTitle.caozhi;
+		lib.characterTitle.cuiyan = "伯夷之风";
+		lib.characterTitle.huangfusong = "志定雪霜";
+		lib.characterTitle.sp_dongzhuo = lib.characterTitle.dongzhuo;
+		lib.characterTitle.hanba = "如惔如焚";
+		lib.characterTitle.caiyang = "古城勇将";
 		// sbfm: "上兵伐谋",
-		lib.characterTitle.ol_sb_yuanshu = "";
+		lib.characterTitle.ol_sb_yuanshu = "画脂镂冰";
 		lib.characterTitle.ol_sb_sunjian = "乌程侯";
 		lib.characterTitle.ol_sb_jiangwei = "炎志灼心";
 		lib.characterTitle.ol_sb_guanyu = "威震华夏";
 		lib.characterTitle.ol_sb_taishici = "矢志全忠孝";
 		lib.characterTitle.ol_sb_yuanshao = "席卷八荒";
 		lib.characterTitle.ol_sb_pangtong = "定鼎巴蜀";
-		lib.characterTitle.ol_sb_kongrong = "";
+		lib.characterTitle.ol_sb_kongrong = "豪气贯长虹";
 		// sp:'璀璨星河',
 		lib.characterTitle.hansui = "雄踞北疆";
 		lib.characterTitle.fanjiangzhangda = "你死我亡";
@@ -331,7 +376,8 @@ content:function(config,pack){
 		lib.characterTitle.yanjun = "志存补益";
 		lib.characterTitle.liuyao = "宗英外镇";
 		lib.characterTitle.liuyan = "裂土之宗";
-		lib.characterTitle.star_zhangzhao = "";
+		lib.characterTitle.star_xunyu = "怀忠念治";
+		lib.characterTitle.star_zhangzhao = "忠謇方直";
 		lib.characterTitle.star_sunjian = "破虏将军";
 		lib.characterTitle.star_zhangchunhua = "皑雪皎月";
 		lib.characterTitle.star_yuanshao = "熏灼群魔";
@@ -340,10 +386,12 @@ content:function(config,pack){
 		lib.characterTitle.star_caoren = "伏波四方";
 		lib.characterTitle.star_sunshangxiang = "鸳袖衔剑珮";
 		// mdtx: "谋定天下",
+		lib.characterTitle.dc_sb_chenlin = "文翻云海";
 		lib.characterTitle.dc_sb_jushou = "忠不逢时";
 		lib.characterTitle.dc_sb_chengyu = "沐风知秋";
 		lib.characterTitle.yj_sb_guojia = "翼谋奇佐";
 		lib.characterTitle.dc_sb_zhangxiu = "凌枪破宛";
+		lib.characterTitle.dc_sb_hucheer = "有力逮戟";
 		lib.characterTitle.dc_sb_guanping = "百战烈烈";
 		lib.characterTitle.dc_sb_caoang = "两全忠孝";
 		lib.characterTitle.dc_sb_dianwei = "狂战怒莽";
@@ -370,6 +418,7 @@ content:function(config,pack){
 		lib.characterTitle.liuyong = "甘陵王";
 		lib.characterTitle.zhangxuan = "玉宇嫁蔷";
 		// xianding:'限定专属',
+		lib.characterTitle.wu_huangfusong = "";
 		lib.characterTitle.sp_zhenji = "善言贤女";
 		lib.characterTitle.wu_guanyu = "义武千秋";
 		lib.characterTitle.caofang = "迷瞑终觉";
@@ -407,6 +456,7 @@ content:function(config,pack){
 		lib.characterTitle.mb_wangjing = "青云孤竹";
 		lib.characterTitle.re_xugong = "独计击流";
 		// sb:'谋攻篇',
+		lib.characterTitle.sb_zhugejin = "才猷蕴借";
 		lib.characterTitle.sb_jiaxu = "计深似海";
 		lib.characterTitle.sb_handang = lib.characterTitle.handang;
 		lib.characterTitle.sb_gongsunzan = "劲震幽土";
@@ -495,16 +545,16 @@ content:function(config,pack){
 		lib.characterTitle.sp_sunshao = "创基抉政";
 		lib.characterTitle.sp_xunchen = "谋刃略锋";
 		// tw:'外服武将',
-		lib.characterTitle.huan_luxun = "";
-		lib.characterTitle.huan_liushan = "";
+		lib.characterTitle.huan_luxun = "审机而行";
+		lib.characterTitle.huan_liushan = "汉祚永延";
 		lib.characterTitle.licuilianzhaoquanding = "望子成龙";
 		lib.characterTitle.huan_zhugeliang = "天意可叹";
 		lib.characterTitle.huan_jiangwei = "麒麟擎汉";
 		lib.characterTitle.huan_zhugeguo = "悠游清汉";
 		lib.characterTitle.huan_zhanghe = "追敌入彀";
 		lib.characterTitle.huan_zhaoyun = "天武耆龙";
-		lib.characterTitle.huan_simayi = "";
-		lib.characterTitle.huan_weiyan = "";
+		lib.characterTitle.huan_simayi = "权谋并施";
+		lib.characterTitle.huan_weiyan = "自矜功伐";
 		lib.characterTitle.tw_yanliang = "何惧华雄";
 		lib.characterTitle.tw_wenchou = "有去无回";
 		lib.characterTitle.tw_niufudongxie = "虺伴蝎行";
@@ -597,6 +647,11 @@ content:function(config,pack){
 		lib.characterTitle.jsrg_yl_luzhi = "眸宿渊渟";
 		lib.characterTitle.jsrg_chenfan = "不畏强御";
 		lib.characterTitle.jsrg_zhangju = "草头天子";
+		lib.characterTitle.jsrg_jiananfeng = "";
+		lib.characterTitle.jsrg_wenyang = "";
+		lib.characterTitle.jsrg_zhugedan = "";
+		lib.characterTitle.jsrg_wangjun = "";
+		lib.characterTitle.jsrg_limi = "";
 		// sixiang: "四象封印",
 		lib.characterTitle.std_sunhao = "";
 		lib.characterTitle.std_mateng = "勇冠西州";
@@ -631,16 +686,39 @@ content:function(config,pack){
 		lib.characterTitle.std_zhonghui = "";
 		lib.characterTitle.std_huaxin = "";
 		// collab:'联动卡',
+		lib.characterTitle.liuxiecaojie = "";
 		lib.characterTitle.dc_zhaoyun = lib.characterTitle.boss_zhaoyun;
 		lib.characterTitle.dc_sunce = lib.characterTitle.sunce;
+		lib.characterTitle.nezha = "";
 		lib.characterTitle.dc_caocao = lib.characterTitle.caocao;
 		lib.characterTitle.dc_liubei = lib.characterTitle.liubei;
 		lib.characterTitle.dc_sunquan = lib.characterTitle.sunquan;
+		lib.characterTitle.zhutiexiong = "";
+		lib.characterTitle.wu_zhutiexiong = "";
+		lib.characterTitle.xiaoyuehankehan = "";
+		lib.characterTitle.libai = "";
+		lib.characterTitle.sunwukong = "";
+		lib.characterTitle.longwang = "";
+		lib.characterTitle.taoshen = "";
+		lib.characterTitle.sunyang = "";
+		lib.characterTitle.yeshiwen = "";
+		lib.characterTitle.sp_jiben = "";
+		lib.characterTitle.sp_fuhuanghou = "";
+		lib.characterTitle.sp_fuwan = "";
+		lib.characterTitle.old_lingju = "";
+		lib.characterTitle.sp_mushun = "";
 		lib.characterTitle.dc_wuyi = lib.characterTitle.wuyi;
+		lib.characterTitle.quyuan = "";
+		lib.characterTitle.xin_sunquan = "";
+		lib.characterTitle.wuhujiang = "";
+		lib.characterTitle.dc_noname = "";
+		lib.characterTitle.xunyuxunyou = "";
 		lib.characterTitle.mp_wangrong = "善发谈端";
 		lib.characterTitle.mp_liuling = "醉侯";
+		lib.characterTitle.mp_xiangxiu = "出尘窥冥";
 		// old:'怀旧',
 		lib.characterTitle.old_shen_huangzhong = lib.characterTitle.shen_huangzhong;
+		lib.characterTitle.junk_zhangjiao = lib.characterTitle.shen_zhangjiao;
 		lib.characterTitle.old_shen_zhaoyun = lib.characterTitle.shen_zhaoyun;
 		lib.characterTitle.old_caocao = lib.characterTitle.shen_caocao;
 		// lib.characterTitle.junk_sunquan = lib.characterTitle.shen_sunquan;
@@ -664,11 +742,11 @@ content:function(config,pack){
 		lib.characterTitle.gz_sunquan = lib.characterTitle.sunquan;
 		lib.characterTitle.gz_zhangjiao = lib.characterTitle.sp_zhangjiao;
 		
-		lib.characterTitle.gz_dianwei = "";
-		lib.characterTitle.gz_guanyu = "";
-		lib.characterTitle.gz_sunjian = "";
-		lib.characterTitle.gz_lvbu = "";
-		lib.characterTitle.gz_jin_simashi = "";
+		lib.characterTitle.gz_dianwei = lib.characterTitle.dianwei;
+		lib.characterTitle.gz_guanyu = lib.characterTitle.ol_sb_guanyu;
+		lib.characterTitle.gz_sunjian = "魂佑江东";
+		lib.characterTitle.gz_lvbu = "戟指中原";
+		lib.characterTitle.gz_jin_simashi = lib.characterTitle.jin_simashi;
 		
 		lib.characterTitle.gz_wujing = "汗马鎏金";
 		lib.characterTitle.gz_wenqin = "勇而无算";
@@ -852,7 +930,8 @@ content:function(config,pack){
 			true,
 			'lib.characterPack.mode_guozhan.gz_lvbu',
 			isguozhanmode,
-		], '骁勇无敌，善战无前，然勇而少谋，暴而少仁。', '——陈宫');
+		// ], '骁勇无敌，善战无前，然勇而少谋，暴而少仁。', '——陈宫'); // 旧版
+		], '吕布壮士，善战无前。', '——陈宫');
 		setWuJiangYinWenTranslation([
 			'lib.characterPack.extra.shen_lvbu',
 			true,
@@ -1095,6 +1174,40 @@ content:function(config,pack){
 	
 	// 右键菜单修改
 	if(config.youjiancaidan){
+		// 修复滚轮滚动问题（右键菜单更改皮肤）
+		ui.click.mousewheel=function(evt) {
+			if (
+				this.firstChild &&
+				this.firstChild.classList.contains("handcards") &&
+				!this.classList.contains("scrollh")
+			)
+				return;
+			var node = this;
+			var num = this._scrollnum || 6;
+			var speed = this._scrollspeed || 16;
+			
+			// 阻止默认行为（防止滚轮事件冒泡到父元素触发垂直滚动）
+			evt.preventDefault();
+			
+			clearInterval(node.interval);
+			if (evt.detail > 0 || evt.wheelDelta < 0) {
+				node.interval = setInterval(function () {
+					if (num-- && Math.abs(node.scrollLeft + node.clientWidth - node.scrollWidth) > 0) {
+						node.scrollLeft += speed;
+					} else {
+						clearInterval(node.interval);
+					}
+				}, 16);
+			} else {
+				node.interval = setInterval(function () {
+					if (num-- && node.scrollLeft > 0) {
+						node.scrollLeft -= speed;
+					} else {
+						clearInterval(node.interval);
+					}
+				}, 16);
+			}
+		};
 		// 修复三板斧不能正常显示的bug
 		function addBrAndSpace(str) {
 			// 如果字符串长度小于等于2，则原样返回
@@ -12765,6 +12878,9 @@ config:{
 				'<br>※ 禁用武将切换功能<br>- 原作者为157，搬运自官将重修扩展<br>- 默认关闭此选项，开启后将在选将时禁用武将切换功能'+
 				'<br>'+
 				'<br>▷ 其他<br>- 参考将灵重置版扩展、群英荟萃乀摧林扩展，实现选项菜单的折叠'+
+				'<br>'+
+				'<br>▷ 特效/界面错位解决方案'+
+				'<br>※ 特效错位修复<br>- 原作者为梨花喵🐱，搬运自特效修复扩展'+
 				'<br>'
 				);
 				this.parentNode.insertBefore(more,this.nextSibling);
@@ -14807,11 +14923,11 @@ config:{
 				gameplayers3.node.avatar.setBackgroundImage("image/skin/" + name3 + "/" + num3 + ".jpg");
 				var name4="sp_huaman",num4=3;
 				gameplayers4.node.avatar.setBackgroundImage("image/skin/" + name4 + "/" + num4 + ".jpg");
-				var name5="sunluban",num5=10;
+				var name5="sunluban",num5=11;
 				gameplayers5.node.avatar.setBackgroundImage("image/skin/" + name5 + "/" + num5 + ".jpg");
 				var name6="wanniangongzhu",num6=4;
 				gameplayers6.node.avatar.setBackgroundImage("image/skin/" + name6 + "/" + num6 + ".jpg");
-				var name7="sunshangxiang",num7=12;
+				var name7="sunshangxiang",num7=13;
 				gameplayers7.node.avatar.setBackgroundImage("image/skin/" + name7 + "/" + num7 + ".jpg");
 			}
 			if(item == '6'){
@@ -15031,7 +15147,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 来自群友的需求：悔棋功能、武将胜率
 
 // 升级为选项/武将/卡牌导航功能（其他扩展选项也能导航；添加武将/卡牌搜索导航的功能，搜一下就能跳转到武将/卡牌那里）
-// 其他优秀功能搬运（并魔改）：体力翻倍；假装无敌-统计牌堆；牌库增添-自定义牌堆；天牢令-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本；奇妙工具-卡牌创造（开启后在可以创造卡牌）、添加技能（开启后在游戏进行时给自己加技能）等
+// 其他优秀功能搬运（并魔改）：体力翻倍；牌库增添-自定义牌堆；天牢令/笨蛋插件-衍生技能详细显示；测试中的功能搬运AI优化（AI弃牌价值修改）；AI互动；扩展管家-扩展/武将包/卡牌包排序；王者荣耀-发动技能显示台词文本；奇妙工具-卡牌创造（开启后在可以创造卡牌）、添加技能（开启后在游戏进行时给自己加技能）等
 
 // 同人模式后续更新计划及待处理的问题：
 // 同人模式及其他游戏模式加入其他模式（如对决-欢乐等）
@@ -15074,7 +15190,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 露头皮肤效果图、其他选项先关露头皮肤？
 // 双击武将切换双形态？
 // 特殊处理武将（张郃、神赵云、神关羽等）的资料卡试听技能配音
-// 一将成名、神将、OL专属、上兵伐谋、星火燎原、群英荟萃、限定专属、外服武将、四象封印等武将称号待补充
+// 群英荟萃、限定专属、江山如故、四象封印、联动卡等武将称号待补充
 // 处理〖妙剑·改〗〖绝情·改〗等技能？：lib.notShowSkillNamePinyin、台词显示
 // 阵亡配音待适配写法"die:yujin.mp3"（例：于禁）、旧版台词函数适配"die:xxx"写法；还要改noname/library/element/content.js的die: function () {函数？
 // 资料卡点击查看武将信息增加其他rank信息（武将、技能）、场上技能和技能ID查看
@@ -15085,3 +15201,4 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 控制台从牌堆&弃牌堆获得牌不能选择多名角色
 // 绘制效果图获得牌bug fix：改async函数，await game.asyncDelay()？
 // 选将时查看资料卡功能，方案一：开启后，在选将时长按/右击武将头像，可查看资料卡；关闭后，恢复原有的长按/右击弹出菜单功能。方案二：双击武将头像，可查看资料卡
+// 禁用卡牌功能（类似禁用武将功能）

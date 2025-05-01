@@ -163,7 +163,7 @@ game.import("character", function () {
 			xin_zhangliang: ["male", "qun", 4, ["rejijun", "refangtong"]],
 			re_simalang: ["male", "wei", 3, ["requji", "rejunbing"]],
 			re_zhugedan: ["male", "wei", 4, ["regongao", "rejuyi"]],
-			re_caorui: ["male", "wei", 3, ["huituo", "remingjian", "rexingshuai"], ["zhu"]],
+			re_caorui: ["male", "wei", 3, ["huituo", "remingjian", "xingshuai"], ["zhu"]],
 			re_caochong: ["male", "wei", 3, ["rechengxiang", "renxin"]],
 			ol_zhangzhang: ["male", "wu", 3, ["olzhijian", "olguzheng"]],
 			re_jsp_huangyueying: ["female", "qun", 3, ["rejiqiao", "relinglong"]],
@@ -203,7 +203,7 @@ game.import("character", function () {
 			re_guotufengji: ["male", "qun", 3, ["rejigong", "shifei"]],
 			re_zhoucang: ["male", "shu", 4, ["rezhongyong"]],
 			ol_zhurong: ["female", "shu", 4, ["juxiang", "lieren", "changbiao"]],
-			re_zhangchunhua: ["female", "wei", 3, ["rejueqing", "reshangshi"]],
+			re_zhangchunhua: ["female", "wei", 3, ["rejueqing", "shangshi"]],
 			re_gongsunyuan: ["male", "qun", 4, ["rehuaiyi"]],
 			re_caozhen: ["male", "wei", 4, ["residi"]],
 			re_fuhuanghou: ["female", "qun", 3, ["rezhuikong", "reqiuyuan"]],
@@ -260,7 +260,7 @@ game.import("character", function () {
 			re_huangyueying: ["female", "shu", 3, ["rejizhi", "reqicai"]],
 			re_sunquan: ["male", "wu", 4, ["rezhiheng", "rejiuyuan"], ["zhu"]],
 			re_sunshangxiang: ["female", "wu", 3, ["xiaoji", "rejieyin"]],
-			re_zhenji: ["female", "wei", 3, ["reluoshen", "reqingguo"]],
+			re_zhenji: ["female", "wei", 3, ["reluoshen", "qingguo"]],
 			re_zhugeliang: ["male", "shu", 3, ["reguanxing", "kongcheng"]],
 			re_huaxiong: ["male", "qun", 6, ["reyaowu", "shizhan"]],
 
@@ -856,6 +856,7 @@ game.import("character", function () {
 								player.getStorage("remingjian_buff").some((i) => i.isIn())
 							);
 						},
+						direct: true,
 						content: function* (event, map) {
 							const player = map.player;
 							const masters = player
@@ -866,12 +867,12 @@ game.import("character", function () {
 							while (masters.length) {
 								const master = masters.shift();
 								if (!master.isIn()) continue;
-								const result = yield player
-									.chooseBool(`是否令${get.translation(master)}发动一次〖恢拓〗？`)
-									.set("choice", get.attitude(player, master) > 0);
-								if (!result.bool) continue;
-								if (!player.isUnderControl(true) && !event.isOnline()) game.delayx();
-								player.logSkill("remingjian_buff", master);
+								// const result = yield player
+									// .chooseBool(`是否令${get.translation(master)}发动一次〖恢拓〗？`)
+									// .set("choice", get.attitude(player, master) > 0);
+								// if (!result.bool) continue;
+								// if (!player.isUnderControl(true) && !event.isOnline()) game.delayx();
+								// player.logSkill("remingjian_buff", master);
 								const next = game.createEvent("huituo");
 								next.setContent(lib.skill.huituo.content);
 								next.player = master;
@@ -3140,7 +3141,7 @@ game.import("character", function () {
 						) {
 							return true;
 						}
-						return Math.random() < 0.5;
+						return Math.random() < (evt.player.countCards("h") / 4);
 					};
 					"step 2";
 					if (result.bool) {
@@ -3263,6 +3264,7 @@ game.import("character", function () {
 			},
 			rexiansi2: {
 				enable: "chooseToUse",
+				sourceSkill: "rexiansi",
 				filter: function (event, player) {
 					return (
 						player.getExpansions("xiansi").length > Math.max(0, player.hp) &&
@@ -3513,6 +3515,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "rezhanjue",
 				onremove: function (player) {
 					delete player.getStat().skill.rezhanjue_draw;
 				},
@@ -4677,7 +4680,7 @@ game.import("character", function () {
 						},
 					},
 					jieshu: {
-						audio: 2,
+						audio: "reqiaobian",
 						trigger: { player: "phaseJieshuBegin" },
 						forced: true,
 						filter: function (event, player) {
@@ -4803,26 +4806,29 @@ game.import("character", function () {
 				},
 				derivation: "rejianyan",
 			},
+			// 临时修改（by 棘手怀念摧毁）
 			rejianyan: {
 				audio: 2,
 				enable: "phaseUse",
 				usable: 2,
 				filter: function (event, player) {
-					return game.hasPlayer((current) => current.group == "key" || current.hasSex("male"));
+					// return game.hasPlayer((current) => current.group == "key" || current.hasSex("male"));
+					return game.hasPlayer((current) => current.hasSex("male"));
 				},
 				chooseButton: {
 					dialog: function () {
 						return ui.create.dialog("###荐言###" + get.translation("rejianyan_info"));
 					},
 					chooseControl: function (event, player) {
-						var list = [];
-						if (!player.hasSkill("rejianyan_color")) list.addArray(["red", "black"]);
-						if (!player.hasSkill("rejianyan_type")) list.addArray(["basic", "trick", "equip"]);
+						const list = [],
+							storage = player.getStorage("rejianyan_used");
+						if (!storage.includes("color")) list.addArray(["red", "black"]);
+						if (!storage.includes("type")) list.addArray(["basic", "trick", "equip"]);
 						list.push("cancel2");
 						return list;
 					},
 					check: function () {
-						if (!_status.event.player.hasSkill("rejianyan_color")) return "red";
+						if (!_status.event.player.getStorage("rejianyan_used").includes("color")) return "red";
 						return "trick";
 					},
 					backup: function (result, player) {
@@ -4835,13 +4841,14 @@ game.import("character", function () {
 								"step 0";
 								var card = false,
 									info = lib.skill.rejianyan_backup.info;
+								player.addTempSkill("rejianyan_used", "phaseUseEnd");
 								if (info == "red" || info == "black") {
-									player.addTempSkill("rejianyan_color", "phaseUseEnd");
+									player.markAuto("rejianyan_used", "color");
 									card = get.cardPile2(function (card) {
 										return get.color(card) == info;
 									});
 								} else {
-									player.addTempSkill("rejianyan_type", "phaseUseEnd");
+									player.markAuto("rejianyan_used", "type");
 									card = get.cardPile2(function (card) {
 										return get.type(card) == info;
 									});
@@ -4856,7 +4863,8 @@ game.import("character", function () {
 										true,
 										"选择一名角色获得" + get.translation(card),
 										function (card, player, target) {
-											return target.group == "key" || target.hasSex("male");
+											// return target.group == "key" || target.hasSex("male");
+											return target.hasSex("male");
 										}
 									)
 									.set("ai", function (target) {
@@ -4883,7 +4891,8 @@ game.import("character", function () {
 							if (
 								game.hasPlayer(
 									(current) =>
-										(current.group == "key" || current.hasSex("male")) &&
+										// (current.group == "key" || current.hasSex("male")) &&
+										(current.hasSex("male")) &&
 										get.attitude(player, current) > 0
 								)
 							)
@@ -4892,7 +4901,7 @@ game.import("character", function () {
 						},
 					},
 				},
-				subSkill: { type: {}, color: {}, backup: {} },
+				subSkill: { used: { charlotte: true, onremove: true }, backup: {} },
 			},
 			//野兽高顺
 			decadexianzhen: {
@@ -4960,6 +4969,7 @@ game.import("character", function () {
 				audio: "decadexianzhen",
 				charlotte: true,
 				onremove: true,
+				sourceSkill: "decadexianzhen",
 				mod: {
 					targetInRange: function (card, player, target) {
 						if (target == player.storage.decadexianzhen2) return true;
@@ -5464,7 +5474,7 @@ game.import("character", function () {
 							if (!get.tag(card, "damage")) return;
 							if (target.hp + target.hujia < 2 || player.hasSkillTag("jueqing", false, target))
 								return 2;
-							if (target.countMark("redanxin") > 1) return [1, 1];
+							if (!target.hasSkill("rejiaozhao") || target.countMark("redanxin") > 1) return [1, 1];
 							return [1, 0.8 * target.hp - 0.4];
 						},
 					},
@@ -5787,6 +5797,7 @@ game.import("character", function () {
 			reyanyu2: {
 				trigger: { player: "phaseUseEnd" },
 				direct: true,
+				sourceSkill: "reyanyu",
 				filter: (event, player) =>
 					player.hasHistory(
 						"useSkill",
@@ -6142,6 +6153,7 @@ game.import("character", function () {
 				audioname: ["liushan", "re_liubei", "re_liushan", "ol_liushan"],
 				trigger: { player: ["useCardBegin", "respondBegin"] },
 				logTarget: "targets",
+				sourceSkill: "rejijiang",
 				filter: function (event, player) {
 					return event.skill == "rejijiang";
 				},
@@ -6195,6 +6207,7 @@ game.import("character", function () {
 				trigger: { global: ["useCard", "respond"] },
 				usable: 1,
 				direct: true,
+				sourceSkill: "rejijiang",
 				filter: function (event, player) {
 					return (
 						event.card.name == "sha" &&
@@ -6630,6 +6643,22 @@ game.import("character", function () {
 						},
 					},
 				},
+				group: "reweimu_log",
+				subSkill: {
+					log: {
+						audio: "reweimu",
+						trigger: { global: "useCard1" },
+						forced: true,
+						firstDo: true,
+						filter(event, player) {
+							if (event.player == player) return false;
+							if (get.color(event.card) != "black" || get.type(event.card) != "trick") return false;
+							var info = lib.card[event.card.name];
+							return info && info.selectTarget && info.selectTarget == -1 && !info.toself;
+						},
+						content() {},
+					},
+				},
 			},
 			//顾雍
 			reshenxing: {
@@ -6848,10 +6877,8 @@ game.import("character", function () {
 				audio: 2,
 				enable: "phaseUse",
 				filter: function (event, player) {
-					return (
-						player.getExpansions("xinquanji").length > 0 &&
-						(!player.hasSkill("xinpaiyi_0") || !player.hasSkill("xinpaiyi_1"))
-					);
+					if (player.getStorage("xinpaiyi_used").length > 1) return false;
+					return player.getExpansions("xinquanji").length > 0;
 				},
 				chooseButton: {
 					check: function (button) {
@@ -6889,8 +6916,7 @@ game.import("character", function () {
 					},
 					select: 2,
 					filter: function (button, player) {
-						if (typeof button.link == "number" && player.hasSkill("xinpaiyi_" + button.link))
-							return false;
+						if (typeof button.link == "number" && player.getStorage("xinpaiyi_used").includes(button.link)) return false;
 						if (ui.selected.buttons.length)
 							return typeof ui.selected.buttons[0].link != typeof button.link;
 						return true;
@@ -6915,8 +6941,10 @@ game.import("character", function () {
 					combo: "xinquanji",
 				},
 				subSkill: {
-					0: {},
-					1: {},
+					used: {
+						charlotte: true,
+						onremove: true,
+					},
 					backup0: {
 						audio: "xinpaiyi",
 						filterCard: () => false,
@@ -6925,7 +6953,8 @@ game.import("character", function () {
 						delay: false,
 						content: function () {
 							"step 0";
-							player.addTempSkill("xinpaiyi_0", "phaseUseEnd");
+							player.addTempSkill("xinpaiyi_used", "phaseUseEnd");
+							player.markAuto("xinpaiyi_used", [0]);
 							var card = lib.skill.xinpaiyi_backup.card;
 							player.loseToDiscardpile(card);
 							"step 1";
@@ -6958,7 +6987,8 @@ game.import("character", function () {
 						content: function () {
 							"step 0";
 							targets.sortBySeat();
-							player.addTempSkill("xinpaiyi_1", "phaseUseEnd");
+							player.addTempSkill("xinpaiyi_used", "phaseUseEnd");
+							player.markAuto("xinpaiyi_used", [1]);
 							var card = lib.skill.xinpaiyi_backup.card;
 							player.loseToDiscardpile(card);
 							"step 1";
@@ -7475,9 +7505,10 @@ game.import("character", function () {
 						return num;
 					},
 				},
-				trigger: { player: "phaseDiscardBegin" },
+				trigger: { player: "phaseDiscardEnd" },
 				forced: true,
 				charlotte: true,
+				sourceSkill: "rejigong",
 				filter: function (event, player) {
 					if (player.isHealthy()) return false;
 					var num = 0;
@@ -7755,6 +7786,7 @@ game.import("character", function () {
 			},
 			ollihuo2: {
 				trigger: { player: "useCard2" },
+				sourceSkill: "ollihuo",
 				filter: function (event, player) {
 					if (event.card.name != "sha" || !game.hasNature(event.card, "fire")) return false;
 					return game.hasPlayer(function (current) {
@@ -7800,6 +7832,7 @@ game.import("character", function () {
 			},
 			ollihuo3: {
 				trigger: { player: "useCardEnd" },
+				sourceSkill: "ollihuo",
 				filter: function (event, player) {
 					return (
 						event.lihuo_changed == true &&
@@ -7811,6 +7844,7 @@ game.import("character", function () {
 				forced: true,
 				audio: "lihuo",
 				audioname: ["re_chengpu"],
+				sourceSkill: "ollihuo",
 				content: function () {
 					player.loseHp();
 				},
@@ -8032,18 +8066,13 @@ game.import("character", function () {
 				frequent: true,
 				preHidden: true,
 				filter: function (event, player, name) {
-					//if(name=='damageEnd') return true;
-					//if(!event.card) return false;
-					if (
-						player.hasHistory("useSkill", function (evt) {
-							return evt.skill == "gzquanji" && evt.event.triggername == name;
-						})
-					)
-						return false;
+					if (player.getStorage("gzquanji_used").includes(name)) return false;
 					return true;
 				},
 				content: function () {
 					"step 0";
+					player.addTempSkill("gzquanji_used");
+					player.markAuto("gzquanji_used", event.triggername);
 					player.draw();
 					"step 1";
 					var hs = player.getCards("he");
@@ -8073,6 +8102,12 @@ game.import("character", function () {
 				},
 				ai: {
 					notemp: true
+				},
+				subSkill: {
+					used: {
+						onremove: true,
+						charlotte: true,
+					},
 				},
 			},
 			gzpaiyi: {
@@ -8331,6 +8366,7 @@ game.import("character", function () {
 				trigger: { player: "phaseEnd" },
 				forced: true,
 				popup: false,
+				sourceSkill: "xinjiefan",
 				content: function () {
 					player.restoreSkill("xinjiefan");
 				},
@@ -8382,6 +8418,7 @@ game.import("character", function () {
 			residi_push: {
 				trigger: { global: "phaseUseBegin" },
 				direct: true,
+				sourceSkill: "residi",
 				filter: function (event, player) {
 					return event.player != player && player.getExpansions("residi").length > 0;
 				},
@@ -8459,6 +8496,7 @@ game.import("character", function () {
 				audio: "residi",
 				trigger: { global: "phaseUseEnd" },
 				forced: true,
+				sourceSkill: "residi",
 				filter: function (event, player) {
 					if (!event.residi || !event.residi.includes(player)) return false;
 					var sha = player.canUse("sha", event.player, false),
@@ -8574,6 +8612,7 @@ game.import("character", function () {
 			rehuaiyi2: {},
 			rezhuikong: {
 				audio: 2,
+				audioname2: { tw_fuhuanghou: "xinzhuikong" },
 				trigger: { global: "phaseZhunbeiBegin" },
 				check: function (event, player) {
 					if (get.attitude(player, event.player) < -2) {
@@ -8741,6 +8780,7 @@ game.import("character", function () {
 			reenyuan1: {
 				audio: "reenyuan",
 				trigger: { player: "gainEnd" },
+				sourceSkill: "reenyuan",
 				filter: function (event, player) {
 					if (
 						!event.source ||
@@ -8765,6 +8805,7 @@ game.import("character", function () {
 				audio: "reenyuan",
 				trigger: { player: "damageEnd" },
 				logTarget: "source",
+				sourceSkill: "reenyuan",
 				filter: function (event, player) {
 					return event.source && event.source != player && event.source.isIn();
 				},
@@ -9027,6 +9068,7 @@ game.import("character", function () {
 			decadezishou_zhiheng: {
 				trigger: { player: "phaseJieshuBegin" },
 				direct: true,
+				sourceSkill: "decadezishou",
 				filter: function (event, player) {
 					return (
 						player.countCards("h") > 0 &&
@@ -9506,7 +9548,9 @@ game.import("character", function () {
 					},
 					reverseEquip: true,
 					noe: true,
-					expose: 0.2,
+					threaten(player, target) {
+						return target.countCards("e") + target.countCards("h") / 3;
+					}
 				},
 			},
 			oltuntian: {
@@ -9758,6 +9802,7 @@ game.import("character", function () {
 			},
 			decadelihuo2: {
 				trigger: { player: "useCard2" },
+				sourceSkill: "decadelihuo",
 				filter: function (event, player) {
 					if (event.card.name != "sha" || !game.hasNature(event.card, "fire")) return false;
 					return game.hasPlayer(function (current) {
@@ -9798,6 +9843,7 @@ game.import("character", function () {
 			},
 			decadelihuo3: {
 				trigger: { player: "useCardAfter" },
+				sourceSkill: "decadelihuo",
 				filter: function (event, player) {
 					return (
 						event.card.name == "sha" &&
@@ -9844,6 +9890,7 @@ game.import("character", function () {
 				trigger: { player: "damageBegin2" },
 				silent: true,
 				lastDo: true,
+				sourceSkill: "decadechunlao",
 				filter: function (event, player) {
 					return !player.isLinked();
 				},
@@ -9857,6 +9904,7 @@ game.import("character", function () {
 					player: "damageEnd",
 				},
 				prompt: "是否发动【醇醪】将武将牌重置？",
+				sourceSkill: "decadechunlao",
 				filter: function (event, player) {
 					return player.isLinked() && event.num > 1 && !event.decadechunlaox;
 				},
@@ -10134,6 +10182,7 @@ game.import("character", function () {
 					//player:'phaseJieshuBegin',
 				},
 				forced: true,
+				sourceSkill: "rezishou",
 				filter: function (event, player) {
 					if (event.name == "damage") return event.player != player;
 					if (player.getHistory("skipped").includes("phaseUse")) return false;
@@ -10300,6 +10349,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "decadepojun",
 				filter: function (event, player) {
 					return player.getExpansions("decadepojun2").length > 0;
 				},
@@ -10373,6 +10423,7 @@ game.import("character", function () {
 					global: "chooseToCompareAfter",
 				},
 				audio: "hanzhan",
+				sourceSkill: "hanzhan",
 				filter: function (event, player) {
 					if (event.preserve) return false;
 					if (
@@ -10563,6 +10614,7 @@ game.import("character", function () {
 				intro: { name2: "烈", content: "mark" },
 				trigger: { player: "damageBegin3" },
 				forced: true,
+				sourceSkill: "wulie",
 				content: function () {
 					trigger.cancel();
 					player.removeMark("wulie2", 1);
@@ -10927,7 +10979,8 @@ game.import("character", function () {
 						game.addVideo("judge2", null, event.videoId);
 						ui.arena.classList.remove("thrownhighlight");
 					}
-					let cards = [event.card].filterInD("od");
+					"step 2"
+					let cards = [event.card].filterInD();
 					if(cards.length) game.cardsGotoPile(cards, "insert");
 				},
 				ai: {
@@ -10960,6 +11013,7 @@ game.import("character", function () {
 				audio: "paoxiao",
 				audioname: ["re_zhangfei", "xiahouba", "re_guanzhang"],
 				audioname2: { guanzhang: "paoxiao_guanzhang" },
+				sourceSkill: "olpaoxiao",
 				filter: function (event, player) {
 					return event.card && event.card.name == "sha" && player.countMark("olpaoxiao2") > 0;
 				},
@@ -11291,6 +11345,7 @@ game.import("character", function () {
 			},
 			rechunlao2: {
 				enable: "chooseToUse",
+				sourceSkill: "rechunlao",
 				filter: function (event, player) {
 					return (
 						event.type == "dying" &&
@@ -11484,6 +11539,7 @@ game.import("character", function () {
 				},
 				audio: "rejiushi",
 				audioname2: { mb_caomao: "rejiushi_mb_caomao", mb_caomao_shadow: "rejiushi_mb_caomao", mb_caomao_dead: "rejiushi_mb_caomao" },
+				sourceSkill: "rejiushi",
 				enable: "chooseToUse",
 				filter: function (event, player) {
 					if (player.classList.contains("turnedover")) return false;
@@ -11567,6 +11623,7 @@ game.import("character", function () {
 				trigger: { player: "damageBegin3" },
 				silent: true,
 				firstDo: true,
+				sourceSkill: "rejiushi",
 				filter: function (event, player) {
 					return player.classList.contains("turnedover");
 				},
@@ -11577,6 +11634,7 @@ game.import("character", function () {
 			rejiushi3: {
 				audio: "rejiushi",
 				trigger: { player: "damageEnd" },
+				sourceSkill: "rejiushi",
 				check: function (event, player) {
 					return player.isTurnedOver();
 				},
@@ -11759,6 +11817,10 @@ game.import("character", function () {
 					player
 						.chooseControl("bazhen", "olhuoji", "olkanpo")
 						.set("prompt", "选择获得一个技能").ai = function () {
+						let player = get.event("player"), threaten = get.threaten(player);
+						if (!player.hasEmptySlot(2)) return "olhuoji";
+						if (threaten < 0.8) return "olkanpo";
+						if (threaten < 1.6) return "bazhen";
 						return ["olhuoji", "bazhen"].randomGet();
 					};
 					"step 6";
@@ -12145,6 +12207,7 @@ game.import("character", function () {
 				audio: "rejinjiu",
 				forced: true,
 				trigger: { player: "damageBegin3" },
+				sourceSkill: "rejinjiu",
 				filter: function (event, player) {
 					return event.getParent(2).jiu == true;
 				},
@@ -12207,6 +12270,7 @@ game.import("character", function () {
 			repojun3: {
 				audio: "repojun",
 				trigger: { source: "damageBegin1" },
+				sourceSkill: "repojun",
 				filter: function (event, player) {
 					var target = event.player;
 					return (
@@ -12228,6 +12292,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "repojun",
 				filter: function (event, player) {
 					return player.getExpansions("repojun2").length > 0;
 				},
@@ -12358,6 +12423,7 @@ game.import("character", function () {
 				popup: false,
 				audio: false,
 				onremove: true,
+				sourceSkill: "olfangquan",
 				content: function () {
 					"step 0";
 					event.count = player.countMark(event.name);
@@ -12398,6 +12464,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				audio: false,
+				sourceSkill: "olfangquan",
 				content: function () {
 					player.unmarkSkill("olfangquan");
 					player.removeSkill("olfangquan3");
@@ -12416,6 +12483,7 @@ game.import("character", function () {
 			olluanji_remove: {
 				trigger: { player: "useCard2" },
 				direct: true,
+				sourceSkill: "olluanji",
 				filter: function (event, player) {
 					return event.card.name == "wanjian" && event.targets.length > 0;
 				},
@@ -12474,6 +12542,7 @@ game.import("character", function () {
 				audio: "olxueyi",
 				trigger: { player: "phaseUseBegin" },
 				prompt2: "弃置一枚「裔」标记，然后摸一张牌",
+				sourceSkill: "olxueyi",
 				check: function (event, player) {
 					return player.getUseValue("wanjian") > 0 || !player.needsToDiscard();
 				},
@@ -13377,6 +13446,7 @@ game.import("character", function () {
 				popup: false,
 				charlotte: true,
 				firstDo: true,
+				sourceSkill: "reguhuo",
 				filter: function (event, player) {
 					return event.skill && event.skill.indexOf("reguhuo_") == 0;
 				},
@@ -13688,6 +13758,7 @@ game.import("character", function () {
 				trigger: { player: "judgeEnd" },
 				direct: true,
 				disableReason: ["暴虐", "助祭", "弘仪", "孤影"],
+				sourceSkill: "xinleiji",
 				filter: function (event, player) {
 					return (
 						!lib.skill.xinleiji_misa.disableReason.includes(event.judgestr) &&
@@ -13771,6 +13842,9 @@ game.import("character", function () {
 							var judging = _status.event.judging;
 							var result = trigger.judge(card) - trigger.judge(judging);
 							var attitude = get.attitude(player, trigger.player);
+							let val = get.value(card);
+							if (get.subtype(card) == "equip2") val /= 2;
+							else val /= 7;
 							if (attitude == 0 || result == 0) {
 								if (trigger.player != player) return 0;
 								if (
@@ -13786,10 +13860,9 @@ game.import("character", function () {
 								return 0;
 							}
 							if (attitude > 0) {
-								return result;
-							} else {
-								return -result;
+								return result - val;
 							}
+							return -result - val;
 						})
 						.set("judging", trigger.player.judging[0]);
 					"step 1";
@@ -13997,6 +14070,7 @@ game.import("character", function () {
 					re_yanwen: "shuangxiong_re_yanwen1",
 				},
 				trigger: { player: "phaseDrawBegin1" },
+				sourceSkill: "reshuangxiong",
 				check: function (event, player) {
 					if (player.countCards("h") > player.hp) return true;
 					if (player.countCards("h") > 3) return true;
@@ -14072,6 +14146,7 @@ game.import("character", function () {
 					player: "damageEnd",
 				},
 				direct: true,
+				sourceSkill: "reshuangxiong",
 				filter: function (event, player) {
 					var evt = event.getParent();
 					return (
@@ -14419,8 +14494,8 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
-					result: {
-						effect: function (card, player, target) {
+					effect: {
+						target: function (card, player, target) {
 							if (get.tag(card, "damage")) {
 								if (player.hasSkillTag("jueqing", false, target)) return [1, -2];
 								if (!target.hasFriend()) return;
@@ -14429,7 +14504,7 @@ game.import("character", function () {
 									if (player.needsToDiscard()) num = 0.7;
 									else num = 0.5;
 								}
-								if (player.hp >= 4) return [1, num * 2];
+								if (target.hp >= 4) return [1, num * 2];
 								if (target.hp == 3) return [1, num * 1.5];
 								if (target.hp == 2) return [1, num * 0.5];
 							}
@@ -14664,6 +14739,7 @@ game.import("character", function () {
 				popup: false,
 				forced: true,
 				charlotte: true,
+				sourceSkill: "new_yijue",
 				content: function () {
 					trigger.num++;
 				},
@@ -14773,6 +14849,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				charlotte: true,
+				sourceSkill: "new_tishen",
 				content: function () {
 					player.gain(trigger.cards.filterInD("od"), "gain2");
 				},
@@ -15438,14 +15515,11 @@ game.import("character", function () {
 			},
 			rebiyue: {
 				audio: 2,
+				audioname2: { sp_diaochan: "biyue" },
 				trigger: { player: "phaseJieshuBegin" },
 				frequent: true,
 				content: function () {
-					var num = 1;
-					if (!player.countCards("h")) {
-						num = 2;
-					}
-					player.draw(num);
+					player.draw(player.countCards("h") ? 1 : 2);
 				},
 			},
 			rerende: {
@@ -15675,6 +15749,7 @@ game.import("character", function () {
 			rerende1: {
 				trigger: { player: "phaseUseBegin" },
 				silent: true,
+				sourceSkill: "rerende",
 				content: function () {
 					player.storage.rerende = 0;
 					player.storage.rerende2 = [];
@@ -15819,12 +15894,14 @@ game.import("character", function () {
 							var judging = _status.event.judging;
 							var result = trigger.judge(card) - trigger.judge(judging);
 							var attitude = get.attitude(player, trigger.player);
+							let val = get.value(card);
+							if (get.subtype(card) == "equip2") val /= 2;
+							else val /= 4;
 							if (attitude == 0 || result == 0) return 0;
 							if (attitude > 0) {
-								return result - get.value(card) / 2;
-							} else {
-								return -result - get.value(card) / 2;
+								return result - val;
 							}
+							return -result - val;
 						})
 						.set("judging", trigger.player.judging[0]);
 					"step 1";
@@ -15938,6 +16015,7 @@ game.import("character", function () {
 			},
 			reluoyi2: {
 				trigger: { source: "damageBegin1" },
+				sourceSkill: "reluoyi",
 				filter: function (event) {
 					return (
 						event.card &&
@@ -15978,12 +16056,20 @@ game.import("character", function () {
 						return 0;
 					});
 					"step 2";
-					if (result.color == "black") {
-						if (trigger.source.countCards("he")) {
-							player.discardPlayerCard(trigger.source, "he", true);
-						}
-					} else if (trigger.source.isIn()) {
-						trigger.source.damage();
+					switch (result.color) {
+						case "black":
+							if (trigger.source.countCards("he")) {
+								player.discardPlayerCard(trigger.source, "he", true);
+							}
+							break;
+
+						case "red":
+							if (trigger.source.isIn()) {
+								trigger.source.damage();
+							}
+							break;
+						default:
+							break;
 					}
 					event.num--;
 					if (event.num > 0 && player.hasSkill("reganglie")) {
@@ -16213,6 +16299,7 @@ game.import("character", function () {
 				trigger: { global: "phaseEnd" },
 				forced: true,
 				audio: false,
+				sourceSkill: "reqianxun",
 				content: function () {
 					var cards = player.getExpansions("reqianxun2");
 					if (cards.length) player.gain(cards, "draw");
@@ -16322,6 +16409,7 @@ game.import("character", function () {
 				trigger: { player: "phaseJieshuBegin" },
 				priority: -10,
 				silent: true,
+				sourceSkill: "retishen",
 				content: function () {
 					player.storage.retishen2 = player.hp;
 					game.broadcast(function (player) {
@@ -16578,8 +16666,8 @@ game.import("character", function () {
 				ai: {
 					maixie: true,
 					maixie_hp: true,
-					result: {
-						effect: function (card, player, target) {
+					effect: {
+						target: function (card, player, target) {
 							if (get.tag(card, "damage")) {
 								if (player.hasSkillTag("jueqing", false, target)) return [1, -2];
 								if (!target.hasFriend()) return;
@@ -16588,7 +16676,7 @@ game.import("character", function () {
 									if (player.needsToDiscard()) num = 0.7;
 									else num = 0.5;
 								}
-								if (player.hp >= 4) return [1, num * 2];
+								if (target.hp >= 4) return [1, num * 2];
 								if (target.hp == 3) return [1, num * 1.5];
 								if (target.hp == 2) return [1, num * 0.5];
 							}
@@ -16603,6 +16691,7 @@ game.import("character", function () {
 				mark: true,
 				popup: "遗计拿牌",
 				audio: false,
+				sourceSkill: "reyiji",
 				content: function () {
 					player.$draw(player.storage.reyiji2.length);
 					player.gain(player.storage.reyiji2, "fromStorage");
@@ -16923,6 +17012,7 @@ game.import("character", function () {
 				audio: "zhaxiang",
 				audioname2: { ol_sb_jiangwei: "zhaxiang_ol_sb_jiangwei" },
 				trigger: { player: "useCard" },
+				sourceSkill: "zhaxiang",
 				filter: function (event, player) {
 					return event.card && event.card.name == "sha" && get.color(event.card) == "red";
 				},
@@ -18606,7 +18696,7 @@ game.import("character", function () {
 			xsqianxin_info: "觉醒技。当你造成伤害后，若你已受伤，则你减1点体力上限并获得〖荐言〗。",
 			rejianyan: "荐言",
 			rejianyan_info:
-				"出牌阶段每项各限一次。你可选择一种颜色或一种牌的类别，然后系统从牌堆中检索出一张满足该条件的牌并展示之。然后你将此牌交给一名男性角色或Key势力角色。",
+				"出牌阶段每项各限一次。你可选择一种颜色或一种牌的类别，然后系统从牌堆中检索出一张满足该条件的牌并展示之。然后你将此牌交给一名男性角色。",
 			re_zhanghe: "界张郃",
 			re_zhanghe_prefix: "界",
 			reqiaobian: "巧变",
@@ -18801,8 +18891,7 @@ game.import("character", function () {
 			re_caorui: "界曹叡",
 			re_caorui_prefix: "界",
 			remingjian: "明鉴",
-			remingjian_info:
-				"出牌阶段限一次。你可以将所有手牌交给一名其他角色，然后该角色于其下个回合获得如下效果：1.手牌上限与使用【杀】的次数上限+1；2.当该角色首次造成伤害后，其可以令你发动一次〖恢拓〗。",
+			remingjian_info: "出牌阶段限一次。你可以将所有手牌交给一名其他角色，然后该角色于其下个回合获得如下效果：1.手牌上限与使用【杀】的次数上限+1；2.当该角色首次造成伤害后，你发动一次〖恢拓〗。",
 			rexingshuai: "兴衰",
 			rexingshuai_info:
 				"主公技，限定技。当你进入濒死状态时，你可令其他魏势力角色依次选择是否令你回复1点体力。然后这些角色依次受到1点伤害。有〖明鉴〗效果的角色于其回合内杀死角色后，你重置〖兴衰〗。",

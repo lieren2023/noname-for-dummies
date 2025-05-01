@@ -1704,7 +1704,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								player.flashAvatar("fakeyigui", character);
 								player.unmarkAuto("fakeyigui", [character]);
 								_status.characterlist.add(character);
-								game.log(player, "移除了", "#g“魂”", "#y" + get.translation(character));
+								game.log(player, "移去了一张", "#g“魂（" + get.translation(character) + "）”");
 								if (!player.storage.fakeyigui2) {
 									player
 										.when({ global: "phaseBefore" })
@@ -2014,7 +2014,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 										);
 									}, 0);
 								})(player, target, all);
-								return Math.max(0, get.sgn(eff1 - eff2));
+								return Math.max(0, get.sgn(eff2 - eff1));
 							});
 						const cards = player.getExpansions("fakequanji");
 						if (index == 0) {
@@ -3757,7 +3757,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				subSkill: {
 					mark: {
 						charlotte: true,
-						trigger: { player: ["hideCharacterEnd", "showCharacterEnd"] },
+						trigger: { player: ["hideCharacterBegin", "showCharacterEnd"] },
 						filter(event, player) {
 							return get
 								.character(event[event.name == "hideCharacter" ? "toHide" : "toShow"], 3)
@@ -4227,25 +4227,28 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			fakechongxin: {
 				audio: "chongxin",
 				enable: "phaseUse",
+				viewAs: {
+					name: "yiyi",
+					isCard: true,
+				},
+				usable: 1,
 				filter(event, player) {
 					const card = new lib.element.VCard({ name: "yiyi" });
 					return (
 						lib.filter.targetEnabled2(card, player, player) &&
-						game.hasPlayer((target) => {
-							return (
-								lib.filter.targetEnabled2(card, player, target) && target.isEnemyOf(player)
-							);
-						})
+						game.hasPlayer(target => lib.skill.fakechongxin.filterTarget(card, player, target))
 					);
 				},
-				filterTarget(cardx, player, target) {
-					const card = new lib.element.VCard({ name: "yiyi" });
-					return lib.filter.targetEnabled2(card, player, target) && target.isEnemyOf(player);
+				selectTarget: 1,
+				filterTarget(card, player, target) {
+					if (game.checkMod(card, player, target, "unchanged", "playerEnabled", player) == false) return false;
+					if (game.checkMod(card, player, target, "unchanged", "targetEnabled", target) == false) return false;
+					return target.isEnemyOf(player);
 				},
-				usable: 1,
-				async content(event, trigger, player) {
-					const card = new lib.element.VCard({ name: "yiyi" });
-					await player.useCard(card, [player].concat(event.targets), false);
+				filterCard: () => false,
+				selectCard: -1,
+				precontent() {
+					event.result.targets.add(player);
 				},
 				ai: {
 					order(item, player) {
@@ -4323,7 +4326,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				subSkill: {
 					mark: {
 						charlotte: true,
-						trigger: { player: ["hideCharacterEnd", "showCharacterEnd"] },
+						trigger: { player: ["hideCharacterBegin", "showCharacterEnd"] },
 						filter(event, player) {
 							return get
 								.character(event[event.name == "hideCharacter" ? "toHide" : "toShow"], 3)
@@ -10013,7 +10016,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					player
 						.chooseTarget(
 							get.prompt("gzshensu"),
-							"失去1点体力并跳过弃牌阶段，视为对一名其他角色使用使用一张无距离限制的【杀】",
+							"失去1点体力并跳过弃牌阶段，视为对一名其他角色使用一张无距离限制的【杀】",
 							function (card, player, target) {
 								return player.canUse("sha", target, false);
 							}
@@ -11672,6 +11675,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (Math.min(target.maxHp, target.countCards("h")) > 3) return true;
 					return false;
 				},
+				usable: 1,
 				preHidden: true,
 				content: function () {
 					"step 0";
@@ -15817,7 +15821,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				selectTarget: 2,
 				multitarget: true,
-				targetprompt: ["受到伤害</br>然后摸牌", "回复体力"],
+				targetprompt: ["受伤摸牌", "回复体力"],
 				content: function () {
 					"step 0";
 					targets[0].damage(player);
@@ -18082,6 +18086,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				forced: true,
 				preHidden: true,
+				check: function (event, player) {
+					return true;
+				},
 				filter: function (event, player) {
 					if (event.num <= 0 || !event.source) return false;
 					var n1 = player.getNext();
@@ -23239,8 +23246,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			gzlianpian_info:
 				"①结束阶段，若你于此回合内弃置过所有角色的牌数之和大于你的体力值，你可令一名与你势力相同的角色将手牌补至X张（X为其体力上限）。②其他角色的结束阶段，若其于此回合内弃置过所有角色的牌数之和大于你的体力值，其可选择：1.弃置你的一张牌；2.令你回复1点体力。",
 			gzyusui: "玉碎",
-			gzyusui_info:
-				"当你成为其他势力的角色使用黑色牌的目标后，你可以失去1点体力，然后选择一项：①令其弃置X张手牌（X为其体力上限）；②令其失去Y点体力（Y为其的体力值减去你的体力值，不为正时不可选择）。",
+			gzyusui_info: "每回合限一次，当你成为其他势力的角色使用黑色牌的目标后，你可以失去1点体力，然后选择一项：①令其弃置X张手牌（X为其体力上限）；②令其失去Y点体力（Y为其的体力值减去你的体力值，不为正时不可选择）。",
 			gzboyan: "驳言",
 			gzboyan_info:
 				"出牌阶段限一次，你可令一名其他角色将手牌摸至体力上限（至多摸五张），然后其本回合不能使用或打出手牌。",

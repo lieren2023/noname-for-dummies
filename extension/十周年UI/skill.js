@@ -2164,6 +2164,28 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		// 龙魂配音与技能效果一一对应
 		xinlonghun:{
 			audio:true,
+			mod: {
+				aiOrder(player, card, num) {
+					if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) return num;
+					let suit = get.suit(card, player);
+					if (suit === "heart") return num - 3.6;
+				},
+				aiValue(player, card, num) {
+					if (num <= 0) return num;
+					let suit = get.suit(card, player);
+					if (suit === "heart") return num + 3.6;
+					if (suit === "club") return num + 1;
+					if (suit === "spade") return num + 1.8;
+				},
+				aiUseful(player, card, num) {
+					if (num <= 0) return num;
+					let suit = get.suit(card, player);
+					if (suit === "heart") return num + 3;
+					if (suit === "club") return num + 1;
+					if (suit === "spade") return num + 1;
+				},
+			},
+			locked: false,
 			enable:['chooseToUse','chooseToRespond'],
 			prompt:'将一张♠牌当做【无懈可击】，♣牌当做【闪】，♥牌当做【桃】，♦牌当做火【杀】使用或打出',
 			viewAs:function(cards,player){
@@ -3387,6 +3409,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			trigger:{source:'damageBegin1'},
 			forced:true,
 			logTarget:'player',
+			sourceSkill: "panshi",
 			filter:function(event,player){
 				return player.isPhaseUsing()&&event.card&&event.card.name=='sha'&&event.player.hasSkill('cixiao');
 			},
@@ -3461,6 +3484,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		},
 		kuangfeng3: {
 			trigger: { global: "damageBegin3" },
+			sourceSkill: "kuangfeng",
 			filter(event, player) {
 				return event.hasNature("fire") && event.player.getStorage("kuangfeng2").includes(player);
 			},

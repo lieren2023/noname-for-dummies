@@ -1468,7 +1468,7 @@ game.import("character", function () {
 					player: "damageBegin4",
 				},
 				filter: function (event, player, name) {
-					return !player.hasSkill(`stdjinjian_effect${name.slice(11)}`);
+					return !player.getStorage("stdjinjian_used").includes(name.slice(11));
 				},
 				prompt2(event, player, name) {
 					return `防止即将${name == "damageBegin2" ? "造成" : "受到"}的伤害`;
@@ -1478,37 +1478,44 @@ game.import("character", function () {
 				},
 				async content(event, trigger, player) {
 					trigger.cancel();
+					player.addTempSkill("stdjinjian_used");
+					player.markAuto("stdjinjian_used", event.triggername.slice(11));
 					player.addTempSkill(`stdjinjian_effect${event.triggername.slice(11)}`);
+					player.addMark(`stdjinjian_effect${event.triggername.slice(11)}`, 1, false);
 				},
 				subSkill: {
+					used: {
+						charlotte: true,
+						onremove: true,
+					},
 					effect2: {
 						trigger: { source: "damageBegin1" },
 						forced: true,
 						charlotte: true,
+						onremove: true,
 						async content(event, trigger, player) {
-							trigger.num++;
-							player.tempBanSkill(event.name, null, false);
-							player.unmarkSkill(event.name);
+							const num = player.countMark(event.name);
+							trigger.num += num;
+							player.removeMark(event.name, num, false);
 						},
-						mark: true,
 						marktext: "进",
 						intro: {
-							content: "下次造成的伤害+1",
+							content: "下次造成的伤害+$",
 						},
 					},
 					effect4: {
 						trigger: { player: "damageBegin3" },
 						forced: true,
 						charlotte: true,
+						onremove: true,
 						async content(event, trigger, player) {
-							trigger.num++;
-							player.tempBanSkill(event.name, null, false);
-							player.unmarkSkill(event.name);
+							const num = player.countMark(event.name);
+							trigger.num += num;
+							player.removeMark(event.name, num, false);
 						},
-						mark: true,
 						marktext: "谏",
 						intro: {
-							content: "下次受到的伤害+1",
+							content: "下次受到的伤害+$",
 						},
 					},
 				},
@@ -1855,21 +1862,21 @@ game.import("character", function () {
 				discard: false,
 				lose: false,
 				delay: false,
-				usable: 1,
+				usable: 2,
 				check(card) {
 					if (card.name == "du") return 114514;
 					return 5 - get.value(card);
 				},
 				async content(event, trigger, player) {
 					const target = event.target;
+					await player.showCards(event.cards);
 					await player.give(event.cards, target, "visible");
-					await target
+					if (target.countCards("h")) await target
 						.chooseToGive(
 							player,
 							(card, player) => {
 								return get.type2(card) != get.type2(get.event("cards")[0]);
-							},
-							"he"
+							}
 						)
 						.set("cards", event.cards);
 				},
@@ -2152,7 +2159,7 @@ game.import("character", function () {
 			stdyibing: "益兵",
 			stdyibing_info: "一名角色进入濒死状态时，你可以获得其一张牌。",
 			stdbazhan: "把盏",
-			stdbazhan_info: "出牌阶段限一次，你可以交给一名男性角色一张手牌，然后其可以交给你一张与此牌类别不同的牌。",
+			stdbazhan_info: "出牌阶段限两次，你可以将一张手牌展示并交给一名男性角色，然后其可以展示并交给你一张与此牌类别不同的手牌。",
 			stdzhanying: "醮影",
 			stdzhanying_info: "锁定技，你的回合内，手牌数比回合开始时多的角色不能使用红色牌且受到的伤害+1。",
 			stdtiaohe: "调和",

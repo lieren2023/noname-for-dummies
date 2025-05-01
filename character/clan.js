@@ -104,7 +104,7 @@ game.import("character", function () {
 									}, 0) >= get.cardNameLength(lib.skill.clanchengqi_backup.viewAs.name)
 								);
 							},
-							check(card) {
+							ai1(card) {
 								const player = get.event("player");
 								const name = lib.skill.clanchengqi_backup.viewAs.name;
 								if (ui.selected.cards.length > 1 || card.name == name) return 0;
@@ -245,10 +245,7 @@ game.import("character", function () {
 							const lose = result.moved[1].slice();
 							const gain = result.moved[0].slice().filter(i => !get.owner(i));
 							if (lose.some(i => get.owner(i)))
-								await target.lose(
-									lose.filter(i => get.owner(i)),
-									ui.special
-								);
+								await game.cardsGotoOrdering(lose.filter(i => get.owner(i)));
 							for (let i = lose.length - 1; i--; i >= 0) {
 								ui.cardPile.insertBefore(lose[i], ui.cardPile.firstChild);
 							}
@@ -3514,7 +3511,7 @@ game.import("character", function () {
 							) {
 								var num1 = player.countCards("h"),
 									num2 = player.getHandcardLimit();
-								if (num1 < num2) player.draw(Math.min(5, num2 - num1));
+								if (num1 < num2) player.draw(num2 - num1);
 							} else if (trigger.addCount !== false) {
 								trigger.addCount = false;
 								player.getStat().card.sha--;
@@ -3570,7 +3567,7 @@ game.import("character", function () {
 					if (num1 > num2) {
 						str += "弃置" + get.cnNumber(num1 - num2) + "张牌，然后手牌上限+1。";
 					} else {
-						str += "摸" + get.cnNumber(Math.min(8, num2 - num1)) + "张牌，然后手牌上限-1。";
+						str += "摸" + get.cnNumber(num2 - num1) + "张牌，然后手牌上限-1。";
 					}
 					str += "<br>※当前手牌上限：" + num2;
 					var num3 = (_status.event.getParent().phaseIndex || 0) + 1;
@@ -3588,7 +3585,7 @@ game.import("character", function () {
 					} else {
 						var num1 = player.countCards("h"),
 							num2 = player.getHandcardLimit();
-						if (num1 < num2) player.draw(Math.min(8, num2 - num1));
+						if (num1 < num2) player.draw(num2 - num1);
 					}
 					"step 1";
 					lib.skill.chenliuwushi.change(player, -1);
@@ -3715,7 +3712,9 @@ game.import("character", function () {
 				return '转换技，出牌阶段限一次。<span class="bluetext">阴：你可以观看牌堆顶的至多四张牌；</span>阳：你可以观看一名角色的至多四张手牌。然后你可以使用其中的一张牌。';
 			},
 			clanjiexuan(player) {
-				if (player.storage.clanjiexuan) return '限定技，转换技。阴：你可以将一张红色牌当【顺手牵羊】使用；<span class="bluetext">阳：你可以将一张黑色牌当【过河拆桥】使用。</span>';
+				// 临时修改（by 棘手怀念摧毁）
+				if(((player.storage && player.storage.clanjiexuan) || 0) % 2) return '限定技，转换技。阴：你可以将一张红色牌当【顺手牵羊】使用；<span class="bluetext">阳：你可以将一张黑色牌当【过河拆桥】使用。</span>';
+				// if((player.storage?.clanjiexuan || 0) % 2) return '限定技，转换技。阴：你可以将一张红色牌当【顺手牵羊】使用；<span class="bluetext">阳：你可以将一张黑色牌当【过河拆桥】使用。</span>';
 				return '限定技，转换技。<span class="bluetext">阴：你可以将一张红色牌当【顺手牵羊】使用；</span>阳：你可以将一张黑色牌当【过河拆桥】使用。';
 			},
 		},
@@ -3741,7 +3740,7 @@ game.import("character", function () {
 
 			clan_wuxian: "族吴苋",
 			clanyirong: "移荣",
-			clanyirong_info: "出牌阶段限两次。若你的手牌数：小于X，则你可以将手牌摸至X张（至多摸八张），然后X-1；大于X，则你可以将手牌弃置至X张，然后X+1。（X为你的手牌上限）",
+			clanyirong_info: "出牌阶段限两次。若你的手牌数：小于X，则你可以将手牌摸至X张，然后X-1；大于X，则你可以将手牌弃置至X张，然后X+1。（X为你的手牌上限）",
 			clanguixiang: "贵相",
 			clanguixiang_info: "锁定技。你的非出牌阶段开始前，若此阶段即将成为你本回合内的第X个阶段（X为你的手牌上限），则你终止此阶段，改为进行一个出牌阶段。",
 			clanmuyin: "穆荫",
@@ -3749,7 +3748,7 @@ game.import("character", function () {
 			chenliuwushi: "陈留·吴氏",
 			clan_wuban: "族吴班",
 			clanzhanding: "斩钉",
-			clanzhanding_info: "你可以将任意张牌当做【杀】使用并你令你的手牌上限-1。你以此法使用的【杀】结算结束后，若你因此【杀】造成过伤害，则你将手牌摸至手牌上限（至多摸五张），否则你令此【杀】不计入次数限制。",
+			clanzhanding_info: "你可以将任意张牌当做【杀】使用并你令你的手牌上限-1。你以此法使用的【杀】结算结束后，若你因此【杀】造成过伤害，则你将手牌摸至手牌上限，否则你令此【杀】不计入次数限制。",
 			clan_xunshu: "族荀淑",
 			clanshenjun: "神君",
 			clanshenjun_info: "当一名角色使用【杀】或普通锦囊牌时，若你手牌中有该牌名的牌，你展示之，且这些牌称为“神君”。然后本阶段结束时，你可以将等同于你“神君”数张牌当做一张“神君”牌使用。",

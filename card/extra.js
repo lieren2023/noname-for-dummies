@@ -811,6 +811,7 @@ game.import("card", function () {
 				},
 			},
 			muniu_skill7: {
+				charlotte: true,
 				trigger: { player: "loseEnd" },
 				firstDo: true,
 				forced: true,

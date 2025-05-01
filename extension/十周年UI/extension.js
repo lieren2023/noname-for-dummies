@@ -33,7 +33,7 @@ content:function(config, pack){
 	// 其他-帮助-关于游戏内容添加提示
 	lib.help['关于游戏']=
 		'<div style="margin:10px">无名杀简介</div><ul style="margin-top:0"><li>无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>'+
-		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：诗笺<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
+		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：诗笺<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙OS（HarmonyOS）、澎湃OS（HyperOS）、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
 		'<li>无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等<br>'+
 		'<li>主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等<br>'+
 		'<li>最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span></ul>'+
@@ -1690,6 +1690,70 @@ content:function(config, pack){
 				player.line(result.targets,'green');
 				event.result.targets=result.targets;
 			}
+		};
+	}
+	// 国战围攻队列标记美化（默认关闭，搬运自标记补充扩展）
+	if (config.szn_weigongduilie) {
+		//国战阵法
+		lib.skill._guozhan_duiweibiaoji_gua_ = {
+			trigger: { global: ['showCharacterAfter', 'dieAfter', 'phaseZhunbeiAfter'] },
+			forced: true,
+			silent: true,
+			filter: function (event, player) {
+				return lib.config.mode == 'guozhan';
+			},
+			content: function () {
+				var shang = player.getPrevious()?get.translation(player.getPrevious().group):'未知';
+				var xia = player.getNext()?get.translation(player.getNext().group):'未知';
+				var ziji = get.translation(player.group);
+				if ((xia == ziji && xia != '未知' && ziji != '未知') || (shang == ziji && shang != '未知' && ziji != '未知')) {
+					if (ziji == '魏') { ui.create.div('.guozhanweidui', player); }
+					if (ziji == '蜀') { ui.create.div('.guozhanshudui', player); }
+					if (ziji == '吴') { ui.create.div('.guozhanwudui', player); }
+					if (ziji == '群') { ui.create.div('.guozhanqundui', player); }
+					if (ziji == '晋') { ui.create.div('.guozhanjindui', player); }
+				}
+				//围
+				if (shang == xia && shang != ziji && xia != ziji && shang != '未知' && xia != '未知' && player.getPrevious() != player.getNext()) {
+					ui.create.div('.guozhanwei', player);
+				}
+			},
+		};
+		//删除阵法
+		lib.skill._guozhan_duiweibiaoji_gua_gua_ = {
+			trigger: { global: ['showCharacterEnd', 'dieEnd', 'phaseZhunbeiEnd'] },
+			forced: true,
+			silent: true,
+			forceDie: true,
+			filter: function (event, player) {
+				return lib.config.mode == 'guozhan';
+			},
+			content: function () {
+				//有时候player.getPrevious()这些会出现null值，暂改修复
+				var shang = player.getPrevious()?get.translation(player.getPrevious().group):false;
+				var xia = player.getNext()?get.translation(player.getNext().group):false;
+				var ziji = get.translation(player.group);
+				//if(xia!=ziji&&xia!='未知'&&ziji!='未知'&&shang!=ziji&&shang!='未知'){     
+				for (var i = 0; i < 3; i++) {
+					var scweidui = document.querySelector('.guozhanweidui');
+					if (scweidui) { scweidui.parentNode.removeChild(scweidui); }
+					var scwudui = document.querySelector('.guozhanwudui');
+					if (scwudui) { scwudui.parentNode.removeChild(scwudui); }
+					var scshudui = document.querySelector('.guozhanshudui');
+					if (scshudui) { scshudui.parentNode.removeChild(scshudui); }
+					var scqundui = document.querySelector('.guozhanqundui');
+					if (scqundui) { scqundui.parentNode.removeChild(scqundui); }
+					var scjindui = document.querySelector('.guozhanjindui');
+					if (scjindui) { scjindui.parentNode.removeChild(scjindui); }
+				}
+				// }           
+				// if(shang!=xia && shang!=ziji && xia!=ziji && shang!='未知' && xia!='未知'){
+				for (var i = 0; i < 3; i++) {
+					var scwei = document.querySelector('.guozhanwei');
+					if (scwei) { scwei.parentNode.removeChild(scwei); }
+				}
+				//  }        
+			},
 		};
 	}
 	
@@ -7689,10 +7753,6 @@ content:function(config, pack){
 		if(lib.skill.yinbing != undefined){
 			lib.skill.yinbing.marktext = "引兵";
 		}
-		// 界刘禅思蜀标记修改
-		if(lib.skill.sishu2 != undefined){
-			lib.skill.sishu2.marktext = "思蜀";
-		}
 		// 旧皇甫嵩奋钺标记修改
 		if(lib.skill.fenyue2 != undefined){
 			lib.skill.fenyue2.marktext = "奋钺";
@@ -7767,6 +7827,10 @@ content:function(config, pack){
 		// SP公孙瓒突骑标记修改
 		if(lib.skill.sptuji2 != undefined){
 			lib.skill.sptuji2.marktext = "突骑";
+		}
+		// 星荀彧匡祚标记修改
+		if(lib.skill.starchengfeng != undefined){
+			lib.skill.starchengfeng.marktext = "匡祚";
 		}
 		// ☆曹植流殇标记修改
 		if(lib.skill.psliushang != undefined){
@@ -7988,10 +8052,13 @@ content:function(config, pack){
 		if(lib.skill.yechou2 != undefined){
 			lib.skill.yechou2.marktext = "业仇";
 		}
-		// 承许贡表召标记修改
+		// 承许贡表召、业仇标记修改
 		if(lib.skill.jsrgbiaozhao != undefined){
 			lib.skill.jsrgbiaozhao.subSkill.A.marktext = "表召";
 			lib.skill.jsrgbiaozhao.subSkill.B.marktext = "表召";
+		}
+		if(lib.skill.jsrgyechou != undefined){
+			lib.skill.jsrgyechou.subSkill.effect.marktext = "业仇";
 		}
 		// 界曹真司标记修改
 		if(lib.skill.residi != undefined){
@@ -8008,6 +8075,10 @@ content:function(config, pack){
 		// 谋华雄扬威标记修改
 		if(lib.skill.sbyangwei != undefined){
 			lib.skill.sbyangwei.subSkill.effect.marktext = "扬威";
+		}
+		// 李密难全标记修改
+		if(lib.skill.jsrgnanquan != undefined){
+			lib.skill.jsrgnanquan.subSkill.fengyin.marktext = "难全";
 		}
 		// 起孙坚平讨标记修改
 		if(lib.skill.jsrgpingtao != undefined){
@@ -8234,10 +8305,13 @@ content:function(config, pack){
 		if(lib.skill.dczecai != undefined){
 			lib.skill.dczecai.subSkill.effect.marktext = "择才";
 		}
-		// 濮阳兴征建标记修改
+		// 濮阳兴征建、众斥标记修改
 		if(lib.skill.twzhengjian != undefined){
 			lib.skill.twzhengjian.subSkill.eff0.marktext = "征建";
 			lib.skill.twzhengjian.subSkill.eff1.marktext = "征建";
+		}
+		if(lib.skill.twzhongchi != undefined){
+			lib.skill.twzhongchi.subSkill.effect.marktext = "众斥";
 		}
 		// 孙瑜劝守标记修改
 		if(lib.skill.dcquanshou != undefined){
@@ -8254,6 +8328,14 @@ content:function(config, pack){
 			lib.skill.xinfu_xionghuo.marktext = "暴戾";
 			lib.skill.xinfu_xionghuo.subSkill.disable.marktext = "凶镬";
 			lib.skill.xinfu_xionghuo.subSkill.low.marktext = "凶镬";
+		}
+		// 界刘禅思蜀标记修改
+		if(lib.skill.sishu2 != undefined){
+			lib.skill.sishu2.marktext = "思蜀";
+		}
+		// 幻刘禅任贤标记修改
+		if(lib.skill.twrenxian != undefined){
+			lib.skill.twrenxian.subSkill.mark.marktext = "任贤";
 		}
 		// 神曹丕储、行动标记修改
 		if(lib.skill.chuyuan != undefined){
@@ -8782,6 +8864,7 @@ content:function(config, pack){
 			group:["wuhun2","wuhun4","wuhun5"],
 	};
 	lib.skill.wuhun2={
+		sourceSkill: "wuhun",
 		trigger:{
 		player:'dieBegin',
 		},
@@ -8832,6 +8915,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun3={
+		sourceSkill: "wuhun",
 		audio:3,
 		trigger:{
 			global:'dieAfter',
@@ -8851,6 +8935,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun4={
+		sourceSkill: "wuhun",
 		trigger:{
 			player:'dieAfter',
 		},
@@ -8866,6 +8951,7 @@ content:function(config, pack){
 		},
 	};
 	lib.skill.wuhun5={
+		sourceSkill: "wuhun",
 		trigger:{player:'dieBegin'},
 		forced:true,
 		popup:false,
@@ -8893,6 +8979,7 @@ content:function(config, pack){
 		}
 	};
 	lib.skill.wuhun6={
+		sourceSkill: "wuhun",
 		audio:3,
 		trigger:{global:'dieAfter'},
 		forced:true,
@@ -9023,6 +9110,8 @@ content:function(config, pack){
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
 		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
 		// 凌人、整肃、蛊惑、军令、协力、五禽戏、暴虐值点数卡牌显示修复
+		lib.card.black = {fullskin:true};
+		lib.card.red = {fullskin:true};
 		lib.card.basic = {fullskin:true};
 		lib.card.equip = {fullskin:true};
 		lib.card.trick = {fullskin:true};
@@ -17528,6 +17617,7 @@ config:{
 				'<br>③ 新增旧版配音系统开关选项，开启后，将启用旧版配音系统，支持.ogg格式配音播放（默认开启），若遇冲突请关闭本选项！'+
 				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效；开启后，非国战模式选项-外观-体力条样式-勾玉无法更改。'+
 				'<br>- 国战其他魔改：国战隐匿美化（搬运自零二魔改版，修复邹氏等武将暗置武将牌后的显示问题、修复换人/重新选将后的显示问题等）、适配露头；鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
+				'<br>- 新增国战围攻队列标记美化开关选项，默认关闭，搬运自标记补充扩展。'+
 				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
 				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
 				'<br>- 新增富甲天下配置选项，开启富甲天下扩展后，可对toast提示和音效进行设置，即时生效（默认配置为toast提示：关闭、音效：开启）。'+
@@ -18073,6 +18163,11 @@ config:{
 			if (window.decadeUI) ui.arena.dataset.playerMarkStyle = lib.config['extension_十周年UI_playerMarkStyle'];
 		}
     },
+	"szn_weigongduilie": {
+		name: '国战围攻队列标记美化',
+		init: false,
+		intro: '开启后，在国战模式，对围攻队列标记进行美化。',
+	},
 	szn_fenjiexian27:{
 		clear:true,
 		name:"<font size='3'><li>手牌数/上限显示</font>",

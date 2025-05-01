@@ -5189,7 +5189,8 @@ game.import("character", function () {
 					),
 				filterCard: (card, player) => get.type(card) == "equip" && player.canRecast(card),
 				check(card) {
-					if (!_status.event.player.hasEquipableSlot(get.subtype(card))) return 5;
+					if (get.position(card) == "e") return 0.5 - get.value(card, get.player());
+					if (!get.player().hasEquipableSlot(get.subtype(card))) return 5;
 					return 3 - get.value(card);
 				},
 				content() {
@@ -9603,13 +9604,20 @@ game.import("character", function () {
 				async content(event, trigger, player) {
 					const target = event.indexedData;
 					const { result } = await target.judge();
-					if (result.color === "red" && target.isIn()) {
-						await target.draw();
-					} else {
-						const source = _status.currentPhase;
-						if (source && source.isIn() && source.countCards("h") > 0) {
-							source.chooseToDiscard("he", true);
-						}
+					switch (result.color) {
+						case "red":
+							await target.draw();
+							break;
+
+						case "black":
+							const source = _status.currentPhase;
+							if (source && source.isIn() && source.countCards("h") > 0) {
+								source.chooseToDiscard("he", true);
+							}
+							break;
+
+						default:
+							break;
 					}
 				},
 				ai: { expose: 0.2 },
@@ -13225,7 +13233,7 @@ game.import("character", function () {
 				"你可以如手牌般使用或打出“影”。锁定技，当你使用“影”时，强制触发对应的应变效果。",
 			kotomi_qinji: "琴击",
 			kotomi_qinji_info:
-				"出牌阶段开始时，你可视为使用使用【万箭齐发】。你以此法使用【万箭齐发】造成的伤害视为失去体力。",
+				"出牌阶段开始时，你可视为使用【万箭齐发】。你以此法使用【万箭齐发】造成的伤害视为失去体力。",
 			kotomi_chuanxiang: "传箱",
 			kotomi_chuanxiang2: "传箱",
 			kotomi_chuanxiang_info:

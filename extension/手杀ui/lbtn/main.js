@@ -314,7 +314,9 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
       cardRoundTime: function() {
         var node = ui.create.div('.cardRoundNumber', ui.arena).hide();
         node.node = {
-          cardPileNumber: ui.create.div('.cardPileNumber', node),
+			// 记牌器#1837
+			cardPileNumber: ui.create.div('.cardPileNumber', node, plugin.paidui),
+          // cardPileNumber: ui.create.div('.cardPileNumber', node),
           roundNumber: ui.create.div('.roundNumber', node),
           time: ui.create.div('.time', node),
         };
@@ -461,6 +463,173 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
         return a - b;
       },
     },
+	
+		// 记牌器#1837，功能搬运自本体 添加记牌器 by Curpond
+		paidui: function () {
+			// 临时修改（by 棘手怀念摧毁）
+			// if (!_status.gameStarted) return;
+			
+			game.pause2();
+			let drawPile = ui.cardPile.children;
+			let discardPile = ui.discardPile.children;
+			let popupContainer = ui.create.div(".popupContainer.deckMonitor", ui.window, function () {
+				this.delete(400);
+				game.resume2();
+			});
+			let container = ui.create.div(".deckMonitor", popupContainer, function (e) {
+				e.stopPropagation();
+			});
+			let flag = true;
+			let titleContainer = ui.create.div(".title", container, function (e) {
+				if (flag) {
+					statistic(discardPile, "弃牌堆");
+				} else {
+					statistic(drawPile, "牌堆");
+				}
+				flag = !flag;
+			});
+			let contentContainer = ui.create.div(".contentContainer", container);
+			statistic(drawPile, "牌堆");
+			function statistic(cards, title) {
+				titleContainer.innerHTML = `${title}【${cards.length}张】 <span>(点击切换牌堆/弃牌堆)</span>`;
+				contentContainer.innerHTML = "";
+				renderNumberColumn();
+				renderSuitColumn();
+				renderTypeColumns();
+				function renderNumberColumn() {
+					let numberResult = Object.groupBy(cards, card => get.number(card));
+					for (let i = 1; i <= 13; i++) {
+						if (!numberResult[i]) numberResult[i] = [];
+					}
+					createColumnContainer(numberResult, "点数", cards.length);
+				}
+				function renderSuitColumn() {
+					// 临时修改（by 棘手怀念摧毁）
+					let suitResult = Object.groupBy(cards, card => {if (get.suit(card) != "none") return get.suit(card)});
+					Object.assign(
+						suitResult,
+						// 临时修改（by 棘手怀念摧毁）
+						Object.groupBy(cards, card => {
+							if (get.suit(card) == "none") {
+								return "无色";
+							}
+							if (get.suit(card) == "heart" || get.suit(card) == "diamond") {
+								return "红色♥︎♦︎";
+							}
+							if (get.suit(card) == "spade" || get.suit(card) == "club") {
+								return "黑色♠♣︎";
+							}
+						}),
+					);
+					Object.assign(
+						suitResult,
+						// 临时修改（by 棘手怀念摧毁）
+						Object.groupBy(cards, card => {
+							if (get.number(card) <= 9 && get.number(card) >= 2) {
+								if (get.suit(card) == "spade") {
+									return "♠2-9";
+								}
+								if (get.suit(card) == "heart") {
+									return "♥︎2-9";
+								}
+								if (get.suit(card) == "club") {
+									return "♣︎2-9";
+								}
+								if (get.suit(card) == "diamond") {
+									return "♦︎2-9";
+								}
+							}
+						})
+					);
+					// @ts-ignore
+					delete suitResult[void 0];
+					for (let suit of lib.suit) {
+						if (!suitResult[suit]) suitResult[suit] = [];
+					}
+					createColumnContainer(suitResult, "花色", cards.length);
+				}
+				function renderTypeColumns() {
+					let typeResult = Object.groupBy(cards, card => get.type(card));
+					
+					// 临时修改（by 棘手怀念摧毁）
+					typeResult.basic = (typeResult.basic!=null && typeResult.basic!=undefined)?typeResult.basic:[];
+					typeResult.trick = (typeResult.trick!=null && typeResult.trick!=undefined)?typeResult.trick:[];
+					typeResult.equip = (typeResult.equip!=null && typeResult.equip!=undefined)?typeResult.equip:[];
+					typeResult.delay = (typeResult.delay!=null && typeResult.delay!=undefined)?typeResult.delay:[];
+					// typeResult.basic ??= [];
+					// typeResult.trick ??= [];
+					// typeResult.equip ??= [];
+					// typeResult.delay ??= [];
+					
+					for (let key of Object.keys(typeResult).sort((a, b) => {
+						let arr = ["basic", "trick", "delay", "equip", "jiqi", "spell", "zhenfa", "food", "jiguan", "land"];
+						return arr.indexOf(a) - arr.indexOf(b);
+					})) {
+						let result = Object.groupBy(typeResult[key], card => get.name(card));
+						if (key == "basic") {
+							Object.assign(
+								result,
+								Object.groupBy(typeResult[key], card => {
+									if (get.name(card) !== "sha") return;
+									let perfix = get.translation(get.nature(card));
+									if (perfix == "") perfix = "普通";
+									return perfix + "杀";
+								})
+							);
+							Object.assign(
+								result,
+								Object.groupBy(typeResult[key], card => {
+									if (get.name(card) !== "sha") return;
+									return get.translation(get.color(card)) + "杀";
+								})
+							);
+							// @ts-ignore
+							delete result[void 0];
+							createColumnContainer(result, get.translation(key), typeResult[key].length);
+						} else {
+							createColumnContainer(result, get.translation(key), typeResult[key].length);
+						}
+					}
+				}
+				function createColumnContainer(result, title, count) {
+					let column = ui.create.div(".columnContainer", contentContainer);
+					let subtitle = ui.create.div(".subtitle", column);
+					subtitle.textContent = `${title}(${count})`;
+					let itemContainer = ui.create.div(".itemContainer", column);
+					for (let key in result) {
+						let item = ui.create.div(".item", itemContainer);
+						let tip = ui.create.div(".tip", item);
+						tip.innerHTML = handleColor(
+							result[key].reduce((a, c) => {
+								return a + `${get.translation(get.suit(c))}${get.number(c)} `;
+							}, "")
+						);
+						item.addEventListener("mouseenter", function (e) {
+							if (tip.innerHTML == "") return;
+							tip.style.display = "block";
+							let rect = item.getBoundingClientRect();
+							if (rect.top < window.innerHeight / 2) {
+								tip.style.top = "110%";
+							} else {
+								tip.style.bottom = "110%";
+							}
+						});
+						item.addEventListener("mouseleave", function (e) {
+							tip.style.display = "none";
+						});
+						let itemName = ui.create.div(".itemName", item);
+						let itemCount = ui.create.div(".itemCount", item);
+						itemName.innerHTML = handleColor(get.translation(key));
+						itemCount.textContent = `×${result[key].length}`;
+					}
+					function handleColor(str) {
+						let red = `[${get.translation("diamond")}${get.translation("heart")}]`;
+						let black = `[${get.translation("club")}${get.translation("spade")}]`;
+						return str.replace(new RegExp(red, "g"), '<span style="color:red">$&</span>').replace(new RegExp(black, "g"), '<span style="color:black">$&</span>');
+					}
+				}
+			}
+		},
   };
   return plugin;
 });

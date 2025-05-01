@@ -25,15 +25,15 @@ game.import("character", function () {
 					"xia_xiahouzie",
 				],
 				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
-				tw_sp: ["licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
-				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo"],
+				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
+				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
 				tw_standard: ["tw_zhangfei"],
 				tw_shenhua_yin: ['tw_yl_luzhi'],
 				tw_shenhua_lei: ["tw_guanqiujian"],
 				tw_yijiang1: ["tw_re_fazheng"],
 				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
-				tw_yijiang3: ["tw_guohuai"],
-				tw_yijiang4: ["tw_guyong"],
+				tw_yijiang3: ["tw_fuhuanghou", "tw_guohuai"],
+				tw_yijiang4: ["tw_sunluban", "tw_guyong"],
 				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
 				tw_yijiang7: ["tw_xuezong"],
 				tw_yunchouzhi: [
@@ -62,6 +62,13 @@ game.import("character", function () {
 			},
 		},
 		character: {
+			tw_sunluban: ['female', 'wu', 3, ['twzenhui', 'xinjiaojin'], ['die_audio:xin_sunluban']],
+			tw_mazhong: ['male', 'shu', 4, ['twfuman'], ['die_audio:mazhong']],
+			tw_jsp_guanyu: ['male', 'wei', 4, ['wusheng', 'twdanji'], ['die_audio:jsp_guanyu','tempname:jsp_guanyu']],
+			tw_fuhuanghou: ['female', 'qun', 3, ['rezhuikong', 'xinqiuyuan'], ['die_audio:xin_fuhuanghou']],
+			tw_qiaozhou: ['male', 'shu', 3, ['zhiming', 'twxingbu'], ['die_audio:qiaozhou']],
+			tw_yj_zhanghe: ['male', 'qun', 4, ['zhilve'], ['die_audio:yj_zhanghe']],
+			old_jiakui: ["male", "wei", 3, ["zhongzuo", "wanlan"]],
 			huan_luxun: ["male", "wu", 3, ["twlifeng", "twniwo"]],
 			huan_liushan: ["male", "shu", 3, ["twguihan", "twrenxian", "twyanzuo"], ["zhu"]],
 			licuilianzhaoquanding: ["double", "qun", 3, ["twciyin", "twchenglong"]],
@@ -188,6 +195,8 @@ game.import("character", function () {
 			kaisa: ["male", "western", 4, ["zhengfu"]],
 		},
 		characterIntro: {
+			huan_jiangwei: "在攻取陇右后，被诸葛亮委以重任，负责治理该地，确保稳定与繁荣。<br>于蜀汉攻打长安、洛阳之际，姜维挺身而出，担任后勤重任，从陇右源源不断地向前线输送粮草，确保军队无后顾之忧。<br>面对匈奴与羌族的侵扰，姜维展示出卓越的战略眼光，他巧妙利用两族间的矛盾，与羌族建立友好关系，透过贸易与合作，联合羌族逐步削弱并蚕食匈奴的势力范围，成功平定了蛮族之乱。<br>遵循诸葛亮的遗命，姜维在北方与司马懿展开激烈对峙。即便在诸葛亮离世后，他仍坚持奋战，最终举全国之力，成功灭亡了河北之地。<br>为肃清朝纲，姜维坚决执行大将军蒋琬的命令，果断诛杀了祸乱朝政的阉宦黄皓，为蜀汉政治环境的清明立下了汗马功劳。<br>在军事上，姜维更是势如破竹，他率领精锐之师，连续攻克东吴多座城池，最终迫使东吴在巨大的军事压力下选择投降，为蜀汉的统一大业奠定了坚实基础。",
+			huan_zhugeguo: "承继了诸葛亮的非凡灵根，自幼便对道教抱有深厚兴趣。及至成年，她踏遍蜀地山川，遍访道馆，深得诸多高人隐士的真传与指点。<br>南华真人，奉天命降临凡尘，化身为华城一位仙风道骨的老者，亲自指点诸葛果修行之道。此事亦被诸葛亮所察觉，南华老仙逐赠序诸葛亮山河镜，并预言若天命属蜀汉，此镜终有重圆之日。<br>蜀军北伐之际，粮草运输成为一大难题。虽有诸葛亮所创木牛流马相助，然路途遥远，运输效率仍显不足。诸葛果施展御风之术，令所有运粮器材皆沐于顺风之中，大大提升了运输速度。更于险峻峭壁之处，运用仙家法宝开关捷径，使运粮队伍与援军得以迅速通行，加速了北伐进程。<br>待诸葛亮集齐山河镜，并成功攻克长安之后，诸葛果之天命似乎又重归大汉之脤。于是，她再次踏上修仙之旅，从此杳无音信。后世传言，诸葛果最终在峨眉山筑庐修炼，终得羽化登仙，成就一段传奇佳话。",
 			licuilianzhaoquanding: "李翠莲，是河北梆子《青釭剑》里赵云的妻子，性情贤惠，小家碧玉。剧中赵云长坂大战后又去阻挡追兵，结果与刘备失散，来到西川，遇到了翠莲，二人一见钟情，不久成婚。后赵云出发去找队伍，留下青釭剑作记认。李夫人在等待中生下一子，取名全定。十八年后刘备进了西川，全定带着青釭剑去认父亲，谁知赵云正与诸葛亮打赌，为了不输掉这个赌赵云不认这两母子，后来全定斩将立功，在诸葛亮与众将的劝说下，终于赵云夫妻相认，父子团圆。",
 			huan_zhaoyun: "赵云，字子龙，蜀国名将，以勇猛善战、忠诚义烈著称于世。其一生战功卓著，尤在建兴年间，多次随诸葛亮北伐，立下汗马功劳。<br>建兴六年春，诸葛亮为牵制魏军，遣赵云与邓芝领兵出斜谷，佯攻郿县。赵云与邓芝率军急行，沿途广布旗帐，擂鼓呐喊，声势浩大，成功吸引魏军主力。面对曹真大军，赵云临危不乱，凭借精妙的战术和士兵们的英勇，多次击退魏军进攻。期间，赵云更是在乱军之中单骑救主，斩杀大将王双，令魏军胆寒。双方对峙月余，直至诸葛亮成功收复陇右，赵云与邓芝方才率军撤回。<br>建兴八年，诸葛亮再次北伐，攻打魏国长安。赵云作为先锋大将，身先士卒，连克数城，直逼长安城下。在此战中，赵云与张郃激战数十回合，不分胜负。随后，赵云又独斗张虎、乐綝、戴陵三将，一一将其击败，展示了其超凡的武艺。最终，在和张郃的决战中，赵云以诈败之计诱敌深入，一枪刺中张郃，致其重伤身亡，为蜀军攻克长安立下大功。<br>然而，英雄也有迟暮时，在长安之战后不久，赵云因年事已高，体力不支，于军营中病逝。其一生忠诚于蜀汉，勇猛善战，深受士兵和百姓的爱戴。后主刘禅追封其为大将军，以表彰其卓越功勋和忠诚精神。",
 			huan_zhanghe: "张郃，魏国骁将，随太祖曹操征战四方，功勋卓著，以其智勇双全，成为魏国后期独当一面的大将。<br>时诸葛亮出祁山，闻陇右三郡叛魏归汉，魏国震动。魏明帝急召张郃，援以重兵，命其速赴街亭，以解陇右之围。张郃领命，率军疾驰，至街亭，与蜀军交战。然蜀军设伏，张郃虽勇猛，终被围困。幸得亲卫死战，张郃方得突围而出，率军退回长安。<br>陇右既失，长安告急。大将军曹真镇守长安，命张郃巡视各城，加固防御。张郃依令行事，使各城得以稳固。<br>诸葛亮于陇右发展，意图反攻。曹真遣张郃率骑兵袭扰陇右，张郃领命，分兵五路，灵活出击。然蜀军早有防备，设下重重包围，张郃骑兵活动范围渐小，终被迫退兵。<br>此后，诸葛亮亲率大军进逼长安，魏国上下皆惊。张郃虽奋力抵抗，然终因蜀军势大，长安城破。张郃于乱军之中，英勇战死，为国捐躯。",
@@ -206,7 +215,7 @@ game.import("character", function () {
 			xiahousone:
 				"夏侯子萼，游卡桌游《三国杀阵面对决》中虚构的人物。在《阵面对决》中，设定为在貂蝉不在时血婆娑的实际首领。在海外服中，设定为夏侯惇的养女，继承了夏侯紫萼的血婆娑，之后“夏侯紫萼”这个名字就被隐匿于历史之中，而“夏侯子萼”则成为了血婆娑的首领“血蔷薇”的固定名号。",
 			zhangwei:
-				"张葳，游卡桌游《三国杀阵面对决》中虚构的人物。在《阵面对决》中，设定为被夏侯子萼救下后加入的血婆娑成员。在海外服中，设定为张奂的养女，张奂为宦官迫害时与其失散，为神秘女子所救并学得武艺，后与夏侯紫萼一起建立血婆娑。在李儒分成时为了保护百姓而牺牲。",
+				"张葳，游卡桌游《三国杀阵面对决》中虚构的人物。在《阵面对决》中，设定为被夏侯子萼救下后加入的血婆娑成员。在海外服中，设定为张奂的养女，张奂为宦官迫害时与其失散，为神秘女子所救并学得武艺，后与夏侯紫萼一起建立血婆娑。在李儒焚城时为了保护百姓而牺牲。",
 			nashime:
 				"难升米（なしめ，或なんしょうまい）是倭国大夫。景初二年六月，受女王卑弥呼之命，与都市牛利出使魏国，被魏国拜为率善中郎将。",
 			jiachong:
@@ -400,8 +409,274 @@ game.import("character", function () {
 			},
 		},
 		skill: {
+			//TW孙鲁班
+			twzenhui: {
+				audio: 'xinzenhui',
+				trigger: { player: 'useCardToPlayer' },
+				filter: function (event, player) {
+					if (event.targets.length != 1) return false;
+					var card = event.card;
+					if (card.name != 'sha' && (get.type(card, null, false) != 'trick' || get.color(card, false) != 'black')) return false;
+					if (!player.isPhaseUsing() || player.hasSkill('twzenhui2')) return false;
+					return game.hasPlayer(function (current) {
+						return current != player && current != event.target && lib.filter.targetEnabled2(card, player, current) && lib.filter.targetInRange(card, player, current);
+					});
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					player.chooseTarget(get.prompt2('twzenhui'), function (card, player, target) {
+						if (player == target) return false;
+						var evt = _status.event.getTrigger();
+						return !evt.targets.includes(target) && lib.filter.targetEnabled2(evt.card, player, target) && lib.filter.targetInRange(evt.card, player, target);
+					}).set('ai', function (target) {
+						var trigger = _status.event.getTrigger();
+						var player = _status.event.player;
+						return Math.max((target.countGainableCards(player, 'hej') ? get.effect(target, { name: 'shunshou' }, player, player) : 0), get.effect(target, trigger.card, player, player));
+					});
+					'step 1'
+					if (result.bool) {
+						player.addTempSkill('twzenhui2', 'phaseUseAfter');
+						var target = result.targets[0], str = get.translation(target);
+						event.target = target;
+						player.logSkill('twzenhui', target);
+						if (!target.countGainableCards(player, 'hej')) event._result = { index: 0 };
+						else player.chooseControl().set('choiceList', [
+							'令' + str + '也成为' + get.translation(trigger.card) + '的目标',
+							'获得' + str + '区域里的一张牌，然后' + str + '成为' + get.translation(trigger.card) + '的使用者',
+						]).set('ai', function () {
+							var trigger = _status.event.getTrigger();
+							var player = _status.event.player, target = _status.event.getParent().target;
+							return (target.countGainableCards(player, 'hej') ? get.effect(target, { name: 'shunshou' }, player, player) : 0) > get.effect(target, trigger.card, player, player) ? 1 : 0;
+						})
+					}
+					else event.finish();
+					'step 2'
+					if (result.index == 1) {
+						trigger.untrigger();
+						trigger.getParent().player = event.target;
+						game.log(event.target, '成为了', trigger.card, '的使用者');
+						player.gainPlayerCard(target, true, 'hej');
+					}
+					else {
+						game.log(event.target, '成为了', trigger.card, '的额外目标');
+						trigger.getParent().targets.push(event.target);
+					}
+				},
+			},
+			twzenhui2: { charlotte: true },
+			//TW马忠
+			twfuman: {
+				group: 'twfuman_draw',
+				audio: 'fuman',
+				inherit: 'fuman',
+				filterTarget: function (card, player, target) {
+					if (target == player) return false;
+					var stat = player.getStat('skill').twfuman_targets;
+					return !stat || !stat.includes(target);
+				},
+				filter: function (event, player) {
+					return player.countCards('h') > 0 && game.hasPlayer(function (current) {
+						return lib.skill.twfuman.filterTarget(null, player, current)
+					});
+				},
+				content: function () {
+					player.give(cards, target).gaintag.add('twfuman');
+					target.addSkill('twfuman2');
+					var stat = player.getStat('skill');
+					if (!stat.twfuman_targets) stat.twfuman_targets = [];
+					stat.twfuman_targets.push(target);
+				},
+				subSkill: {
+					draw: {
+						audio: 'fuman',
+						trigger: { global: ['useCardAfter', 'respondAfter'] },
+						filter: function (event, player) {
+							return event.player.getHistory('lose', function (evt) {
+								if (evt.getParent() != event) return false;
+								for (var i in evt.gaintag_map) {
+									if (evt.gaintag_map[i].includes('twfuman')) return true;
+								}
+								return false;
+							}).length;
+						},
+						forced: true,
+						logTarget: 'player',
+						content: function () {
+							player.draw(trigger.player.getHistory('sourceDamage', function (evt) {
+								return evt.card == trigger.card;
+							}).length ? 2 : 1);
+						},
+					},
+				},
+			},
+			twfuman2: {
+				mod: {
+					aiOrder: function (player, card, num) {
+						if (get.itemtype(card) == 'card' && card.hasGaintag('twfuman')) return num + 1;
+					},
+					cardname: function (card, player) {
+						if (get.itemtype(card) == 'card' && card.hasGaintag('twfuman')) return 'sha';
+					},
+				},
+			},
+			//魏关羽
+			twdanji: {
+				derivation: ['mashu', 'nuzhan'],
+				unique: true,
+				audio: 'danji',
+				trigger: { player: 'phaseZhunbeiBegin' },
+				filter: function (event, player) {
+					var zhu = get.zhu(player);
+					if (zhu && zhu.isZhu) {
+						if (lib.translate[zhu.name].indexOf('刘备') != -1 || (zhu.name2 && lib.translate[zhu.name2].indexOf('刘备') != -1)) return false;
+					}
+					return player.countCards('h') > player.hp;
+				},
+				forced: true,
+				juexingji: true,
+				skillAnimation: true,
+				animationColor: 'water',
+				content: function () {
+					'step 0'
+					player.awakenSkill('twdanji');
+					player.loseMaxHp();
+					'step 1'
+					player.addSkills(['mashu', 'nuzhan']);
+					'step 2'
+					player.addSkill('twdanji_effect');
+				},
+				subSkill: {
+					effect: {
+						charlotte: true,
+						mark: true,
+						intro: { content: '每回合首次使用转化【杀】结算结束后摸一张牌' },
+						audio: 'danji',
+						trigger: { player: 'useCardAfter' },
+						filter: function (event, player) {
+							return player.getHistory('useCard', function (evt) {
+								return evt.card.name == 'sha' && evt.cards && evt.cards.length && !event.card.isCard;
+							}).indexOf(event) == 0;
+						},
+						forced: true,
+						content: function () {
+							player.draw();
+						},
+					},
+				},
+			},
+			//谯周
+			twxingbu: {
+				audio: 'xingbu',
+				trigger: { player: 'phaseJieshuBegin' },
+				frequent: true,
+				content: function () {
+					'step 0'
+					var cards = get.cards(3);
+					game.updateRoundNumber();
+					event.cards = cards;
+					player.showCards(cards, get.translation(player) + '发动了【星卜】');
+					'step 1'
+					var num = 0, list = [
+						['荧惑守心', '出牌阶段使用【杀】的次数-1'],
+						['扶匡东柱', '出牌阶段使用的第一张牌结算完成后，弃置一张牌并摸两张牌'],
+						['五星连珠', '摸牌阶段多摸两张牌，出牌阶段使用【杀】的次数+1，跳过弃牌阶段'],
+					];
+					for (var i of cards) {
+						if (get.color(i, false) == 'red') num++;
+					}
+					if (num == 0) num = 1;
+					player.chooseTarget('是否令一名其他角色获得“' + list[num - 1][0] + '”效果？', list[num - 1][1], lib.filter.notMe).set('ai', function (target) {
+						var player = _status.event.player, num = _status.event.getParent().num;
+						var att = get.attitude(player, target);
+						switch (num) {
+							case 1:
+								return -get.sgn(att) * target.countCards('hs', { name: 'sha' }) - 1;
+								break;
+							case 2:
+								return att;
+								break;
+							case 3:
+								return att * (target.hasJudge('lebu') ? 3 : 1);
+								break;
+						}
+					});
+					event.num = num;
+					'step 2'
+					if (result.bool) {
+						player.addExpose(0.15);
+						var skill = 'twxingbu_effect' + num;
+						var target = result.targets[0];
+						player.line(target);
+						game.log(player, '选择了', target);
+						target.popup(skill);
+						target.addTempSkill(skill, { player: 'phaseAfter' });
+						target.addMark(skill, 1, false);
+						game.delayx();
+					}
+					game.cardsDiscard(cards);
+				},
+				subSkill: {
+					effect1: {
+						charlotte: true,
+						onremove: true,
+						marktext: '惑',
+						intro: { content: '出牌阶段使用【杀】的次数-#' },
+						mod: {
+							cardUsable: function (card, player, num) {
+								if (card.name == 'sha') return num - player.countMark('twxingbu_effect1');
+							},
+						},
+					},
+					effect2: {
+						charlotte: true,
+						onremove: true,
+						marktext: '匡',
+						intro: { content: '出牌阶段使用的第一张牌结算完成后，弃置#张牌并摸#*2张牌' },
+						audio: 'xingbu',
+						trigger: { player: 'useCardAfter' },
+						filter: function (event, player) {
+							var evt = event.getParent('phaseUse');
+							if (!evt || evt.player != player) return false;
+							return player.getHistory('useCard', function (evtx) {
+								return evtx.getParent('phaseUse') == evt;
+							}).indexOf(event) < player.countMark('twxingbu_effect2');
+						},
+						forced: true,
+						content: function () {
+							'step 0'
+							player.chooseToDiscard(player.countMark('twxingbu_effect2'), 'he', true);
+							'step 1'
+							player.draw(player.countMark('twxingbu_effect2') * 2);
+						},
+					},
+					effect3: {
+						charlotte: true,
+						onremove: true,
+						marktext: '星',
+						intro: { content: '摸牌阶段多摸#*2张牌，出牌阶段使用【杀】的次数+#，跳过弃牌阶段' },
+						mod: {
+							cardUsable: function (card, player, num) {
+								if (card.name == 'sha') return num + player.countMark('twxingbu_effect3');
+							},
+						},
+						audio: 'xingbu',
+						trigger: { player: ['phaseDrawBegin2', 'phaseDiscardBefore'] },
+						filter: function (event, player) {
+							if (event.name == 'phaseDiscard') return true;
+							return !event.numFixed;
+						},
+						forced: true,
+						content: function () {
+							if (trigger.name == 'phaseDiscard') trigger.cancel();
+							else trigger.num += (player.countMark('twxingbu_effect3') * 2);
+						},
+					},
+				},
+			},
 			//幻陆逊
 			twlifeng: {
+				audio: 2,
 				enable: "phaseUse",
 				filter(event, player) {
 					if (!player.countCards("he")) return false;
@@ -503,6 +778,7 @@ game.import("character", function () {
 				},
 			},
 			twniwo: {
+				audio: 2,
 				trigger: {
 					player: "phaseUseBegin",
 				},
@@ -708,6 +984,7 @@ game.import("character", function () {
 				},
 			},
 			twyanzuo: {
+				audio: 2,
 				trigger: { global: "damageSource" },
 				filter(event, player) {
 					if (event.getParent("phase").skill !== "twrenxian_phase") return false;
@@ -1239,6 +1516,7 @@ game.import("character", function () {
 					},
 					backup(links, player) {
 						return {
+							audio: "twhuanji",
 							names: links.map(i => [{ name: i[2], nature: i[3] }]),
 							filterCard: () => false,
 							selectCard: -1,
@@ -10736,6 +11014,7 @@ game.import("character", function () {
 				mark: true,
 				intro: { content: "使用$花色的杀无任何次数限制" },
 				trigger: { player: "useCard1" },
+				sourceSkill: "twgongji",
 				filter: function (event, player) {
 					if (
 						_status.currentPhase == player &&
@@ -10838,6 +11117,7 @@ game.import("character", function () {
 				charlotte: true,
 				onremove: true,
 				trigger: { global: "dying" },
+				sourceSkill: "twjiefan",
 				filter: function (event, player) {
 					return player.getStorage("twjiefan2").includes(event.player);
 				},
@@ -11120,6 +11400,7 @@ game.import("character", function () {
 					global: ["gainAfter", "loseAsyncAfter"],
 				},
 				direct: true,
+				sourceSkill: "twenyuan",
 				filter: function (event, player) {
 					var cards = event.getg(player);
 					if (!cards.length || cards.length < 2) return false;
@@ -11192,6 +11473,7 @@ game.import("character", function () {
 				audio: "reenyuan",
 				trigger: { player: "damageEnd" },
 				logTarget: "source",
+				sourceSkill: "twenyuan",
 				filter: function (event, player) {
 					return event.source && event.source.isIn();
 				},
@@ -12857,6 +13139,7 @@ game.import("character", function () {
 				direct: true,
 				charlotte: true,
 				onremove: true,
+				sourceSkill: "twruilian",
 				filter: function (event, player) {
 					return player.getStorage("twruilian2").includes(event.player);
 				},
@@ -16205,6 +16488,7 @@ game.import("character", function () {
 			},
 			twgongsun_shadow: {
 				global: "twgongsun_shadow2",
+				sourceSkill: "twgongsun",
 				init: function (player, skill) {
 					if (!player.storage[skill]) player.storage[skill] = [];
 				},
@@ -17227,6 +17511,7 @@ game.import("character", function () {
 					name: "wuxie",
 					isCard: true,
 				},
+				sourceSkill: "twyingji",
 				viewAsFilter: function (player) {
 					return player != _status.currentPhase && player.countCards("h") == 0;
 				},
@@ -17760,6 +18045,7 @@ game.import("character", function () {
 			},
 			twlihuo2: {
 				trigger: { player: "useCard2" },
+				sourceSkill: "twlihuo",
 				filter: function (event, player) {
 					if (event.card.name != "sha" || !game.hasNature(event.card, "fire")) return false;
 					return game.hasPlayer(function (current) {
@@ -17800,6 +18086,7 @@ game.import("character", function () {
 			},
 			twlihuo3: {
 				trigger: { player: "useCardAfter" },
+				sourceSkill: "twlihuo",
 				filter: function (event, player) {
 					return (event.card.twlihuo_buffed &&
 						player.getHistory("sourceDamage", function (evt) {
@@ -19757,6 +20044,7 @@ game.import("character", function () {
 				trigger: { player: "useCardAfter" },
 				forced: true,
 				popup: false,
+				sourceSkill: "twhengjiang",
 				filter: function (event, player) {
 					return (
 						event.twhengjiang_buffed &&
@@ -21588,6 +21876,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "twrangyi",
 				filter: function (event, player) {
 					var evt = event.getParent(2);
 					return (
@@ -22240,6 +22529,7 @@ game.import("character", function () {
 			liwei: ["liwei", "tw_liwei"],
 			tw_jiling: ["jiling", "dc_jiling", "tw_jiling"],
 			tw_zhangji: ["tw_zhangji", "ol_tw_zhangji"],
+			yuejiu: ["yuejiu", "dc_yuejiu"],
 		},
 		characterSubstitute: {
 			huan_zhugeliang: [
@@ -23280,6 +23570,32 @@ game.import("character", function () {
 			twlifeng_info: "出牌阶段 你可弃置两张不同点数的牌，然后对一名距离x以内的角色造成一点伤害（x为你弃置牌点数的差）。该角色因此受到伤害时，其可重铸一张手牌（若没有手牌，则改为摸一张牌），若此牌点数与你弃置的两张牌点数相同，或处于两张牌点数之间，其防止此伤害，且【砺锋】失效直到回合结束。",
 			twniwo: "逆涡",
 			twniwo_info: "出牌阶段开始时，你可选择一名其他角色，然后选择你与其等量的手牌。若如此做，直到本回合结束，你与其均无法使用或打出你以此法选择的牌。",
+			old_jiakui: "TW贾逵",
+			old_jiakui_prefix: "TW",
+			tw_sunluban: 'TW孙鲁班',
+			tw_sunluban_prefix: 'TW',
+			tw_mazhong: 'TW马忠',
+			tw_mazhong_prefix: 'TW',
+			tw_jsp_guanyu: 'TW关羽',
+			tw_jsp_guanyu_prefix: 'TW',
+			tw_fuhuanghou: 'TW伏寿',
+			tw_fuhuanghou_prefix: 'TW',
+			tw_qiaozhou: 'TW谯周',
+			tw_qiaozhou_prefix: 'TW',
+			tw_yj_zhanghe: 'TW张郃',
+			tw_yj_zhanghe_prefix: 'TW',
+			twzenhui: '谮毁',
+			twzenhui_info: '出牌阶段限一次，当你使用【杀】或黑色普通锦囊牌指定目标时，你可选择另一名能成为此牌目标的其他角色并选择一项：①令其也成为此牌的目标。②获得其区域里的一张牌，然后将此牌的使用者改为该角色。',
+			twfuman: '抚蛮',
+			twfuman2: '抚蛮',
+			twfuman_info: '①出牌阶段每名角色限一次，你可以将一张手牌交给一名其他角色并标记为“抚蛮”且“抚蛮”牌的牌名视为【杀】。②一名角色使用或打出“抚蛮”牌结算结束后，你摸一张牌（若此牌造成过伤害，则改为摸两张牌）。',
+			twdanji: '单骑',
+			twdanji_info: '觉醒技，准备阶段，若你的手牌数大于你的体力值且本局游戏的主公不为刘备，你减1点体力上限，然后获得〖马术〗和〖怒斩〗，且本局游戏中你每回合使用的第一张转化【杀】结算完毕后，你摸一张牌。',
+			twxingbu: '星卜',
+			twxingbu_info: '结束阶段，你可以亮出牌堆顶的三张牌，然后可以根据这三张牌中红色牌的数量令一名其他角色获得对应的效果直到其下回合结束：三张，摸牌阶段多摸两张牌，使用【杀】的次数上限+1，跳过弃牌阶段；两张，出牌阶段使用的第一张牌结算完成后，弃置一张牌然后摸两张牌；少于两张，出牌阶段使用【杀】的次数上限-1。',
+			twxingbu_effect1: '荧惑守心',
+			twxingbu_effect2: '扶匡东柱',
+			twxingbu_effect3: '五星连珠',
 
 			tw_zhu: "海外服·专属主公",
 			tw_swordsman: "海外服·武侠篇",

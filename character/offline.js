@@ -2070,7 +2070,9 @@ game.import("character", function () {
 						direct: true,
 						filter(event, player) {
 							if (player == event.player) return false;
-							if (event.cards.length) {
+							// 临时修改（by 棘手怀念摧毁）
+							if (event.cards && event.cards.length) {
+							// if (event.cards?.length) {
 								if (event.getParent().name == "draw") return false;
 								for (var i = 0; i < event.cards.length; i++) if (get.position(event.cards[i]) != "c" || (!get.position(event.cards[i]) && event.cards[i].original != "c")) return true;
 							}
@@ -2287,7 +2289,7 @@ game.import("character", function () {
 				},
 				filter(event, player) {
 					let hasCard = player.getEquips("tiejili").length > 0;
-					if (event.name == "phaseZhunbei") return !hasCard && !player.storage.tymanyong;
+					if (event.name == "phaseZhunbei") return !hasCard;
 					return hasCard;
 				},
 				async content(event, trigger, player) {
@@ -2296,7 +2298,6 @@ game.import("character", function () {
 						if (card) {
 							player.$gain2(card);
 							await player.equip(card);
-							player.storage.tymanyong = true;
 						}
 					}
 					else {
@@ -2954,9 +2955,9 @@ game.import("character", function () {
 				async callback(event, trigger, player) {
 					const result = event.debateResult;
 					if (result.bool && result.opinion) {
-						var opinion = result.opinion,
-							targets = result[opinion].map(i => i[0]);
-						if (opinion == "red") {
+						if (!["red", "black"].includes(result.opinion)) return;
+						const targets = result[result.opinion].map(i => i[0]);
+						if (result.opinion == "red") {
 							for (const target of targets) {
 								target.addTempSkill("tyqingshi_distance", "roundStart");
 								target.addMark("tyqingshi_distance", 1, false);
@@ -3954,7 +3955,7 @@ game.import("character", function () {
 					mark: {
 						charlotte: true,
 						onremove: true,
-						intro: { content: "手牌上限+#" },
+						intro: { content: "本回合手牌上限+#" },
 						charlotte: true,
 						onremove: true,
 						mod: {
@@ -4090,6 +4091,7 @@ game.import("character", function () {
 					},
 					backup(links, player) {
 						return {
+							audio: "jdlongdan",
 							viewAs: {
 								name: links[0][2],
 								nature: links[0][3],
@@ -6041,12 +6043,14 @@ game.import("character", function () {
 					player: "phaseJieshuBegin",
 				},
 				check(event, player) {
+					if (game.countPlayer() > 4) return true;
 					return event.player.hp + player.countCards("h") < 4;
 				},
 				async content(event, trigger, player) {
+					const num = game.countPlayer();
 					await player.turnOver();
-					await player.draw(game.countPlayer());
-					let eff = 0;
+					await player.draw(num);
+					let eff = num > 4 ? 4 * (4 - num) : 0;
 					for (const current of game.players) {
 						eff += get.sgnAttitude(player, current) * (current.countCards("e") + 3 + current.isTurnedOver() ? 5 : -5);
 					}
@@ -6353,6 +6357,7 @@ game.import("character", function () {
 					if (!player.hasSkill("psqingsuan")) await player.addSkills("psqingsuan");
 					else await player.recoverTo(player.maxHp);
 				},
+				derivation: "psqingsuan",
 			},
 			psqingsuan: {
 				locked: true,
@@ -6590,7 +6595,7 @@ game.import("character", function () {
 							if (cards.length) {
 								await player
 									.chooseToUse(function (card, player, event) {
-										if (!get.event("cards").includes(card)) return false;
+										if (get.itemtype(card) != "card" || !get.event("cards").includes(card)) return false;
 										return lib.filter.filterCard.apply(this, arguments);
 									}, "炎谋：选择使用其中的一张【火攻】或火【杀】")
 									.set("cards", cards)
@@ -6692,7 +6697,7 @@ game.import("character", function () {
 					nofire: true,
 					effect: {
 						target(card, player, target, current) {
-							if (get.tag(card, "fireDamage")) return "zerotarget";
+							if (get.tag(card, "fireDamage")) return "zeroplayertarget";
 						},
 					},
 				},
@@ -7472,6 +7477,7 @@ game.import("character", function () {
 						event.source.isIn()
 					);
 				},
+				logTarget: "source",
 				check: function (event, player) {
 					return (
 						get.attitude(player, event.source) >= 0 ||
@@ -7705,6 +7711,7 @@ game.import("character", function () {
 				check: function (event, player) {
 					return get.recoverEffect(event.player, player, player) > 0;
 				},
+				logTarget: "player",
 				content: function () {
 					"step 0";
 					player.addTempSkill("vtbyanli_used", "roundStart");
@@ -8443,6 +8450,7 @@ game.import("character", function () {
 				audio: "suishi",
 				trigger: { global: "dieAfter" },
 				forced: true,
+				sourceSkill: "gzsuishi",
 				filter: function (event, player) {
 					return event.player.group == player.group;
 				},
@@ -8668,6 +8676,7 @@ game.import("character", function () {
 				forced: true,
 				charlotte: true,
 				popup: false,
+				sourceSkill: "pkmiewu",
 				filter: function (event, player) {
 					return event.skill == "pkmiewu_backup";
 				},
@@ -10528,7 +10537,7 @@ game.import("character", function () {
 			},
 			//孙綝
 			zyshilu: {
-				audio: "gzshilu",
+				audio: ["gzshilu1.mp3", "gzshilu2.mp3"],
 				preHidden: true,
 				trigger: { global: "dieAfter" },
 				prompt2: function (event, player) {
@@ -10626,7 +10635,7 @@ game.import("character", function () {
 				},
 			},
 			zyxiongnve: {
-				audio: "gzxiongnve",
+				audio: ["gzxiongnve1.mp3", "gzxiongnve2.mp3"],
 				trigger: { player: "phaseUseBegin" },
 				direct: true,
 				filter: function (event, player) {
@@ -10872,6 +10881,7 @@ game.import("character", function () {
 				trigger: { source: "damageEnd" },
 				logTarget: "player",
 				charlotte: true,
+				sourceSkill: "liangfan",
 				onremove: function (player) {
 					player.removeGaintag("liangfan");
 				},
@@ -11344,7 +11354,7 @@ game.import("character", function () {
 							}
 							return att;
 						})
-						.set("goon", !player.hasUnknown())
+						.set("goon", !player.hasUnknown(Math.round(game.players.length / 4 - 0.2)))
 						.forResult();
 				},
 				async content(event, trigger, player) {
@@ -13008,6 +13018,7 @@ game.import("character", function () {
 				silent: true,
 				popup: false,
 				charlotte: true,
+				sourceSkill: "spmingjian",
 				content: function () {
 					if (trigger.name == "phase") player.removeSkill(event.name);
 					else trigger.noJudgeTrigger = true;
@@ -13109,6 +13120,7 @@ game.import("character", function () {
 			},
 			splanggu_rewrite: {
 				trigger: { player: "judge" },
+				sourceSkill: "splanggu",
 				filter: function (event, player) {
 					return player.countCards("hs") > 0 && event.getParent().name == "splanggu";
 				},
@@ -13193,6 +13205,7 @@ game.import("character", function () {
 			sphantong_gain: {
 				trigger: { global: "phaseBegin" },
 				direct: true,
+				sourceSkill: "sphantong",
 				filter: function (event, player) {
 					return player.storage.sphantong && player.storage.sphantong.length > 0;
 				},
@@ -13560,6 +13573,7 @@ game.import("character", function () {
 					global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter", "equipAfter"],
 				},
 				direct: true,
+				sourceSkill: "xinfu_yanyu",
 				filter: function (event, player) {
 					if (player.storage.xinfu_yanyu2 >= 3) return false;
 					var type = player.storage.xinfu_yanyu,
@@ -13719,6 +13733,7 @@ game.import("character", function () {
 				position: "hes",
 				viewAs: { name: "sha" },
 				prompt: "将一张♦牌当杀使用或打出",
+				sourceSkill: "chixin",
 				check: function (card) {
 					return 5 - get.value(card);
 				},
@@ -13732,6 +13747,7 @@ game.import("character", function () {
 				viewAs: { name: "shan" },
 				position: "hes",
 				prompt: "将一张♦牌当闪使用或打出",
+				sourceSkill: "chixin",
 				check: function (card) {
 					return 5 - get.value(card);
 				},
@@ -13947,6 +13963,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				charlotte: true,
+				sourceSkill: "zuixiang",
 				filter: function (event, player) {
 					if (event.name == "phaseZhunbei") return !event._zuixiang;
 					var type = get.type2(event.card);
@@ -14240,6 +14257,7 @@ game.import("character", function () {
 				trigger: { player: "phaseJieshuBegin" },
 				forced: true,
 				charlotte: true,
+				sourceSkill: "junwei",
 				content: function () {
 					"step 0";
 					var cards = player.getExpansions("junwei2").filter(function (card) {
@@ -14332,6 +14350,7 @@ game.import("character", function () {
 				},
 				trigger: { player: "damageBegin3" },
 				forced: true,
+				sourceSkill: "fenyong",
 				content: function () {
 					trigger.cancel();
 				},
@@ -14444,6 +14463,7 @@ game.import("character", function () {
 			mouduan2: {
 				audio: 1,
 				trigger: { global: "phaseZhunbeiBegin" },
+				sourceSkill: "mouduan",
 				//priority:5,
 				filter: function (event, player) {
 					return (
@@ -14704,6 +14724,7 @@ game.import("character", function () {
 				trigger: { player: "damageBegin3" },
 				forced: true,
 				popup: false,
+				sourceSkill: "shichou",
 				content: function () {
 					trigger.player = player.storage.shichou_target;
 					trigger.shichou4 = true;
@@ -14734,6 +14755,7 @@ game.import("character", function () {
 				trigger: { global: ["dying", "dieBegin"] },
 				forced: true,
 				popup: false,
+				sourceSkill: "shichou",
 				//priority:10,
 				filter: function (event, player) {
 					return event.player == player.storage.shichou_target;
@@ -14749,6 +14771,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				audio: false,
+				sourceSkill: "shichou",
 				content: function () {
 					if (!trigger.shichou4) return;
 					if (event.triggername == "damageAfter" && trigger.num) {
@@ -14787,6 +14810,7 @@ game.import("character", function () {
 				trigger: { player: "phaseDrawEnd" },
 				forced: true,
 				popup: false,
+				sourceSkill: "zhaolie",
 				content: function () {
 					"step 0";
 					event.cards = get.cards(3);
@@ -14940,11 +14964,17 @@ game.import("character", function () {
 				},
 				callback: function () {
 					var evt = event.getParent(2);
-					if (event.judgeResult.color == "black") {
-						//game.cardsDiscard(card);
-						evt._trigger.num++;
-					} else {
-						evt._trigger.source.gain(card, "gain2");
+					switch (event.judgeResult.color) {
+						case "black":
+							evt._trigger.num++;
+							break;
+
+						case "red":
+							evt._trigger.source.gain(card, "gain2");
+							break;
+
+						default:
+							break;
 					}
 				},
 			},
@@ -16140,7 +16170,7 @@ game.import("character", function () {
 			tyliebao_info: "手牌数最少的角色成为【杀】的目标后，你可以摸一张牌并代替其成为目标，若你未因此【杀】受到伤害，其回复一点体力。",
 			ty_zhaorong: "赵融",
 			tyyuantao: "援讨",
-			tyyuantao_info: "每回合限一次，一名角色使用基本牌时，你可以令此牌额外使用一次，然后你于当前回合结束时失去一点体力。",
+			tyyuantao_info: "每回合限一次，一名角色使用基本牌时，你可以令此牌额外结算一次，然后你于当前回合结束时失去一点体力。",
 			ty_zhangnan: "桃张南",
 			ty_zhangnan_prefix: "桃",
 			tyfenwu: "奋武",

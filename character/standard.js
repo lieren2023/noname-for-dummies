@@ -444,12 +444,14 @@ game.import("character", function () {
 							const judging = _status.event.judging;
 							const result = trigger.judge(card) - trigger.judge(judging);
 							const attitude = get.attitude(player, trigger.player);
+							let val = get.value(card);
+							if (get.subtype(card) == "equip2") val /= 2;
+							else val /= 4;
 							if (attitude == 0 || result == 0) return 0;
 							if (attitude > 0) {
-								return result - get.value(card) / 2;
-							} else {
-								return -result - get.value(card) / 2;
+								return result - val;
 							}
+							return -result - val;
 						})
 						.set("judging", trigger.player.judging[0])
 						.setHiddenSkill("guicai");
@@ -459,7 +461,7 @@ game.import("character", function () {
 				popup: false,
 				async content(event, trigger, player) {
 					const chooseCardResultCards = event.cost_data.cards;
-					player.respond(chooseCardResultCards, "guicai", "highlight", "noOrdering");
+					await player.respond(chooseCardResultCards, "guicai", "highlight", "noOrdering");
 					if (trigger.player.judging[0].clone) {
 						trigger.player.judging[0].clone.classList.remove("thrownhighlight");
 						game.broadcast(function (card) {
@@ -635,6 +637,7 @@ game.import("character", function () {
 			},
 			luoyi2: {
 				trigger: { source: "damageBegin1" },
+				sourceSkill: "luoyi",
 				filter(event) {
 					return (
 						event.card &&
@@ -917,6 +920,9 @@ game.import("character", function () {
 				locked: false,
 				audio: 2,
 				audioname: ["sb_zhenji"],
+				audioname2: {
+					re_zhenji: "reqingguo",
+				},
 				enable: ["chooseToRespond", "chooseToUse"],
 				filterCard(card) {
 					return get.color(card) == "black";
@@ -1047,6 +1053,7 @@ game.import("character", function () {
 			rende1: {
 				trigger: { player: "phaseUseBegin" },
 				silent: true,
+				sourceSkill: "rende",
 				async content(event, trigger, player) {
 					player.storage.rende = 0;
 				},
@@ -1090,6 +1097,7 @@ game.import("character", function () {
 				audioname: ["liushan", "re_liubei", "re_liushan", "ol_liushan"],
 				trigger: { player: ["useCardBegin", "respondBegin"] },
 				logTarget: "targets",
+				sourceSkill: "jijiang",
 				filter(event, player) {
 					return event.skill == "jijiang";
 				},
@@ -1143,6 +1151,7 @@ game.import("character", function () {
 				trigger: { global: ["useCardAfter", "useSkillAfter", "phaseAfter"] },
 				silent: true,
 				charlotte: true,
+				sourceSkill: "jijiang",
 				filter(event) {
 					return event.skill != "jijiang" && event.skill != "qinwang";
 				},
@@ -1220,6 +1229,7 @@ game.import("character", function () {
 				forced: true,
 				popup: false,
 				logTarget: "source",
+				sourceSkill: "zhongyi",
 				filter(event, player) {
 					return event.getParent().name == "sha" && event.source && event.source.isFriendOf(player);
 				},
@@ -1359,6 +1369,7 @@ game.import("character", function () {
 				forced: true,
 				firstDo: true,
 				audioname: ["re_zhugeliang"],
+				sourceSkill: "kongcheng",
 				filter(event, player) {
 					if (player.countCards("h")) return false;
 					for (let i = 0; i < event.cards.length; i++) {
@@ -2347,6 +2358,7 @@ game.import("character", function () {
 				audioname: ["re_lvbu", "shen_lvbu", "lvlingqi"],
 				trigger: { player: "useCardToPlayered" },
 				forced: true,
+				sourceSkill: "wushuang",
 				filter(event, player) {
 					return event.card.name == "sha" && !event.getParent().directHit.includes(event.target);
 				},
@@ -2374,6 +2386,7 @@ game.import("character", function () {
 				audioname: ["re_lvbu", "shen_lvbu", "lvlingqi"],
 				trigger: { player: "useCardToPlayered", target: "useCardToTargeted" },
 				forced: true,
+				sourceSkill: "wushuang",
 				logTarget(trigger, player) {
 					return player == trigger.player ? trigger.target : trigger.player;
 				},

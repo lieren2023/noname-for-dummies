@@ -84,7 +84,7 @@ game.import("character", function () {
 				},
 				distance: { attackFrom: -1 },
 				ai: { basic: { equipValue: 7 } },
-				skills: ["olsbyufeng_sizhaojian"],
+				skills: ["sizhaojian_skill"],
 			},
 		},
 		skill: {
@@ -124,7 +124,7 @@ game.import("character", function () {
 				onremove(player) {
 					player.removeSkill("oljiushi_gain");
 				},
-				group: ["oljiushi_use", "oljiushi_damage", "oljiushi_gain"],
+				group: ["oljiushi_use", "oljiushi_damage"],
 				subSkill: {
 					gain: {
 						audio: "oljiushi",
@@ -141,7 +141,7 @@ game.import("character", function () {
 							event.result = { bool: false };
 							if (trigger.name != "phase") {
 								player.addGaintag(trigger.cards, "reluoying");
-								let bool = player.isTurnedOver();
+								let bool = player.isTurnedOver() && player != _status.currentPhase && player.hasSkill("oljiushi", null, false);
 								player.markAuto("oljiushi_gain", trigger.cards);
 								if (bool && player.getStorage("oljiushi_gain").length >= player.maxHp) {
 									const result = await player.chooseBool("是否发动【酒诗】，将武将牌翻面？").forResult();
@@ -528,6 +528,7 @@ game.import("character", function () {
 							evt =>
 								evt == trigger.getParent() &&
 								target.canUse(sha, player, false) &&
+								target.isIn() &&
 								!game.hasPlayer2(current => {
 									return current.hasHistory("damage", evtx => evtx.card === evt.card);
 								})
@@ -772,47 +773,71 @@ game.import("character", function () {
 				filterTarget: lib.filter.notMe,
 				usable: 1,
 				async content(event, trigger, player) {
-					const target = event.target;
-					let map = {};
-					for (const current of [player, target]) {
-						let colors = ["red", "black"];
-						if (current.getDiscardableCards(current, "h").some(card => get.color(card) == "none")) {
-							colors.push("none2");
-						}
-						const str = get.translation(current == player ? target : player);
-						const result = await current
-							.chooseControl(colors)
-							.set("prompt", "翦灭：请选择一个颜色")
-							.set("prompt2", "弃置选择颜色的手牌，然后若你/" + str + "弃置的牌更多，则你/" + str + "视为对" + str + "/你使用【决斗】")
-							.set("ai", () => {
-								const player = get.event().player;
-								let controls = get.event().controls.slice();
-								return controls.sort((a, b) => {
-									return (
-										player
-											.getDiscardableCards(player, "h")
-											.filter(card => {
-												return get.color(card) == (a == "none2" ? "none" : a);
-											})
-											.reduce((sum, card) => sum + get.value(card, player), 0) -
-										player
-											.getDiscardableCards(player, "h")
-											.filter(card => {
-												return get.color(card) == (b == "none2" ? "none" : b);
-											})
-											.reduce((sum, card) => sum + get.value(card, player), 0)
-									);
-								})[0];
+					const target = event.target,
+						targets = [player, target];
+					let map = {},
+						locals = targets.slice();
+					let humans = targets.filter(current => current === game.me || current.isOnline());
+					locals.removeArray(humans);
+					const eventId = get.id();
+					const send = (current, eventId) => {
+						lib.skill.oljianmie.chooseControl(current, targets, eventId);
+						game.resume();
+					};
+					event._global_waiting = true;
+					let time = 10000;
+					if (lib.configOL && lib.configOL.choose_timeout) time = parseInt(lib.configOL.choose_timeout) * 1000;
+					targets.forEach(current => current.showTimer(time));
+					if (humans.length > 0) {
+						const solve = function (resolve, reject) {
+							return function (result, player) {
+								if (result && result.control) {
+									map[player.playerid] = result.control == "none2" ? "none" : result.control;
+									resolve();
+								} else reject();
+							};
+						};
+						await Promise.any(
+							humans.map(current => {
+								return new Promise(async (resolve, reject) => {
+									if (current.isOnline()) {
+										current.send(send, current, eventId);
+										current.wait(solve(resolve, reject));
+									} else {
+										const next = lib.skill.oljianmie.chooseControl(current, targets, eventId);
+										const solver = solve(resolve, reject);
+										if (_status.connectMode) game.me.wait(solver);
+										const result = await next.forResult();
+										if (_status.connectMode) game.me.unwait(result, current);
+										else solver(result, current);
+									}
+								});
 							})
-							.forResult();
-						if (result.control) map[current.playerid] = result.control == "none2" ? "none" : result.control;
+						).catch(() => {});
+						game.broadcastAll("cancel", eventId);
 					}
+					if (locals.length > 0) {
+						for (const current of locals) {
+							const result = await lib.skill.oljianmie.chooseControl(current, targets).forResult();
+							if (result && result.control) map[current.playerid] = result.control == "none2" ? "none" : result.control;
+						}
+					}
+					delete event._global_waiting;
+					for (const i of targets) i.hideTimer();
 					const cards_player = player.getDiscardableCards(player, "h").filter(card => get.color(card) == map[player.playerid]);
 					const cards_target = target.getDiscardableCards(target, "h").filter(card => get.color(card) == map[target.playerid]);
-					if (cards_player.length) await player.discard(cards_player);
-					else player.chat("无牌可弃");
-					if (cards_target.length) await target.discard(cards_target);
-					else target.chat("无牌可弃");
+					if (cards_player.length && cards_target.length) {
+						await game
+							.loseAsync({
+								lose_list: [
+									[player, cards_player],
+									[target, cards_target],
+								],
+								discarder: player,
+							})
+							.setContent("discardMultiple");
+					} else if (cards_player.length) await player.discard(cards_player);
+					else if (cards_target.length) await target.discard(cards_target);
 					if (cards_player.length != cards_target.length) {
 						const user = cards_player.length > cards_target.length ? player : target;
 						const aim = user == player ? target : player;
@@ -827,6 +852,39 @@ game.import("character", function () {
 							return get.effect(target, { name: "juedou" }, player, player) * get.sgn(get.attitude(player, target));
 						},
 					},
+				},
+				chooseControl(player, targets, eventId) {
+					let colors = ["red", "black"];
+					if (player.getDiscardableCards(player, "h").some(card => get.color(card) == "none")) {
+						colors.push("none2");
+					}
+					const str = get.translation(targets[0] == player ? targets[1] : targets[0]);
+					return player
+						.chooseControl(colors)
+						.set("prompt", "翦灭：请选择一个颜色")
+						.set("prompt2", "弃置选择颜色的手牌，然后若你/" + str + "弃置的牌更多，则你/" + str + "视为对" + str + "/你使用【决斗】")
+						.set("ai", () => {
+							const player = get.event().player;
+							let controls = get.event().controls.slice();
+							return controls.sort((a, b) => {
+								return (
+									player
+										.getDiscardableCards(player, "h")
+										.filter(card => {
+											return get.color(card) == (a == "none2" ? "none" : a);
+										})
+										.reduce((sum, card) => sum + get.value(card, player), 0) -
+									player
+										.getDiscardableCards(player, "h")
+										.filter(card => {
+											return get.color(card) == (b == "none2" ? "none" : b);
+										})
+										.reduce((sum, card) => sum + get.value(card, player), 0)
+								);
+							})[0];
+						})
+						.set("id", eventId)
+						.set("_global_waiting", true);
 				},
 			},
 			//OL谋孔融
@@ -1199,13 +1257,13 @@ game.import("character", function () {
 				filter(event, player) {
 					const target = event.player;
 					if (target == player || !target.isIn()) return false;
-					return !target.hasHistory("sourceDamage", evt => evt.player != target);
+					return !target.hasHistory("sourceDamage", evt => evt.player != target) || !target.hasHistory("useCard", evt => evt.targets && evt.targets.some(i => i != target));
 				},
 				async cost(event, trigger, player) {
 					const target = trigger.player;
 					let num = 0;
-					if (!target.hasHistory("useCard", evt => evt.targets && evt.targets.some(i => i != target))) num++;
-					if (!target.hasHistory("sourceDamage", evt => evt.player != target)) num++;
+					if (!target.hasHistory("useCard", evt => evt.targets && evt.targets.some(i => i != target))) num += 2;
+					if (!target.hasHistory("sourceDamage", evt => evt.player != target)) num += 1;
 					const next = player.chooseButton([
 						"窃听：请选择" + (num > 1 ? "一至两" : "一") + "项",
 						[
@@ -1619,9 +1677,11 @@ game.import("character", function () {
 			},
 			olenyuan1: {
 				inherit: "xinenyuan1",
+				sourceSkill: "olenyuan",
 			},
 			olenyuan2: {
 				inherit: "xinenyuan2",
+				sourceSkill: "olenyuan",
 				prompt2: event => "令" + get.translation(event.source) + "交给你一张红色手牌或失去1点体力",
 				getIndex: event => event.num,
 				async content(event, trigger, player) {
@@ -1953,38 +2013,44 @@ game.import("character", function () {
 					var cards = player.getExpansions(skill);
 					if (cards.length) player.loseToDiscardpile(cards);
 				},
-				group: ["olchunlao_save", "olchunlao_gain"],
+				group: ["olchunlao_save"],
 				subSkill: {
 					save: {
 						inherit: "chunlao2",
 						filter(event, player) {
-							return (
-								event.type == "dying" &&
-								event.dying &&
-								event.dying.hp <= 0 &&
-								player.getExpansions("olchunlao").length
-							);
+							const num = player.getRoundHistory("useCard", evt => {
+								// 临时修改（by 棘手怀念摧毁）
+								return evt.card && evt.card.name == "jiu" && evt.card.storage && evt.card.storage.olchunlao;
+								// return evt.card?.name == "jiu" && evt.card?.storage?.olchunlao;
+							}).length + 1;
+							return event.type == "dying" && event.dying && event.dying.hp <= 0 && player.getExpansions("olchunlao").length >= num;
 						},
 						async content(event, trigger, player) {
 							const target = event.targets[0];
+							const num = player.getRoundHistory("useCard", evt => {
+								// 临时修改（by 棘手怀念摧毁）
+								return evt.card && evt.card.name == "jiu" && evt.card.storage && evt.card.storage.olchunlao;
+								// return evt.card?.name == "jiu" && evt.card?.storage?.olchunlao;
+							}).length + 1;
 							const {
 								result: { bool, links },
-							} = await player.chooseCardButton(
-								get.translation("olchunlao"),
-								player.getExpansions("olchunlao"),
-								true
-							);
+							} = await player.chooseCardButton(get.translation("olchunlao"), player.getExpansions("olchunlao"), true, num);
 							if (bool) {
 								player.logSkill("olchunlao", target);
 								await player.loseToDiscardpile(links);
 								event.type = "dying";
-								await target.useCard({ name: "jiu", isCard: true }, target);
+								await target.useCard({ name: "jiu", isCard: true, storage: { olchunlao: true }}, target);
 							}
 						},
 						ai: {
 							save: true,
 							skillTagFilter(player) {
-								return player.getExpansions("olchunlao").length;
+								const num = player.getRoundHistory("useCard", evt => {
+									// 临时修改（by 棘手怀念摧毁）
+									return evt.card && evt.card.name == "jiu" && evt.card.storage && evt.card.storage.olchunlao;
+									// return evt.card?.name == "jiu" && evt.card?.storage?.olchunlao;
+								}).length + 1;
+								return player.getExpansions("olchunlao").length >= num;
 							},
 							order: 6,
 							result: { target: 1 },
@@ -2384,27 +2450,6 @@ game.import("character", function () {
 					ol_sb_yuanshao_shadow: {
 						audio: 1,
 					},
-					sizhaojian: {
-						equipSkill: true,
-						mod: {
-							aiOrder(player, card, num) {
-								if (card.name == "sha" && typeof get.number(card) == "number")
-									return num + get.number(card) / 114514;
-							},
-						},
-						trigger: { player: "useCardToPlayered" },
-						filter(event, player) {
-							return event.card.name == "sha" && typeof get.number(event.card) == "number";
-						},
-						forced: true,
-						locked: false,
-						logTarget: "target",
-						async content(event, trigger, player) {
-							const target = trigger.target;
-							target.addTempSkill("olsbyufeng_block");
-							target.markAuto("olsbyufeng_block", [trigger.card]);
-						},
-					},
 					block: {
 						mod: {
 							cardEnabled(card, player) {
@@ -2444,6 +2489,26 @@ game.import("character", function () {
 								player.removeSkill("olsbyufeng_block");
 						},
 					},
+				},
+			},
+			sizhaojian_skill: {
+				equipSkill: true,
+				mod: {
+					aiOrder(player, card, num) {
+						if (card.name == "sha" && typeof get.number(card) == "number") return num + get.number(card) / 114514;
+					},
+				},
+				trigger: { player: "useCardToPlayered" },
+				filter(event, player) {
+					return event.card.name == "sha" && typeof get.number(event.card) == "number";
+				},
+				forced: true,
+				locked: false,
+				logTarget: "target",
+				async content(event, trigger, player) {
+					const target = trigger.target;
+					target.addTempSkill("olsbyufeng_block");
+					target.markAuto("olsbyufeng_block", [trigger.card]);
 				},
 			},
 			olsbshishou: {
@@ -3429,7 +3494,7 @@ game.import("character", function () {
 					"step 0";
 					player.chooseToCompare(target);
 					"step 1";
-					if (result.bool) player.addTempSkill("qiaoshui3", { player: "phaseUseAfter" });
+					if (result.bool) player.addTempSkill("olqiaoshui_target", { player: "phaseUseAfter" });
 					else {
 						player.addTempSkill("qiaoshui2");
 						player.addTempSkill("olqiaoshui_used");
@@ -3441,6 +3506,11 @@ game.import("character", function () {
 						mark: true,
 						marktext: '<span style="text-decoration: line-through;">说</span>',
 						intro: { content: "被迫闭嘴" },
+					},
+					target: {
+						audio: "olqiaoshui",
+						inherit: "qiaoshui3",
+						sourceSkill: "olqiaoshui",
 					},
 				},
 			},
@@ -3528,8 +3598,7 @@ game.import("character", function () {
 			ol_jianyong: "OL界简雍",
 			ol_jianyong_prefix: "OL界",
 			olqiaoshui: "巧说",
-			olqiaoshui_info:
-				"出牌阶段，你可与一名其他角色拼点。若你赢，你使用的下一张基本牌或普通锦囊牌可以额外指定任意一名其他角色为目标或减少指定一个目标；若你没赢，此技能于本回合失效且本回合你不能使用锦囊牌。",
+			olqiaoshui_info: "出牌阶段，你可与一名其他角色拼点。若你赢，你本回合使用下一张基本牌或普通锦囊牌时，可以为此牌增加或减少一个目标；若你没赢，此技能于本回合失效且本回合你不能使用锦囊牌。",
 			ol_caozhang: "OL界曹彰",
 			ol_caozhang_prefix: "OL界",
 			oljiangchi: "将驰",
@@ -3578,8 +3647,6 @@ game.import("character", function () {
 			olsbshenli_info:
 				"出牌阶段限一次，当你使用【杀】指定目标后，你可以令所有可成为此牌目标的其他角色均成为此牌目标，此牌结算完毕后，若你因此牌造成的伤害值X：大于你的手牌数，你摸X张牌（至多摸五张）；大于你的体力值，你再次对所有目标角色中可以成为此牌目标的角色使用此牌。",
 			olsbyufeng: "玉锋",
-			olsbyufeng_sizhaojian: "思召剑",
-			olsbyufeng_sizhaojian_info: "当你使用有点数的【杀】指定目标后，你令目标角色只能使用无点数或点数大于等于此【杀】的【闪】响应此牌。",
 			olsbyufeng_block: "思召剑",
 			olsbyufeng_info: "游戏开始时，你将【思召剑】置入装备区。",
 			sizhaojian: "思召剑",
@@ -3587,6 +3654,8 @@ game.import("character", function () {
 				"当你使用有点数的【杀】指定目标后，你令目标角色只能使用无点数或点数大于等于此【杀】的【闪】响应此牌。",
 			sizhaojian_append:
 				'<span class="text" style="font-family: yuanli">【思召剑】于闪闪节（3月2日-3月15日）外离开装备区后，销毁此牌</span>',
+			sizhaojian_skill: "思召剑",
+			sizhaojian_skill_info: "当你使用有点数的【杀】指定目标后，你令目标角色只能使用无点数或点数大于等于此【杀】的【闪】响应此牌。",
 			olsbshishou: "士首",
 			olsbshishou_info:
 				"主公技，其他群势力角色失去装备区的牌后，若你的装备区中没有武器牌，其可将【思召剑】置入你的装备区。",
@@ -3602,7 +3671,7 @@ game.import("character", function () {
 			dclihuo_info:
 				"①你使用的非火【杀】可以改为火【杀】，若如此做，此牌结算完毕后，若此牌造成过伤害，则你弃置一张牌或失去1点体力。②你使用火【杀】可以额外指定一个目标。",
 			olchunlao: "醇醪",
-			olchunlao_info: "①当你或你的上下家的【杀】因弃置进入弃牌堆后，你将位于弃牌堆的这些牌称为“醇”置于武将牌上。②一名角色处于濒死状态时，你可以将一张“醇”置入弃牌堆，然后令其视为使用一张【酒】。③当一名角色失去体力后，你可以获得至多两张“醇”。",
+			olchunlao_info: "①当你或你的上下家的【杀】因弃置进入弃牌堆后，你将位于弃牌堆的这些牌称为“醇”置于武将牌上。②一名角色处于濒死状态时，你可以将X张“醇”置入弃牌堆，然后令其视为使用一张【酒】（X为你本轮以此法使用【酒】的次数）。",
 			ol_wangyi: "OL界王异",
 			ol_wangyi_prefix: "OL界",
 			olzhenlie: "贞烈",
@@ -3628,7 +3697,7 @@ game.import("character", function () {
 			ol_caifuren: "OL界蔡夫人",
 			ol_caifuren_prefix: "OL界",
 			olqieting: "窃听",
-			olqieting_info: "其他角色的回合结束后，若其本回合未对其他角色造成伤害，你可以选择一项：1.将其装备区的一张牌置入你的装备区；2.摸一张牌（若其本回合未对其他角色使用过牌，可额外选择一项）。",
+			olqieting_info: "其他角色的回合结束后，若其本回合未对其他角色造成伤害/使用过牌，你可以选择一项/至多两项：1.将其装备区的一张牌置入你的装备区；2.摸一张牌。",
 			ol_liru: "OL界李儒",
 			ol_liru_prefix: "OL界",
 			olmieji: "灭计",
@@ -3654,7 +3723,7 @@ game.import("character", function () {
 			ol_zhangchunhua: "OL界张春华",
 			ol_zhangchunhua_prefix: "OL界",
 			oljianmie: "翦灭",
-			oljianmie_info: "出牌阶段限一次，你可以选择一名其他角色，你与其依次选择一个颜色，然后依次弃置各自选择颜色的手牌，若你/其以此法弃置了更多手牌，则你/其视为对其/你使用一张【决斗】。",
+			oljianmie_info: "出牌阶段限一次，你可以选择一名其他角色，你与其同时选择一个颜色，然后弃置各自选择颜色的手牌，若你/其以此法弃置了更多手牌，则你/其视为对其/你使用一张【决斗】。",
 			ol_caochong: "OL界曹冲",
 			ol_caochong_prefix: "OL界",
 			olchengxiang: "称象",

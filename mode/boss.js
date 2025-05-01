@@ -3313,7 +3313,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			boss_remen: {
-				equipSkill: true,
 				trigger: { target: ["useCardToBefore"] },
 				forced: true,
 				priority: 6,

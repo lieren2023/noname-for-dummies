@@ -44,9 +44,17 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 
 		var openMenu = function (node, e, onclose) {
 			popupContainer.innerHTML = '';
+			// 界面错位修复
+			if (game.getChromeVersion && game.getChromeVersion() >= 128) {
+				var left = Math.round(e.clientX / 1.3);
+			} else {
+				var left = Math.round(e.clientX);
+			}
+			/*
 			// var left = Math.round(e.clientX / game.documentZoom);
 			// var zoom = get.is.phoneLayout() ? 1.3 : 1;
 			var left = Math.round(e.clientX);
+			*/
 			var zoom = get.is.phoneLayout() ? 1 : 1;
 			popupContainer.appendChild(node);
 			// var rect=node.getBoundingClientRect();
@@ -67,8 +75,16 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			// }
 			// if(e){
 			var height = node.offsetHeight;
+			// 界面错位修复
+			if (game.getChromeVersion && game.getChromeVersion() >= 128) {
+				var idealtop = e.clientY / 1.3;
+			} else {
+				var idealtop = e.clientY;
+			}
+			/*
 			// var idealtop = e.clientY / game.documentZoom;
 			var idealtop = e.clientY;
+			*/
 			if (idealtop < 10) {
 				idealtop = 10;
 			}
@@ -197,8 +213,16 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					active._link.remove();
 				}
 				this.classList.add('active');
+				// 界面错位修复
+				if (game.getChromeVersion && game.getChromeVersion() >= 128) {
+					menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) / 1.3 + 'px)';
+				} else {
+					menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) + 'px)';
+				}
+				/*
 				// menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) / game.documentZoom + 'px)';
 				menuTabBar.style.transform = 'translateX(' + (this.getBoundingClientRect().left - this.parentNode.firstChild.getBoundingClientRect().left) + 'px)';
+				*/
 				menuContent.appendChild(this._link);
 			};
 			ui.click.menuTab = function (tab) {
