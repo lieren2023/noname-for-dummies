@@ -33,7 +33,7 @@ content:function(config, pack){
 	// 其他-帮助-关于游戏内容添加提示
 	lib.help['关于游戏']=
 		'<div style="margin:10px">无名杀简介</div><ul style="margin-top:0"><li>无名杀是一款基于JavaScript、CSS和HTML开发的开源卡牌游戏，<span style=\"color:red\">完全免费且不做任何商业用途！！！</span><br>'+
-		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：诗笺<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙HarmonyOS、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
+		'<li>中文名：无名杀<br><li>英文名：noname<br><li>开发者：水乎（于2013年底发布）<br><li>现更新者：诗笺<br><li>客户端平台：安卓Android、苹果iOS、鸿蒙OS（HarmonyOS）、澎湃OS（HyperOS）、Windows、Mac、Linux以及支持web内核的浏览器版本等<br>'+
 		'<li>无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等<br>'+
 		'<li>主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等<br>'+
 		'<li>最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span></ul>'+

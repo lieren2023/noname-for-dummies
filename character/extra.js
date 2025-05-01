@@ -862,7 +862,9 @@ game.import("character", function () {
 					await player.loseMaxHp();
 					await player.addSkills("xinjilve");
 				},
-				derivation: ["xinjilve", "reguicai", "fangzhu", "rejizhi", "rezhiheng", "rewansha"],
+				// 魔改（by 棘手怀念摧毁）
+				// derivation: ["xinjilve", "reguicai", "fangzhu", "rejizhi", "rezhiheng", "rewansha"],
+				derivation: ["xinjilve", "reguicai", "fangzhu", "rejizhi", "rezhiheng", "rewansha", "xiongzhi"],
 				ai: {
 					combo: "xinrenjie",
 				},
@@ -930,7 +932,9 @@ game.import("character", function () {
 					return player.countMark("xinrenjie");
 				},
 				async cost(event, trigger, player) {
-					const limit = Math.min(3, player.countMark("xinrenjie"));
+					// 魔改（by 棘手怀念摧毁）
+					// const limit = Math.min(3, player.countMark("xinrenjie"));
+					const limit = Math.min(4, player.countMark("xinrenjie"));
 					const choices = Array.from({
 						length: limit,
 					}).map((_, i) => [i, get.cnNumber(i + 1, true)]);
@@ -941,7 +945,7 @@ game.import("character", function () {
 						.derivation.removeArray(["xinjilve", "reguicai"])
 						.filter(skill => !player.hasSkill(skill, null, null, false));
 					if (skills.length && limit >= num) {
-						const next = player.chooseButton(2, ["连破：请选择你要移去的“忍”标记数和相应操作", '<div class="text center">移去“忍”标记数</div>', [choices, "tdnodes"], '<div class="text center">执行的操作</div>', [skills.map(i => [i, `获得【${get.translation(i)}】`]).concat(["摸牌"]), "tdnodes"]]);
+						const next = player.chooseButton(2, ["极略：请选择你要移去的“忍”标记数和相应操作", '<div class="text center">移去“忍”标记数</div>', [choices, "tdnodes"], '<div class="text center">执行的操作</div>', [skills.map(i => [i, `获得【${get.translation(i)}】`]).concat(["摸牌"]), "tdnodes"]]);
 						next.set("filterButton", button => {
 							const link = button.link;
 							if (Boolean(ui.selected.buttons.length) !== (typeof link == "number")) return false;
@@ -1029,6 +1033,8 @@ game.import("character", function () {
 								["shu", "rejizhi"],
 								["wu", "rezhiheng"],
 								["qun", "rewansha"],
+								// 魔改（by 棘手怀念摧毁）
+								["jin", "xiongzhi"],
 							]);
 							if (Array.from(groupList.keys()).includes(player.group)) skills.push(groupList.get(player.group));
 							skills = skills.filter(skill => !player.hasSkill(skill, null, null, false));
@@ -11610,7 +11616,9 @@ game.import("character", function () {
 			xinlianpo: "连破",
 			xinlianpo_info: "当你杀死一名角色后，你可以选择一项：1.于此回合结束后获得一个额外回合；2.若你拥有〖极略〗，你获得一个你未拥有的〖极略〗技能。",
 			xinjilve: "极略",
-			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
+			// xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
+			// 魔改（by 棘手怀念摧毁）
+			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗；晋：〖雄志〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
 			new_simayi: "应天神司马懿",
 			// new_simayi_ab: "手杀神司马懿",
 			// new_simayi_prefix: "手杀神",

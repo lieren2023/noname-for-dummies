@@ -743,7 +743,7 @@ game.import("character", function () {
 							} else break;
 						}
 						cards = cards.filter(i => get.owner(i) == target);
-						if (cards.length) await target.discard(cards);
+						if (cards.length) await target.modedDiscard(cards);
 					}
 				},
 				ai: {
