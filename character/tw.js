@@ -828,6 +828,7 @@ game.import("character", function () {
 							return get.event("cards").includes(button.link);
 						})
 						.forResult();
+					if (!result?.links?.length) return;
 					for (const owner of [player, target]) {
 						owner.addTempSkill("twniwo_block");
 						owner.addGaintag(result.links.filter(i => get.owner(i) == owner), "twniwo");

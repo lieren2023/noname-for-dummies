@@ -6021,6 +6021,7 @@ game.import("character", function () {
 					return { type: "basic" };
 				},
 				group: "sblongdan_charge",
+				derivation: "sblongdan_shabi",
 				onremove: function (player) {
 					player.removeSkill("sblongdan_mark");
 				},
@@ -6110,12 +6111,11 @@ game.import("character", function () {
 						},
 						content: function () {
 							game.log(player, "和", trigger.player, "的协力成功");
-							player.addTempSkill("sblongdan_mark", { player: "phaseJieshuBegin" });
+							player.addTempSkill("sblongdan_mark", player.hasSkill("jdlongdan", null, null, false) ? { player: "phaseAfter" } : { player: "phaseJieshuBegin" });
 							game.delayx();
 						},
 					},
 				},
-				derivation: "sblongdan_shabi",
 				ai: {
 					combo: "sblongdan",
 				},

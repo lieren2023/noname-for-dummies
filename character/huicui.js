@@ -2005,7 +2005,7 @@ game.import("character", function () {
 							const num = player.countCards("e");
 							const effect = get.effect(target, trigger.card, player, player);
 							if (!num) return effect;
-							return Math.max(eff, get.effect(target, { name: "guohe_copy2" }, target, player) * num);
+							return Math.max(effect, get.effect(target, { name: "guohe_copy2" }, target, player) * num);
 						})
 						.forResult();
 				},

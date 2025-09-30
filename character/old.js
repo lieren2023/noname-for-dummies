@@ -870,19 +870,22 @@ game.import("character", function () {
 			},
 			oldjiefan: {
 				audio: "jiefan",
-				enable: "chooseToUse",
+				trigger: { player: "chooseToUseBegin" },
 				filter: function (event, player) {
-					return event.type == "dying" && _status.currentPhase && _status.currentPhase.isIn();
+					return event.type == "dying" && _status.currentPhase !== player;
 				},
 				direct: true,
+				clearTime: true,
 				content: function () {
+					const list = [event.name, trigger.dying];
 					player
 						.chooseToUse(function (card, player, event) {
 							if (get.name(card) != "sha") return false;
 							return lib.filter.filterCard.apply(this, arguments);
-						}, get.prompt2("oldjiefan"))
+						}, get.prompt2(...list))
 						.set("targetRequired", true)
 						.set("complexSelect", true)
+						.set("complexTarget", true)
 						.set("filterTarget", function (card, player, target) {
 							if (
 								target != _status.currentPhase &&
@@ -891,7 +894,7 @@ game.import("character", function () {
 								return false;
 							return lib.filter.filterTarget.apply(this, arguments);
 						})
-						.set("logSkill", "oldjiefan")
+						.set("logSkill", list)
 						.set("oncard", function () {
 							_status.event.player.addTempSkill("oldjiefan_recover");
 						})

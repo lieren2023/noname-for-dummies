@@ -958,10 +958,20 @@ game.import("character", function () {
 			clanjianyuan: {
 				inherit: "clanchenya",
 				filter(event, player) {
+					if (event.type != "player") return false;
+					var skill = get.sourceSkillFor(event);
+					var info = get.info(skill);
+					if (info.charlotte) return false;
+					var translation = get.skillInfoTranslation(skill, event.player);
+					if (!translation) return false;
+					// 临时修改（by 棘手怀念摧毁）
+					var match = translation.match(/“?出牌阶段限一次/g);
+					// var match = get.plainText(translation).match(/“?出牌阶段限一次/g);
+					if (!match || match.every(value => value != "出牌阶段限一次") || !event.player.countCards("he")) return false;
 					for (var phase of lib.phaseName) {
 						var evt = event.getParent(phase);
 						if (evt && evt.name == phase) {
-							if (event.player.getHistory("useCard", evtx => evtx.getParent(phase) == evt).length) return lib.skill.clanchenya.filter(event, player);
+							if (event.player.getHistory("useCard", evtx => evtx.getParent(phase) == evt).length) return true;
 						}
 					}
 					return false;

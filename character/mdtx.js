@@ -96,23 +96,29 @@ game.import("character", function () {
 						};
 						await Promise.all(
 							humans.map(current => {
-								return new Promise(async (resolve, reject) => {
+								return new Promise((resolve, reject) => {
 									if (current.isOnline()) {
 										current.send(send, player, current);
 										current.wait((result, player) => {
 											solve(result, player);
-											resolve();
+											resolve(void 0);
 										});
 									} else if (current == game.me) {
 										const next = lib.skill.dcsbyaozuo.chooseCard(player, current);
 										const solver = (result, player) => {
 											solve(result, player);
-											resolve();
+											resolve(void 0);
 										};
-										if (_status.connectMode) game.me.wait(solver);
-										const result = await next.forResult();
-										if (_status.connectMode) game.me.unwait(result, current);
-										else solver(result, current);
+										if (_status.connectMode) {
+											game.me.wait(solver);
+										}
+										return next.forResult().then(result => {
+											if (_status.connectMode) {
+												game.me.unwait(result, current);
+											} else {
+												solver(result, current);
+											}
+										});
 									}
 								});
 							})
@@ -177,6 +183,7 @@ game.import("character", function () {
 						player: 1,
 					},
 				},
+				derivation: "dcsbzhuanwen",
 				subSkill: {
 					effect: {
 						audio: "dcsbyaozuo",

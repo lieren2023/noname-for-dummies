@@ -113,7 +113,7 @@ game.import("character", function () {
 			jd_ol_huaxin: ["male", "wei", 3, ["jdcaozhao", "olxibing"], ["character:ol_huaxin", "die_audio:ol_huaxin"]],
 			jd_sp_yangwan: ["female", "qun", 3, ["jdmingxuan", "spxianchou"], ["character:sp_yangwan", "die_audio:sp_yangwan"]],
 			jd_sb_huangyueying: ["female", "shu", 3, ["jdjizhi", "jdqicai"], ["character:sb_huangyueying", "die_audio:sb_huangyueying"]],
-			jd_sb_zhaoyun: ["male", "shu", 4, ["jdlongdan", "sbjizhu"], ["character:sb_zhaoyun", "die_audio:sb_zhaoyun"]],
+			jd_sb_zhaoyun: ["male", "shu", 4, ["jdlongdan", "jdjizhu"], ["character:sb_zhaoyun", "die_audio:sb_zhaoyun"]],
 			jd_sb_ganning: ["male", "wu", 4, ["jdqixi", "jdfenwei"], ["character:sb_ganning", "die_audio:sb_ganning"]],
 			jd_sb_pangtong: ["male", "shu", 3, ["jdlianhuan", "oldniepan"], ["tempname:sb_pangtong", "character:sb_pangtong", "die_audio:sb_pangtong"]],
 			jd_hanlong: ["male", "wei", 4, ["duwang", "jdcibei"], ["character:hanlong", "die_audio:hanlong"]],
@@ -4170,6 +4170,13 @@ game.import("character", function () {
 					},
 				},
 			},
+			jdjizhu: {
+				inherit: "sbjizhu",
+				audio: ["sbjizhu", 3],
+				ai: {
+					combo: "jdlongdan",
+				},
+			},
 			//九鼎-甘宁
 			jdqixi: {
 				audio: "sbqixi",
@@ -7620,21 +7627,14 @@ game.import("character", function () {
 				content: function () {
 					"step 0";
 					if (!_status.vtbtaoyan_count) {
-						_status.vtbtaoyan_count = 5;
+						_status.vtbtaoyan_count = 6;
 					}
-					player
-						.chooseTarget(
-							get.prompt("vtbtaoyan"),
-							"令一或两名其他角色摸一张牌并从游戏外获得一张【桃】（♥6）",
-							lib.filter.notMe,
-							[1, 2]
-						)
-						.set("ai", (target) => {
-							var player = _status.event.player;
-							return (
-								get.recoverEffect(target, player, player) / 2 + get.attitude(player, target)
-							);
-						});
+					player.chooseTarget(get.prompt("vtbtaoyan"), "令一或两名其他角色摸一张牌并从游戏外获得一张【桃】指示物", lib.filter.notMe, [1, 2]).set("ai", target => {
+						var player = _status.event.player;
+						return (
+							get.recoverEffect(target, player, player) / 2 + get.attitude(player, target)
+						);
+					});
 					"step 1";
 					if (result.bool) {
 						var targets = result.targets.slice();
@@ -7651,7 +7651,7 @@ game.import("character", function () {
 							if (!_status.vtbtaoyan_count) continue;
 							if (!_status.vtbtaoyan_cards) _status.vtbtaoyan_cards = [];
 							_status.vtbtaoyan_count--;
-							var card = game.createCard("tao", "heart", 6);
+							var card = game.createCard("tao");
 							_status.vtbtaoyan_cards.push(card.cardid);
 							target.gain(card, "gain2");
 						}
@@ -7822,7 +7822,6 @@ game.import("character", function () {
 						charlotte: true,
 						trigger: { player: "useCard2" },
 						forced: true,
-						popup: false,
 						onremove: true,
 						nopop: true,
 						filter: function (event, player) {
@@ -7830,6 +7829,7 @@ game.import("character", function () {
 						},
 						content: function () {
 							"step 0";
+							player.removeSkill("vtbyaoli_effect");
 							trigger.directHit.addArray(game.filterPlayer());
 							var num = player.countMark("vtbyaoli_effect");
 							if (
@@ -7874,7 +7874,6 @@ game.import("character", function () {
 							"step 2";
 							player.logSkill("vtbyaoli_effect", event.targets);
 							trigger.targets.addArray(event.targets);
-							player.removeSkill("vtbyaoli_effect");
 						},
 						marktext: "媱",
 						intro: {
@@ -15875,8 +15874,7 @@ game.import("character", function () {
 			vtbxianli_info: "每回合限两次。当你失去牌后，若其中有【闪】，你可以获得当前回合角色的一张牌。",
 			vtb_xiaotao: "小桃",
 			vtbtaoyan: "桃宴",
-			vtbtaoyan_info:
-				"回合开始时，你可以令至多两名其他角色摸一张牌并于游戏外获得一张【桃】（共五张且均为♥6）。",
+			vtbtaoyan_info: "回合开始时，你可以令至多两名其他角色摸一张牌并于游戏外获得一张【桃】指示物（共六张）。",
 			vtbyanli: "妍丽",
 			vtbyanli_info:
 				"每轮限一次。一名角色于你的回合外进入濒死状态时，你可以令其回复至1点体力，然后其摸一张牌。",
@@ -16107,9 +16105,11 @@ game.import("character", function () {
 			jd_sb_zhaoyun: "九鼎赵云",
 			jd_sb_zhaoyun_prefix: "九鼎",
 			jdlongdan: "龙胆",
-			jdlongdan_info: "你可以将【杀】/【闪】当作【闪】/【杀】使用或打出，然后若你本阶段未以此法获得过牌，则你摸两张牌。",
+			jdlongdan_info: "你可以将一张【杀】/【闪】当作【闪】/【杀】使用或打出。每阶段你首次以此法使用或打出牌结算结束后，摸两张牌。",
 			jdlongdanx: "龙胆·改",
-			jdlongdanx_info: "你可以将一张基本牌当作任意基本牌使用或打出，然后若你本阶段未以此法获得过牌，则你摸两张牌。",
+			jdlongdanx_info: "你可以将一张基本牌当作任意基本牌使用或打出。每阶段你首次以此法使用或打出牌结算结束后，摸两张牌。",
+			jdjizhu: "积著",
+			jdjizhu_info: "准备阶段开始时，你可以与一名其他角色“协力”。其的下个结束阶段开始时，若你与其“协力”成功，则你修改〖龙胆〗直到你的下个回合结束后。",
 			jd_sb_huangyueying: "九鼎黄月英",
 			jd_sb_huangyueying_prefix: "九鼎",
 			jdjizhi: "集智",

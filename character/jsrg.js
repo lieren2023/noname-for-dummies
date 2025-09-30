@@ -11866,6 +11866,7 @@ game.import("character", function () {
 					if (!event.getd || !event.getl) return false;
 					let cards = event.getd();
 					return cards.some(card => {
+						if (get.position(card) != "d") return false;
 						if(get.type(card) != "equip") return false;
 						if(!player.canEquip(card, true)) return false;
 						return game.hasPlayer(current => {

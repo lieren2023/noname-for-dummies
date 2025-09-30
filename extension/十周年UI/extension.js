@@ -7808,6 +7808,10 @@ content:function(config, pack){
 		if(lib.skill.clanshengmo != undefined){
 			lib.skill.clanshengmo.marktext = "剩墨";
 		}
+		// 界钟繇活墨标记修改
+		if(lib.skill.rehuomo != undefined){
+			lib.skill.rehuomo.marktext = "活墨";
+		}
 		// 起许劭访客标记修改
 		if(lib.skill.sbyingmen != undefined){
 			lib.skill.sbyingmen.marktext = "访客";
@@ -8264,6 +8268,10 @@ content:function(config, pack){
 		if(lib.skill.twjuexing != undefined){
 			lib.skill.twjuexing.subSkill.lizhan.marktext = "历战";
 		}
+		// 袁谭历战标记修改
+		if(lib.skill.twbaizu != undefined){
+			lib.skill.twbaizu.subSkill.lizhan.marktext = "历战";
+		}
 		// 夏侯子萼承袭标记修改
 		if(lib.skill.twchengxi != undefined){
 			lib.skill.twchengxi.subSkill.effect.marktext = "承袭";
@@ -8668,6 +8676,8 @@ content:function(config, pack){
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
+		// 杨彪尽节标记修改
+		lib.translate.dcjinjie_bg = "尽节";
 		// 衰曹节王甫纵害标记修改
 		lib.translate.jsrgzonghai_bg = "纵害";
 		// 手杀费祎谏喻标记修改

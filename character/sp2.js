@@ -14391,7 +14391,7 @@ game.import("character", function () {
 							let trigger = get.event().getTrigger(), player = trigger.player;
 							if (get.attitude(player, target) > 0) return 0;
 							let eff = get.effect(player, { name: "guohe" }, player, get.event().player) + get.effect(target, { name: "guohe" }, player, get.event().player);
-							if (get.tag(trigger.card, "damage")) eff += get.damageEffect(target, trigger.card, trigger.player, get.event().player);
+							if (get.tag(trigger.card, "damage")) eff += get.effect(target, trigger.card, trigger.player, get.event().player);
 							return eff;
 						});
 					if (bool) {
