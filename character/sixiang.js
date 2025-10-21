@@ -46,10 +46,15 @@ game.import("character", function () {
 		},
 		characterSort: {
 			sixiang: {
-				sixiang_shaoyin: ["std_sunhao", "std_mateng", "std_mayunlu", "std_jianggan", "std_zhouchu", "std_lvlingqi", "std_dc_yanghu", "std_dc_luotong", "std_lijue", "std_chengpu", "std_db_wenyang", "std_re_dengzhi", "std_zhangyì", "std_chengyu", "std_fanyufeng", "std_feiyi"],
-				sixiang_taiyin: ["std_guanxing", "std_fuhuanghou", "std_liubiao", "std_gongsunyuan", "std_cenhun", "std_simashi", "std_sunshao", "std_jiangwan", "std_maliang", "std_xushu", "std_xuezong", "std_liuzhang", "std_wangyuanji", "std_wanglang", "std_zhonghui", "std_huaxin"],
-				// sixiang_shaoyang: [],
-				// sixiang_taiyang: [],
+				// 分包调整（by棘手怀念摧毁）
+				shaoyin_li: ["std_lijue", "std_chengpu", "std_db_wenyang", "std_re_dengzhi", "std_zhangyì", "std_chengyu", "std_fanyufeng", "std_feiyi"],
+				shaoyin_zhen: ["std_jianggan", "std_mayunlu", "std_mateng", "std_sunhao", "std_dc_luotong", "std_dc_yanghu", "std_lvlingqi", "std_zhouchu"],
+				taiyin_gen: ["std_guanxing", "std_sunshao", "std_jiangwan", "std_maliang", "std_xushu", "std_xuezong", "std_wangyuanji", "std_zhonghui"],
+				taiyin_kun: ["std_liuzhang", "std_liubiao", "std_gongsunyuan", "std_fuhuanghou", "std_cenhun", "std_wanglang", "std_huaxin", "std_simashi", ],
+				// shaoyang_xun: [],
+				// shaoyang_kan: [],
+				// taiyang_qian: [],
+				// taiyang_dui: [],
 			},
 		},
 		characterIntro: {
@@ -2260,10 +2265,14 @@ game.import("character", function () {
 			stdshuchen: "疏陈",
 			stdshuchen_info: "你的回合外，你可以将超出手牌上限的手牌当【桃】使用。",
 
-			sixiang_shaoyin: "四象封印·少阴",
-			sixiang_taiyin: "四象封印·太阴",
-			// sixiang_shaoyang: "四象封印·少阳",
-			// sixiang_taiyang: "四象封印·太阳",
+			shaoyin_li: "少阴·离",
+			shaoyin_zhen: "少阴·震",
+			taiyin_gen: "太阴·艮",
+			taiyin_kun: "太阴·坤",
+			shaoyang_xun: "少阳·巽",
+			shaoyang_kan: "少阳·坎",
+			taiyang_qian: "太阳·乾",
+			taiyang_dui: "太阳·兑",
 		},
 		pinyins: {
 			

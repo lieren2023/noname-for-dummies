@@ -8,7 +8,7 @@ game.import("character", function () {
 			mobile: {
 				mobile_default: ["xin_huojun", "muludawang", "mb_chengui", "mb_huban", "mb_xianglang", "yanxiang", "xin_wuban", "laimin", "baoxin", "jiangji", "liwei", "xin_guozhao", "miheng", "taoqian", "lingcao", "sunru", "lifeng", "zhuling", "liuye", "zhaotongzhaoguang", "majun", "simazhao", "wangyuanji", "pangdegong", "shenpei", "hujinding", "zhangyì", "jiakui", "yangbiao", "chendeng", "dongcheng", "yangyi", "dengzhi", "zhengxuan", "sp_sufei", "furong", "dingyuan", "simashi", "yanghuiyu", "hucheer", "gongsunkang", "nanhualaoxian", "zhouqun", "qiaozhou", "fuqian", "mayuanyi", "yanpu", "sunhanhua", "sp_maojie", "peixiu", "sp_jianggan", "ruanhui", "xin_mamidi", "sp_caosong", "yangfu", "wangjun", "sp_pengyang", "qianzhao", "shichangshi", "yangfeng", "zhangbu", "mb_zhangfen"],
 				mobile_longxue: ["mb_simafu", "mb_wenqin", "mb_simazhou", "mb_sp_guanqiujian", "mb_caomao", "chengji", "lizhaojiaobo", "mb_wangjing", "mb_jiachong"],
-				mobile_yijiang: ["yj_zhanghe", "yj_zhangliao", "yj_xuhuang", "yj_ganning", "yj_huangzhong", "yj_weiyan", "yj_zhoubuyi"],
+				mobile_yijiang: ["yj_zhanghe", "yj_zhangliao", "yj_xuhuang", "yj_ganning", "yj_huangzhong", "yj_weiyan", "yj_zhoubuyi", "new_yj_dongzhuo"],
 				mobile_standard: ["xin_xiahoudun", "xin_zhangfei"],
 				mobile_shenhua_feng: ["re_xiaoqiao", "xin_zhoutai"],
 				mobile_shenhua_huo: ["re_pangtong", "re_sp_zhugeliang", "re_xunyu", "re_dianwei", "re_yanwen", "xin_yuanshao"],
@@ -191,6 +191,7 @@ game.import("character", function () {
 			scs_duangui: ["male", "qun", "", ["scschihe"], ["unseen", "sex:male_castrated"]],
 			scs_guosheng: ["male", "qun", "", ["scsniqu"], ["unseen", "sex:male_castrated"]],
 			scs_gaowang: ["male", "qun", "", ["scsmiaoyu"], ["unseen", "sex:male_castrated"]],
+			new_yj_dongzhuo: ["male", "qun", "4/5", ["xiongjin", "xiawei", "baoxi"]],
 		},
 		characterIntro: {
 			lizhaojiaobo: "李昭（？—约公元260年），三国时期曹魏官吏，官拜冗从仆射，为魏帝曹髦的亲信。<br>焦伯，三国时期人物，魏帝曹髦护卫，官拜黄门从官。<br>曹髦见自己权力威势日渐削弱，感到不胜忿恨，于公元260年（甘露五年）五月初六夜里，令李昭和焦伯等在陵云台布署甲士，出讨司马昭，但最终失败，曹髦为成济所弑，李昭和焦伯等应该也战死。在《三国演义》里，焦伯挺枪出战成济，亦被成济所杀。",
@@ -410,7 +411,6 @@ game.import("character", function () {
 			},
 			//大攻车
 			dagongche_attack: {
-				cardimage: "dagongche",
 				fullskin: true,
 				derivation: "mb_zhangfen",
 				type: "equip",
@@ -420,13 +420,12 @@ game.import("character", function () {
 				ai: { basic: { equipValue: 10 } },
 				cardPrompt(card) {
 					if (!card.storage || typeof card.storage.mbquchong != "number") return lib.translate["dagongche_attack_info"];
-					let str = "②此牌剩余" + parseFloat(card.storage.mbquchong) + "点耐久度，耐久度为0时销毁此牌。";
+					let str = "此牌剩余" + parseFloat(card.storage.mbquchong) + "点耐久度，耐久度为0时销毁此牌。";
 					return str + "①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你对一名角色造成伤害时，你可减少1点此牌的耐久度，令此伤害+X（X为游戏轮数且至多为3）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。";
 				},
 				skills: ["dagongche_attack_skill", "mbquchong_effect"],
 			},
 			dagongche_defend: {
-				cardimage: "dagongche",
 				fullskin: true,
 				derivation: "mb_zhangfen",
 				type: "equip",
@@ -436,7 +435,7 @@ game.import("character", function () {
 				ai: { basic: { equipValue: 10 } },
 				cardPrompt(card) {
 					if (!card.storage || typeof card.storage.mbquchong != "number") return lib.translate["dagongche_defend_info"];
-					let str = "②此牌剩余" + parseFloat(card.storage.mbquchong) + "点耐久度，耐久度为0时销毁此牌。";
+					let str = "此牌剩余" + parseFloat(card.storage.mbquchong) + "点耐久度，耐久度为0时销毁此牌。";
 					return str + "①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你受到伤害时，减少X点此牌的耐久度，令此伤害-X（X为伤害值且至多为此牌耐久度）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。";
 				},
 				skills: ["dagongche_defend_skill", "mbquchong_effect"],
@@ -626,7 +625,7 @@ game.import("character", function () {
 						})
 					) {
 						const num = player.getAllHistory("custom", evt => evt.name == "mbquchong").length;
-						const list = get.mode() == "identity" ? [0, 5, 10, 10] : [0, 2, 5, 5];
+						const list = /*get.mode() == "identity" ? [0, 5, 10, 10] : */ [0, 2, 5, 5];
 						return num < 4 && player.countMark("mbquchong") >= list[num];
 					}
 					return player.canMoveCard(
@@ -672,7 +671,7 @@ game.import("character", function () {
 							.set("logSkill", "mbquchong");
 					} else {
 						const numbers = Array.from({ length: 13 }).map((_, i) => get.strNumber(i + 1));
-						const list = get.mode() == "identity" ? [0, 5, 10, 10] : [0, 2, 5, 5];
+						const list = /*get.mode() == "identity" ? [0, 5, 10, 10] : */ [0, 2, 5, 5];
 						const costMark = list[player.getAllHistory("custom", evt => evt.name == "mbquchong").length];
 						const result = await player
 							.chooseButton(
@@ -705,7 +704,7 @@ game.import("character", function () {
 							const card = game.createCard(equips[0], equips[1], get.numString(equips[2]));
 							if (!card.storage) card.storage = {};
 							if (typeof card.storage.mbquchong != "number") {
-								card.storage.mbquchong = card.name == "dagongche_attack" ? 2 : 4;
+								card.storage.mbquchong = card.name == "dagongche_attack" ? 2 : 3;
 							}
 							lib.skill.mbquchong.broadcast(card);
 							const resultx = await player
@@ -860,7 +859,7 @@ game.import("character", function () {
 					return "令对" + get.translation(event.player) + "造成的伤害+" + parseFloat(Math.min(3, game.roundNumber));
 				},
 				check(event, player) {
-					return get.attitude(player, event.player) < 0 && event.player.hasSkillTag("filterDamage", null, { player: player, card: event.card });
+					return get.damageEffect(event.player, player, player) > 0;
 				},
 				async content(event, trigger, player) {
 					trigger.num += Math.min(3, game.roundNumber);
@@ -2275,7 +2274,17 @@ game.import("character", function () {
 							return player.isTurnedOver();
 						},
 						filter(event, player) {
-							return event.mbcmjiushi;
+							if (
+								player.hasHistory("useCard", evt => {
+									if (evt.card.name != "jiu" || evt.getParent().name != "mbcmjiushi_use") {
+										return false;
+									}
+									return evt.getParent("damage", true) == event;
+								})
+							) {
+								return false;
+							}
+							return player.isTurnedOver();
 						},
 						prompt(event, player) {
 							return "是否发动【酒诗】，将武将牌翻面？";
@@ -2893,7 +2902,8 @@ game.import("character", function () {
 					if (gains.length) player.gain(gains.randomGets(Math.min(gains.length, num)), "gain2");
 				},
 				getNum: function (player, event) {
-					let num = get.mode() == "identity" ? 3 : 4;
+					//let num = get.mode() == "identity" ? 3 : 4;
+					let num = 3;
 					const history = game.getAllGlobalHistory("everything");
 					for (let i = history.length - 1; i >= 0; i--) {
 						const evt = history[i];
@@ -3729,7 +3739,7 @@ game.import("character", function () {
 						var card = result.cards[0];
 						player.line(target, "green");
 						target.addTempSkills("mbzhixi", "phaseUseAfter");
-						if (card.name != "sha" && get.type(card) != "trick" && get.color(card) != "black") {
+						if (card.name != "sha" && !(get.type(card, "trick") == "trick" && get.color(card) == "black")) {
 							target.addTempSkill("new_meibu_range", "phaseUseAfter");
 							target.markAuto("new_meibu_range", player);
 						}
@@ -4242,9 +4252,15 @@ game.import("character", function () {
 						charlotte: true,
 						onremove: true,
 						intro: { content: "出牌阶段第一张【杀】只能指定$为目标，且其不可响应你回合内使用的【杀】" },
-						trigger: { player: "useCard1" },
-						filter: function (event, player) {
-							return player == _status.currentPhase && event.card.name == "sha";
+						trigger: { player: "useCardToPlayered" },
+						filter(event, player) {
+							return (
+								player === _status.currentPhase &&
+								event.card.name == "sha" &&
+								player.getStorage("luanqun_directHit").some(tar => {
+									return event.targets.includes(tar);
+								})
+							);
 						},
 						forced: true,
 						logTarget(event, player) {
@@ -4252,6 +4268,14 @@ game.import("character", function () {
 						},
 						content: function () {
 							trigger.directHit.addArray(player.getStorage("luanqun_directHit"));
+						},
+						ai: {
+							directHit_ai: true,
+							skillTagFilter(player, tag, arg) {
+								if (tag === "directHit_ai") {
+									return player.getStorage("luanqun_directHit").includes(arg.target);
+								}
+							},
 						},
 					},
 				},
@@ -5857,6 +5881,8 @@ game.import("character", function () {
 							delete player.storage.scschihe_blocker;
 						},
 						filter: function (event, player) {
+							const evt = event.getParent("useCard", true, true);
+							if (evt && evt.effectedCount < evt.effectCount) return false;
 							if (!event.card || !player.storage.scschihe_block) return false;
 							for (var i of player.storage.scschihe_block) {
 								if (i[0] == event.card) return true;
@@ -8564,22 +8590,39 @@ game.import("character", function () {
 					player.draw();
 				},
 				mod: {
-					cardUsable: function (card, player) {
+					cardUsable(card, player) {
 						if (typeof card == "object") {
-							var evt = lib.skill.dcjianying.getLastUsed(player);
-							if (!evt || !evt.card) return;
-							var num1 = get.number(card),
-								num2 = get.number(evt.card);
-							if (num1 === "unsure" || (typeof num1 == "number" && typeof num2 == "number" && num1 % num2 == 0)) return Infinity;
+							let num1 = get.number(card);
+							if (num1 != "unsure" && typeof num1 != "number") {
+								return;
+							}
+							if ([card].concat(card.cards || []).some(cardx => get.itemtype(cardx) === "card" && cardx.hasGaintag("xingtu1"))) {
+								return Infinity;
+							}
+							let num2 = player.storage.xingtu_mark;
+							if (typeof num2 == "number" && num1 % num2 == 0) {
+								return Infinity;
+							}
 						}
 					},
-					aiOrder: function (player, card, num) {
+					aiOrder(player, card, num) {
 						if (typeof card == "object") {
-							var evt = lib.skill.dcjianying.getLastUsed(player);
-							if (!evt || !evt.card) return;
-							var num1 = get.number(card),
-								num2 = (num2 = get.number(evt.card));
-							if (num1 === "unsure" || (typeof num1 == "number" && typeof num2 == "number" && num2 % num1 == 0)) return num + 5;
+							let num1 = get.number(card);
+							if (num1 != "unsure" && typeof num1 != "number") {
+								return;
+							}
+							if (!card.cards) {
+								return;
+							}
+							for (var i of card.cards) {
+								if (i.hasGaintag("xingtu1")) {
+									return num + 5;
+								}
+							}
+							let num2 = player.storage.xingtu_mark;
+							if (typeof num2 == "number" && num1 % num2 == 0) {
+								return num + 5;
+							}
 						}
 					},
 				},
@@ -10364,10 +10407,10 @@ game.import("character", function () {
 			xingbu: {
 				audio: 2,
 				trigger: { player: "phaseJieshuBegin" },
-				prompt2: "展示牌堆顶的三张牌，并可以根据其中红色牌的数量，令一名其他角色获得一种效果",
+				prompt2: "亮出牌堆顶的三张牌，并可以根据其中红色牌的数量，令一名其他角色获得一种效果",
 				content: function () {
 					"step 0";
-					var cards = get.cards(3, true);
+					var cards = game.cardsGotoOrdering(get.cards(3)).cards;
 					event.cards = cards;
 					player.showCards(cards, get.translation(player) + "发动了【星卜】");
 					"step 1";
@@ -17066,6 +17109,17 @@ game.import("character", function () {
 			},
 			qc_weimu: {
 				audio: true,
+				trigger: { global: "useCard1" },
+				forced: true,
+				firstDo: true,
+				filter(event, player) {
+					if (player.hasSkill("weimu")) return false;
+					if (event.player == player) return false;
+					if (get.color(event.card) != "black" || get.type(event.card) != "trick") return false;
+					var info = lib.card[event.card.name];
+					return info && info.selectTarget && info.selectTarget == -1 && !info.toself;
+				},
+				async content() {},
 				mod: {
 					targetEnabled: function (card, player, target) {
 						var bool = true;
@@ -17335,10 +17389,14 @@ game.import("character", function () {
 					prompt += ingame ? "至多四名" : "至多三名";
 					prompt += "要横置的角色";
 					var range = ingame ? [1, 4] : [1, 3];
-					player.chooseTarget(prompt, range).set("ai", function (target) {
-						var player = _status.event.player;
-						return get.effect(target, { name: "tiesuo" }, player, player);
-					});
+					player
+						.chooseTarget(prompt, range, (card, player, target) => {
+							return !target.isLinked();
+						})
+						.set("ai", function (target) {
+							var player = _status.event.player;
+							return get.effect(target, { name: "tiesuo" }, player, player);
+						});
 					"step 1";
 					if (result.bool && result.targets.length) {
 						player.line(result.targets, "green");
@@ -19222,6 +19280,140 @@ game.import("character", function () {
 					},
 				},
 			},
+			//星董卓
+			xiongjin: {
+				mark: true,
+				marktext: "☯",
+				zhuanhuanji: true,
+				intro: {
+					content(storage) {
+						if (!storage) return "出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）";
+						return "其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）";
+					},
+				},
+				audio: 2,
+				trigger: { global: "phaseUseBegin" },
+				filter(event, player) {
+					return (event.player !== player) === Boolean(player.storage.xiongjin);
+				},
+				logTarget: "player",
+				prompt2(event, player) {
+					return "令其摸" + get.cnNumber(Math.min(3, Math.max(1, player.getDamagedHp()))) + "张牌，然后本回合的弃牌阶段开始时，" + (event.player === player ? "" : "其") + "弃置所有非基本牌";
+				},
+				content() {
+					player.changeZhuanhuanji("xiongjin");
+					const target = trigger.player;
+					target.addTempSkill("xiongjin_effect");
+					target.draw(Math.min(3, Math.max(1, player.getDamagedHp())));
+				},
+				subSkill: {
+					effect: {
+						charlotte: true,
+						mark: true,
+						intro: { content: "弃牌阶段开始时，弃置所有非基本牌" },
+						trigger: { player: "phaseDiscardBegin" },
+						forced: true,
+						popup: false,
+						content() {
+							const cards = player.getCards("he", card => lib.filter.cardDiscardable(card, player) && get.type(card) !== "basic");
+							if (cards.length) player.discard(cards);
+						},
+					},
+				},
+			},
+			xiawei: {
+				audio: 2,
+				trigger: { global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter"] },
+				filter(event, player) {
+					if (event.name.indexOf("lose") === 0) {
+						if (event.getlx === false || event.position !== ui.discardPile) return false;
+					} else if (event.getParent()?.relatedEvent?.name == "useCard") return false;
+					return event.cards.some(card => !player.getStorage("xiawei").includes(get.suit(card, false)));
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					player.markAuto(
+						"xiawei",
+						trigger.cards.reduce((list, card) => list.add(get.suit(card, false)), [])
+					);
+					player.storage.xiawei.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
+					// 临时修改（by 棘手怀念摧毁）
+					// player.addTip("xiawei", get.translation("xiawei") + player.getStorage("xiawei").reduce((str, suit) => str + get.translation(suit), " "));
+					if (player.getStorage("xiawei").length >= 4 && player.maxHp < 9) {
+						delete player.storage.xiawei;
+						player.unmarkSkill("xiawei");
+						// 临时修改（by 棘手怀念摧毁）
+						// player.removeTip("xiawei");
+						await player.gainMaxHp();
+						await player.draw();
+					}
+				},
+				intro: { content: "已记录花色$" },
+				mod: { maxHandcardBase: player => player.maxHp },
+				// 临时修改（by 棘手怀念摧毁）
+				// onremove: (player, skill) => player.removeTip(skill),
+			},
+			baoxi: {
+				audio: 2,
+				trigger: { global: ["loseEnd", "cardsDiscardEnd", "loseAsyncEnd"] },
+				filter(event, player) {
+					if (player.getStorage("baoxi_used").includes("juedou")) return false;
+					if (event.name.indexOf("lose") === 0 && (event.getlx === false || event.position !== ui.discardPile)) return false;
+					return event.cards.filter(card => get.type(card) === "basic").length > 1 && player.hasUseTarget(new lib.element.VCard({ name: "juedou" }));
+				},
+				async cost(event, trigger, player) {
+					event.result = await player
+						.chooseTarget(get.prompt("baoxi"), "减1点体力上限，视为对一名角色使用【决斗】", (card, player, target) => {
+							return player.canUse(new lib.element.VCard({ name: "juedou" }), target);
+						})
+						.set("ai", target => {
+							const player = get.player();
+							if (player.maxHp === 1) return 0;
+							return get.effect(target, new lib.element.VCard({ name: "juedou" }), player, player);
+						})
+						.forResult();
+				},
+				async content(event, trigger, player) {
+					player.addTempSkill("baoxi_used");
+					player.markAuto("baoxi_used", ["juedou"]);
+					await player.loseMaxHp();
+					await player.useCard(new lib.element.VCard({ name: "juedou" }), event.targets[0], false);
+				},
+				group: "baoxi_sha",
+				subSkill: {
+					used: {
+						charlotte: true,
+						onremove: true,
+					},
+					sha: {
+						audio: "baoxi",
+						trigger: { global: ["loseEnd", "cardsDiscardEnd", "loseAsyncEnd"] },
+						filter(event, player) {
+							if (player.getStorage("baoxi_used").includes("sha")) return false;
+							if (event.name.indexOf("lose") === 0 && (event.getlx === false || event.position !== ui.discardPile)) return false;
+							return event.cards.filter(card => get.type(card) !== "basic").length > 1 && player.hasUseTarget(new lib.element.VCard({ name: "sha" }));
+						},
+						async cost(event, trigger, player) {
+							event.result = await player
+								.chooseTarget(get.prompt("baoxi"), "减1点体力上限，视为对一名角色使用【杀】", (card, player, target) => {
+									return player.canUse(new lib.element.VCard({ name: "sha" }), target);
+								})
+								.set("ai", target => {
+									const player = get.player();
+									if (player.maxHp === 1) return 0;
+									return get.effect(target, new lib.element.VCard({ name: "sha" }), player, player);
+								})
+								.forResult();
+						},
+						async content(event, trigger, player) {
+							player.addTempSkill("baoxi_used");
+							player.markAuto("baoxi_used", ["sha"]);
+							await player.loseMaxHp();
+							await player.useCard(new lib.element.VCard({ name: "sha" }), event.targets[0], false);
+						},
+					},
+				},
+			},
 		},
 		dynamicTranslate: {
 			yizan_use: function (player) {
@@ -19267,6 +19459,18 @@ game.import("character", function () {
 					versus = get.mode() == "versus" && _status.mode == "two" ? "角色" : "有手牌的角色弃置一张手牌，然后其";
 				if (mbzuoyou) return '转换技。出牌阶段限一次，阴：你可以令一名角色摸三张牌，然后其弃置两张牌；<span class="bluetext">阳：你可以令一名' + versus + "获得1点护甲。</span>";
 				return '转换技。出牌阶段限一次，<span class="bluetext">阴：你可以令一名角色摸三张牌，然后其弃置两张牌；</span>阳：你可以令一名' + versus + "获得1点护甲。";
+			},
+			xiongjin(player){
+				const storage = player.storage.xiongjin;
+				var str = "转换技。";
+				if (!storage) str += '<span class="bluetext">';
+				str += "阳：出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌";
+				if (!storage) str += "</span>";
+				str += "；";
+				if (storage) str += '<span class="bluetext">';
+				str += "阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌";
+				if (storage) str += "</span>";
+				return str+="（X为你已损失的体力值，至少为1，至多为3）。";
 			},
 		},
 		perfectPair: {
@@ -19785,7 +19989,7 @@ game.import("character", function () {
 			zhiming: "知命",
 			zhiming_info: "准备阶段开始时或弃牌阶段结束时，你摸一张牌，然后可以将一张牌置于牌堆顶。",
 			xingbu: "星卜",
-			xingbu_info: "结束阶段，你可以展示牌堆顶的三张牌，然后你可以根据X值（X为这三张牌中红色牌的数量），令一名其他角色获得对应的效果直到其下回合结束：①三张：其摸牌阶段多摸两张牌，使用【杀】的次数上限+1。②两张：其使用【杀】的次数上限-1，跳过弃牌阶段。③小于两张：其于准备阶段开始时弃置一张手牌。",
+			xingbu_info: "结束阶段，你可以亮出牌堆顶的三张牌，然后你可以根据X值（X为这三张牌中红色牌的数量），令一名其他角色获得对应的效果直到其下回合结束：①三张：其摸牌阶段多摸两张牌，使用【杀】的次数上限+1。②两张：其使用【杀】的次数上限-1，跳过弃牌阶段。③小于两张：其于准备阶段开始时弃置一张手牌。",
 			xin_sunluban: "手杀界孙鲁班",
 			xin_sunluban_prefix: "手杀界",
 			xinzenhui: "谮毁",
@@ -20157,9 +20361,8 @@ game.import("character", function () {
 			sidai: "伺怠",
 			sidai_info: "限定技，出牌阶段，你可以将手牌区内的所有基本牌当做【杀】使用。若此牌对应的实体牌中：包含【闪】，则目标角色成为此牌的目标后，需弃置一张基本牌，否则不可响应此牌；包含【桃】，则当目标角色受到此牌的伤害后，其减1点体力上限。",
 			jieyu: "竭御",
-			jieyu_info: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为4-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",
-			jieyu_info_identity: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",
-			yangfeng: "杨奉",
+			jieyu_info: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",
+			//jieyu_info_identity: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",			yangfeng: "杨奉",
 			mbxuetu: "血途",
 			mbxuetu_info: "转换技。出牌阶段限一次，阴：你可以令一名角色回复1点体力；阳：你可以令一名角色摸两张牌。",
 			mbxuetu_achieve: "血途·成功",
@@ -20192,7 +20395,7 @@ game.import("character", function () {
 			mbcmqingzheng: "清正",
 			mbcmqingzheng_info: "持恒技。出牌阶段开始时，你可以弃置一种花色的所有手牌，并观看一名有手牌的其他角色的手牌，你弃置其中一种花色的所有牌。若其被弃置的牌数小于你以此法弃置的牌数，你对其造成1点伤害。",
 			mbcmjiushi: "酒诗",
-			mbcmjiushi_info: "持恒技。①当你需要使用【酒】时，若你的武将牌正面向上，你可以翻面，视为使用一张【酒】。②当你受到伤害后，若你的武将牌背面向上，你可以翻面。③当你翻面后，你获得牌堆里的一张锦囊牌。",
+			mbcmjiushi_info: "持恒技。①当你需要使用【酒】时，若你的武将牌正面向上，你可以翻面，视为使用一张【酒】。②当你受到伤害后，若你武将牌背面朝上且未因此次伤害发动过〖酒诗〗，你可以翻面。③当你翻面后，你获得牌堆里的一张锦囊牌。",
 			mbcmfangzhu: "放逐",
 			mbcmfangzhu_info: "持恒技。出牌阶段限一次，你可以选择一名不为你上个出牌阶段发动〖放逐〗的目标的其他角色，选择一项：⒈令其不能使用手牌中的非锦囊牌直到其回合结束；⒉令其所有非Charlotte技能失效直到其回合结束。",
 			mbjuejin: "决进",
@@ -20238,7 +20441,7 @@ game.import("character", function () {
 			mbquchong: "渠冲",
 			mbquchong_effect: "大攻车",
 			mbquchong_info: "①出牌阶段，你可以重铸装备牌。②一名角色的回合结束时，你将弃牌堆中的所有装备移出游戏，然后获得等量的铸造值。③出牌阶段开始时，若场上：没有【大攻车】，则你可以依次消耗0、2、5、5点铸造值，从【大攻车·攻】和【大攻车·守】中选择一个令一名角色获得（你任选此牌花色和点数）并令其使用此牌；有【大攻车】，则你可以移动场上的一张【大攻车】（可替换原装备）。",
-			mbquchong_info_identity: "①出牌阶段，你可以重铸装备牌。②一名角色的回合结束时，你将弃牌堆中的所有装备移出游戏，然后获得等量的铸造值。③出牌阶段开始时，若场上：没有【大攻车】，则你可以依次消耗0、5、10、10点铸造值，从【大攻车·攻】和【大攻车·守】中选择一个令一名角色获得（你任选此牌花色和点数）并令其使用此牌；有【大攻车】，则你可以移动场上的一张【大攻车】（可替换原装备）。",
+			// mbquchong_info_identity: "①出牌阶段，你可以重铸装备牌。②一名角色的回合结束时，你将弃牌堆中的所有装备移出游戏，然后获得等量的铸造值。③出牌阶段开始时，若场上：没有【大攻车】，则你可以依次消耗0、5、10、10点铸造值，从【大攻车·攻】和【大攻车·守】中选择一个令一名角色获得（你任选此牌花色和点数）并令其使用此牌；有【大攻车】，则你可以移动场上的一张【大攻车】（可替换原装备）。",
 			mbxunjie:'逊节',
 			mbxunjie_info:'锁定技，当你受到有来源的伤害时，若其体力值大于你且场上没有【大攻车】，则你进行一次判定，若结果为红色，则此伤害-1。',
 			mb_zhangfen_prefix: "手杀",
@@ -20246,14 +20449,22 @@ game.import("character", function () {
 			dagongche_defend: "大攻车·守",
 			dagongche_attack_skill: "大攻车",
 			dagongche_defend_skill: "大攻车",
-			dagongche_attack_info: "②此牌拥有1点耐久度，耐久度为0时销毁此牌。①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你对一名角色造成伤害时，你可减少1点此牌的耐久度，令此伤害+X（X为游戏轮数且至多为3）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。",
-			dagongche_defend_info: "②此牌拥有3点耐久度，耐久度为0时销毁此牌。①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你受到伤害时，减少X点此牌的耐久度，令此伤害-X（X为伤害值且至多为此牌耐久度）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。",
+			dagongche_attack_info: "此牌拥有2点耐久度，耐久度为0时销毁此牌。①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你对一名角色造成伤害时，你可减少1点此牌的耐久度，令此伤害+X（X为游戏轮数且至多为3）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。",
+			dagongche_defend_info: "此牌拥有3点耐久度，耐久度为0时销毁此牌。①当此牌进入你的装备区时，弃置你装备区里的其他牌。②其他装备区进入你的装备区前，改为将这些牌置于弃牌堆。③当你受到伤害时，减少X点此牌的耐久度，令此伤害-X（X为伤害值且至多为此牌耐久度）。④当此牌不因〖渠冲〗离开装备区时，减少1点此牌的耐久度并防止之。",
 			mb_sp_zhenji: "手杀SP甄宓",
 			mb_sp_zhenji_prefix: "手杀SP",
 			mbbojian: "博鉴",
 			mbbojian_info: "锁定技。若你本阶段使用牌数与花色数与上个出牌阶段皆不同，你摸两张牌；否则你将一张弃牌堆中本阶段你因使用而失去的牌交给一名角色。",
 			mbjiwei: "济危",
 			mbjiwei_info: "锁定技。①其他角色的回合结束时，你摸X张牌（X为本回合满足的项数：1.至少[1]名角色失去过牌；2.至少[1]名角色受到过伤害）。②准备阶段，若你的手牌数不小于Y，你将手牌中颜色较多的牌分配给任意名其他角色（Y为存活人数与你体力值的最大值）。",
+			new_yj_dongzhuo: "☆董卓",
+			new_yj_dongzhuo_prefix: "☆",
+			xiongjin: "雄进",
+			xiongjin_info: "转换技。阳：出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌；阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）。",
+			xiawei: "侠威",
+			xiawei_info: "锁定技。①你的手牌上限等于体力上限。②有牌非因使用进入弃牌堆后，你记录这些牌的花色，然后若你因此记录了至少四种花色且你的体力上限小于9，则你增加1点体力上限并摸一张牌。",
+			baoxi: "暴袭",
+			baoxi_info: "每回合每项各限一次，当一次性至少有两张基本牌/非基本牌进入弃牌堆时，你可以减1点体力上限，视为对一名角色使用【决斗】/【杀】。",
 
 			mobile_default: "袖里乾坤",
 			mobile_longxue: "龙血玄黄",

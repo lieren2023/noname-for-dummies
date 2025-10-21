@@ -7,16 +7,13 @@ game.import("character", function () {
 			sp: {
 				sp_tianji: ["caoteng", "sunhao", "liuxie", "caoang", "hetaihou", "sunluyu", "ol_wangrong", "zuofen", "ol_bianfuren", "qinghegongzhu", "tengfanglan", "ruiji", "caoxiancaohua", "caoyu"],
 				sp_sibi: ["ol_lukai", "yangxiu", "guotu", "chenlin", "chengyu", "shixie", "fuwan", "wangyun", "zhugejin", "simalang", "maliang", "buzhi", "dongyun", "kanze", "sunqian", "xizhicai", "sunshao", "duxi", "jianggan", "ol_dengzhi", "ol_yangyi", "ol_dongzhao", "ol_chendeng", "jin_yanghu", "wangyan", "xiahouxuan", "quhuang", "zhanghua", "wangguan", "sunhong", "caoxi", "tianchou"],
-				sp_tianzhu: ["ol_liupi", "budugen", "ol_kebineng", "yadan", "liyi", "zhangyan", "niujin", "hejin", "hansui", "wutugu", "yanbaihu", "shamoke", "zhugedan", "huangzu", "gaogan", "tadun", "fanjiangzhangda", "ahuinan", "dongtuna", "ol_wenqin"],
-				sp_nvshi: ["ol_sunru", "ol_yuanji", "ol_dingshangwan", "lingju", "guanyinping", "zhangxingcai", "mayunlu", "dongbai", "zhaoxiang", "ol_zhangchangpu", "daxiaoqiao", "jin_guohuai", "ol_hujinding", "ol_luyusheng", "ol_liwan"],
+				sp_tianzhu: ["ol_liupi", "budugen", "ol_kebineng", "yadan", "liyi", "zhangyan", "niujin", "hejin", "hansui", "wutugu", "yanbaihu", "shamoke", "zhugedan", "huangzu", "gaogan", "tadun", "fanjiangzhangda", "ahuinan", "dongtuna", "ol_wenqin", "mawan"],
+				sp_nvshi: ["ol_sunru", "ol_yuanji", "ol_dingshangwan", "lingju", "guanyinping", "zhangxingcai", "mayunlu", "dongbai", "zhaoxiang", "ol_zhangchangpu", "daxiaoqiao", "jin_guohuai", "ol_hujinding", "ol_luyusheng", "ol_liwan", "kongshu"],
 				sp_shaowei: ["ol_pengyang", "simahui", "zhangbao", "zhanglu", "zhugeguo", "xujing", "zhangling", "huangchengyan", "zhangzhi", "lushi"],
 				sp_huben: ["wangkuang", "duanjiong", "liupan", "ol_mengda", "caohong", "xiahouba", "zhugeke", "zumao", "wenpin", "litong", "mazhong", "heqi", "quyi", "luzhi", "yuejin", "dingfeng", "wuyan", "ol_zhuling", "tianyu", "huojun", "zhaoyǎn", "dengzhong", "ol_furong", "macheng", "ol_zhangyì", "ol_zhujun", "maxiumatie", "luoxian", "ol_huban", "haopu", "ol_qianzhao", "caimao"],
 				sp_liesi: ["lvboshe", "mizhu", "weizi", "ol_liuba", "zhangshiping"],
-				sp_default: ["sp_diaochan", "sp_zhaoyun", "sp_sunshangxiang", "sp_caoren", "sp_jiangwei", "sp_machao", "sp_caiwenji", "jsp_guanyu", "jsp_huangyueying", "sp_pangde", "sp_jiaxu", "yuanshu", "sp_zhangliao", "sp_ol_zhanghe", "sp_menghuo", "sp_sunce"],
-				sp_qifu: ["ol_jiangwan", "ol_feiyi", "caoying", "panshu", "caochun", "yuantanyuanshang", "caoshuang", "wolongfengchu", "guansuo", "baosanniang", "fengfangnv", "jin_zhouchu"],
-				sp_wanglang: ["ol_wanglang", "ol_puyuan", "ol_zhouqun", "ol_peixiu"],
 				
-				sp_waitforsort: ["kongshu", "ol_tw_zhangji", "mawan"],
+				// sp_waitforsort: [],
 			},
 		},
 		characterFilter: {
@@ -39,11 +36,8 @@ game.import("character", function () {
 			caoteng: ["male", "qun", 3, ["olyongzu", "olqingliu"]],
 			budugen: ["male", "qun", 4, ["olkouchao"]],
 			mawan: ["male", "qun", 4, ["mashu", "olhunjiang"]],
-			ol_jiangwan: ["male", "shu", 3, ["olziruo", "olxvfa"]],
 			caimao: ["male", "wei", 4, ["olzuolian", "oljingzhou"]],
-			ol_peixiu: ["male", "jin", 4, ["olmaozhu", "oljinlan"]],
 			yadan: ["male", "qun", 4, ["olqingya", "oltielun"]],
-			sp_sunce: ["male", "qun", 4, ["junkliantao"]],
 			ol_liupi: ["male", "qun", 4, ["olyicheng"]],
 			ol_lukai: ["male", "wu", 3, ["olxuanzhu", "oljiane"]],
 			liupan: ["male", "qun", 4, ["olpijing"]],
@@ -55,8 +49,6 @@ game.import("character", function () {
 			ol_liwan: ["female", "wei", 3, ["relianju", "resilv"]],
 			ol_dingshangwan: ["female", "wei", 3, ["olfudao", "olfengyan"]],
 			zhangyan: ["male", "qun", 4, ["olsuji", "ollangdao"]],
-			ol_tw_zhangji: ["male", "wei", 3, ["skill_zhangji_A", "skill_zhangji_B"]],
-			ol_feiyi: ["male", "shu", 3, ["yanru", "hezhong"]],
 			lvboshe: ["male", "qun", 4, ["olfushi", "oldongdao"]],
 			ol_luyusheng: ["female", "wu", 3, ["olcangxin", "olrunwei"]],
 			caoxi: ["male", "wei", 3, ["olgangshu", "oljianxuan"]],
@@ -66,11 +58,9 @@ game.import("character", function () {
 			hejin: ["male", "qun", 4, ["mouzhu", "olyanhuo"]],
 			hansui: ["male", "qun", 4, ["olniluan", "olxiaoxi"]],
 			duanjiong: ["male", "qun", 4, ["olsaogu"]],
-			ol_zhouqun: ["male", "shu", 4, ["oltianhou", "olchenshuo"]],
 			ol_wenqin: ["male", "wei", 4, ["olguangao", "olhuiqi"]],
 			haopu: ["male", "shu", 4, ["olzhenying"]],
 			ol_mengda: ["male", "shu", 4, ["olgoude"]],
-			ol_wanglang: ["male", "wei", 3, ["gushe", "oljici"]],
 			lushi: ["female", "qun", 3, ["olzhuyan", "releijie"]],
 			zhangshiping: ["male", "shu", 3, ["olhongji", "olxinggu"]],
 			sunhong: ["male", "wu", 3, ["olxianbi", "olzenrun"]],
@@ -94,13 +84,10 @@ game.import("character", function () {
 			wangyan: ["male", "jin", 4, ["yangkuang", "cihuang", "sanku"]],
 			huojun: ["male", "shu", 4, ["qiongshou", "fenrui"]],
 			caoxiancaohua: ["female", "qun", 3, ["huamu", "qianmeng", "liangyuan", "jisi"]],
-			jin_zhouchu: ["male", "jin", 4, ["shanduan", "yilie"]],
 			zhaoyǎn: ["male", "wei", 4, ["tongxie"]],
-			ol_puyuan: ["male", "shu", 4, ["olshengong", "olqisi"]],
 			ruiji: ["female", "wu", 3, ["qiaoli", "qingliang"]],
 			weizi: ["male", "qun", 3, ["yuanzi", "liejie"]],
 			tengfanglan: ["female", "wu", 3, ["luochong", "aichen"]],
-			sp_menghuo: ["male", "qun", 4, ["spmanwang"]],
 			jin_yanghu: ["male", "jin", 4, ["huaiyuan", "chongxin", "dezhang"]],
 			qinghegongzhu: ["female", "wei", 3, ["zengou", "qhzhangji"]],
 			fanjiangzhangda: ["male", "wu", 4, ["yuanchou", "juesheng"]],
@@ -108,9 +95,7 @@ game.import("character", function () {
 			ol_chendeng: ["male", "qun", 4, ["olfengji", "olxuanhui"]],
 			ol_zhuling: ["male", "wei", 4, ["jixian"]],
 			wuyan: ["male", "wu", 4, ["lanjiang"]],
-			sp_ol_zhanghe: ["male", "qun", 4, ["spolzhouxuan"]],
 			ol_dongzhao: ["male", "wei", 3, ["olxianlve", "olzaowang"]],
-			fengfangnv: ["female", "qun", 3, ["zhuangshu", "chuiti"]],
 			ol_yangyi: ["male", "shu", 3, ["oljuanxia", "oldingcuo"]],
 			zuofen: ["female", "jin", 3, ["zhaosong", "lisi"]],
 			ol_wangrong: ["female", "qun", 3, ["olfengzi", "oljizhan", "olfusong"]],
@@ -120,30 +105,20 @@ game.import("character", function () {
 			gaogan: ["male", "qun", 4, ["juguan"]],
 			huangchengyan: ["male", "qun", 3, ["guanxu", "yashi"]],
 			huangzu: ["male", "qun", 4, ["wangong"]],
-			panshu: ["female", "wu", 3, ["weiyi", "jinzhi"]],
-			wolongfengchu: ["male", "shu", 4, ["youlong", "luanfeng"]],
-			sp_zhangliao: ["male", "qun", 4, ["mubing", "ziqu", "diaoling"]],
-			caoshuang: ["male", "wei", 4, ["retuogu", "shanzhuan"]],
 			ol_zhangchangpu: ["female", "wei", 3, ["yanjiao", "olxingshen"]],
 			zhangling: ["male", "qun", 3, ["zlhuji", "zlshoufu"]],
 			sunshao: ["male", "wu", 3, ["bizheng", "yidian"]],
 
-			yuantanyuanshang: ["male", "qun", 4, ["neifa"]],
 			xujing: ["male", "shu", 3, ["yuxu", "xjshijian"]],
 
 			jianggan: ["male", "wei", 3, ["weicheng", "daoshu"]],
 
-			caoying: ["female", "wei", 4, ["xinfu_lingren", "fujian"], []],
 			simahui: ["male", "qun", 3, ["jianjie", "xinfu_chenghao", "xinfu_yinshi"], []],
-			baosanniang: ["female", "shu", 4, ["olwuniang", "olxushen"], []],
 
 			yangxiu: ["male", "wei", 3, ["jilei", "danlao"]],
 			chenlin: ["male", "wei", 3, ["bifa", "songci"]],
 			caohong: ["male", "wei", 4, ["yuanhu"]],
 			xiahouba: ["male", "shu", 4, ["baobian"]],
-			yuanshu: ["male", "qun", 4, ["yongsi", "weidi"]],
-			sp_diaochan: ["female", "qun", 3, ["lihun", "rebiyue"], ["die_audio:diaochan"]],
-			sp_zhaoyun: ["male", "qun", 3, ["ollongdan", "chongzhen"], ["die_audio:zhaoyun"]],
 			liuxie: ["male", "qun", 3, ["tianming", "mizhao", "twzhuiting"], ["zhu"]],
 			zhugejin: ["male", "wu", 3, ["huanshi", "olhongyuan", "olmingzhe"]],
 			zhugeke: ["male", "wu", 3, ["aocai", "duwu"]],
@@ -151,44 +126,31 @@ game.import("character", function () {
 			simalang: ["male", "wei", 3, ["junbing", "quji"]],
 			zhangxingcai: ["female", "shu", 3, ["shenxian", "qiangwu"]],
 			fuwan: ["male", "qun", 4, ["dcmoukui"]],
-			sp_sunshangxiang: ["female", "shu", 3, ["liangzhu", "fanxiang"]],
 			caoang: ["male", "wei", 4, ["kaikang"]],
-			sp_caoren: ["male", "wei", 4, ["weikui", "lizhan"]],
 			zhangbao: ["male", "qun", 3, ["rezhoufu", "reyingbing"]],
 			maliang: ["male", "shu", 3, ["zishu", "yingyuan"]],
 			zhugedan: ["male", "wei", 4, ["gongao", "juyi"]],
-			sp_jiangwei: ["male", "wei", 4, ["kunfen", "fengliang"]],
-			sp_machao: ["male", "qun", 4, ["olzhuiji", "ol_shichou"]],
 			sunhao: ["male", "wu", 5, ["recanshi", "rechouhai", "guiming"], ["zhu"]],
 			shixie: ["male", "qun", 3, ["olbiluan", "relixia"]],
 			mayunlu: ["female", "shu", 4, ["fengpo", "mashu"]],
 			zhanglu: ["male", "qun", 3, ["yishe", "bushi", "midao", "twshijun"], ["zhu"]],
 			wutugu: ["male", "qun", 15, ["ranshang", "hanyong"]],
-			sp_caiwenji: ["female", "wei", 3, ["chenqing", "mozhi"]],
 			zhugeguo: ["female", "shu", 3, ["qirang", "yuhua"]],
 
 			lingju: ["female", "qun", 3, ["jieyuan", "fenxin"]],
 
-			jsp_guanyu: ["male", "wei", 4, ["new_rewusheng", "danji"]],
-			jsp_huangyueying: ["female", "qun", 3, ["jiqiao", "linglong"]],
 			sunluyu: ["female", "wu", 3, ["new_meibu", "new_mumu"]],
 			zumao: ["male", "wu", 4, ["yinbing", "juedi"]],
 			wenpin: ["male", "wei", 4, ["zhenwei"]],
 			daxiaoqiao: ["female", "wu", 3, ["new_xingwu", "new_luoyan"]],
 
-			guansuo: ["male", "shu", 4, ["zhengnan", "xiefang"]],
 			tadun: ["male", "qun", 4, ["reluanzhan"]],
 			yanbaihu: ["male", "qun", 4, ["zhidao", "jili"]],
 			chengyu: ["male", "wei", 3, ["shefu", "benyu"]],
 
-			sp_pangde: ["male", "wei", 4, ["mashu", "juesi"]],
-			sp_jiaxu: ["male", "wei", 3, ["zhenlue", "jianshu", "yongdi"]],
-
 			litong: ["male", "wei", 4, ["tuifeng"]],
 			mizhu: ["male", "shu", 3, ["ziyuan", "jugu"]],
 			buzhi: ["male", "wu", 3, ["hongde", "dingpan"]],
-
-			caochun: ["male", "wei", 4, ["xinshanjia"]],
 
 			dongbai: ["female", "qun", 3, ["lianzhu", "xiahui"]],
 
@@ -392,7 +354,7 @@ game.import("character", function () {
 			lingcao: ["lingtong"],
 			lingju: ["diaochan", "lvbu"],
 			jiangqing: ["zhoutai"],
-			dingfeng: ["xusheng", "zhugeke"],
+			dingfeng: ["xusheng", "re_xusheng", "zhugeke"],
 			caohong: ["caoren"],
 			daxiaoqiao: ["zhouyu", "sunce"],
 			cuiyan: ["caocao"],
@@ -763,7 +725,7 @@ game.import("character", function () {
 					check(button) {
 						const player = get.player();
 						if (button.link == "discard") return 2;
-						let bool = card => get.type(card) == "trick" && get.tag(card, "damage");
+						let bool = card => get.type(card) == "trick" && get.tag(card, "damage") > 0.5;
 						if (player.countCards("h", "sha") > 1 && player.countCards("h", bool) > 1) return 1;
 						return 3;
 					},
@@ -781,13 +743,14 @@ game.import("character", function () {
 									.chooseToDiscard(2, "he", true)
 									.set("ai", card => {
 										let player = get.player();
-										let bool = card => get.type(card) == "trick" && get.tag(card, "damage");
-										if (player.countCards("h", bool) == 1 && bool(card)) return 10 - get.value(card);
-										else if (card.name == "sha") return 9 - get.value(card);
+										let bool = card => get.type(card) == "trick" && get.tag(card, "damage") > 0.5;
+										if (card.name == "sha" || bool(card)) return 10 - get.value(card);
 										return 5 - get.value(card);
 									});
-								if (!player.countCards("h", card => card.name == "sha")) break;
-								if (!player.countCards("h", card => get.type(card) == "trick" && get.tag(card, "damage"))) break;
+								if (!player.countCards("h", card => {
+									if (card.name == "sha") return true;
+									return get.type(card) == "trick" && get.tag(card, "damage") > 0.5;
+								})) break;
 							}
 							const evt = event.getParent("phaseUse", true);
 							if (!evt || event.name == "renxia_discard") return;
@@ -804,7 +767,7 @@ game.import("character", function () {
 							while (true) {
 								await player.draw(2);
 								if (player.countCards("h", card => card.name == "sha")) break;
-								if (player.countCards("h", card => get.type(card) == "trick" && get.tag(card, "damage"))) break;
+								if (player.countCards("h", card => get.type(card) == "trick" && get.tag(card, "damage") > 0.5)) break;
 							}
 							const evt = event.getParent("phaseUse", true);
 							if (!evt || event.name == "renxia_draw") return;
@@ -1550,7 +1513,7 @@ game.import("character", function () {
 							.chooseButton(["拥族：请选择一项执行", [list.filter(effect => choosed !== effect[0][0]), "textbutton"]], true)
 							.set("filterButton", button => {
 								const effect = button.link[1];
-								return !effect.filter || effect.filter(current);
+								return !effect.filter || effect.filter(get.player());
 							})
 							.set("ai", button => {
 								const effect = button.link[1];
@@ -1868,7 +1831,7 @@ game.import("character", function () {
 					locals.removeArray(humans);
 					const eventId = get.id();
 					const send = (question, current, eventId) => {
-						lib.skill.dclisao.chooseControl(question, current, eventId);
+						lib.skill.olhunjiang.chooseControl(question, current, eventId);
 						game.resume();
 					};
 					event._global_waiting = true;
@@ -4188,17 +4151,18 @@ game.import("character", function () {
 						player.countCards("he", card => {
 							if (_status.connectMode && get.position(card) == "h") return true;
 							return lib.filter.cardDiscardable(card, player);
-						}) >= 2 && player.countCards("j")
+						}) >= lib.skill.olfeiyang.getNum && player.countCards("j")
 					);
 				},
 				direct: true,
 				limited:true,
+				getNum: 2,
 				//skillAnimation:true,
 				//animationColor:'orange',
 				content: function () {
 					"step 0";
 					player
-						.chooseToDiscard(get.prompt2("olfeiyang"), "he", 2)
+						.chooseToDiscard(get.prompt2("olfeiyang"), lib.skill.olfeiyang.getNum)
 						.set("ai", function (card) {
 							var player = _status.event.player;
 							if (
@@ -5796,7 +5760,7 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { global: "phaseDiscardBegin" },
 				filter: function (event, player) {
-					if (event.player == player) return false;
+					// if (event.player == player) return false;
 					return event.player.isDamaged();
 				},
 				direct: true,
@@ -9854,20 +9818,26 @@ game.import("character", function () {
 			oljianhe: {
 				audio: 2,
 				enable: "phaseUse",
-				filterTarget: function (card, player, target) {
-					return !player.getStorage("oljianhe_chosen").includes(target);
+				filterTarget(card, player, target) {
+					return !player.getStorage("oljianhe_used").includes(target);
 				},
-				filterCard: function (card, player) {
+				filterCard(card, player) {
 					if (ui.selected.cards.length) {
 						var cardx = ui.selected.cards[0];
-						if (get.type(cardx) == "equip") return get.type(card) == "equip";
+						if (get.type(cardx) == "equip") {
+							return get.type(card) == "equip";
+						}
 						return get.name(card) == get.name(cardx);
 					}
 					var cards = player.getCards("he");
 					for (var cardx of cards) {
 						if (card != cardx) {
-							if (get.type(cardx) == "equip" && get.type(card) == "equip") return true;
-							if (get.name(card) == get.name(cardx)) return true;
+							if (get.type(cardx) == "equip" && get.type(card) == "equip") {
+								return true;
+							}
+							if (get.name(card) == get.name(cardx)) {
+								return true;
+							}
 						}
 					}
 					return false;
@@ -9876,27 +9846,30 @@ game.import("character", function () {
 				position: "he",
 				complexCard: true,
 				discard: false,
-				visible: true,
-				prepare: "throw",
-				loseTo: "discardPile",
+				lose: false,
 				delay: 0.5,
-				check: function (card) {
-					if (get.type(card) == "equip") return 15 - get.value(card);
+				check(card) {
+					if (get.type(card) == "equip") {
+						return 10 - get.value(card);
+					}
 					return 7 - get.value(card);
 				},
-				content: function () {
+				content() {
 					"step 0";
-					player.draw(cards.length);
-					player.addTempSkill("oljianhe_chosen", "phaseUseAfter");
-					player.markAuto("oljianhe_chosen", [target]);
+					event.type = get.type2(cards[0], player);
+					player.recast(cards);
+					player.addTempSkill("oljianhe_used", "phaseUseAfter");
+					player.markAuto("oljianhe_used", [target]);
 					"step 1";
-					var type = get.type2(cards[0]);
+					const type = event.type;
 					target
 						.chooseCard(get.translation(player) + "对你发动了【剑合】", "请重铸" + get.cnNumber(cards.length) + "张" + get.translation(type) + "牌，或点“取消”受到1点雷电伤害", cards.length, "he", (card, player) => {
 							return get.type2(card) == _status.event.type && player.canRecast(card);
 						})
 						.set("ai", card => {
-							if (_status.event.goon) return (get.type(card) == "equip" ? 15 : 7) - get.value(card);
+							if (_status.event.goon) {
+								return (get.type(card) == "equip" ? 15 : 7) - get.value(card);
+							}
 							return 0;
 						})
 						.set("type", type)
@@ -9911,28 +9884,55 @@ game.import("character", function () {
 					game.delayx();
 				},
 				ai: {
-					order: function (item, player) {
-						if (player.hasSkill("olbihun") && player.countCards("h") > player.getHandcardLimit()) return 11;
+					order(item, player) {
+						if (player.hasSkill("olbihun") && player.countCards("h") > player.getHandcardLimit()) {
+							return 11;
+						}
 						return 4;
 					},
 					threaten: 2.4,
 					expose: 0.1,
 					result: {
-						target: function (player, target) {
-							var cards = ui.selected.cards,
-								type = get.type2(cards[0]);
+						player: 1,
+						target(player, target) {
+							const cards = ui.selected.cards,
+								type = get.type2(cards[0]),
+								damage = get.damageEffect(target, player, target, "thunder");
+							if (player === target) {
+								if (
+									target.countCards("he", card => {
+										return !cards.includes(card) && get.type(card) === type && get.value(card) < 6;
+									}) >= cards.length
+								) {
+									return Math.max(2, damage);
+								}
+								return damage;
+							}
+							const he = target.getCards("he"),
+								known = target.getKnownCards(player);
+							let num = 0;
+							if (type === "basic") {
+								num = 0.42;
+							} else if (type === "equip") {
+								num = 0.1;
+							} else if (type === "trick") {
+								num = 0.25;
+							}
 							if (
-								target.countCards("he", card => {
-									return get.type(card) == type && get.value(card) <= 5;
-								}) >= cards.length
-							)
-								return 1;
-							return -1;
+								known.filter(card => {
+									return get.type(card) === type && get.value(card) < 6;
+								}).length +
+									(he - known.length) * num >=
+								cards.length
+							) {
+								return Math.max(3, damage);
+							}
+							return damage;
 						},
 					},
 				},
 				subSkill: {
-					chosen: {
+					used: {
 						charlotte: true,
 						onremove: true,
 						intro: { content: "本阶段已对$发动过技能" },
@@ -15686,6 +15686,7 @@ game.import("character", function () {
 				audio: 2,
 				trigger: { global: "phaseBegin" },
 				direct: true,
+				derivation: ["zhuangshu_basic", "zhuangshu_trick", "zhuangshu_equip"],
 				filter: function (event, player) {
 					return event.player.isIn() && event.player.hasEmptySlot(5) && player.hasCard(lib.skill.zhuangshu.filterCard, "he");
 				},
@@ -15809,6 +15810,7 @@ game.import("character", function () {
 				},
 			},
 			zhuangshu_basic: {
+				audio: true,
 				equipSkill: true,
 				trigger: { player: "damageBegin2" },
 				direct: true,
@@ -15875,6 +15877,7 @@ game.import("character", function () {
 				},*/
 			},
 			zhuangshu_trick: {
+				audio: true,
 				trigger: { player: ["phaseJudgeBefore"] },
 				equipSkill: true,
 				direct: true,
@@ -15918,6 +15921,7 @@ game.import("character", function () {
 				},
 			},
 			zhuangshu_equip: {
+				audio: true,
 				trigger: { player: "phaseUseEnd" },
 				forced: true,
 				equipSkill: true,
@@ -19576,7 +19580,7 @@ game.import("character", function () {
 					},
 				},
 				subSkill: {
-					used: { sub: true },
+					used: { charlotte: true },
 				},
 			},
 			//统率三军诸葛瑾和文聘
@@ -20139,7 +20143,7 @@ game.import("character", function () {
 						var card = result.cards[0];
 						player.line(target, "green");
 						target.addTempSkills("new_zhixi", "phaseUseAfter");
-						if (card.name != "sha" && get.type(card) != "trick" && get.color(card) != "black") {
+						if (card.name != "sha" && !(get.type(card, "trick") == "trick" && get.color(card) == "black")) {
 							target.addTempSkill("new_meibu_range", "phaseUseAfter");
 							target.markAuto("new_meibu_range", player);
 						}
@@ -24550,25 +24554,57 @@ game.import("character", function () {
 			},
 			linglong: {
 				audio: 2,
+				trigger: {
+					player: ["loseAfter", "disableEquipAfter", "enableEquipAfter"],
+					global: ["equipAfter", "addJudgeAfter", "gainAfter", "loseAsyncAfter", "addToExpansionAfter", "phaseBefore"],
+				},
+				forced: true,
+				onremove: true,
+				derivation: "reqicai",
+				filter(event, player) {
+					if (event.name == "disableEquip" || event.name == "enableEquip") {
+						if (!event.slots.includes("equip5")) {
+							return false;
+						}
+					} else if (event.name != "phase" && (event.name != "equip" || event.player != player)) {
+						var evt = event.getl(player);
+						if (!evt || !evt.es || !evt.es.some(i => get.subtypes(i).includes("equip5"))) {
+							return false;
+						}
+					}
+					let skills = player.additionalSkills["linglong"];
+					return (skills && skills.length > 0) != player.hasEmptySlot(5);
+				},
+				direct: true,
+				content() {
+					player.removeAdditionalSkill("linglong");
+					if (player.hasEmptySlot(5)) {
+						player.addAdditionalSkill("linglong", ["reqicai"]);
+					}
+				},
 				group: "linglong_bagua",
 				mod: {
-					cardUsable: function (card, player, num) {
-						if (card.name == "sha" && player.hasEmptySlot(1)) return num + 1;
+					cardUsable(card, player, num) {
+						if (card.name == "sha" && player.hasEmptySlot(1)) {
+							return num + 1;
+						}
 					},
-					maxHandcard: function (player, num) {
-						if (!player.hasEmptySlot(3) || !player.hasEmptySlot(4)) return;
+					maxHandcard(player, num) {
+						if (!player.hasEmptySlot(3) || !player.hasEmptySlot(4)) {
+							return;
+						}
 						return num + 1;
 					},
-					targetInRange: function (card, player, target, now) {
+					/*targetInRange(card, player, target, now) {
 						if (!player.hasEmptySlot(5)) return;
 						var type = get.type(card);
 						if (type == "trick" || type == "delay") return true;
 					},
-					canBeDiscarded: function (card, source, player) {
+					canBeDiscarded(card, source, player) {
 						if (!player.hasEmptySlot(5)) return;
 						if (get.position(card) == "e" && get.subtypes(card).some(slot => slot == "equip2" || slot == "equip5")) return false;
 					},
-					/*cardDiscardable:function (card,player){
+					cardDiscardable:function (card,player){
 						if(player.getEquip(5)) return;
 						if(get.position(card)=='e') return false;
 					},*/
@@ -31314,6 +31350,7 @@ game.import("character", function () {
 			},
 		},
 		characterReplace: {
+			yuejin: ["yuejin", "std_yuejin"],
 			chenlin: ["chenlin", "dc_sb_chenlin"],
 			shamoke: ["shamoke", "ty_shamoke"],
 			guanyinping: ["guanyinping", "old_guanyinping", "ty_guanyinping"],
@@ -32533,7 +32570,7 @@ game.import("character", function () {
 			olcangxin: "藏心",
 			olcangxin_info: "锁定技。①当你每回合第一次受到伤害时，你观看牌堆底的三张牌并弃置其中任意张牌，然后此伤害-X。②摸牌阶段开始时，你展示牌堆底的三张牌，然后摸X张牌（X为其中红桃牌的数量）。",
 			olrunwei: "润微",
-			olrunwei_info: "其他角色的弃牌阶段开始时，若其已受伤，则你可以选择一项：①令其弃置一张牌，其本回合手牌上限+1；②令其摸一张牌，其本回合手牌上限-1。",
+			olrunwei_info: "一名角色的弃牌阶段开始时，若其已受伤，则你可以选择一项：①令其弃置一张牌，其本回合手牌上限+1；②令其摸一张牌，其本回合手牌上限-1。",
 			caoxi: "曹羲",
 			olgangshu: "刚述",
 			olgangshu_info: "①当你使用非基本牌结算结束后，你可以令以下一项数值+1（每项至多加至5）：1.攻击范围；2.受〖刚述〗影响的下个摸牌阶段摸牌数；3.使用【杀】的次数上限。②当有牌被你抵消后，重置你〖刚述①〗增加的所有数值。",
@@ -32700,9 +32737,6 @@ game.import("character", function () {
 			sp_shaowei: "少微·能人异士",
 			sp_huben: "虎贲·勇冠三军",
 			sp_liesi: "列肆·豪商巨贾",
-			sp_default: "天同·同名异势",
-			sp_qifu: "灯愿·祈福武将",
-			sp_wanglang: "SP",
 			
 			sp_waitforsort: "等待分包",
 		},

@@ -31,7 +31,7 @@ game.import("character", function () {
 			shen_lusu: ["male", "shen", 3, ["tamo", "dingzhou", "zhimeng"], ["wu"]],
 			shen_huatuo: ["male", "shen", 3, ["wuling", "youyi"], ["qun"]],
 			le_shen_jiaxu: ["male", "shen", 4, ["jxlianpo", "jxzhaoluan"], ["qun"]],
-			shen_dianwei: ["male", "shen", 4, ["juanjia", "qiexie", "cuijue"], ["wei"]],
+			shen_dianwei: ["male", "shen", 4, ["juanjia", "qiexie", "cuijue"], ["wei", "die_audio:shen_dianwei:shen_dianwei2"]],
 			shen_dengai: ["male", "shen", 4, ["dctuoyu", "dcxianjin", "dcqijing"], ["wei"]],
 			tw_shen_lvmeng: ["male", "shen", 3, ["twshelie", "twgongxin"], ["wu"]],
 			shen_zhangjiao: ["male", "shen", 3, ["yizhao", "sijun", "sanshou", "tianjie"], ["qun"]],
@@ -109,11 +109,14 @@ game.import("character", function () {
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			// 故意保留了一部分“旧版”的味道，这样才知道你玩的是无名杀（by 棘手怀念摧毁）
 			//神黄忠
 			//丁真神将，赤矢神将，爆头神将，吃人神将
 			// 扎针小游戏？
 			"1！5！": {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dclieqiong",
+				// audio: 2,
 				trigger: { source: "damageSource" },
 				filter(event, player) {
 					return event.player.isIn() && event.source != event.player;
@@ -247,6 +250,9 @@ game.import("character", function () {
 						let list = [];
 						for (let i = 0; i < position.length; i++) {
 							const num_px = document.createElement("div");
+							num_px.classList.add("nodeintro");
+							num_px.nodeTitle = get.translation(position[i]);
+							num_px.nodeContent = get.skillInfoTranslation(position[i]);
 							num_px.style.width = "15%";
 							num_px.style.height = "15%";
 							num_px.id = position[i];
@@ -293,6 +299,14 @@ game.import("character", function () {
 									if (event.control2) event.control2.open();
 								}
 							});
+							if (!lib.config.touchscreen) {
+								if (lib.config.hover_all) {
+									lib.setHover(num_px, ui.click.hoverplayer);
+								}
+								if (lib.config.right_info) {
+									num_px.oncontextmenu = ui.click.rightplayer;
+								}
+							}
 							list.push(num_px);
 						}
 						const selectedList = list.filter(i => places.includes(i.id))
@@ -465,7 +479,9 @@ game.import("character", function () {
 				},
 			},
 			chiren: {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dczhanjue",
+				// audio: 2,
 				trigger:{
 					player: "phaseUseBegin",
 				},
@@ -555,6 +571,9 @@ game.import("character", function () {
 					},
 				}
 			},
+			// 配音临时修改（by 棘手怀念摧毁）
+			dclieqiong: { audio: 2 },
+			dczhanjue: { audio: 2 },
 			//手杀神司马？
 			//应天司马懿！别肘
 			jilin: {
@@ -830,25 +849,45 @@ game.import("character", function () {
 				audio: "renjie2",
 				trigger: {
 					player: ["chooseToUseAfter", "chooseToRespondAfter"],
+					global: "_wuxieAfter",
 				},
 				filter(event, player) {
-					if (player.getRoundHistory("useSkill", evt => evt.skill == "xinrenjie").length >= 4) return false;
+					if (player.countMark("xinrenjie_used") >= 4) return false;
+					if (event.name == "chooseToUse" && event.type == "wuxie") return false;
+					if (event.name == "_wuxie") {
+						if (event.wuxieresult && event.wuxieresult == player) return false;
+						if (event._info_map.player == player) return false;
+						return true;
+					}
 					return event.respondTo && event.respondTo[0] !==player && !event.result.bool;
 				},
 				forced: true,
 				async content(event, trigger, player) {
-					player.addMark(event.name, 1);
+					player.addMark("xinrenjie", 1);
+					player.addTempSkill("xinrenjie_used", "roundStart");
+					player.addMark("xinrenjie_used", 1, false);
 				},
 				intro: {
 					name2: "忍",
 					content: "mark",
 				},
 				marktext: "忍",
-				hiddenCard: () => true,
+				hiddenCard: player => player.countMark("xinrenjie_used") < 4,
 				ai: {
 					combo: "xinjilve",
 					respondSha: true,
 					respondShan: true,
+					skillTagFilter(player) {
+						if (player.countMark("xinrenjie_used") >= 4) {
+							return false;
+						}
+					},
+				},
+				subSkill: {
+					used: {
+						charlotte: true,
+						onremove: true,
+					},
 				},
 			},
 			xinbaiyin: {
@@ -1095,6 +1134,10 @@ game.import("character", function () {
 				usable: 1,
 				filterCard: true,
 				filterTarget: lib.filter.notMe,
+				filter() {
+					const round = game.roundNumber;
+					return typeof round == "number" && round > 0;
+				},
 				check(card) {
 					const round = game.roundNumber,
 						player = get.player();
@@ -3637,7 +3680,8 @@ game.import("character", function () {
 				},
 				forced: true,
 				filter(event, player) {
-					return typeof get.number(event.card) == "number";
+					const number = get.number(event.card);
+					return typeof number == "number" && number > 0;
 				},
 				marktext: "黄",
 				intro: {
@@ -8789,7 +8833,6 @@ game.import("character", function () {
 						gains.removeArray(player.getCards("h"));
 						if (!pushs.length || pushs.length != gains.length) return;
 						player.addToExpansion(pushs, player, "giveAuto").gaintag.add("qixing");
-						//game.log(player,'将',pushs,'作为“星”置于武将牌上');
 						player.gain(gains, "draw");
 					}
 				},
@@ -8857,7 +8900,6 @@ game.import("character", function () {
 						if (!pushs.length || pushs.length != gains.length) return;
 						player.logSkill("qixing2");
 						player.addToExpansion(pushs, player, "giveAuto").gaintag.add("qixing");
-						game.log(player, "将", pushs, "作为“星”置于武将牌上");
 						player.gain(gains, "draw");
 					}
 				},
@@ -11610,8 +11652,7 @@ game.import("character", function () {
 			// xin_simayi_prefix: "手杀神",
 			xin_simayi_prefix: "极略神",
 			xinrenjie: "忍戒",
-			xinrenjie_info: "锁定技，当你需要响应其他角色的一张牌时，若你未响应此牌，你获得1枚“忍”标记（你每轮以此法至多获得4枚“忍”标记）。",
-			xinbaiyin: "拜印",
+			xinrenjie_info: "锁定技。①当你需要响应一张延时锦囊牌或其他角色使用的牌时，若你未响应此牌，你获得1枚“忍”标记（你每轮以此法至多获得4枚“忍”标记）。②游戏开始时，若你为神势力且你未执行神武将势力选择，则你可以变更势力。",			xinbaiyin: "拜印",
 			xinbaiyin_info: "觉醒技，准备阶段，若你的“忍”标记数不小于4，你减少1点体力上限，然后获得〖极略〗。",
 			xinlianpo: "连破",
 			xinlianpo_info: "当你杀死一名角色后，你可以选择一项：1.于此回合结束后获得一个额外回合；2.若你拥有〖极略〗，你获得一个你未拥有的〖极略〗技能。",
@@ -11632,7 +11673,8 @@ game.import("character", function () {
 			yingtian_info: "觉醒技。一名角色死亡后，若场上势力数不大于2，则你获得〖鬼才〗、〖完杀〗、〖连破〗并失去〖英猷〗且你本局游戏使用牌没有距离限制。",
 			shen_huangzhong: "神黄忠",
 			shen_huangzhong_prefix: "神",
-			"1！5！": "毅武",
+			// "1！5！": "毅武",
+			"1！5！": "裂穹",
 			"1！5！_info": "当你对一名其他角色造成伤害后，你可以在任意部位中选择一个“击伤”；若你击伤了一名角色，则本回合再次击伤该角色时出现“头部”选项。",
 			"1！5！_place1": "头部",
 			"1！5！_place1_info": "令其失去所有体力，若其因此死亡，你增加1点体力上限。",
@@ -11648,7 +11690,8 @@ game.import("character", function () {
 			"1！5！_place6_info": "令其使用的下一张牌无效直到其回合结束。",
 			"1！5！_place7": "腹部",
 			"1！5！_place7_info": "令其不能使用或打出红桃牌直到其下个回合结束。",
-			chiren: "赤刃",
+			// chiren: "赤刃",
+			chiren: "斩决",
 			chiren_info: "出牌阶段开始时，你可以选择一项：1.摸体力值张牌，此阶段使用的下一张【杀】无距离限制且不能被响应。2.摸已损失体力值张牌，此阶段下一次造成伤害后，回复等量体力。",
 
 			extra_feng: "神话再临·风",

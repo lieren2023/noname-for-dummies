@@ -37,6 +37,9 @@ game.import("character", function () {
 				mdtx_dushi: ["dc_sb_caoang", "dc_sb_zhangxiu", "dc_sb_dianwei", "dc_sb_hucheer"],
 				mdtx_zhoulang: ["dc_sb_chengyu"],
 				mdtx_qizuo: ["dc_sb_jushou", "dc_sb_chenlin"],
+				// mdtx_wangzuo: [],
+				// mdtx_youlin: [],
+				// mdtx_boyan: [],
 				
 				// mdtx_waitforsort: [],
 			},
@@ -55,6 +58,8 @@ game.import("character", function () {
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			// 部分武将代码位于xianding.js
+			
 			//谋陈琳
 			dcsbyaozuo: {
 				audio: 2,
@@ -183,7 +188,6 @@ game.import("character", function () {
 						player: 1,
 					},
 				},
-				derivation: "dcsbzhuanwen",
 				subSkill: {
 					effect: {
 						audio: "dcsbyaozuo",
@@ -218,7 +222,7 @@ game.import("character", function () {
 				},
 				async cost(event, trigger, player) {
 					event.result = await player
-						.chooseTarget(get.prompt2("dcsbzhuanwen"), function (card, player, target) {
+						.chooseTarget(get.prompt2(event.skill), function (card, player, target) {
 							return target != player && target.countCards("h");
 						})
 						.set("ai", target => {
@@ -281,7 +285,7 @@ game.import("character", function () {
 						cards.removeArray(nodamages);
 						await target.gain(nodamages, "gain2");
 					}
-					await game.cardsGotoPile(cards.reverse(), "insert");
+					if(cards.length) await game.cardsGotoPile(cards.reverse(), "insert");
 				},
 			},
 			//这是俺拾嘞
@@ -425,12 +429,15 @@ game.import("character", function () {
 			dcsbzhuanwen: "撰文",
 			dcsbzhuanwen_info: "结束阶段，你可选择一名其他角色，展示牌堆顶X张牌并选择一项：1.对其使用其中的伤害牌；2.令其获得其中的非伤害牌。然后将剩余牌置于牌堆顶（X为其手牌数且至多为5）。",
 
-			mdtx_mouding: "谋定天下·谋定天下",
-			mdtx_zhonghu: "谋定天下·冢虎狼顾",
-			mdtx_zijing: "谋定天下·子敬邀刀",
-			mdtx_dushi: "谋定天下·毒士鸩计",
-			mdtx_zhoulang: "谋定天下·周郎将计",
-			mdtx_qizuo: "谋定天下·奇佐论胜",
+			mdtx_mouding: "谋定天下",
+			mdtx_zhonghu: "冢虎狼顾",
+			mdtx_zijing: "子敬邀刀",
+			mdtx_dushi: "毒士鸩计",
+			mdtx_zhoulang: "周郎将计",
+			mdtx_qizuo: "奇佐论胜",
+			mdtx_wangzuo: "王佐倡义",
+			mdtx_youlin: "幼麟绝战",
+			mdtx_boyan: "伯言绽火",
 			
 			mdtx_waitforsort: "等待分包",
 		},

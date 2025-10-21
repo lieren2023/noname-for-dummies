@@ -126,7 +126,7 @@ game.import("character", function () {
 		},
 		perfectPair: {
 			jiaxu: ["liqueguosi"],
-			re_yuanshao: ["yanwen", "tianfeng"],
+			re_yuanshao: ["yanwen", "tianfeng", "yanliang", "wenchou"],
 			menghuo: ["zhurong"],
 			sp_zhugeliang: ["pangtong", "huangyueying"],
 			sunce: ["zhouyu", "taishici", "re_taishici", "daqiao"],
@@ -3397,7 +3397,7 @@ game.import("character", function () {
 						.set("ai", function (button) {
 							if (!_status.event.att) return 0;
 							if (get.position(button.link) == "e") {
-								if (get.subtype(button.link) == "equip2") return 2 * get.value(button.link);
+								if (get.subtype(button.link) == "equip2") return 5 * get.value(button.link);
 								return get.value(button.link);
 							}
 							return 1;
@@ -4151,7 +4151,7 @@ game.import("character", function () {
 					"step 1";
 					event.count--;
 					player
-						.chooseToDiscard("是否弃置一张牌并令一名其他角色进行一个额外回合？")
+						.chooseToDiscard("是否弃置一张手牌并令一名其他角色进行一个额外回合？")
 						.set("logSkill", player.name == "re_liushan" ? "refangquan" : "fangquan").ai =
 						function (card) {
 							return 20 - get.value(card);
@@ -5952,7 +5952,6 @@ game.import("character", function () {
 				audioname: ["re_sunjian", "sunce", "re_sunben", "re_sunce", "ol_sunjian"],
 				audioname2: {
 					re_sunyi: "gzyinghun_re_sunyi",
-					tw_ol_sunjian: "yinghun_ol_sunjian",
 					boss_sunce: "yinghun_sunce"
 				},
 				mod: {
@@ -6050,7 +6049,6 @@ game.import("character", function () {
 				audioname: ["re_sunjian", "sunce", "re_sunben", "re_sunce", "ol_sunjian", "sb_sunce"],
 				audioname2: {
 					re_sunyi: "gzyinghun_re_sunyi",
-					tw_ol_sunjian: "yinghun_ol_sunjian",
 				},
 				mod: {
 					aiOrder(player, card, num) {
@@ -9141,16 +9139,18 @@ game.import("character", function () {
 			pangtong: ["pangtong", "ol_pangtong", "re_pangtong", "ol_sb_pangtong", "sb_pangtong", "jd_sb_pangtong"],
 			re_jsp_pangtong: ["re_jsp_pangtong", "jsrg_pangtong", "sp_pangtong"],
 			taishici: ["taishici", "re_taishici", "ol_sb_taishici"],
-			re_yuanshao: ["re_yuanshao", "ol_yuanshao", "xin_yuanshao", "ol_sb_yuanshao", "star_yuanshao", "sb_yuanshao", "jd_sb_yuanshao", "jsrg_yuanshao"],
+			re_yuanshao: ["re_yuanshao", "ol_yuanshao", "xin_yuanshao", "ol_sb_yuanshao", "star_yuanshao", "sb_yuanshao", "jd_sb_yuanshao", "jsrg_yuanshao", "yy_yuanshao"],
 			pangde: ["re_pangde", "ol_pangde", "pangde"],
 			yanwen: ["yanwen", "ol_yanwen", "re_yanwen"],
+			tw_yanliang: ["tw_yanliang", "ns_yanliang"],
+			tw_wenchou: ["tw_wenchou", "yy_wenchou"],
 			caopi: ["caopi", "re_caopi", "ps_caopi", "sb_caopi"],
 			xuhuang: ["re_xuhuang", "ol_xuhuang", "sb_xuhuang", "xuhuang", "jd_sb_xuhuang"],
 			menghuo: ["menghuo", "re_menghuo", "sb_menghuo", "jd_sb_menghuo"],
 			zhurong: ["zhurong", "ol_zhurong", "re_zhurong", "sb_zhurong"],
-			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "tw_ol_sunjian", "star_sunjian", "jx_sunjian", "ol_sb_sunjian"],
+			sunjian: ["sunjian", "ol_sunjian", "re_sunjian", "star_sunjian", "ol_sb_sunjian", "jsrg_sunjian"],
 			jiaxu: ["jiaxu", "re_jiaxu", "ns_jiaxu", "ps_jiaxu", "dc_sb_jiaxu", "sb_jiaxu"],
-			dongzhuo: ["dongzhuo", "ol_dongzhuo", "re_dongzhuo", "star_dongzhuo", "jsrg_dongzhuo", "sp_dongzhuo", "yj_dongzhuo"],
+			dongzhuo: ["dongzhuo", "ol_dongzhuo", "re_dongzhuo", "star_dongzhuo", "jsrg_dongzhuo", "sp_dongzhuo", "yj_dongzhuo", "new_yj_dongzhuo"],
 			dengai: ["dengai", "ol_dengai", "re_dengai"],
 			sp_ol_zhanghe: ["sp_ol_zhanghe", "yj_zhanghe", "tw_yj_zhanghe", "sp_zhanghe", "jsrg_zhanghe", "huan_zhanghe"],
 			jiangwei: ["jiangwei", "ol_jiangwei", "re_jiangwei", "ol_sb_jiangwei", "sb_jiangwei", "jsrg_jiangwei", "huan_jiangwei", "jd_sb_jiangwei"],

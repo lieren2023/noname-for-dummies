@@ -3316,6 +3316,10 @@ game.import("card", function () {
 				},
 				charlotte: true,
 				filter: function (event, player) {
+					const evt = event.getParent("useCard", true, true);
+					if (evt && evt.effectedCount < evt.effectCount) {
+						return false;
+					}
 					return (
 						player.storage.qinggang2 &&
 						event.card &&

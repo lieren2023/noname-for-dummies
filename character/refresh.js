@@ -280,7 +280,7 @@ game.import("character", function () {
 			ol_yuanshao: ["male", "qun", 4, ["olluanji", "olxueyi"], ["zhu"]],
 			re_menghuo: ["male", "shu", 4, ["huoshou", "rezaiqi"]],
 			ol_dongzhuo: ["male", "qun", 8, ["oljiuchi", "roulin", "benghuai", "olbaonue"], ["zhu"]],
-			ol_sunjian: ["male", "wu", "4/5", ["gzyinghun", "wulie"]],
+			ol_sunjian: ["male", "wu", "4/5", ["gzyinghun", "wulie", "twpolu"], ["zhu"]],
 			re_caopi: ["male", "wei", 3, ["rexingshang", "refangzhu", "songwei"], ["zhu"]],
 			ol_jiangwei: ["male", "shu", 4, ["oltiaoxin", "olzhiji"]],
 			ol_caiwenji: ["female", "qun", 3, ["olbeige", "duanchang"]],
@@ -5531,6 +5531,7 @@ game.import("character", function () {
 						player.line(target, "green");
 						target.storage.reqianxi_effect = [event.color, player];
 						target.addTempSkill("reqianxi_effect");
+						target.markSkill("reqianxi_effect");
 					}
 				},
 				subSkill: {
@@ -5669,9 +5670,10 @@ game.import("character", function () {
 						},
 						logTarget: "player",
 						content: function () {
-							var next = trigger.player.phaseDraw();
-							event.next.remove(next);
-							trigger.getParent().next.add(next);
+							const evt = trigger.getParent("phase", true, true);
+							if (evt?.phaseList) {
+								evt.phaseList.splice(evt.num + 1, 0, "phaseDraw|oljiezi");
+							}
 							trigger.player.removeMark("oljiezi", trigger.player.countMark("oljiezi"));
 						},
 					},
@@ -6400,6 +6402,7 @@ game.import("character", function () {
 				},
 			},
 			oldimeng: {
+				audio: 2,
 				enable: "phaseUse",
 				usable: 1,
 				filter: function (event, player) {
@@ -6429,11 +6432,8 @@ game.import("character", function () {
 				multiline: true,
 				content: function () {
 					targets[0].swapHandcards(targets[1]);
-					var num = Math.abs(targets[0].countCards("h") - targets[1].countCards("h"));
-					if (num > 0) {
-						player.addMark("oldimeng_discard", num, false);
-						player.addTempSkill("oldimeng_discard", "phaseUseAfter");
-					}
+					player.addTempSkill("oldimeng_discard", "phaseUseAfter");
+					player.markAuto("oldimeng_discard", [targets]);
 				},
 				ai: {
 					threaten: 4.5,
@@ -6455,6 +6455,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					discard: {
+						audio: "oldimeng",
 						trigger: { player: "phaseUseEnd" },
 						forced: true,
 						charlotte: true,
@@ -6462,8 +6463,12 @@ game.import("character", function () {
 						filter: function (event, player) {
 							return player.countCards("he") > 0;
 						},
-						content: function () {
-							player.chooseToDiscard("he", true, player.countMark("oldimeng_discard"));
+						async content(event, trigger, player) {
+							for (let targets of player.getStorage("oldimeng_discard")) {
+								if (targets.length < 2) continue;
+								const num = Math.abs(targets[0].countCards("h") - targets[1].countCards("h"));
+								if (num > 0 && player.countCards("he") > 0) await player.chooseToDiscard("he", true, num);
+							}
 						},
 					},
 				},
@@ -7324,15 +7329,17 @@ game.import("character", function () {
 							.chooseControl("摸牌阶段", "出牌阶段")
 							.set("prompt", "精策：选择要执行的额外阶段");
 					"step 1";
-					if (event.goon || result.index == 0) {
-						var next = player.phaseDraw();
-						event.next.remove(next);
-						trigger.getParent().next.push(next);
-					}
+					//插入阶段，后来的先插
+					const evt = trigger.getParent("phase", true, true);
 					if (event.goon || result.index == 1) {
-						var next = player.phaseUse();
-						event.next.remove(next);
-						trigger.getParent().next.push(next);
+						if (evt?.phaseList) {
+							evt.phaseList.splice(evt.num + 1, 0, `phaseUse|${event.name}`);
+						}
+					}
+					if (event.goon || result.index == 0) {
+						if (evt?.phaseList) {
+							evt.phaseList.splice(evt.num + 1, 0, `phaseDraw|${event.name}`);
+						}
 					}
 				},
 			},
@@ -10519,7 +10526,7 @@ game.import("character", function () {
 						.set("ai", function (button) {
 							if (!_status.event.att) return 0;
 							if (get.position(button.link) == "e") {
-								if (get.subtype(button.link) == "equip2") return 2 * get.value(button.link);
+								if (get.subtype(button.link) == "equip2") return 5 * get.value(button.link);
 								return get.value(button.link);
 							}
 							return 1;
@@ -12230,6 +12237,7 @@ game.import("character", function () {
 						event.card.name == "sha" && event.target.hp > 0 && event.target.countCards("he") > 0
 					);
 				},
+				preHidden: true,
 				content: function () {
 					"step 0";
 					var next = player.choosePlayerCard(
@@ -12246,6 +12254,7 @@ game.import("character", function () {
 					});
 					next.set("goon", get.attitude(player, trigger.target) <= 0);
 					next.set("forceAuto", true);
+					next.setHiddenSkill(event.name);
 					"step 1";
 					if (result.bool) {
 						var target = trigger.target;
@@ -12283,6 +12292,10 @@ game.import("character", function () {
 				forced: true,
 				locked: false,
 				logTarget: "player",
+				preHidden: true,
+				check(event, player) {
+					return get.attitude(player, event.player) < 0;
+				},
 				content: function () {
 					trigger.num++;
 				},
@@ -12431,7 +12444,7 @@ game.import("character", function () {
 					"step 1";
 					event.count--;
 					player
-						.chooseToDiscard("是否弃置一张牌并令一名其他角色进行一个额外回合？")
+						.chooseToDiscard("是否弃置一张手牌并令一名其他角色进行一个额外回合？")
 						.set("logSkill", "olfangquan").ai = function (card) {
 						return 20 - get.value(card);
 					};
@@ -13774,11 +13787,28 @@ game.import("character", function () {
 						player.logSkill("xinleiji");
 						player.recover();
 					}
-					player.chooseTarget("雷击：是否对一名角色造成" + event.num + "点雷电伤害？").ai =
-						function (target) {
-							var player = _status.event.player;
-							return get.damageEffect(target, player, player, "thunder");
-						};
+					player
+						.chooseTarget("雷击：是否对一名角色造成" + event.num + "点雷电伤害？")
+						.set("ai", target => {
+							const player = _status.event.player;
+							let eff = get.damageEffect(target, player, target, "thunder");
+							if (
+								get.event("num") > 1 &&
+								!target.hasSkillTag("filterDamage", null, {
+									player: player,
+									card: null,
+									nature: "thunder",
+								})
+							) {
+								if (eff > 0) {
+									eff -= 25;
+								} else if (eff < 0) {
+									eff *= 2;
+								}
+							}
+							return eff * get.attitude(player, target);
+						})
+						.set("num", event.num);
 					"step 1";
 					if (result.bool && result.targets && result.targets.length) {
 						if (!event.logged) player.logSkill("xinleiji", result.targets);
@@ -15446,8 +15476,9 @@ game.import("character", function () {
 						if (type == "trick" || type == "delay") return true;
 					},
 					canBeDiscarded: function (card) {
-						if (get.position(card) == "e" && ["equip2", "equip5"].includes(get.subtype(card)))
+						if (get.position(card) == "e" && get.subtypes(card).some(slot => slot == "equip2" || slot == "equip5")) {
 							return false;
+						}
 					},
 				},
 			},
@@ -16024,6 +16055,7 @@ game.import("character", function () {
 					);
 				},
 				forced: true,
+				charlotte: true,
 				content: function () {
 					trigger.num++;
 				},
@@ -18619,8 +18651,7 @@ game.import("character", function () {
 			olhaoshi_info:
 				"摸牌阶段开始时，你可以多摸两张牌。然后摸牌阶段结束时，若你的手牌数大于5，则你将手牌数的一半（向下取整）交给一名手牌最少其他角色并获得如下效果直到你下回合开始：当你成为【杀】或普通锦囊牌的目标后，其可以交给你一张手牌。",
 			oldimeng: "缔盟",
-			oldimeng_info:
-				"出牌阶段限一次，你可令两名满足X≤Y的其他角色交换手牌并获得如下效果：出牌阶段结束时，你弃置X张牌（X为这两名角色手牌数之差的绝对值；Y为你的牌数）。",
+			oldimeng_info: "出牌阶段限一次，你可令两名手牌数之差不大于你牌数的其他角色交换手牌。若如此做，此阶段结束时，你弃置X张牌（X为这两名角色手牌数之差）。",
 
 			rejijiang: "激将",
 			rejijiang1: "激将",

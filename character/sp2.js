@@ -106,7 +106,7 @@ game.import("character", function () {
 					"dongxie",
 					"liqueguosi",
 				],
-				sp2_zlzy: ["lvkai", "zhanggong", "weiwenzhugezhi", "beimihu"],
+				sp2_zltx: ["lvkai", "zhanggong", "weiwenzhugezhi", "beimihu"],
 				sp2_sbfm: ["lisu", "xinpi", "zhangwen"],
 				sp2_qihuan: ["zhaozhong", "re_hejin", "fengfang", "mushun"],
 				sp2_binglin: [
@@ -2497,6 +2497,10 @@ game.import("character", function () {
 						popup: false,
 						firstDo: true,
 						content: function () {
+							if (trigger.addCount !== false) {
+								trigger.addCount = false;
+								trigger.player.getStat().card.sha--;
+							}
 							player.addTempSkill("dcjiaoxia_mark", "phaseUseAfter");
 							player.markAuto(
 								"dcjiaoxia_mark",
@@ -5256,9 +5260,9 @@ game.import("character", function () {
 						});
 					"step 3";
 					if (result.index == 0) {
-						if (target.countCards("j") > 0)
-							target.discardPlayerCard(target, cards.length, true, "hej");
-						else target.chooseToDiscard("he", true, cards.length);
+						var num = Math.min(target.countCards("hej"), cards.length);
+						if (target.countCards("j") > 0) target.discardPlayerCard(target, num, true, "hej");
+						else target.chooseToDiscard("he", true, num);
 					} else player.addTempSkill("piaoping_blocker");
 				},
 				init(player) {
@@ -6659,7 +6663,7 @@ game.import("character", function () {
 					var skill = result.control;
 					if (skill != "cancel2") {
 						event.skills.remove(skill);
-						target.addAdditionalSkills("jinghe_" + player.playerid, skill);
+						target.addAdditionalSkills("jinghe_" + player.playerid, skill, true);
 						target.popup(skill);
 					}
 					if (event.num < event.targets.length) event.goto(1);
@@ -7656,7 +7660,7 @@ game.import("character", function () {
 							gains.push(card);
 						if (!red && get.color(card, target) == "red") red = true;
 					}
-					if (gains.length) player.gain(gains, "gain2");
+					if (gains.length) player.gain(gains, "give");
 					if (!red) event.finish();
 					"step 3";
 					player[player.isDamaged() ? "loseMaxHp" : "loseHp"]();
@@ -11692,13 +11696,15 @@ game.import("character", function () {
 					player.logSkill("spjiedao", trigger.player);
 					var num = event.map[result.control] || 1;
 					trigger.num += num;
-					var next = game.createEvent("spjiedao_after", null, trigger.getParent());
-					next.player = player;
-					next.target = trigger.player;
-					next.num = num;
-					next.setContent(function () {
-						if (target.isIn()) player.chooseToDiscard(num, true, "he");
-					});
+					player
+						.when({ global: "damageEnd" })
+						.filter(evt => evt == trigger)
+						.then(() => {
+							if (trigger.player.isIn()) {
+								player.chooseToDiscard(num, true, "he");
+							}
+						})
+						.vars({ num: num });
 				},
 			},
 			biaozhao: {
@@ -14692,7 +14698,7 @@ game.import("character", function () {
 			zhangchangpu: ["ol_zhangchangpu", "zhangchangpu", "sp_zhangchangpu"],
 			huangfusong: ["huangfusong", "sp_huangfusong", "jsrg_huangfusong", "old_huangfusong"],
 			dingyuan: ["ol_dingyuan", "dingyuan"],
-			quyi: ["quyi", "re_quyi"],
+			quyi: ["quyi", "re_quyi", "yy_quyi"],
 			hansui: ["hansui", "re_hansui", "xin_hansui", "jsrg_hansui"],
 			jin_simashi: ["dc_simashi", "jin_simashi", "simashi", "std_simashi", "jd_jin_simashi"],
 			jin_yanghuiyu: ["jin_yanghuiyu", "yanghuiyu"],
@@ -15174,8 +15180,7 @@ game.import("character", function () {
 			gongxiu_info:
 				"结束阶段，若你本回合内发动过〖经合〗，则你选择一项：①令所有本回合内成为过〖经合〗目标的角色各摸一张牌；②令所有本回合内未成为过〖经合〗目标的角色各弃置一张手牌。",
 			jinghe: "经合",
-			jinghe_info:
-				"出牌阶段限一次，你可以展示至多四张牌名各不相同的牌并选择等量的角色。系统从“写满技能的天书”中随机选择等量的技能，然后这些角色依次选择获得其中的一个。",
+			jinghe_info: "出牌阶段限一次，你可以展示至多四张牌名各不相同的牌并选择等量的角色。系统从“写满技能的天书”中随机选择等量的技能，然后这些角色依次选择获得其中的一个直到你的下回合开始。",
 			nhyinbing: "阴兵",
 			nhyinbing_info: "锁定技，你使用的【杀】造成伤害改为失去体力。其他角色失去体力后，你摸一张牌。",
 			nhhuoqi: "活气",
@@ -15493,13 +15498,13 @@ game.import("character", function () {
 
 			// 南征北战
 			sp2_whlw: "南征北战·文和乱武",
-			sp2_zlzy: "南征北战·逐鹿天下",
+			sp2_zltx: "南征北战·逐鹿天下",
 			sp2_sbfm: "南征北战·上兵伐谋",
 			sp2_qihuan: "南征北战·戚宦之争",
 			sp2_binglin: "南征北战·兵临城下",
 			sp2_danqi: "南征北战·千里单骑",
 			sp2_fenghuo: "南征北战·烽火连天",
-			sp2_zizouqi: "南征北战·自走棋",
+			sp2_zizouqi: "南征北战·食禄尽忠",
 			
 			// 武将列传
 			sp2_huangjin: "武将列传·黄巾之乱",
@@ -15513,7 +15518,6 @@ game.import("character", function () {
 			sp2_guandu: "活动场·官渡之战",
 			sp2_longzhou: "活动场·同舟共济",
 			
-			// sp2_shengun: "三国奇人传",
 			sp2_waitforsort: "等待分包",
 		},
 		pinyins: {

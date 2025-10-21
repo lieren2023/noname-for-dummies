@@ -1989,14 +1989,14 @@ game.import("character", function () {
 						});
 					if (get.attitude(get.zhu(player), player) > 0) {
 						//听话的主公应该忠臣给啥你亮啥
-						next.ai = function (card) {
+						next.set("ai", card => {
 							const target = get.zhu(player),
-								// 临时修改（by 棘手怀念摧毁）
-								history = target.getHistory("gain", evt => evt.getParent("jsrgwentian", true) && evt.getParent("jsrgwentian", true).player == player);
-								// history = target.getHistory("gain", evt => evt.getParent("jsrgwentian", true)?.player == player);
-							if (history.length && get.color(card) == get.color(history[0].cards[0])) return 2 + Math.random();
+								history = target.getHistory("gain", evt => evt.getParent("jsrgwentian", true)?.player == player);
+							if (history.length && get.color(card) == get.color(history[0].cards[0])) {
+								return 2 + Math.random();
+							}
 							return Math.random();
-						};
+						});
 					}
 					await next;
 				},
@@ -5809,11 +5809,7 @@ game.import("character", function () {
 							}
 							cards3.forEach((i) => i.delete());
 							if (player == game.me) ui.updatehl();
-							if (!player.storage.jsrgmanjuan_used) {
-								player.when({ global: "phaseAfter" }).then(() => {
-									delete player.storage.jsrgmanjuan_used;
-								});
-							}
+							player.addTempSkill("jsrgmanjuan_used");
 							player.markAuto(
 								"jsrgmanjuan_used",
 								cards3.map((card) => get.number(card, false))
@@ -5886,6 +5882,10 @@ game.import("character", function () {
 							cards2.forEach((i) => i.delete());
 							if (player == game.me) ui.updatehl();
 						},
+					},
+					used: {
+						onremove:true,
+						charlotte:true,
 					},
 				},
 			},
@@ -10469,6 +10469,11 @@ game.import("character", function () {
 						forced: true,
 						popup: false,
 						charlotte: true,
+						filter(event) {
+							const evt = event.getParent("useCard", true, true);
+							if (evt && evt.effectedCount < evt.effectCount) return false;
+							return true;
+						},
 						content: function () {
 							player.removeSkill("jsrgfendi_blocker");
 						},
@@ -10898,6 +10903,7 @@ game.import("character", function () {
 					return !player.countCards("h", { type: "basic" });
 				},
 				locked: false,
+				frequent: true,
 				content: function () {
 					"step 0";
 					player.showHandcards();
@@ -11936,7 +11942,8 @@ game.import("character", function () {
 			//李密
 			jsrgnanquan: {
 				audio: 2,
-				enable: ["chooseToUse", "chooseToRespond"],
+				// enable: ["chooseToUse", "chooseToRespond"],
+				enable: "chooseToUse",
 				filter(event, player) {
 					if (!player.countCards("hs") || player.hasSkill("jsrgnanquan_used")) return false;
 					for (var i of lib.inpile) {
@@ -12023,9 +12030,9 @@ game.import("character", function () {
 							cardEnabled: function (card, player) {
 								if (player.getStorage("jsrgnanquan_fengyin").includes(get.type(card))) return false;
 							},
-							cardRespondable: function (card, player) {
-								if (player.getStorage("jsrgnanquan_fengyin").includes(get.type(card))) return false;
-							},
+							// cardRespondable: function (card, player) {
+								// if (player.getStorage("jsrgnanquan_fengyin").includes(get.type(card))) return false;
+							// },
 							cardSavable: function (card, player) {
 								if (player.getStorage("jsrgnanquan_fengyin").includes(get.type(card))) return false;
 							},
@@ -12616,7 +12623,7 @@ game.import("character", function () {
 			jsrg_zhangju: "衰张举",
 			jsrg_zhangju_prefix: "衰",
 			jsrgqiluan: "起乱",
-			jsrgqiluan_info: "每回合限两次。当你需要使用【杀】或【闪】时，你可以弃置任意张牌，并令至多等两名其他角色选择是否代替你使用之。若有角色响应，则你摸等同与你弃置牌数的牌。",
+			jsrgqiluan_info: "每回合限两次。当你需要使用【杀】或【闪】时，你可以弃置任意张牌，并令至多等量名其他角色选择是否代替你使用之。若有角色响应，则你摸等同与你弃置牌数的牌。",
 			jsrgxiangjia: "相假",
 			jsrgxiangjia_info: "出牌阶段限一次。若你的装备区内有武器牌，则你可以视为使用一张【借刀杀人】。然后此牌的目标角色可以视为对你使用一张【借刀杀人】。",
 			//江山如故·兴

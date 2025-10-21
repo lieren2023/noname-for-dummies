@@ -686,6 +686,7 @@ game.import("card", function () {
 			jiguantong: {
 				fullskin: true,
 				type: "jiguan",
+				cardnature: "fire",
 				enable: true,
 				wuxieable: true,
 				selectTarget: -1,

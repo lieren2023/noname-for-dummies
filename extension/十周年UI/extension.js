@@ -5262,6 +5262,56 @@ content:function(config, pack){
 					zhu:_status.characterlist.randomRemove(6),
 					fan:_status.characterlist.randomRemove(6),
 				};
+				
+				// 创建自由选将功能
+				const createCharacterDialog = function () {
+					// 配合搬运自用的自由选将增强功能使用
+					setTimeout(function(){
+						if (get.config("free_choose")) {
+							event.dialogxx = ui.create.characterDialog("heightset");
+						} else {
+							event.dialogxx = ui.create.characterDialog("heightset");
+						}
+					},1);
+				};
+				if (lib.onfree) {
+					lib.onfree.push(createCharacterDialog);
+				} else {
+					createCharacterDialog();
+				}
+				ui.create.cheat2 = function () {
+					ui.cheat2 = ui.create.control("自由选将", function () {
+						if (this.dialog == _status.event.dialog) {
+							if (game.changeCoin) {
+								game.changeCoin(10);
+							}
+							this.dialog.close();
+							_status.event.dialog = this.backup;
+							this.backup.open();
+							delete this.backup;
+							game.uncheck();
+							game.check();
+						} else {
+							if (game.changeCoin) {
+								game.changeCoin(-10);
+							}
+							this.backup = _status.event.dialog;
+							_status.event.dialog.close();
+							_status.event.dialog = _status.event.parent.dialogxx;
+							this.dialog = _status.event.dialog;
+							this.dialog.open();
+							game.uncheck();
+							game.check();
+						}
+					});
+					if (lib.onfree) {
+						ui.cheat2.classList.add("disabled");
+					}
+				};
+				if (!ui.cheat2 && get.config("free_choose")) {
+					ui.create.cheat2();
+				}
+				
 				const dialog=[
 					'请选择出场武将',
 					'<div class="text center">本局游戏Buff</div>',
@@ -5272,7 +5322,17 @@ content:function(config, pack){
 				dialog.add([_status.characterChoice[game.me.identity],'character']);
 				game.me.chooseButton(true,dialog);
 				'step 2'
+				// 创建自由选将功能
+				if (ui.cheat2) {
+					ui.cheat2.close();
+					delete ui.cheat2;
+				}
+				
 				game.me.init(result.links[0]);
+				
+				// 创建自由选将功能
+				game.addRecentCharacter(result.links[0]);
+				
 				_status.characterChoice[game.me.identity].removeArray(result.links);
 				var list=_status.characterChoice[game.me.enemy.identity].randomRemove(1);
 				game.me.enemy.init(list[0]);
@@ -7053,6 +7113,15 @@ content:function(config, pack){
 	}
 	if(lib.character.nezha){
 		lib.character.nezha[1] = 'shen';
+	}
+	if(lib.character.jiangziya){
+		lib.character.jiangziya[1] = 'shen';
+	}
+	if(lib.character.shengongbao){
+		lib.character.shengongbao[1] = 'shen';
+	}
+	if(lib.character.nanjixianweng){
+		lib.character.nanjixianweng[1] = 'shen';
 	}
 	// 修复关闭武将包后不生效的bug
 	if(lib.characterPack.collab){

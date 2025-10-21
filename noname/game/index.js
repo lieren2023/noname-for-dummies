@@ -743,18 +743,9 @@ export class Game {
 		return next;
 	}
 	/**
-	 * @overload
-	 * @returns { void }
-	 */
-	/**
-	 * @overload
-	 * @param { Card } cards
-	 * @returns { GameEventPromise }
-	 */
-	/**
-	 * @overload
-	 * @param {Card[]} cards
-	 * @returns { GameEventPromise }
+	 * 将cards移动到处理区
+	 * @param { Card[] | Card } cards
+	 * @returns { GameEvent }
 	 */
 	cardsGotoOrdering(cards) {
 		/** @type { 'cards' | 'card' | void } */
@@ -958,31 +949,44 @@ export class Game {
 	 * @param { Function } proceed
 	 */
 	checkFileList(updates, proceed) {
-		if (!Array.isArray(updates) || !updates.length) proceed();
-		let n = updates.length;
-		for (let i = 0; i < updates.length; i++) {
+		if (!Array.isArray(updates) || !updates.length) {
+			proceed();
+		}
+		let n = updates.length,
+			list = updates.slice(0);
+		for (let i = 0; i < list.length; i++) {
 			if (lib.node && lib.node.fs) {
-				lib.node.fs.access(__dirname + "/" + updates[i], (err) => {
+				lib.node.fs.access(__dirname + "/" + list[i], err => {
 					if (!err) {
-						let stat = lib.node.fs.statSync(__dirname + "/" + updates[i]);
-						// @ts-ignore
-						if (stat.size == 0) err = true;
+						let stat = lib.node.fs.statSync(__dirname + "/" + list[i]);
+						// @ts-expect-error ignore
+						if (stat.size == 0) {
+							err = true;
+						}
 					}
 					n--;
-					if (!err) updates.remove(updates[i]);
-					if (n == 0) proceed();
+					if (!err) {
+						updates.remove(list[i]);
+					}
+					if (n == 0) {
+						proceed();
+					}
 				});
 			} else {
 				window.resolveLocalFileSystemURL(
-					nonameInitialized + updates[i],
+					nonameInitialized + list[i],
 					() => {
 						n--;
-						updates.remove(updates[i]);
-						if (n == 0) proceed();
+						updates.remove(list[i]);
+						if (n == 0) {
+							proceed();
+						}
 					},
 					() => {
 						n--;
-						if (n == 0) proceed();
+						if (n == 0) {
+							proceed();
+						}
 					}
 				);
 			}

@@ -50,7 +50,7 @@ game.import("character", function () {
 			},
 		},
 		character: {
-			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu"]],
+			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu", "die_audio:shen_huangzhong"]],
 			junk_zhangjiao: ["male", "shen", 3, ["yizhao", "junksijun", "tianjie"], ["qun", "die_audio:shen_zhangjiao"]],
 
 			old_shixie: ["male", "qun", 3, ["biluan", "lixia"]],
@@ -128,7 +128,9 @@ game.import("character", function () {
 		skill: {
 			//初版神黄忠
 			"old_1！5！": {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dclieqiong",
+				// audio: 2,
 				trigger: { source: "damageSource" },
 				filter(event, player) {
 					return event.player.isIn() && event.source != event.player;
@@ -251,6 +253,9 @@ game.import("character", function () {
 						let list = [];
 						for (let i = 0; i < position.length; i++) {
 							const num_px = document.createElement("div");
+							num_px.classList.add("nodeintro");
+							num_px.nodeTitle = get.translation(position[i]);
+							num_px.nodeContent = get.skillInfoTranslation(position[i]);
 							num_px.style.width = "15%";
 							num_px.style.height = "15%";
 							num_px.id = position[i];
@@ -274,6 +279,14 @@ game.import("character", function () {
 								_status.imchoosing = false;
 								resolve(event._result);
 							});
+							if (!lib.config.touchscreen) {
+								if (lib.config.hover_all) {
+									lib.setHover(num_px, ui.click.hoverplayer);
+								}
+								if (lib.config.right_info) {
+									num_px.oncontextmenu = ui.click.rightplayer;
+								}
+							}
 							list.push(num_px);
 						}
 						const selectedList = list.filter(i => places.includes(i.id)).randomGets(Math.min(places.length, event.player.countMark("old_1！5！")));
@@ -466,7 +479,9 @@ game.import("character", function () {
 				},
 			},
 			old_chiren: {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dczhanjue",
+				// audio: 2,
 				trigger: { player: "phaseJieshuBegin" },
 				filter(event, player) {
 					return player.countMark("old_1！5！") >= Math.max(1, player.getDamagedHp());

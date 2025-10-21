@@ -987,7 +987,7 @@ export class Library {
 				},
 				sync_speed: {
 					name: "限制结算速度",
-					intro: "在动画结算完成前不执行下一步操作，开启后游戏操作的间隔更长但画面更浏畅，在游戏较卡时建议开启",
+					intro: "在动画结算完成前不执行下一步操作，开启后游戏操作的间隔更长但画面更流畅，在游戏较卡时建议开启",
 					init: true,
 				},
 				enable_vibrate: {
@@ -4117,7 +4117,9 @@ export class Library {
 					intro: "自由选将对话框中最近使用武将的数量",
 					init: "12",
 					item: {
+						5: "5",
 						6: "6",
+						10: "10",
 						12: "12",
 						20: "20",
 						30: "30",
@@ -7379,6 +7381,22 @@ export class Library {
 						unlimited: "无限",
 					},
 				},
+				free_choose: {
+					name: "自由选将",
+					init: true,
+					onclick(bool) {
+						game.saveConfig("free_choose", bool, this._link.config.mode);
+						if (get.mode() != this._link.config.mode || (!_status.event.getParent().showConfig && !_status.event.showConfig)) {
+							return;
+						}
+						if (!ui.cheat2 && get.config("free_choose")) {
+							ui.create.cheat2();
+						} else if (ui.cheat2 && !get.config("free_choose")) {
+							ui.cheat2.close();
+							delete ui.cheat2;
+						}
+					},
+				},
 				update: function (config, map) {
 					if (config.single_mode != "normal") {
 						map.enable_jin.hide();
@@ -7389,6 +7407,11 @@ export class Library {
 						map.change_card.hide();
 					} else {
 						map.change_card.show();
+					}
+					if (config.single_mode == "wuxianhuoli" || config.single_mode == "dianjiang") {
+						map.free_choose.show();
+					} else {
+						map.free_choose.hide();
 					}
 				},
 			},
@@ -9947,6 +9970,7 @@ export class Library {
 		western: "西",
 		key: "键",
 		jin: "晋",
+		ye: "野",
 		double: "双",
 		wei2: "魏国",
 		shu2: "蜀国",
@@ -9956,6 +9980,7 @@ export class Library {
 		western2: "西方",
 		key2: "KEY",
 		jin2: "晋朝",
+		ye2: "野心家",
 		double2: "双势力",
 		male: "男",
 		female: "女",
@@ -14187,6 +14212,13 @@ export class Library {
 			},
 		],
 		[
+			"疑",
+			{
+				color: "#5a6968",
+				nature: "graymm",
+			},
+		],
+		[
 			"用间",
 			{
 				color: "#c3f9ff",
@@ -14227,28 +14259,28 @@ export class Library {
 			"旧",
 			{
 				color: "#a4a4a4",
-				nature: "black",
+				nature: "blackmm",
 			},
 		],
 		[
 			"旧界",
 			{
 				color: "#a4a4a4",
-				nature: "black",
+				nature: "blackmm",
 			},
 		],
 		[
 			"节钺",
 			{
 				color: "#a4a4a4",
-				nature: "black",
+				nature: "blackmm",
 			},
 		],
 		[
 			"毅重",
 			{
 				color: "#a4a4a4",
-				nature: "black",
+				nature: "blackmm",
 			},
 		],
 		[
@@ -14309,6 +14341,28 @@ export class Library {
 			},
 		],
 		[
+			"蛇",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.textContent = "🐍";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"骏骊",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.textContent = "🐎";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
 			"SP",
 			{
 				getSpan: () => {
@@ -14358,7 +14412,9 @@ export class Library {
 						span = document.createElement("span");
 					if (lib.characterPack.shiji && name in lib.characterPack.shiji) {
 						for (const entry of Object.entries(lib.characterSort.shiji)) {
-							if (!entry[1].includes(name)) continue;
+							if (!entry[1].includes(name)) {
+								continue;
+							}
 							prefix = get.translation(entry[0]).slice(-1);
 							break;
 						}
@@ -14367,8 +14423,9 @@ export class Library {
 							span.dataset.nature = "watermm";
 						}
 						span.innerHTML = prefix;
-					} else if (simple) span.textContent = "手杀";
-					else {
+					} else if (simple) {
+						span.textContent = "手杀";
+					} else {
 						span.style.fontFamily = "NonameSuits";
 						span.textContent = "📱";
 					}
@@ -14388,6 +14445,57 @@ export class Library {
 					span.textContent = "TW";
 					return span.outerHTML;
 				},
+			},
+		],
+		[
+			"汉末",
+			{
+				showName: "汉",
+				color: "#fefedc",
+				nature: "shenmm",
+			},
+		],
+		[
+			"汉末神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("汉末")}${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"长安",
+			{
+				showName: "镐",
+				color: "#40e0d0",
+				nature: "shenmm",
+			},
+		],
+		[
+			"长安神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("长安")}${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"渭南",
+			{
+				showName: "渭",
+				color: "#2a17d5",
+				nature: "shenmm",
+			},
+		],
+		[
+			"渭南神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("渭南")}${get.prefixSpan("神")}`,
 			},
 		],
 		[
@@ -14604,6 +14712,13 @@ export class Library {
 			},
 		],
 		[
+			"韩氏",
+			{
+				color: "#ffff99",
+				nature: "firemm",
+			},
+		],
+		[
 			"幻",
 			{
 				color: "#ffff99",
@@ -14621,7 +14736,7 @@ export class Library {
 			"牢",
 			{
 				color: "#EEEE00",
-				nature: "black",
+				nature: "blackmm",
 			},
 		],
 		[
@@ -14634,21 +14749,204 @@ export class Library {
 			},
 		],
 		[
-			"鼎",
+			"友",
 			{
-				color: "#ffccff",
-				nature: "black",
+				color: "#AAABFF",
+				nature: "blackmm",
 			},
 		],
 		[
 			"九鼎",
 			{
+				showName: "鼎",
+				color: "#ffccff",
+				nature: "blackmm",
+			},
+		],
+		[
+			"SCL",
+			{
+				showName: "競",
+				color: "#fefedc",
+				nature: "soilmm",
+			},
+		],
+		[
+			"汉",
+			{
+				color: "#ffd700",
+				nature: "metalmm",
+			},
+		],
+		[
+			"OL乐",
+			{
+				showName: "乐",
+				color: "#dab71b",
+				nature: "firemm",
+			},
+		],
+		[
+			"烈",
+			{
+				color: "#8B0000",
+				nature: "firemm",
+			},
+		],
+		[
+			"燕幽",
+			{
+				showName: "幽",
+				color: "#ff6a6a",
+				nature: "redmm",
+			},
+		],
+		[
+			"威",
+			{
+				color: "#ff9966",
+				nature: "glodenmm",
+			},
+		],
+		[
+			"势",
+			{
+				color: "#7d26cd",
+				nature: "purplemm",
+			},
+		],
+		[
+			"TW谋",
+			{
 				/**
 				 * @returns {string}
 				 */
-				getSpan: () => `${get.prefixSpan("鼎")}`,
+				getSpan: () => `${get.prefixSpan("TW")}${get.prefixSpan("谋")}`,
 			},
 		],
+		[
+			"闪",
+			{
+				color: "#00bfff",
+				nature: "watermm",
+			},
+		],
+		[
+			"ddd",
+			{
+				showName: "3D",
+				color: "#edb5b5",
+				nature: "watermm",
+			},
+		],
+		[
+			"荆扬",
+			{
+				showName: "扬",
+				color: "#ffcc99",
+				nature: "thundermm",
+			},
+		],
+		[
+			"魔",
+			{
+				color: "#2e002e",
+				nature: "firemm",
+			},
+		],
+		[
+			"青史",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.textContent = "📚";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"风云",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.textContent = "☁️";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"爻",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.textContent = "☯";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"忍",
+			{
+				color: "#180a29",
+				nature: "thundermm",
+			},
+		],
+		[
+			"狂",
+			{
+				color: "#8B00FF",
+				nature: "firemm",
+			},
+		],
+		[
+			"绶",
+			{
+				color: "#8B00FF",
+				nature: "shenmm",
+			},
+		],
+		[
+			"欧陆",
+			{
+				getSpan: () => {
+					const span = document.createElement("span"),
+						style = span.style;
+					style.writingMode = style.webkitWritingMode = "horizontal-tb";
+					style.fontFamily = "MotoyaLMaru";
+					style.transform = "scaleY(0.85)";
+					span.textContent = "EU";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"智将",
+			{
+				showName: "智",
+				color: "#99e2ff",
+				nature: "firemm",
+			},
+		],
+		[
+			"徐兖",
+			{
+				showName: "徐",
+				color: "#ff0000",
+				nature: "firemm",
+			},
+		],
+		[
+			"有",
+			{
+				color: "#dd9420",
+				nature: "firemm",
+			},
+		],
+		
+		// 补充by棘手怀念摧毁
 		[
 			"少阴",
 			{
@@ -14660,6 +14958,20 @@ export class Library {
 			"太阴",
 			{
 				color: "#f3652d",
+				nature: "metalmm",
+			},
+		],
+		[
+			"少阳",
+			{
+				color: "#ffd700",
+				nature: "metalmm",
+			},
+		],
+		[
+			"太阳",
+			{
+				color: "#fefedc",
 				nature: "metalmm",
 			},
 		],

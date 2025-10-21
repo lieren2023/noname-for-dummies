@@ -576,6 +576,7 @@ game.import("card", function () {
 				audio: "shuiyanqijun",
 				fullskin: true,
 				type: "trick",
+				cardnature: "thunder",
 				filterTarget: function (card, player, target) {
 					return (
 						target != player &&
@@ -1086,6 +1087,7 @@ game.import("card", function () {
 				fullskin: true,
 				audio: true,
 				type: "trick",
+				cardnature: "fire",
 				filterTarget: function (card, player, target) {
 					if (get.mode() == "guozhan") {
 						var next = player.getNext();

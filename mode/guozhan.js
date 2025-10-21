@@ -729,6 +729,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_old_huaxiong",
 				],
 				guozhan_others: ["gz_beimihu", "gz_key_ushio", "gz_re_nanhualaoxian"],
+				guozhan_online: ["gz_re_xusheng"],
 			},
 		},
 		characterPack: {
@@ -960,6 +961,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				gz_gaoshun: ["male", "qun", 4, ["fakexunxi", "fakehuanjia"], ["gzskin"]],
 				gz_jin_jiachong: ["male", "jin", 3, ["fakexiongshu", "fakejianhui"]],
 				gz_jin_yanghu: ["male", "jin", 4, ["fakechongxin", "fakeweirong"]],
+
+				gz_re_xusheng: ["male", "wu", 4, ["repojun"]],
 			},
 		},
 		skill: {
@@ -23083,8 +23086,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 		},
 		translate: {
-			ye: "野",
-			ye2: "野心家",
 			yexinjia_mark: "野心家",
 
 			bumingzhi: "不明置",
@@ -24077,6 +24078,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			fakekeshou: "恪守",
 			fakekeshou_info:
 				"①当你受到伤害时，你可以弃置两张颜色相同的牌并令此伤害-1。②当你因弃置而一次性失去至少两张牌后，若你的势力已确定且场上没有与你势力相同的其他角色，则你可以进行判定，若结果判定为红色，你摸一张牌。",
+			gz_re_xusheng: "界徐盛",
+			gz_re_xusheng_prefix: "界",
 
 			guozhan_default: "国战标准",
 			guozhan_zhen: "君临天下·阵",
@@ -24094,6 +24097,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			guozhan_qunxiong: "群雄割据",
 			guozhan_tw: "海外服专属",
 			guozhan_others: "线下版",
+			guozhan_online: "Online专属",
 		},
 		junList: ["liubei", "zhangjiao", "sunquan", "caocao"],
 		guozhanPile_yingbian: [

@@ -34,6 +34,8 @@ game.import("character", function () {
 				clan_han: ["clan_hanshao", "clan_hanrong"],
 				clan_zhong: ["clan_zhongyan", "clan_zhonghui", "clan_zhongyu", "clan_zhongyao"],
 				clan_wang: ["clan_wangling", "clan_wangyun", "clan_wanghun", "clan_wanglun", "clan_wangguang", "clan_wangmingshan"],
+				// clan_yang: [],
+				// clan_lu: [],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -732,9 +734,10 @@ game.import("character", function () {
 									lib.skill.chenliuwushi.change(player, -2);
 								} else {
 									player.popup("洗具");
-									const next = player.phaseDraw();
-									event.next.remove(next);
-									trigger.getParent("phase").next.push(next);
+									const evt = trigger.getParent("phase", true, true);
+									if (evt?.phaseList) {
+										evt.phaseList.splice(evt.num + 1, 0, "phaseDraw|clanqiajue");
+									}
 								}
 							});
 					}
@@ -875,16 +878,16 @@ game.import("character", function () {
 						onremove: true,
 						intro: {
 							content(storage, player) {
-								var str = "";
+								var infos = [];
 								for (var i = 0; i < storage.length; i++) {
 									var list = storage[i];
 									var strx = ["【杀】", "任意普通锦囊牌"];
-									if (list[1]) strx.reverse();
-									str += "对" + get.translation(list[0]) + "使用" + strx[0] + "后，视为对其使用" + strx[1];
-									str += "<br>";
+									if (list[1]) {
+										strx.reverse();
+									}
+									infos.add("对" + get.translation(list[0]) + "使用" + strx[0] + "后，视为对其使用" + strx[1]);
 								}
-								str = str.slice(0, -4);
-								return str;
+								return infos.join("<br>");
 							},
 						},
 						trigger: { player: "useCardAfter" },
@@ -1094,7 +1097,9 @@ game.import("character", function () {
 					threaten: 3,
 					effect: {
 						target(card, player, target) {
-							if (!get.tag(card, "damage") || player.hasSkillTag("jueqing", false, target)) return;
+							if (!lib.translate[card.name] || !get.tag(card, "damage") || player.hasSkillTag("jueqing", false, target)) {
+								return;
+							}
 							let num = get.cardNameLength(card) - target.getDamagedHp();
 							if (num > 0) return [1, 0.8 * num + 0.1];
 						},
@@ -3364,7 +3369,7 @@ game.import("character", function () {
 								.reduce((list, evt) => {
 									return list.add(get.suit(evt.card));
 								}, [])
-								.sort((a, b) => lib.suits.indexOf(a) - lib.suits.indexOf(b));
+								.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
 							if (!player.storage.clandianzhan) {
 								player.when({ global: "roundStart" }).then(() => {
 									delete player.storage.clandianzhan;
@@ -3384,7 +3389,7 @@ game.import("character", function () {
 						.reduce((list, evt) => {
 							return list.add(get.suit(evt.card));
 						}, [])
-						.sort((a, b) => lib.suits.indexOf(a) - lib.suits.indexOf(b));
+						.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
 					if (suits.length) {
 						if (!player.storage.clandianzhan) {
 							player.when({ global: "roundStart" }).then(() => {
@@ -3834,7 +3839,7 @@ game.import("character", function () {
 			clanhuanghan_info: "当你受到牌造成的伤害后，你可以摸X张牌并弃置Y张牌（X为此牌牌名字数，Y为你已损失的体力值），然后若此次技能发动不为你本回合首次发动此技能，你重置技能〖保族〗。",
 			clan_wanglun: "族王沦",
 			clanqiuxin: "求心",
-			clanqiuxin_info: "出牌阶段限一次，你可以令一名其他角色选择一项：①你对其使用【杀】；②你对其使用任意普通锦囊牌。当你执行其选择的选项后，你视为执行另一项。",
+			clanqiuxin_info: "出牌阶段限一次，你可以令一名其他角色选择一项：当你对其使用的下一张〔1.【杀】；2.普通锦囊牌〕结算结束后，你视为对其使用一张〔1.普通锦囊牌；2.【杀】〕。",
 			clanjianyuan: "简远",
 			clanjianyuan_info: "当一名角色发动“出牌阶段限一次”的技能后，你可以令其重铸任意张牌名字数为X的牌（X为其本阶段的使用牌数）。",
 			clan_xunyou: "族荀攸",
@@ -3867,6 +3872,8 @@ game.import("character", function () {
 			clan_han: "颍川·韩氏",
 			clan_zhong: "颍川·钟氏",
 			clan_wang: "太原·王氏",
+			clan_yang: "弘农·杨氏",
+			clan_lu: "吴郡·陆氏",
 		},
 	};
 });

@@ -34,10 +34,11 @@ game.import("character", function () {
 				],
 				standard_2013: ["old_re_lidian", "huaxiong", "re_yuanshu"],
 				standard_2019: ["gongsunzan", "xf_yiji"],
-				standard_2023: ["std_panfeng", "ganfuren"],
+				standard_2023: ["std_panfeng", "ganfuren", "std_yuejin"],
 			},
 		},
 		character: {
+			std_yuejin: ["male", "wei", 4, ["stdxiaoguo"], ["die_audio:yuejin","character:gz_yuejin"]],
 			old_re_lidian: ["male", "wei", 3, ["xunxun", "wangxi"], ["die_audio:lidian"]],
 			ganfuren: ["female", "shu", 3, ["stdshushen", "shenzhi"]],
 			std_panfeng: ["male", "qun", 4, ["stdkuangfu"]],
@@ -132,6 +133,64 @@ game.import("character", function () {
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//标准版乐进
+			stdxiaoguo: {
+				audio: "xiaoguo",
+				trigger: { global: "phaseJieshuBegin" },
+				filter(event, player) {
+					return (
+						event.player.isIn() &&
+						event.player != player &&
+						player.countCards("h", card => {
+							if (_status.connectMode) {
+								return true;
+							}
+							return get.type(card) == "basic" && lib.filter.cardDiscardable(card, player);
+						})
+					);
+				},
+				async cost(event, trigger, player) {
+					const target = trigger.player;
+					const next = player.chooseToDiscard(get.prompt(event.name.slice(0, -5)), (card, player) => {
+						return get.type(card) == "basic";
+					});
+					next.set("ai", card => {
+						return get.event("eff") - get.useful(card);
+					});
+					next.set(
+						"eff",
+						(function () {
+							if (target.hasSkillTag("noe")) {
+								return get.attitude(_status.event.player, target);
+							}
+							return get.damageEffect(target, player, _status.event.player);
+						})()
+					);
+					next.set("logSkill", [event.name.slice(0, -5), target]);
+					event.result = await next.forResult();
+				},
+				popup: false,
+				async content(event, trigger, player) {
+					const target = trigger.player;
+					const bool = await target
+						.chooseToDiscard("he", "弃置一张装备牌，或受到1点伤害", { type: "equip" })
+						.set("ai", card => {
+							if (get.event("damage") > 0) {
+								return 0;
+							}
+							if (get.event("noe")) {
+								return 12 - get.value(card);
+							}
+							return -get.event("damage") - get.value(card);
+						})
+						.set("damage", get.damageEffect(target, player, target))
+						.set("noe", target.hasSkillTag("noe"))
+						.forResultBool();
+					if (!bool) {
+						await target.damage();
+					}
+				},
+			},
 			//标准版甘夫人
 			stdshushen: {
 				audio: "shushen",
@@ -645,6 +704,7 @@ game.import("character", function () {
 						event.notLink()
 					);
 				},
+				charlotte: true,
 				forced: true,
 				async content(event, trigger, player) {
 					trigger.num++;
@@ -2677,8 +2737,8 @@ game.import("character", function () {
 		characterReplace: {
 			caocao: ["caocao", "re_caocao", "sb_caocao", "dc_caocao", "jd_sb_caocao"],
 			guojia: ["guojia", "re_guojia", "yj_sb_guojia", "ps1059_guojia", "ps2070_guojia", "jsrg_guojia"],
-			simayi: ["simayi", "re_simayi", "dc_sb_simayi", "jsrg_simayi", "ps_simayi", "ps2068_simayi", "huan_simayi"],
-			jin_simayi: ["jin_simayi", "junk_simayi", "ps_jin_simayi"],
+			simayi: ["simayi", "re_simayi", "dc_sb_simayi", "jsrg_simayi", "ps_simayi", "ps2068_simayi", "yy_simayi"],
+			jin_simayi: ["jin_simayi", "junk_simayi", "huan_simayi", "ps_jin_simayi"],
 			zhenji: ["zhenji", "re_zhenji", "sb_zhenji", "yj_zhenji"],
 			xuzhu: ["xuzhu", "re_xuzhu"],
 			zhangliao: ["zhangliao", "re_zhangliao"],
@@ -2688,7 +2748,7 @@ game.import("character", function () {
 			guanyu: ["guanyu", "re_guanyu", "ol_sb_guanyu", "sb_guanyu", "ps_guanyu", "old_guanyu", "junk_guanyu", "jx_guanyu", "jd_sb_guanyu", "ty_guanyu", "drag_guanyu"],
 			zhangfei: ["zhangfei", "re_zhangfei", "old_zhangfei", "xin_zhangfei", "sb_zhangfei", "tw_zhangfei", "jsrg_zhangfei", "yj_zhangfei", "jd_sb_zhangfei", "sp_zhangfei"],
 			zhaoyun: ["zhaoyun", "re_zhaoyun", "old_zhaoyun", "sb_zhaoyun", "jsrg_zhaoyun", "ps2063_zhaoyun", "ps2067_zhaoyun", "huan_zhaoyun", "jd_sb_zhaoyun"],
-			sp_zhaoyun: ["sp_zhaoyun", "jsp_zhaoyun"],
+			sp_zhaoyun: ["sp_zhaoyun", "jsp_zhaoyun", "yy_zhaoyun"],
 			machao: ["machao", "re_machao", "sb_machao", "ps_machao"],
 			sp_machao: ["sp_machao", "dc_sp_machao", "jsrg_machao", "old_machao"],
 			zhugeliang: ["zhugeliang", "re_zhugeliang", "ps2066_zhugeliang", "ps_zhugeliang", "huan_zhugeliang", "jsrg_zhugeliang"],
@@ -2702,12 +2762,12 @@ game.import("character", function () {
 			sunshangxiang: ["sunshangxiang", "re_sunshangxiang", "sb_sunshangxiang", "jsrg_sunshangxiang", "star_sunshangxiang", "jd_sb_sunshangxiang"],
 			ganning: ["ganning", "re_ganning", "sb_ganning", "yongjian_ganning", "jd_sb_ganning", "ty_ganning"],
 			yj_ganning: ["yj_ganning", "sp_ganning"],
-			lvbu: ["lvbu", "re_lvbu", "jsrg_lvbu", "ps_lvbu"],
-			diaochan: ["diaochan", "re_diaochan", "sb_diaochan"],
+			lvbu: ["lvbu", "re_lvbu", "jsrg_lvbu", "ps_lvbu", "yj_lvbu"],
+			diaochan: ["diaochan", "re_diaochan", "sb_diaochan", "yue_diaochan"],
 			huatuo: ["huatuo", "re_huatuo", "old_huatuo"],
-			huaxiong: ["huaxiong", "re_huaxiong", "old_huaxiong", "sb_huaxiong", "ol_huaxiong"],
+			huaxiong: ["huaxiong", "re_huaxiong", "old_huaxiong", "sb_huaxiong", "ol_huaxiong", "ol_sb_huaxiong"],
 			yuanshu: ["yuanshu", "re_yuanshu", "yl_yuanshu", "old_yuanshu", "ol_yuanshu", "star_yuanshu"],
-			gongsunzan: ["gongsunzan", "re_gongsunzan", "dc_gongsunzan", "xin_gongsunzan", "sb_gongsunzan", "sp_gongsunzan"],
+			gongsunzan: ["gongsunzan", "re_gongsunzan", "dc_gongsunzan", "xin_gongsunzan", "sb_gongsunzan", "sp_gongsunzan", "yy_gongsunzan"],
 			re_lidian: ["re_lidian", "old_re_lidian", "junk_lidian"],
 			
 		},
@@ -2924,6 +2984,10 @@ game.import("character", function () {
 			stdshushen_info:
 				"当你回复1点体力时，你可以令一名其他角色摸一张牌（若其没有手牌则改为摸两张牌）。",
 			old_re_lidian: "李典",
+			std_yuejin: "标乐进",
+			std_yuejin_prefix: "标",
+			stdxiaoguo: "骁果",
+			stdxiaoguo_info: "其他角色的结束阶段开始时，你可以弃置一张基本牌，令该角色选择一项：1.弃置一张装备牌；2.受到你对其造成的1点伤害。",
 
 			standard_2008: "2008版标准包",
 			standard_2013: "2013版标准包",

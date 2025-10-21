@@ -822,9 +822,9 @@ game.import("card", function () {
 						},
 					},
 					tag: {
-						// damage:1,
-						// natureDamage:1,
-						// fireDamage:1,
+						damage: 0.15,
+						natureDamage: 0.15,
+						fireDamage: 0.15,
 					},
 				},
 			},

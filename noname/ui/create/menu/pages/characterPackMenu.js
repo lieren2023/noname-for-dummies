@@ -330,6 +330,7 @@ export const characterPackMenu = function (connectMenu) {
 					if (listx.length) {
 						var cfgnodeY = {
 							name: lib.translate[pak],
+							intro: lib.translate[pak + "_info"] || false,
 							_name: pak,
 							init: boolx,
 							onclick(bool) {

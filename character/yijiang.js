@@ -14,8 +14,8 @@ game.import("character", function () {
 				yijiang_2016: ["guohuanghou", "sunziliufang", "huanghao", "liyan", "sundeng", "cenhun", "zhangrang", "liuyu"],
 				yijiang_2017: ["xinxianying", "jikang", "wuxian", "qinmi", "xuezong", "xushi", "caiyong", "caojie"],
 				yijiang_2022: ["lukai", "kebineng", "zhugeshang", "liwan", "wuanguo", "hanlong", "yj_sufei", "yj_qiaozhou"],
-				yijiang_2023: ["xiahoumao", "chenshi", "sunli", "feiyao", "linghuyu", "yj_simafu", "yj_xuangongzhu", "xukun"],
-				yijiang_2024: ["yj_majun"],
+				yijiang_2023: ["xiahoumao", "chenshi", "sunli", "feiyao", "linghuyu", "yj_simafu", "yj_xuangongzhu", "xukun", "yj_majun"],
+				// yijiang_2025: [],
 			},
 		},
 		character: {
@@ -2856,7 +2856,7 @@ game.import("character", function () {
 						}
 					}
 				},
-				subSkill: { as: { sub: true } },
+				subSkill: { as: { charlotte: true } },
 				ai: {
 					threaten: 0.6,
 					effect: {
@@ -7471,6 +7471,8 @@ game.import("character", function () {
 				charlotte: true,
 				sourceSkill: "reqingxi",
 				filter: function (event, player) {
+					const evt = event.getParent("useCard", true, true);
+					if (evt && evt.effectedCount < evt.effectCount) return false;
 					return player.storage.reqingxi2 && event.card && player.storage.reqingxi2.includes(event.card);
 				},
 				silent: true,
@@ -10402,6 +10404,8 @@ game.import("character", function () {
 				},
 				charlotte: true,
 				filter: function (event, player) {
+					const evt = event.getParent("useCard", true, true);
+					if (evt && evt.effectedCount < evt.effectCount) return false;
 					return player.storage.reanjian2 && event.card && player.storage.reanjian2.includes(event.card);
 				},
 				silent: true,
@@ -11043,9 +11047,9 @@ game.import("character", function () {
 					"step 2";
 					if (result.bool && result.targets.length) {
 						result.targets[0].storage.qianxi2 = event.color;
-						result.targets[0].addTempSkill("qianxi2");
 						player.line(result.targets, "green");
-						game.addVideo("storage", result.targets[0], ["qianxi2", event.color]);
+						result.targets[0].addTempSkill("qianxi2");
+						result.targets[0].markSkill("qianxi2");
 					}
 				},
 				ai: {
@@ -15366,14 +15370,14 @@ game.import("character", function () {
 			caoxiu: ["caoxiu", "re_caoxiu", "xin_caoxiu", "tw_caoxiu", "old_caoxiu"],
 			xiahoushi: ["xiahoushi", "re_xiahoushi", "sb_xiahoushi", "sp_xiahoushi"],
 			zhangyi: ["zhangyi", "re_zhangyi", "xin_zhangyi"],
-			quancong: ["quancong", "re_quancong", "xin_quancong", "old_quancong"],
+			quancong: ["quancong", "re_quancong", "xin_quancong", "old_quancong", "yy_quancong"],
 			sunxiu: ["sunxiu", "re_sunxiu", "xin_sunxiu"],
 			zhuzhi: ["zhuzhi", "re_zhuzhi", "xin_zhuzhi", "old_zhuzhi"],
 			liuyu: ["liuyu", "dc_liuyu", "ol_liuyu"],
 			zhangrang: ["zhangrang", "ol_zhangrang", "junk_zhangrang"],
 			jikang: ["jikang", "re_jikang", "dc_jikang"],
 			xinxianying: ["xinxianying", "re_xinxianying", "ol_xinxianying", "sp_xinxianying"],
-			gongsunyuan: ["gongsunyuan", "re_gongsunyuan", "std_gongsunyuan"],
+			gongsunyuan: ["gongsunyuan", "re_gongsunyuan", "std_gongsunyuan", "yy_gongsunyuan"],
 			zhoucang: ["zhoucang", "re_zhoucang", "xin_zhoucang"],
 			guotufengji: ["guotufengji", "re_guotufengji"],
 			guanping: ["guanping", "re_guanping", "dc_sb_guanping"],
@@ -15389,7 +15393,7 @@ game.import("character", function () {
 			xunyou: ["xunyou", "re_xunyou", "clan_xunyou"],
 			xuezong: ["xuezong", "tw_xuezong", "std_xuezong"],
 			huanghao: ["huanghao", "dc_huanghao", "old_huanghao"],
-			caorui: ["caorui", "re_caorui", "old_caorui"],
+			caorui: ["caorui", "re_caorui", "old_caorui", "yy_caorui"],
 			sunziliufang: ["sunziliufang", "dc_sunziliufang"],
 			liyan: ["liyan", "old_liyan"],
 			zhangsong: ["zhangsong", "re_zhangsong"],
@@ -16076,7 +16080,7 @@ game.import("character", function () {
 			// 新一将成名
 			yijiang_2022: "一将成名2022",
 			yijiang_2023: "一将成名2023",
-			yijiang_2024: "一将成名2024",
+			yijiang_2025: "一将成名2025",
 		},
 	};
 });

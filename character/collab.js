@@ -4,6 +4,10 @@ game.import("character", function () {
 		name: "collab",
 		connect: true,
 		character: {
+			jiangziya: ["male", "qun", 3, ["xingzhou", "lieshen"]],
+			shengongbao: ["male", "qun", 3, ["zhuzhou", "yaoxian"]],
+			nanjixianweng: ["male", "qun", 3, ["xwshoufa", "fuzhao"], ["name:null|null"]],
+			ol_jsrg_caocao: ["male", "qun", 4, ["oldingxi", "olnengchen", "olhuojie"], ["character:jsrg_caocao"]],
 			// 临时修改（by 棘手怀念摧毁）
 			liuxiecaojie: ["double", "qun", 2, ["dcjuanlv", "dcqixin"]],
 			// liuxiecaojie: ["male", "qun", 2, ["dcjuanlv", "dcqixin"]],
@@ -58,18 +62,488 @@ game.import("character", function () {
 			collab: {
 				collab_olympic: ["sunyang", "yeshiwen"],
 				collab_tongque: ["sp_fuwan", "sp_fuhuanghou", "sp_jiben", "old_lingju", "sp_mushun"],
-				collab_oldoudizhu: ["wuhujiang"],
+				collab_oldoudizhu: ["wuhujiang", "ol_jsrg_caocao"],
 				collab_wuyi: ["dc_wuyi"],
 				collab_liuyi: ["xin_sunquan"],
 				collab_duanwu: ["sunwukong", "longwang", "taoshen", "quyuan"],
 				collab_qixi: ["liuxiecaojie"],
 				collab_decade: ["libai", "xiaoyuehankehan", "zhutiexiong", "wu_zhutiexiong"],
 				collab_remake: ["dc_caocao", "dc_liubei", "dc_sunquan", "nezha", "dc_sunce", "dc_zhaoyun", "dc_noname", "xunyuxunyou"],
+				collab_anime: ["jiangziya", "shengongbao", "nanjixianweng"],
 				mini_qixian: ["mp_liuling", "mp_wangrong", "mp_xiangxiu"],
 			},
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//姜子牙
+			xingzhou: {
+				audio: 2,
+				usable: 1,
+				trigger: {
+					global: "damageEnd",
+				},
+				filter(event, player) {
+					if (!event.source || !event.source.isIn()) return false;
+					if (!player.canUse({ name: "sha" }, event.source, false)) return false;
+					return player.countCards("h") > 1 && event.player.isMinHandcard();
+				},
+				async cost(event, trigger, player) {
+					event.result = await player
+						.chooseToDiscard("h", 2, get.prompt2("xingzhou", trigger.source))
+						.set("chooseonly", true)
+						.set("ai", card => {
+							const player = get.player(),
+								target = get.event().getTrigger().source;
+							if (!player.canUse({ name: "sha" }, target, false)) return 0;
+							if (get.effect(target, { name: "sha" }, player, player) <= 0) return 0;
+							return 6 - get.value(card);
+						})
+						.forResult();
+					event.result.targets = [trigger.source];
+				},
+				async content(event, trigger, player) {
+					const { cards, targets } = event;
+					await player.discard(cards);
+					const card = { name: "sha", isCard: true };
+					if (player.canUse(card, targets[0], false)) await player.useCard(card, targets, false);
+					if (
+						game.getGlobalHistory("everything", evt => {
+							if (evt.name != "die" || evt.player != targets[0]) return false;
+							return evt.reason?.getParent(event.name) == event;
+						}).length > 0
+					) {
+						player.restoreSkill("lieshen");
+					}
+				},
+			},
+			lieshen: {
+				audio: 2,
+				init(player) {
+					player.addSkill("lieshen_init");
+				},
+				onremove(player) {
+					player.removeSkill("lieshen_init");
+				},
+				enable: "phaseUse",
+				mark: true,
+				skillAnimation: true,
+				animationColor: "gray",
+				limited: true,
+				onChooseToUse(event) {
+					if (game.online) return;
+					let list = [];
+					if (_status.lieshen_map) {
+						let map = _status.lieshen_map;
+						for (let key in map) {
+							let target = game.findPlayer(current => current.playerid == key);
+							if (target) {
+								list.add([target, ...map[key]]);
+							}
+						}
+					}
+					event.set("lieshen_list", list);
+				},
+				filter(event, player) {
+					const list = event.lieshen_list;
+					if (!list || !list.length) return false;
+					return list.some(map => {
+						return map[0].hp != map[1] || map[0].countCards("h") != map[2];
+					});
+				},
+				filterTarget(card, player, target) {
+					const list = _status.event.lieshen_list;
+					return list.some(map => {
+						if (map[0] != target) return false;
+						return map[0].hp != map[1] || map[0].countCards("h") != map[2];
+					});
+				},
+				async content(event, trigger, player) {
+					const target = event.target;
+					player.awakenSkill(event.name);
+					const map = _status.lieshen_map[target.playerid];
+					if (map) {
+						if (target.hp > map[0]) await target.loseHp(target.hp - map[0]);
+						else if (target.hp < map[0]) await target.recoverTo(map[0]);
+						const num = target.countCards("h");
+						if (num > map[1]) await target.chooseToDiscard("h", num - map[1], true);
+						else if (num < map[1]) await target.drawTo(map[1]);
+					}
+				},
+				ai: {
+					order: 2,
+					result: {
+						target(player, target) {
+							const list = _status.event.lieshen_list;
+							if (!list || !list.length) return 0;
+							const map = list.find(key => key[0] == target);
+							if (!map) return 0;
+							let eff = 0,
+								num1 = target.hp - map[1],
+								num2 = target.countCards("h") - map[2];
+							if (num1 > 0) {
+								eff += get.effect(target, { name: "losehp" }, target, target) * num1;
+							}
+							else if (num1 < 0) {
+								eff -= get.recoverEffect(target, target, target) * num1;
+							}
+							if (num2 > 0) {
+								eff += get.effect(target, { name: "guohe_copy2" }, target, target) * num2;
+							}
+							else if (num2 < 0) {
+								eff -= get.effect(target, { name: "draw" }, target, target) * num2;
+							}
+							if (Math.abs(eff) <= 5) return 0;
+							return eff;
+						},
+					},
+				},
+				subSkill: {
+					init: {
+						trigger: {
+							global: ["phaseBefore", "enterGame"],
+						},
+						filter(event, player) {
+							return event.name != "phase" || game.phaseNumber == 0;
+						},
+						charlotte: true,
+						lastDo: true,
+						async cost(event, trigger, player) {
+							let targets = game.players;
+							if (trigger.name != "phase" && trigger.player != player) targets = [trigger.player];
+							let bool = targets.some(target => {
+								if (!_status.lieshen_map) return true;
+								return !_status.lieshen_map[target.playerid];
+							});
+							event.result = {
+								bool: bool,
+								targets: targets,
+								skill_popup: false,
+							};
+						},
+						async content(event, trigger, player) {
+							if (!_status.lieshen_map) _status.lieshen_map = {};
+							for (let target of event.targets) {
+								if (_status.lieshen_map[target.playerid]) continue;
+								_status.lieshen_map[target.playerid] = [target.hp, target.countCards("h")];
+							}
+						},
+					},
+				},
+			},
+			//申公豹
+			zhuzhou: {
+				audio: 2,
+				usable: 1,
+				trigger: {
+					global: "damageSource",
+				},
+				filter(event, player) {
+					if (!event.source || event.source == event.player) return false;
+					if (!event.source.isIn() || !event.player.isIn()) return false;
+					return event.source.isMaxHandcard() && event.player.countCards("h");
+				},
+				check(event, player) {
+					return get.effect(event.player, { name: "shunshou_copy2" }, event.source, player) > 0;
+				},
+				logTarget: "source",
+				prompt2: "令其获得受伤角色的一张手牌",
+				async content(event, trigger, player) {
+					await trigger.source.gainPlayerCard(trigger.player, "h", true);
+				},
+			},
+			yaoxian: {
+				enable: "phaseUse",
+				usable: 1,
+				audio: 2,
+				selectTarget: 2,
+				multitarget: true,
+				targetprompt: ["摸牌", "出杀目标"],
+				filterTarget(card, player, target) {
+					if (ui.selected.targets.length == 0) {
+						return true;
+					} else {
+						return target != player;
+					}
+				},
+				delay: false,
+				async content(event, trigger, player) {
+					const drawer = event.targets[0],
+						target = event.targets[1];
+					await drawer.draw(2);
+					const result = await drawer
+						.chooseToUse(function (card, player, event) {
+							if (get.name(card) != "sha") return false;
+							return lib.filter.filterCard.apply(this, arguments);
+						}, "邀仙：对" + get.translation(target) + "使用一张杀，否则失去1点体力")
+						.set("targetRequired", true)
+						.set("complexSelect", true)
+						.set("filterTarget", function (card, player, target) {
+							if (target != _status.event.sourcex && !ui.selected.targets.includes(_status.event.sourcex)) return false;
+							return lib.filter.targetEnabled.apply(this, arguments);
+						})
+						.set("sourcex", target)
+						.forResult();
+					if (!result.bool) await drawer.loseHp();
+				},
+				ai: {
+					result: {
+						player: function (player) {
+							var players = game.filterPlayer();
+							for (var i = 0; i < players.length; i++) {
+								if (players[i] != player && get.attitude(player, players[i]) > 1 && get.attitude(players[i], player) > 1) {
+									return 1;
+								}
+							}
+							return 0;
+						},
+						target: function (player, target) {
+							if (ui.selected.targets.length) {
+								return -0.1;
+							}
+							if (target.hp <= 1) return 0;
+							return 1;
+						},
+					},
+					order: 8.5,
+					expose: 0.2,
+				},
+			},
+			//寿星
+			xwshoufa: {
+				audio: 2,
+				enable: "phaseUse",
+				filter(event, player) {
+					return player.countCards("h", card => lib.suit.includes(get.suit(card, player)));
+				},
+				chooseButton: {
+					dialog(event, player) {
+						const dialog = ui.create.dialog("###授法###请选择要给出的花色");
+						return dialog;
+					},
+					chooseControl(event, player) {
+						var list = player.getCards("h").reduce((arr, card) => arr.add(get.suit(card, player)), []);
+						list.push("cancel2");
+						return list;
+					},
+					check(event, player) {
+						return 1 + Math.random();
+					},
+					backup(result, player) {
+						return {
+							audio: "xwshoufa",
+							filterCard(card, player) {
+								return get.suit(card, player) == result.control;
+							},
+							selectCard: -1,
+							position: "h",
+							suit: result.control,
+							filterTarget:lib.filter.notMe,
+							discard: false,
+							lose: false,
+							async content(event, trigger, player) {
+								const { cards, target } = event;
+								await player.give(cards, target);
+								let suit = get.info(event.name).suit;
+								if (suit) {
+									let skill = lib.skill.xwshoufa.derivation[["spade", "heart", "club", "diamond"].indexOf(suit)];
+									player.addSkill("xwshoufa_clear");
+									target.addAdditionalSkills(`xwshoufa_${player.playerid}`, skill, true);
+								}
+							},
+							ai: {
+								result: {
+									target(player, target) {
+										if (target.hasSkillTag("nogain")) return 0;
+										if (!ui.selected.cards?.length) return 0;
+										return ui.selected.cards.reduce((sum, card) => sum += get.value(card, target), 0);
+									}
+								},
+							},
+						};
+					},
+					prompt(result, player) {
+						let skill = lib.skill.xwshoufa.derivation[["spade", "heart", "club", "diamond"].indexOf(result.control)];
+						return `将所有${get.translation(result.control)}牌交给一名其他角色并令其获得【${get.translation(skill)}】`;
+					},
+				},
+				ai: {
+					order: 2,
+					result: { player: 1 },
+				},
+				derivation: ["tiandu", "retianxiang", "reqingguo", "new_rewusheng"],
+				subSkill: {
+					clear: {
+						trigger: {
+							player: "phaseBegin",
+						},
+						direct: true,
+						firstDo: true,
+						charlotte: true,
+						async content(event, trigger, player) {
+							game.players.forEach(current => {
+								current.removeAdditionalSkills(`xwshoufa_${player.playerid}`);
+							});
+						},
+					},
+					backup: {},
+				},
+			},
+			fuzhao: {
+				audio: 2,
+				trigger: {
+					global: "dying",
+				},
+				logTarget: "player",
+				filter(event, player) {
+					return event.player.hp < 1;
+				},
+				check(event, player) {
+					return get.attitude(player, event.player) > 0;
+				},
+				async content(event, trigger, player) {
+					const target = event.targets[0];
+					const result = await target
+						.judge(function (card) {
+							if (get.suit(card) == "heart") return 2;
+							return 0;
+						})
+						.forResult();
+					if (result?.suit) {
+						if (result.suit == "heart") await target.recover();
+					}
+				},
+			},
+			//忠曹操
+			//汉曹操
+			//江山如故二代目
+			oldingxi: {
+				audio: 2,
+				trigger: { global: "cardsDiscardAfter" },
+				filter(event, player) {
+					if (
+						!player.getPrevious() ||
+						!event.cards.filterInD("d").some(card => {
+							return get.tag(card, "damage") && player.canUse(card, player.getPrevious());
+						})
+					) {
+						return false;
+					}
+					const evt = event.getParent();
+					if (evt.name != "orderingDiscard") {
+						return false;
+					}
+					const evtx = evt.relatedEvent || evt.getParent();
+					return player.hasHistory("useCard", evtxx => {
+						if (evtxx.getParent().name === "oldingxi") {
+							return false;
+						}
+						return evtx.getParent() == (evtxx.relatedEvent || evtxx.getParent()) && get.tag(evtxx.card, "damage");
+					});
+				},
+				async cost(event, trigger, player) {
+					const target = player.getPrevious();
+					const cards = trigger.cards.filterInD("d").filter(card => get.tag(card, "damage"));
+					event.result = await player
+						.chooseButton([get.prompt2(event.skill, target), cards])
+						.set("filterButton", button => {
+							const player = get.player(),
+								target = get.event().target;
+							return player.canUse(button.link, target);
+						})
+						.set("target", target)
+						.set("ai", button => {
+							const player = get.player(),
+								target = get.event().target;
+							return get.effect(target, button.link, player, player);
+						})
+						.forResult();
+					if (event.result.bool) {
+						event.result.cards = event.result.links;
+					}
+				},
+				logTarget(event, player) {
+					return player.getPrevious();
+				},
+				async content(event, trigger, player) {
+					player.$gain2(event.cards, false);
+					// 临时修改（by 棘手怀念摧毁）
+					await game.asyncDelayx();
+					// await game.delayx();
+					const useCardEvent = player.useCard(event.cards[0], event.targets[0], false);
+					await useCardEvent;
+					const cards = useCardEvent.cards.filterInD("d");
+					if (cards.length) {
+						const next = player.addToExpansion(cards, "gain2");
+						next.gaintag.add("oldingxi");
+						await next;
+					}
+				},
+				intro: {
+					content: "expansion",
+					markcount: "expansion",
+				},
+				onremove(player, skill) {
+					const cards = player.getExpansions(skill);
+					if (cards.length) {
+						player.loseToDiscardpile(cards);
+					}
+				},
+				group: "oldingxi_biyue",
+				subSkill: {
+					biyue: {
+						audio: "oldingxi",
+						trigger: { player: "phaseJieshuBegin" },
+						forced: true,
+						locked: false,
+						filter(event, player) {
+							return player.countExpansions("oldingxi") > 0;
+						},
+						async content(event, trigger, player) {
+							await player.draw(player.countExpansions("oldingxi"));
+						},
+					},
+				},
+			},
+			olnengchen: {
+				audio: 2,
+				trigger: { player: "damageEnd" },
+				filter(event, player) {
+					return event.card && player.getExpansions("oldingxi").some(card => card.name === event.card.name);
+				},
+				forced: true,
+				content() {
+					const cards = player.getExpansions("oldingxi").filter(card => card.name === trigger.card.name);
+					player.gain(cards.randomGet(), player, "give");
+				},
+				ai: { combo: "oldingxi" },
+			},
+			olhuojie: {
+				audio: 2,
+				trigger: { player: "phaseUseBegin" },
+				filter(event, player) {
+					return player.countExpansions("oldingxi") > game.players.length + game.dead.length;
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					let num = player.getExpansions("oldingxi").length;
+					while (num > 0) {
+						num--;
+						const next = player.executeDelayCardEffect("shandian");
+						await next;
+						if (player.hasHistory("damage", evt => evt.getParent(2) == next)) {
+							const cards = player.getExpansions("oldingxi");
+							if (cards.length) {
+								await player.gain(cards, player, "give");
+							}
+							break;
+						}
+					}
+				},
+				ai: {
+					combo: "oldingxi",
+					neg: true,
+				},
+			},
 			//刘协曹节
 			//我们意念合一×2
 			dcjuanlv: {
@@ -259,7 +733,16 @@ game.import("character", function () {
 				filter(event, player) {
 					return ["trick", "equip"].includes(get.type2(event.card));
 				},
-				frequent: true,
+				prompt2(event, player) {
+					const type = get.type2(event.card),
+						name = `zhinang_${type}`,
+						skills = player.getRemovableAdditionalSkills(name);
+					let str = `获得一个技能${type == "trick" ? "台词" : "名"}包含“谋”的技能`;
+					if (skills.length) {
+						str = `失去${skills.map(skill => `【${get.translation(skill)}】`)}并${str}`;
+					}
+					return str;
+				},
 				async content(event, trigger, player) {
 					const map = lib.skill.zhinang.getMap(),
 						type = get.type2(trigger.card) == "equip" ? "name" : "info",
@@ -279,27 +762,34 @@ game.import("character", function () {
 						}
 						else player.flashAvatar("zhinang", map[type][skill])
 						player.popup(skill);
-						await player.addSkills(skill);
+						await player.addAdditionalSkills(`zhinang_${get.type2(trigger.card)}`, skill);
 					}
+				},
+				init(player, skill) {
+					player.addSkill(["zhinang_equip", "zhinang_trick"]);
+				},
+				onremove(player, skill) {
+					player.removeSkill(["zhinang_equip", "zhinang_trick"]);
+				},
+				subSkill: {
+					equip: {},
+					trick: {},
 				},
 			},
 			gouzhu: {
 				trigger: {
-					player: ["useSkillAfter", "logSkill"],
+					player: "changeSkillsAfter",
 				},
-				filter(event, player) {
-					if (["global", "equip"].includes(event.type)) return false;
-					let skill = get.sourceSkillFor(event);
-					if (!skill || skill == "gouzhu") return false;
-					let info = get.info(skill);
-					while (true) {
-						if (!info || info.charlotte || info.equipSkill) return false;
-						if (info && !info.sourceSkill) break;
-						skill = info.sourceSkill;
-						info = get.info(skill);
-					}
+				filter(_1, player, _3, skill) {
 					let list = get.skillCategoriesOf(skill, player);
 					return list.length && list.some(item => item in lib.skill.gouzhu.effectMap);
+				},
+				getIndex(event, player) {
+					if (!event.removeSkill.length) return false;
+					return event.removeSkill;
+				},
+				prompt(_1, _2, _3, skill) {
+					return `失去了技能【${get.translation(skill)}】，是否发动【苟渚】？`;
 				},
 				frequent: true,
 				effectMap: {
@@ -342,13 +832,7 @@ game.import("character", function () {
 				locked: false,
 				onremove: true,
 				async content(event, trigger, player) {
-					let skill = get.sourceSkillFor(trigger),
-						info = get.info(skill);
-					while (true) {
-						if (info && !info.sourceSkill) break;
-						skill = info.sourceSkill;
-						info = get.info(skill);
-					}
+					let skill = event.indexedData;
 					let list = get.skillCategoriesOf(skill, player);
 					for (const item of list) {
 						if (item in lib.skill.gouzhu.effectMap) {
@@ -3439,6 +3923,9 @@ game.import("character", function () {
 			zhutiexiong:
 				"朱铁雄，福建莆田人，1994年出生，短视频创作者。中国魔法少年的英雄梦，国风变装的热血与浪漫。抖音年度高光时刻作者，国风变装现象级人物。创玩节期间化身三国杀武将，来一场热血变身！",
 			nezha: "哪吒是中国神话中的民俗神之一，在古典名著《西游记》《封神演义》等及其衍生作品中也多有登场。传说中，哪吒是托塔天王李靖的第三子。哪吒之母怀胎三年，而哪吒出生之时是一个肉球，李靖惊怒之下，用剑劈开了肉球，而哪吒就在肉球中。哪吒广泛流传于道教以及民间传说中，被称为三坛海会大神、威灵显圣大将军、中坛元帅等，民间俗称“三太子”，又常冠其父姓，称为“李哪吒”。哪吒的原型为佛教护法神“那咤”。在不同作品的设定中，哪吒的师承关系有所不同，比如《封神演义》中，哪吒是太乙真人的弟子、元始天尊的徒孙，而《西游记》之中，哪吒则是释迦牟尼（如来佛祖）的弟子。在传说中，哪吒的形象常被形容为可化作三头六臂（封神之中是三头八臂），使用多种武器战斗。比如，《封神演义》中哪吒使用的武器（法宝）为乾坤圈、混天绫、火尖枪和风火轮等，西游记中是斩妖剑、砍妖刀、缚妖索、降妖杵、绣球儿、火轮儿。而哪吒第一次死后被其师父（太乙真人或如来佛祖）以莲花和莲藕复活。",
+			jiangziya: "姜太公（？－前1015年或前1036年），姜姓，吕氏，名尚或望，字子牙（或单呼“牙”），后世称姜子牙、齐太公、师尚父、太公望、吕望、吕尚、姜尚等。籍贯有“东海上”（今山东日照）、河内汲县（今河南卫辉）等不同说法。中国商朝末年军事家、政治家、韬略家、思想家，西周开国元勋。",
+			shengongbao: "申公豹是明代神魔小说《封神演义》中的人物，昆仑山玉虚宫元始天尊弟子，其随身佩一宝剑，有法宝开天珠，坐骑是白额虎。<br>申公豹与姜子牙、南极仙翁为阐教同门，然而，其本人性格狂妄自大、心胸狭窄，自诩有几千年的修行而违背元始天尊师命，逆势而为，选择保成汤、扶纣王，与以姜子牙为代表的扶周灭纣立场相悖。<br>申公豹作为《封神演义》中的反面人物，以其蛊惑人心、搬弄是非的形象让人熟知。离开昆仑山后，申公豹四处游说三十六路人马与姜子牙为敌，助纣王攻打西岐，最终，申公豹被元始天尊罚去以身体塞了北海眼，封神时，受封为东海分水将军。",
+			nanjixianweng: "南极仙翁，为中国古代神话传说中的仙人，是古典小说及电视剧中衍生出来的名称，在道教典籍中暂未发现有南极仙翁称呼的神仙，其原型是道教著名的神仙“寿星老人”。以居南极，故名。常有鹿、鹤二童为其役使；鹿、鹤、灵芝，俱寿之征也。",
 			liuling: "刘伶（约221年-约300年），字伯伦，西晋沛国（治今安徽濉溪县西北）人，竹林七贤之一，中国魏晋时期作家，名士。<br>刘伶自幼便失去了父爱，因其父亲身材矮小，及至长大成人后，刘伶身高也不过六尺。魏齐王曹芳正始之末（249年），刘伶已成为当世名重一时的名士，并且常与嵇康、阮籍、阮咸集会于山阳竹林之下，饮酒赋诗，弹琴作歌。晋武帝司马炎泰始初年（265年）前后，曾做过一段时间的建威参军，不久朝廷下诏，入宫中策问。他大谈老庄，强调无为而治，非但没有得到重用，反而连参军之职也被罢免了，从此再无仕进。晋惠帝司马衷永康元年（300年）前后，以寿而终。<br>刘伶有“品酒第一人”的美称，也被酒行业传颂至今，后人以古瀑河边上的井水酿酒，还取刘伶墓地的黄土垒成窖池酿酒，为了纪念刘伶，当地百姓也将“润泉涌”更名为“刘伶醉”。其传世作品仅有《酒德颂》《北芒客舍》两篇，其中《酒德颂》所表现出的藐视一切存在的气概，敌视礼教之士的反抗精神，既高扬了人格的力量，批判了当时的黑暗政治，同时也抒发了压抑的愤世之情，充满了浪漫色彩，气魄豪迈，用辞又骈偶间行，有无意追求而自至的特点，对后代影响极大。",
 			mp_wangrong: "王戎（234年－305年7月11日），字濬冲。琅玡郡临沂县（今山东省临沂市白沙埠镇诸葛村）人。祖父为三国魏幽州刺史王雄，曹魏凉州刺史王浑的儿子。三国至西晋时期名士、官员，“竹林七贤”之一。<br>王戎出身琅玡王氏。自少神采秀美，长于清谈，以精辟的品评与识鉴而著称，以聪颖知名，为父辈好友、名士阮籍器重，后人视之为玄学名士。初袭父爵贞陵亭侯，被大将军司马昭辟为掾属。累官豫州刺史、建威将军，参与晋灭吴之战。战后以功进封安丰县侯，故人称“王安丰”。治理荆州时，他拉拢士人，颇有成效。后历任侍中、光禄勋、吏部尚书、太子太傅、中书令、尚书左仆射等职。元康七年（296年），升任司徒，位列三公。王戎认为天下将乱，于是不理世事，以山水游玩为乐。赵王司马伦发动政变时，王戎被牵连免官。之后被起用为尚书令，再迁司徒。右将军张方劫持晋惠帝入长安后，王戎逃奔郏县。<br>永兴二年（305年），王戎去世，时年七十二，谥号为“元”。",
 			xiangxiu: "向秀（约227年－272年），字子期，河内怀县（今河南武陟）人。魏晋时期的文学家，竹林七贤之一 [1]。向秀雅好读书，与嵇康、吕安等人相善，隐居不仕。景元四年（263年）嵇康、吕安被司马昭害死后，向秀应本郡的郡上计到洛阳，受司马昭接见，后官至黄门侍郎、散骑常侍。泰始八年（272年）去世。",
@@ -3634,9 +4121,9 @@ game.import("character", function () {
 			olhuyi_info: "①游戏开始时，你从随机三个五虎将技能中选择一个获得。②当你使用或打出一张基本牌后，若你因此技能获得的技能数小于5，你随机获得一个技能描述中包含此牌名的五虎将技能。③回合结束时，你可以失去一个以此法获得的技能。",
 			xunyuxunyou: "荀彧荀攸",
 			zhinang: "智囊",
-			zhinang_info: "当你使用锦囊牌后，你可以获得一个技能台词包含“谋”的技能；当你使用装备牌后，你可以获得一个技能名包含“谋”的技能。",
+			zhinang_info: "①当你使用锦囊牌后，你可以获得一个技能台词包含“谋”的技能直到再发动此项；②当你使用装备牌后，你可以获得一个技能名包含“谋”的技能直到再发动此项。",
 			gouzhu: "苟渚",
-			gouzhu_info: "你发动技能后，若此技能为：锁定技，回复1点体力；觉醒技，获得一张基本牌；限定技，对随机一名其他角色造成1点伤害；转换技，手牌上限+1；主公技，增加1点体力上限。",
+			gouzhu_info: "你失去技能后，若此技能为：锁定技，回复1点体力；觉醒技，获得一张基本牌；限定技，对随机一名其他角色造成1点伤害；转换技，手牌上限+1；主公技，增加1点体力上限。",
 			liuxiecaojie: "刘协曹节",
 			dcjuanlv: "眷侣",
 			dcjuanlv_info: "当你使用牌指定异性角色为目标后，你可以令其选择一项：①弃置一张牌；②令你摸一张牌。",
@@ -3644,6 +4131,31 @@ game.import("character", function () {
 			dcqixin_info: "转换技。①出牌阶段，你可以将性别变更为：阴，曹节--女；阳，刘协--男。②当你即将死亡时，你取消之并将性别变更为〖齐心①〗的转换状态，将体力调整至此状态的体力，然后你本局游戏不能发动〖齐心〗。",
 			dcqixin_faq: "关于齐心",
 			dcqixin_faq_info: "<br>〖齐心①〗的两种状态各拥有初始体力上限的体力值，初始状态为“刘协--男”，且两种状态的体力值分别计算。",
+			// ol_jsrg_caocao: "忠曹操",
+			// ol_jsrg_caocao_prefix: "忠",
+			ol_jsrg_caocao: "汉曹操",
+			ol_jsrg_caocao_prefix: "汉",
+			oldingxi: "定西",
+			oldingxi_info: "当你不因〖定西〗使用伤害牌进入弃牌堆后，你可以对上家使用其中一张伤害牌，然后将使用的牌置于武将牌上。结束阶段，你摸X张牌（X为你的“定西”牌数）。",
+			olnengchen: "能臣",
+			olnengchen_info: "锁定技，当你受到牌造成的伤害后，若你拥有与此牌牌名相同的“定西”牌，则你随机获得其中一张。",
+			olhuojie: "祸结",
+			olhuojie_info: "锁定技，出牌阶段开始时，若X大于游戏人数，则你进行X次【闪电】判定直到以此法受到伤害（X为你的“定西”牌数）；然后若你因此受到了伤害，则你获得所有“定西”牌。",
+			jiangziya: "姜子牙",
+			xingzhou: "兴周",
+			xingzhou_info: "每回合限一次，手牌数最少的角色受到伤害后，你可以弃置两张手牌，视为对伤害来源使用一张【杀】；若其因此死亡，你令〖列神〗视为未发动过。",
+			lieshen: "列神",
+			lieshen_info: "限定技，出牌阶段，你可以令一名角色将体力值和手牌数调整至游戏开始时。",
+			shengongbao: "申公豹",
+			zhuzhou: "助纣",
+			zhuzhou_info: "每回合限一次，手牌数最多的角色造成伤害后，你可以令其获得受伤角色的的一张手牌。",
+			yaoxian: "邀仙",
+			yaoxian_info: "出牌阶段限一次，你可以令一名角色摸两张牌，然后其须对你指定的另一名其他角色使用【杀】，否则其失去1点体力。",
+			nanjixianweng: "南极仙翁",
+			xwshoufa: "授法",
+			xwshoufa_info: "出牌阶段，你可以展示并将所有♠/♥/♣/♦花色的手牌交给一名其他角色，令其获得〖天妒〗/〖天香〗/〖倾国〗/〖武圣〗直到你的下个回合开始。",
+			fuzhao: "福照",
+			fuzhao_info: "一名角色进入濒死状态时，你可以令其进行一次判定，若结果为♥，其回复1点体力。",
 
 			collab_olympic: "OL·伦敦奥运会",
 			collab_tongque: "OL·铜雀台",
@@ -3654,7 +4166,9 @@ game.import("character", function () {
 			collab_qixi: "新服·七夕限时地主",
 			collab_decade: "新服·创玩节",
 			collab_remake: "新服·共创武将",
+			collab_anime: "三国杀·动画",
 			mini_qixian: "小程序·竹林七贤",
+			
 			
 			
 			
@@ -3811,7 +4325,7 @@ game.import("character", function () {
 			"#olhuyi3": "游龙战长坂，可复七进七出。",
 			"#olhuyi4": "身跨白玉鞍，铁骑踏冰河。",
 			"#olhuyi5": "满弓望西北，弦惊夜行之虎。",
-			"#wuhujiang:die": "麦城残阳息长刀……",
+			"#wuhujiang:die": "麦城残阳洗长刀……",
 			"#wuhujiang2:die": "当阳空余声……",
 			"#wuhujiang3:die": "亢龙有悔……",
 			"#wuhujiang4:die": "西风寒，冷铁衣……",
@@ -3872,12 +4386,50 @@ game.import("character", function () {
 			"#dchuanli1": "金乌当空，汝欲与我辩日否？",
 			"#dchuanli2": "童言无忌，童言有理！",
 			"#xin_sunquan:die": "阿娘，大哥抢我糖人！",
+			"#oldingxi1": "今天，我曹操誓要踏平祁连山！",
+			"#oldingxi2": "饮马瀚海，封狼居胥，大丈夫当如此！",
+			"#olnengchen1": "当今四海升平，可为治世之能臣。",
+			"#olnengchen2": "为大汉江山鞠躬尽瘁，臣死犹生。",
+			"#olhuojie1": "国虽大，忘战必危，好战必亡。",
+			"#olhuojie2": "这穷兵黩武的罪，让我一人受便可。",
+			"#ol_jsrg_caocao:die": "此征西将军曹侯之墓……",
+			
+			// shengxiao
+			"#olzishu": "这些牌都归我吧！",
+			"#ol_zishu:die": "油米全没了……",
+			"#olchouniu": "牛角之歌，自保足矣。",
+			"#ol_chouniu:die": "请将我……埋于此地吧……",
+			"#olyinhu": "尝尝我的厉害吧！",
+			"#ol_yinhu:die": "百兽之王，也有终老……",
+			"#olmaotu": "想抓到我？不可能！",
+			"#ol_maotu:die": "这灾祸，是躲不过了……",
+			"#olchenlong": "龙怒的威力，不是你所能承受的。",
+			"#ol_chenlong:die": "龙威不在，龙鳞已落……",
+			"#olsishe": "伤我者，一一奉还。",
+			"#ol_sishe:die": "我的毒液，失效了……",
+			"#olwuma": "有我在，必成功！",
+			"#ol_wuma:die": "马有失蹄啊……",
+			"#olweiyang": "共享绵泽，同甘共苦。",
+			"#ol_weiyang:die": "看不到青草翠绿时……",
+			"#olshenhou": "百般变化，真假难辨！",
+			"#ol_shenhou:die": "这仙桃，无用了……",
+			"#olyouji": "鸡豚之息，虽微渐厚。",
+			"#ol_youji:die": "杀鸡取卵，不可取呀……",
+			"#olxugou": "驱邪吠恶，遇凶斩杀！",
+			"#ol_xugou:die": "不能守护家园了……",
+			"#olhaizhu": "这些都归我吧！",
+			"#ol_haizhu:die": "啊，果然，还是吃太多了……",
 			
 			// ddd
 			
 			// diy
 			
 			// extra
+			"#dclieqiong1": "横眉蔑风雨，引弓狩天狼。",
+			"#dclieqiong2": "一箭出，万军毙！",
+			"#dczhanjue1": "流不尽的英雄血，斩不尽的逆贼头！",
+			"#dczhanjue2": "长刀渴血，当饲英雄胆！",
+			"#shen_huangzhong:die": "箭雨曾蔽日，今夕却成绝响……",
 			"#xinjilve1": "运筹成略，统军持国！",
 			"#xinjilve2": "英雄皆殁，天命终归吾司马一族！",
 			"#wansha_new_simayi1": "连诛其族，剪其党羽，以夷后患！",
@@ -3929,6 +4481,7 @@ game.import("character", function () {
 			"#cuijue1": "当锋摧决，贯遐洞坚！",
 			"#cuijue2": "殒身不恤，死战成仁！",
 			"#shen_dianwei:die": "主公快走！",
+			"#shen_dianwei2:die": "战死沙场，快哉快哉！",
 			"#dctuoyu1": "本尊目之所及，皆为麾下王土。",
 			"#dctuoyu2": "擎五丁之神力，碎万仞之高山。",
 			"#dcxianjin1": "大风！大雨！大景！！",
@@ -4122,6 +4675,15 @@ game.import("character", function () {
 			"#olfangquan_shen_caopi1": "此等小事，你们处理即可。",
 			
 			// huicui
+			"#dcshuangrui1": "刚柔并济，武学之道可不分男女。",
+			"#dcshuangrui2": "人言女子柔弱，我偏要以武证道。",
+			"#dcfuxie1": "箭射辕角，夏侯老贼必中疑兵之计。",
+			"#dcfuxie2": "借父三矢以诱敌，佯装黄汉升在此。",
+			"#dcshouxing1": "古时后羿射日，今我以星为狩。",
+			"#dcshouxing2": "柔荑挽雕弓，箭出大星落。",
+			"#dcshaxue1": "短兵奋进，杀人于无形。",
+			"#dcshaxue2": "霜刃映雪，三步之内，必取汝性命！",
+			"#dc_huangwudie:die": "谁说，战死沙场专属男儿？",
 			"#dcyunzheng1": "佳人弄青丝，柔荑奏鸣筝。",
 			"#dcyunzheng2": "玉柱冷寒雪，清商怨羽声。",
 			"#dchuoxin1": "闻君精通音律，与我合奏一曲如何？",
@@ -4431,6 +4993,7 @@ game.import("character", function () {
 			"#jianliang2": "义士同心力，粮秣应期来！",
 			"#weimeng1": "此礼献于友邦，共赴兴汉大业！",
 			"#weimeng2": "吴有三江之守，何故委身侍魏？",
+			"#re_dengzhi:die": "伯约啊，我帮不了你了……",
 			"#yusui1": "宁为玉碎，不为瓦全！",
 			"#yusui2": "生义相左，舍生取义。",
 			"#boyan1": "黑白颠倒，汝言谬矣！",
@@ -4460,8 +5023,8 @@ game.import("character", function () {
 			"#re_xunchen:die": "为臣当不贰，贰臣不当为……",
 			"#guowu1": "方天映黛眉，赤兔牵红妆。",
 			"#guowu2": "武姬青丝利，巾帼女儿红。",
-			"#zhuangrong1": "我乃温侯吕奉先之女！",
-			"#zhuangrong2": "继父神威，无坚不摧！",
+			"#zhuangrong1": "锋镝鸣手中，锐戟映秋霜。",
+			"#zhuangrong2": "红妆非我愿，学武觅封侯。",
 			"#lvlingqi:die": "父亲，女儿好累……",
 			"#cuijian1": "所当皆披靡，破坚若无人！",
 			"#cuijian2": "一枪定顽敌，一骑破坚城！",
@@ -4584,8 +5147,8 @@ game.import("character", function () {
 			"#dcqinghuang2": "心有草木，何畏荒芜？",
 			"#huomo_huzhao1": "行文挥毫，得心应手。",
 			"#huomo_huzhao2": "泼墨走笔，挥洒自如。",
-			"#llqshenwei1": "锋镝鸣手中，锐戟映秋霜。",
-			"#llqshenwei2": "红妆非我愿，学武觅封侯。",
+			"#llqshenwei1": "我乃温侯吕奉先之女！",
+			"#llqshenwei2": "继父神威，无坚不摧！",
 			"#wushuang_lvlingqi1": "猛将策良骥，长戟破敌营。",
 			"#wushuang_lvlingqi2": "杀气腾剑戟，严风卷戎装。",
 			"#dcjigu1": "我接着奏乐，诸公接着舞。",
@@ -5475,6 +6038,18 @@ game.import("character", function () {
 			"#huangzhong:die": "不得不服老啦~",
 			
 			// onlyOL
+			"#olsbhulie1": "匹夫犯我，吾必斩之！",
+			"#olsbhulie2": "鼠辈！这一刀下去定让你看不到明天的太阳。",
+			"#olsbhulie3": "这大汉，就是我江东子弟的天下！",
+			"#olsbyipo1": "乱臣贼子，天地不容！",
+			"#olsbyipo2": "身既死兮神以灵，魂魄毅兮为鬼雄！",
+			"#olsbyipo3": "年少束发从羽林，纵死不改报国志。",
+			"#ol_sb_sunjian:die": "江东子弟们，我先走一步了……",
+			"#olbuyi1": "今植桑芜，可荫来者。",
+			"#olbuyi2": "补气凝神，百邪不侵。",
+			"#olganlu1": "吾家有女，当择良婿。",
+			"#olganlu2": "今见玄德，真佳婿也。",
+			"#ol_wuguotai:die": "竖子，何以胞妹为饵乎？",
 			"#jueqing_ol_zhangchunhua1": "情丝如雪，难当暖阳。",
 			"#jueqing_ol_zhangchunhua2": "有情总被无情负，绝情方无软肋生。",
 			"#shangshi_ol_zhangchunhua1": "伤我最深的，竟是你司马懿。",
@@ -7279,6 +7854,9 @@ game.import("character", function () {
 			"#ol_dongzhao:die": "昭，一心向魏，绝无二心……",
 			"#zhuangshu1": "殿前妆梳，风姿绝世。",
 			"#zhuangshu2": "顾影徘徊，丰容靓饰。",
+			"#zhuangshu_basic": "鬓怯琼梳，朱颜消瘦。",
+			"#zhuangshu_trick": "犀梳斜插，醉倚阑干。",
+			"#zhuangshu_equip": "金梳富贵，蒙君宠幸。",
 			"#chuiti1": "悲愁垂涕，三日不食。",
 			"#chuiti2": "宜数涕泣，示忧愁也。",
 			"#fengfangnv:die": "毒妇妒我……",
@@ -8708,6 +9286,27 @@ game.import("character", function () {
 			"#bmcanshi_tw_beimihu2": "小则蚕食，大则溃坝。",
 			
 			// xianding
+			"#dckengqiang1": "女子着征袍，战意越关山。",
+			"#dckengqiang2": "兴武效妇好，挥钺断苍穹！",
+			"#dckuichi1": "久战沙场，遗伤无数。",
+			"#dckuichi2": "人无完人，千虑亦有一失。",
+			"#dckunli1": "回首万重山，难阻轻舟一叶。",
+			"#dckunli2": "已过山穷水尽，前有柳暗花明。",
+			"#dcshangjue1": "伯约，奈何桥畔，再等我片刻。",
+			"#dcshangjue2": "与君同生共死，岂可空待黄泉！",
+			"#wenyuan:die": "伯约，回家了……",
+			"#dcyanzuo1": "提笔欲续出师表，何日重登蜀道？",
+			"#dcyanzuo2": "我族以诗书传家，苑中未绝琅琅。",
+			"#dczuyin1": "蒙先祖之佑，未觉春秋之寒。",
+			"#dczuyin2": "我本孺子，幸得父祖遮风挡雨。",
+			"#dcpijian1": "神思凝慧剑，当悬宵小之颈。",
+			"#dcpijian2": "仗剑凌天下，汝忘武侯否！",
+			"#zhugejing:die": "子孙不肖，徒遗泪胡尘……",
+			"#dcsbyaozuo1": "明公馈墨，琳当还以锦绣。",
+			"#dcsbyaozuo2": "识时务者，应势而为，当为俊杰。",
+			"#dcsbzhuanwen1": "夺人妻子，掘人祖陵，彼与桀纣何异。",
+			"#dcsbzhuanwen2": "奸宦之后，权佞之子，安敢居南而大！",
+			"#dc_sb_chenlin:die": "矢在弦上，不得不发，请曹公恕罪……",
 			"#dcsbkongwu1": "莫说兵器，取汝首级也易如反掌。",
 			"#dcsbkongwu2": "臂有千斤力，何惧万人敌。",
 			"#dc_sb_hucheer:die": "典……典将军，您还没睡啊……",
@@ -8829,10 +9428,10 @@ game.import("character", function () {
 			"#fengying1": "二臣恭奉，以迎皇嗣。",
 			"#fengying2": "奉旨典选，以迎忠良。",
 			"#cuimao:die": "为世所痛惜，冤哉……",
-			"#dcjichun1": "寒梅不争春，空任群芳妒。",
-			"#dcjichun2": "三九寒天，尤有寒英凌霜。",
-			"#dchanying1": "寒冬已至，花开不远矣。",
-			"#dchanying2": "梅凌霜雪，其香不逊晚来者。",
+			"#dcjichun1": "寒冬已至，花开不远矣。",
+			"#dcjichun2": "梅凌霜雪，其香不逊晚来者。",
+			"#dchanying1": "寒梅不争春，空任群芳妒。",
+			"#dchanying2": "三九寒天，尤有寒英凌霜。",
 			"#zhugemengxue:die": "雪落青丝上，与君共白头……",
 			"#dclinghui1": "福兮祸所依，祸兮福所伏。",
 			"#dclinghui2": "枯桑知风，沧海知寒。",
@@ -9053,6 +9652,8 @@ game.import("character", function () {
 			"#dc_liuye:die": "功名富贵，到头来，不过黄土一抔……",
 			"#dcyaoyi1": "对弈未分高下，胜负可问春风。",
 			"#dcyaoyi2": "我掷三十六道，邀君游弈其中。",
+			"#dcshoutan1": "对弈博雅，落子珠玑胜无声。",
+			"#dcshoutan2": "弈者无言，手执黑白谈古今。",
 			"#dcfuxue1": "普天之大，唯此处可安书桌。",
 			"#dcfuxue2": "书中自有风月，何故东奔西顾？",
 			"#luyi:die": "此生博弈，落子未有悔……",

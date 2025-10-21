@@ -28,8 +28,9 @@ window.noname_package = {
 		offline: "线下武将",
 		jsrg: "江山如故",
 		sixiang: "四象封印",
-		//各服联动+怀旧
+		//各服联动+特殊武将+怀旧
 		collab: "联动卡",
+		shengxiao: "特殊武将",
 		old: "怀旧",
 		//DIY系列
 		diy: "DIY",

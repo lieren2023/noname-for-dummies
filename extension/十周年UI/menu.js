@@ -2059,8 +2059,8 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 						}
 					}
 					alterableCharacters.sort();
-					// 武将顺序按自定义列表排（本人扩展：三国24名将），检测到吕布时不排序
-					if(!list.includes("wms_z_lvbu"))
+					// 武将顺序按自定义列表排（本人扩展：三国24名将、棘手懒人包：特殊武将），检测到吕布/子鼠时不排序
+					if(!(list.includes("wms_z_lvbu") || list.includes("ol_zishu")))
 					list.sort(lib.sort.character);
 					var list2 = list.slice(0);
 					var cfgnode = createConfig({
@@ -2217,6 +2217,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 							if (listx.length) {
 								var cfgnodeY = {
 									name: lib.translate[pak],
+									intro: lib.translate[pak + "_info"] || false,
 									_name: pak,
 									init: boolx,
 									onclick(bool) {
@@ -2429,7 +2430,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				};
 				
 				lib.config.nocharacters=[];
-				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','sixiang','sbfm','mdtx','old'];
+				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','sixiang','sbfm','mdtx','shengxiao','old'];
 				lib.config.notdefaultcharacters=['diy','ddd','key','yxs','hearth','gwent','mtg','ow','swd','gujian','xianjian'];
 				lib.config.benticharacters=lib.config.defaultcharacters.concat(lib.config.notdefaultcharacters);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {

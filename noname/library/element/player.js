@@ -3656,15 +3656,20 @@ export class Player extends HTMLDivElement {
 	 * 获取蓄力点上限
 	 */
 	getMaxCharge() {
-		let skills = game.expandSkills(this.getSkills().concat(lib.skill.global));
+		let skills = game.expandSkills(this.getSkills(null, null, false).concat(lib.skill.global));
 		let max = 0;
-		for(let skill of skills) {
+		for (let skill of skills) {
 			let info = get.info(skill);
-			if(!info.chargeSkill || typeof info.chargeSkill != "number") continue;
+			if (!info || !info.chargeSkill || typeof info.chargeSkill != "number") {
+				continue;
+			}
+			if (info.chargeSkill == Infinity) {
+				return Infinity;
+			}
 			max += info.chargeSkill;
 		}
 		max = game.checkMod(this, max, "maxCharge", this);
-		return max;
+		return typeof max == "number" ? Math.max(0, max) : Infinity;
 	}
 	num(arg1, arg2, arg3) {
 		if (get.itemtype(arg1) == "position") {
@@ -5119,6 +5124,55 @@ export class Player extends HTMLDivElement {
 			next.num2 = 1;
 		}
 		next.setContent("chooseDrawRecover");
+		return next;
+	}
+	/**
+	 * 选择一或多个数值
+	 */
+	chooseNumbers() {
+		const next = game.createEvent("chooseNumbers");
+		next.player = this;
+		next.list = [];
+		for (const argument of arguments) {
+			if (typeof argument == "string") {
+				get.evtprompt(next, argument);
+			} else if (typeof argument == "number") {
+				next.optionSum = argument;
+			} else if (typeof argument == "boolean") {
+				next.forced = argument;
+			} else if (typeof argument == "object" && Array.isArray(argument)) {
+				next.list.push(...argument);
+			} else if (typeof argument == "function") {
+				if (!next.processAI) {
+					next.processAI = argument;
+				} else {
+					next.filterSelect = argument;
+				}
+			}
+		}
+		if (!next.list.length) {
+			_status.event.next.remove(next);
+			next.resolve();
+		}
+		if (!next.filterSelect) {
+			if (next.optionSum) {
+				next.filterSelect = (num, index, event) => num + event.numbers.reduce((sum, num) => sum + num, 0) - (event.numbers[index] || 0) <= event.optionSum;
+			} else {
+				next.filterSelect = () => true;
+			}
+		}
+		if (!next.filterOk) {
+			if (next.optionSum) {
+				next.filterOk = event => event.numbers.reduce((sum, num) => sum + num, 0) <= event.optionSum;
+			} else {
+				next.filterOk = () => true;
+			}
+		}
+		if (!next.forced) {
+			next.forced = false;
+		}
+		next.setContent("chooseNumbers");
+		next._args = Array.from(arguments);
 		return next;
 	}
 	choosePlayerCard() {

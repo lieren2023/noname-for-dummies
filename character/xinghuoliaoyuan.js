@@ -43,14 +43,14 @@ game.import("character", function () {
 				xinghuoliaoyuan_qisha: ["lvqian", "re_zhangliang"],
 				
 				xinghuoliaoyuan_tianshu: ["star_yuanshu", "star_dongzhuo", "star_yuanshao"],
-				xinghuoliaoyuan_tianxuan: ["star_xunyu"],
+				xinghuoliaoyuan_tianxuan: ["star_xunyu", "star_zhangzhao"],
 				// xinghuoliaoyuan_bdtianji: [],
 				// xinghuoliaoyuan_tianquan: [],
 				xinghuoliaoyuan_yuheng: ["star_caoren", "star_zhangchunhua"],
 				xinghuoliaoyuan_kaiyang: ["star_sunjian"],
 				xinghuoliaoyuan_yaoguang: ["star_sunshangxiang"],
 				
-				xinghuoliaoyuan_waitforsort: ["star_zhangzhao"],
+				// xinghuoliaoyuan_waitforsort: [],
 				
 			},
 		},
@@ -82,6 +82,8 @@ game.import("character", function () {
 			//zhaotongzhaoguang:['zhaoyun','mayunlu'],
 		},
 		skill: {
+			// 部分武将代码位于sp2.js
+			
 			//荀彧
 			staranshu: {
 				audio: 2,

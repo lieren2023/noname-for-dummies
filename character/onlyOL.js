@@ -38,6 +38,39 @@ game.import("character", function () {
 			ol_caochong: ["male", "wei", 3, ["olchengxiang", "olrenxin"]],
 			ol_caozhi: ["male", "wei", 3, ["reluoying", "oljiushi"]],
 			
+			ol_wanglang: ["male", "wei", 3, ["gushe", "oljici"]],
+			ol_puyuan: ["male", "shu", 4, ["olshengong", "olqisi"]],
+			ol_zhouqun: ["male", "shu", 4, ["oltianhou", "olchenshuo"]],
+			ol_peixiu: ["male", "jin", 4, ["olmaozhu", "oljinlan"]],
+			sp_diaochan: ["female", "qun", 3, ["lihun", "rebiyue"], ["die_audio:diaochan"]],
+			sp_caoren: ["male", "wei", 4, ["weikui", "lizhan"]],
+			yuanshu: ["male", "qun", 4, ["yongsi", "weidi"]],
+			sp_zhaoyun: ["male", "qun", 3, ["ollongdan", "chongzhen"], ["die_audio:zhaoyun"]],
+			sp_sunshangxiang: ["female", "shu", 3, ["liangzhu", "fanxiang"]],
+			sp_jiangwei: ["male", "wei", 4, ["kunfen", "fengliang"]],
+			sp_machao: ["male", "qun", 4, ["olzhuiji", "ol_shichou"]],
+			sp_caiwenji: ["female", "wei", 3, ["chenqing", "mozhi"]],
+			jsp_guanyu: ["male", "wei", 4, ["new_rewusheng", "danji"]],
+			jsp_huangyueying: ["female", "qun", 3, ["jiqiao", "linglong"]],
+			sp_pangde: ["male", "wei", 4, ["mashu", "juesi"]],
+			sp_jiaxu: ["male", "wei", 3, ["zhenlue", "jianshu", "yongdi"]],
+			sp_zhangliao: ["male", "qun", 4, ["mubing", "ziqu", "diaoling"]],
+			sp_ol_zhanghe: ["male", "qun", 4, ["spolzhouxuan"]],
+			sp_menghuo: ["male", "qun", 4, ["spmanwang"]],
+			sp_sunce: ["male", "qun", 4, ["junkliantao"]],
+			ol_jiangwan: ["male", "shu", 3, ["olziruo", "olxvfa"]],
+			ol_feiyi: ["male", "shu", 3, ["yanru", "hezhong"]],
+			caoying: ["female", "wei", 4, ["xinfu_lingren", "fujian"], []],
+			panshu: ["female", "wu", 3, ["weiyi", "jinzhi"]],
+			caochun: ["male", "wei", 4, ["xinshanjia"]],
+			yuantanyuanshang: ["male", "qun", 4, ["neifa"]],
+			caoshuang: ["male", "wei", 4, ["retuogu", "shanzhuan"]],
+			wolongfengchu: ["male", "shu", 4, ["youlong", "luanfeng"]],
+			guansuo: ["male", "shu", 4, ["zhengnan", "xiefang"]],
+			baosanniang: ["female", "shu", 4, ["olwuniang", "olxushen"], []],
+			fengfangnv: ["female", "qun", 3, ["zhuangshu", "chuiti"]],
+			jin_zhouchu: ["male", "jin", 4, ["shanduan", "yilie"]],
+			
 			cuiyan: ["male", "wei", 3, ["yawang", "xunzhi"]],
 			huangfusong: ["male", "qun", 4, ["fenyue"]],
 			sp_dongzhuo: ["male", "qun", 5, ["hengzheng"]],
@@ -45,6 +78,7 @@ game.import("character", function () {
 			// 解放印卡蔡阳并魔改体力为4（但AI禁选）
 			caiyang: ["male", "qun", 4, ["yinka", "zhuixi"], ["forbidai"]],
 			// caiyang: ["male", "qun", 1, ["yinka", "zhuixi"], ["forbidai", "unseen"]],
+			ol_tw_zhangji: ["male", "wei", 3, ["skill_zhangji_A", "skill_zhangji_B"]],
 		},
 		characterSort: {
 			onlyOL: {
@@ -52,12 +86,17 @@ game.import("character", function () {
 				onlyOL_yijiang2: ["ol_caozhang", "ol_chengpu", "ol_wangyi", "ol_liubiao"],
 				onlyOL_yijiang3: ["ol_yufan", "ol_liru", "ol_caochong"],
 				onlyOL_yijiang4: ["ol_caifuren"],
+				
+				// 分包调整（by棘手怀念摧毁）
+				sp_wanglang: ["ol_wanglang", "ol_puyuan", "ol_zhouqun", "ol_peixiu", "sp_diaochan", "sp_caoren", "yuanshu"],
+				sp_default: ["sp_zhaoyun", "sp_sunshangxiang", "sp_jiangwei", "sp_machao", "sp_caiwenji", "jsp_guanyu", "jsp_huangyueying", "sp_pangde", "sp_jiaxu", "sp_zhangliao", "sp_ol_zhanghe", "sp_menghuo", "sp_sunce"],
+				sp_qifu: ["ol_jiangwan", "ol_feiyi", "caoying", "panshu", "caochun", "yuantanyuanshang", "caoshuang", "wolongfengchu", "guansuo", "baosanniang", "fengfangnv", "jin_zhouchu"],
 				sp_zhongdan: ["cuiyan", "huangfusong"],
 				sp_guozhan2: ["sp_dongzhuo"],
 				onlyOL_qldq: ["caiyang"],
 				sp_others: ["hanba"],
 				
-				// onlyOL_waitingforsort: [],
+				onlyOL_waitingforsort: ["ol_tw_zhangji"],
 			},
 		},
 		characterIntro: {},
@@ -88,6 +127,8 @@ game.import("character", function () {
 			},
 		},
 		skill: {
+			// 部分武将代码位于sp.js
+			
 			//界曹植
 			oljiushi: {
 				audio: 2,
@@ -500,7 +541,7 @@ game.import("character", function () {
 			},
 			//谋孙坚
 			olsbhulie: {
-				audio: 2,
+				audio: 3,
 				trigger: {
 					player: "useCardToPlayered",
 				},
@@ -577,7 +618,7 @@ game.import("character", function () {
 				},
 			},
 			olsbyipo: {
-				audio: 2,
+				audio: 3,
 				trigger: {
 					player: "changeHp",
 				},
@@ -1080,7 +1121,7 @@ game.import("character", function () {
 					global: "dying",
 				},
 				filter(event, player) {
-					return event.player.hp <= 0 && event.player.countCards("hej") > 0;
+					return event.player.hp <= 0 && event.player.countCards("he") > 0;
 				},
 				logTarget: "player",
 				async cost(event, trigger, player) {
@@ -1089,12 +1130,12 @@ game.import("character", function () {
 					if (trigger.player.isUnderControl(true, player)) {
 						check = player.hasCard(card => {
 							return get.type(card) != "basic";
-						}, "hej");
+						}, "he");
 					} else {
 						check = get.attitude(player, target) > 0;
 					}
 					event.result = await player
-						.choosePlayerCard(target, get.prompt(event.name.slice(0, -5), target), "hej")
+						.choosePlayerCard(target, get.prompt(event.name.slice(0, -5), target), "he")
 						.set("ai", button => {
 							if (!get.event().check) return 0;
 							if (get.event().target.isUnderControl(true, get.player())) {
@@ -2477,6 +2518,8 @@ game.import("character", function () {
 							global: ["useCardEnd"],
 						},
 						filter(event, player) {
+							const evt = event.getParent("useCard", true, true);
+							if (evt && evt.effectedCount < evt.effectCount) return false;
 							if (!event.card || !player.storage.olsbyufeng_block) return false;
 							return player.getStorage("olsbyufeng_block").includes(event.card);
 						},
@@ -3713,7 +3756,7 @@ game.import("character", function () {
 			olganlu: "甘露",
 			olganlu_info: "出牌阶段限一次，你可以交换两名角色装备区内的牌，然后若你的已损失体力值小于X，你弃置X张牌（X为交换前两者装备区牌数之差）。",
 			olbuyi: "补益",
-			olbuyi_info: "一名角色进入濒死状态时，你可展示其区域内一张牌。若此牌不为基本牌，则其弃置此牌并回复1点体力。",
+			olbuyi_info: "一名角色进入濒死状态时，你可展示其一张牌。若此牌不为基本牌，则其弃置此牌并回复1点体力。",
 			ol_sb_kongrong: "OL谋孔融",
 			ol_sb_kongrong_prefix: "OL谋",
 			olsbliwen: "立文",
@@ -3753,6 +3796,9 @@ game.import("character", function () {
 			onlyOL_yijiang2: "OL异构·将2",
 			onlyOL_yijiang3: "OL异构·将3",
 			onlyOL_yijiang4: "OL异构·将4",
+			sp_wanglang: "SP",
+			sp_default: "天同·同名异势",
+			sp_qifu: "灯愿·祈福武将",
 			sp_zhongdan: "忠胆英杰",
 			sp_guozhan2: "国战移植",
 			onlyOL_qldq: "千里单骑移植",

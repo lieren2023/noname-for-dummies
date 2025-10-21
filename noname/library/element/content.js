@@ -11,6 +11,209 @@ export const Content = {
 	emptyEvent: () => {
 		event.trigger(event.name);
 	},
+	async chooseNumbers(event, trigger, player) {
+		if (event.chooseTime && _status.connectMode && !game.online) {
+			event.time = lib.configOL.choose_timeout;
+			game.broadcastAll(function (time) {
+				lib.configOL.choose_timeout = time;
+			}, event.chooseTime);
+		}
+		let result;
+		if (!Array.isArray(event.numbers)) {
+			event.numbers = [];
+		}
+		if (!event.numbers.length) {
+			event.list.forEach(function (item) {
+				if (Array.isArray(item)) {
+					if (["asc", "sort"].includes(item[0])) {
+						event.numbers.push(item.slice(1).sort((a, b) => a - b)[0]);
+					} else if (item[0] == "desc") {
+						event.numbers.push(item.slice(1).sort((a, b) => b - a)[0]);
+					} else {
+						event.numbers.push(item[0]);
+					}
+				} else {
+					event.numbers.push(item.min || 0);
+				}
+			});
+		}
+		if (event.isMine()) {
+			result = await new Promise(function (resolve, reject) {
+				_status.imchoosing = true;
+				event.settleed = false;
+				event.dialog = ui.create.dialog(event.prompt || "请调整以下数值", "forcebutton", "hidden");
+				if (event.prompt2) {
+					event.dialog.addText(event.prompt2);
+				}
+				event.switchToAuto = function () {
+					if (!event.filterOk(event)) {
+						if (!event.forced) {
+							event._result = { bool: false };
+						} else {
+							event._result = "ai";
+						}
+					} else {
+						event._result = "ai";
+					}
+					event.dialog.close();
+					if (ui.confirm) {
+						ui.confirm.close();
+					}
+					game.resume();
+					_status.imchoosing = false;
+					resolve(event._result);
+				};
+
+				function optionUpdate(select) {
+					const index = parseInt(select.id.slice(6));
+					const item = event.list[index],
+						current = event.numbers[index];
+					while (select.childElementCount) {
+						select.removeChild(select.firstChild);
+					}
+					if (Array.isArray(item)) {
+						let numbers;
+						if (["asc", "sort"].includes(item[0])) {
+							numbers = item.slice(1).sort((a, b) => a - b);
+						} else if (item[0] == "desc") {
+							numbers = item.slice(1).sort((a, b) => b - a);
+						} else {
+							numbers = item;
+						}
+						for (const num of numbers) {
+							const option = document.createElement("option");
+							option.innerHTML = num;
+							if (event.optprompt) {
+								if (typeof event.optprompt == "string") {
+									option.innerHTML = event.optprompt.replace("#", num).replace("$", get.cnNumber(num, true));
+								} else if (typeof event.optprompt == "function") {
+									option.innerHTML = event.optprompt(num, index);
+								}
+							}
+							option.value = num;
+							if (num == current) {
+								option.selected = true;
+							}
+							if (!event.filterSelect(num, index, event)) {
+								option.disabled = true;
+							}
+							select.appendChild(option);
+						}
+					} else {
+						let actual;
+						const max = item.max || 9;
+						if (event.optionSum) {
+							actual = event.optionSum - event.numbers.reduce((sum, num) => sum + num, 0) + current;
+						}
+						for (let num = item.min || 0; num <= Math.min(actual || max, max); num += item.base || 1) {
+							const option = document.createElement("option");
+							option.innerHTML = num;
+							if (event.optprompt) {
+								if (typeof event.optprompt == "string") {
+									option.innerHTML = event.optprompt.replace("#", num).replace("$", get.cnNumber(num, true));
+								} else if (typeof event.optprompt == "function") {
+									option.innerHTML = event.optprompt(num, index);
+								}
+							}
+							option.value = num;
+							if (num == current) {
+								option.selected = true;
+							}
+							if (!event.filterSelect(num, index, event)) {
+								option.disabled = true;
+							}
+							select.appendChild(option);
+						}
+					}
+				}
+
+				for (let index = 0; index < event.list.length; index++) {
+					event.dialog.addText(event.list[index].prompt || "选择一个数值");
+					const select = document.createElement("select");
+					select.id = `select${index}`;
+					select.classList.add("add-setting");
+					select.style.margin = "0";
+					select.style.width = "30%";
+					select.style.position = "relative";
+					select.onchange = function () {
+						event.numbers[parseInt(this.id.slice(6))] = parseInt(this.value);
+						event.dialog.content.querySelectorAll(`[id ^= 'select']`).forEach(select => optionUpdate(select));
+						if (event.filterOk(event)) {
+							if (event.forced) {
+								ui.create.confirm("o");
+							} else {
+								ui.create.confirm("oc");
+							}
+						} else {
+							if (!event.forced) {
+								ui.create.confirm("c");
+							} else if (ui.confirm) {
+								ui.confirm.close();
+							}
+						}
+					};
+					optionUpdate(select);
+					event.dialog.content.appendChild(select);
+				}
+				event.dialog.add(" <br> ");
+				event.dialog.open();
+				event.custom.replace.confirm = function (bool) {
+					if (bool) {
+						event._result = { bool: true, numbers: event.numbers };
+					} else {
+						event._result = { bool: false };
+					}
+					event.dialog.close();
+					if (ui.confirm) {
+						ui.confirm.close();
+					}
+					game.resume();
+					_status.imchoosing = false;
+					resolve(event._result);
+				};
+				if (event.filterOk(event)) {
+					if (event.forced) {
+						ui.create.confirm("o");
+					} else {
+						ui.create.confirm("oc");
+					}
+				} else {
+					if (!event.forced) {
+						ui.create.confirm("c");
+					} else if (ui.confirm) {
+						ui.confirm.close();
+					}
+				}
+				game.pause();
+				game.countChoose();
+				event.choosing = true;
+			});
+		} else if (event.isOnline()) {
+			result = await event.sendAsync();
+		} else {
+			result = "ai";
+		}
+		if (event.time) {
+			game.broadcastAll(function (time) {
+				lib.configOL.choose_timeout = time;
+			}, event.time);
+		}
+		if ((!result || result == "ai" || (event.forced && !result.bool)) && event.processAI) {
+			const numbers = event.processAI(event);
+			if (typeof numbers == "boolean") {
+				if (numbers == true) {
+					result = { bool: true, numbers: event.numbers };
+				} else {
+					result = { bool: false };
+				}
+			} else if (Array.isArray(numbers)) {
+				result = { bool: true, numbers };
+			} else {
+				result = { bool: false };
+			}
+		}
+		event.result = result;
+	},
 	//变更武将牌
 	async changeCharacter(event, trigger, player) {
 		const rawPairs = [player.name1];
@@ -677,8 +880,13 @@ export const Content = {
 					"aiCard",
 					event.aiCard ||
 						function (target) {
-							var hs = target.getCards("h");
-							return { bool: true, cards: [hs.randomGet()] };
+							const getAi =
+								get.event("ai") ||
+								function (card) {
+									return Math.random();
+								};
+							let hs = target.getCards("h").sort((a, b) => getAi(b) - getAi(a));
+							return { bool: true, cards: [hs[0]] };
 						}
 				);
 			next._args.remove("glow_result");
@@ -6687,10 +6895,12 @@ export const Content = {
 				filterCard = get.event("filter");
 			if (ui.selected.targets.length == 0) {
 				if (att > 0) {
+					let noEffect = true;
 					if (
 						!_status.event.nojudge &&
 						target.countCards("j", function (card) {
 							if (!filterCard(card)) return false;
+							if (get.effect(target, card, target, target) <= -5) noEffect = false;
 							return game.hasPlayer(function (current) {
 								if (!aimTargets.includes(current)) return false;
 								return (
@@ -6701,7 +6911,7 @@ export const Content = {
 							});
 						})
 					)
-						return 14;
+						return noEffect ? 8 : 14;
 					if (
 						target.countCards("e", function (card) {
 							if (!filterCard(card)) return false;

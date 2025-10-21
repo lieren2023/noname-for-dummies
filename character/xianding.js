@@ -10,7 +10,7 @@ game.import("character", function () {
 			dc_tianfeng: ["male", "qun", 3, ["sijian", "dcsuishi"], ["die_audio:tianfeng"]],
 			dc_zhangren: ["male", "qun", 4, ["dcchuanxin", "dcfengshi"], ["die_audio:zhangren"]],
 			dc_lingcao: ["male", "wu", "3/5", ["dcdufeng"]],
-			zhugejing: ["male", "qun", 3, ["dcyanzuo", "dczuyin", "dcpijian"]],
+			zhugejing: ["male", "qun", 4, ["dcyanzuo", "dczuyin", "dcpijian"]],
 			liutan: ["female", "shu", 3, ["dcjingyin", "dcchixing"]],
 			bianyue: ["female", "wei", 3, ["dcbizu", "dcwuxie"]],
 			zhupeilan: ["female", "wu", 3, ["dccilv", "dctongdao"]],
@@ -121,13 +121,13 @@ game.import("character", function () {
 				sp2_huangjia: ["caomao", "liubian", "dc_liuyu", "quanhuijie", "dingshangwan", "yuanji", "xielingyu", "sunyu", "ganfurenmifuren", "dc_ganfuren", "dc_mifuren", "dc_shixie", "caofang", "zhupeilan", "bianyue"],
 				sp2_zhangtai: ["guozhao", "fanyufeng", "ruanyu", "yangwan", "re_panshu"],
 				sp2_jinse: ["wenyuan", "liutan", "caojinyu", "re_sunyi", "re_fengfangnv", "caohua", "laiyinger", "zhangfen", "zhugeruoxue", "caoxian", "dc_qinghegongzhu", "zhugemengxue"],
-				sp2_yinyu: ["zhouyi", "luyi", "sunlingluan", "caoyi"],
 				sp2_wangzhe: ["dc_daxiaoqiao", "dc_sp_machao", "sp_zhenji"],
 				sp2_doukou: ["re_xinxianying", "huaman", "xuelingyun", "dc_ruiji", "duanqiaoxiao", "tianshangyi", "malingli", "bailingyun"],
 				sp2_jichu: ["zhaoang", "dc_liuye", "dc_wangyun", "yanghong", "huanfan", "xizheng", "lvfan", "dc_tianfeng"],
 				sp2_yuxiu: ["dongguiren", "dc_tengfanglan", "zhangjinyun", "zhoubuyi", "dc_xujing", "guanyue", "zhugejing"],
-				sp2_qifu: ["dc_guansuo", "xin_baosanniang", "dc_zhaoxiang", "xurong", "zhangqiying"],
+				sp2_yinyu: ["zhouyi", "luyi", "sunlingluan", "caoyi"],
 				sp2_gaoshan: ["wanglang", "liuhui"],
+				sp2_qifu: ["dc_guansuo", "xin_baosanniang", "dc_zhaoxiang", "xurong", "zhangqiying"],
 				sp2_wumiao: ["wu_zhugeliang", "wu_luxun", "wu_guanyu", "wu_huangfusong"],
 				
 				xianding_waitforsort: ["zhangjian"],
@@ -978,14 +978,19 @@ game.import("character", function () {
 				filter(event, player) {
 					var count = player.getStat("skill").dcyanzuo;
 					if (count && count > player.countMark("dcyanzuo_zuyin")) return false;
-					return player.countCards("he", card => ["trick", "basic"].includes(get.type(card, player)));
+					return player.countCards("he");
 				},
-				filterCard(card, player) {
-					return ["trick", "basic"].includes(get.type(card, player));
-				},
+				filterCard: true,
 				check(card) {
 					const player = _status.event.player;
-					return player.getUseValue(card) + 3;
+					let val = ["trick", "basic"].includes(get.type(card, player)) ? player.getUseValue(card) : 0, now = 0;
+					player.getExpansions("dcyanzuo").forEach(i => {
+						if (!["trick", "basic"].includes(get.type(i))) return;
+						now = Math.max(now, player.getUseValue(i));
+					});
+					if (val > now) return val + 3;
+					if (now <= 0) return val;
+					return now * 2 - get.value(card);
 				},
 				position: "he",
 				lose: false,
@@ -994,7 +999,8 @@ game.import("character", function () {
 					const next = player.addToExpansion(event.cards, player, "give");
 					next.gaintag.add("dcyanzuo");
 					await next;
-					const cards = player.getExpansions("dcyanzuo");
+					const cards = player.getExpansions("dcyanzuo").filter(i => ["trick", "basic"].includes(get.type(i)));
+					if (!cards.length) return;
 					const result = await player
 						.chooseButton(["是否视为使用其中一张牌？", cards])
 						.set("filterButton", button => {
@@ -1002,6 +1008,7 @@ game.import("character", function () {
 							const card = {
 								name: get.name(button.link),
 								suit: get.suit(button.link),
+								nature: button.link.nature,
 								isCard: true,
 							};
 							return player.hasUseTarget(card);
@@ -1066,13 +1073,13 @@ game.import("character", function () {
 						if(discards.length) await player.loseToDiscardpile(discards);
 					}
 					else {
+						if (player.countMark("dcyanzuo_zuyin") < 2 && player.hasSkill("dcyanzuo", null, null, false)) player.addMark("dcyanzuo_zuyin", 1, false);
 						const card = get.cardPile(card => card.name == trigger.card.name);
 						if (card){
 							const next = player.addToExpansion(card, "gain2");
 							next.gaintag.add("dcyanzuo");
 							await next;
 						}
-						if (player.countMark("dcyanzuo_zuyin") < 2 && player.hasSkill("dcyanzuo", null, null, false)) player.addMark("dcyanzuo_zuyin", 1, false);
 					}
 				},
 			},
@@ -1084,8 +1091,9 @@ game.import("character", function () {
 				filter(event, player) {
 					return player.getExpansions("dcyanzuo").length >= game.countPlayer();
 				},
+				locked: true,
 				async cost(event, trigger, player) {
-					event.result = await player.chooseTarget(get.prompt2("dcpijian")).set("ai", target => {
+					event.result = await player.chooseTarget(get.prompt2(event.skill), true).set("ai", target => {
 						const player = _status.event.player;
 						return get.damageEffect(target, player, player);
 					}).forResult();
@@ -1094,6 +1102,9 @@ game.import("character", function () {
 					await player.loseToDiscardpile(player.getExpansions("dcyanzuo"));
 					const target = event.targets[0];
 					await target.damage(2);
+				},
+				ai: {
+					combo: "dcyanzuo",
 				},
 			},
 			//凌操
@@ -1797,6 +1808,7 @@ game.import("character", function () {
 					player.addTempSkill("dcsbwuwei_effect");
 					event.result.cards = player.getCards("h", { color: color });
 					event.result.card.cards = player.getCards("h", { color: color });
+					event.getParent().addCount = false;
 				},
 				ai: {
 					order(item, player) {
@@ -12601,6 +12613,7 @@ game.import("character", function () {
 					for (var target of targets) target.addSkills("dcshoutan");
 					game.delayx();
 				},
+				derivation: "dcshoutan",
 				global: "dcyaoyi_blocker",
 				subSkill: {
 					blocker: {
@@ -13557,9 +13570,8 @@ game.import("character", function () {
 				forced: true,
 				content: function () {
 					if (!player.hasEquipableSlot(5) || player.getEquip("dagongche")) {
-						var next = player.phaseUse();
-						event.next.remove(next);
-						trigger.getParent().next.push(next);
+						const evt = trigger.getParent("phase", true, true);
+						if (evt && evt.phaseList) evt.phaseList.splice(evt.num + 1, 0, "phaseUse|dcwanglu");
 					} else {
 						var card = game.createCard("dagongche", "spade", 9);
 						player.$gain2(card);
@@ -16948,30 +16960,53 @@ game.import("character", function () {
 			},
 			jiaoying: {
 				audio: 2,
-				trigger: { source: "gainEnd" },
-				forced: true,
-				filter: function (event, player) {
-					if (player == event.player) return false;
-					var evt = event.getl(player);
-					return evt && evt.hs && evt.hs.length;
+				trigger: {
+					global: ["gainAfter", "loseAsyncAfter"],
 				},
-				logTarget: "player",
-				content: function () {
-					var target = trigger.player;
-					if (!target.storage.jiaoying2) target.storage.jiaoying2 = [];
-					var cs = trigger.getl(player).hs;
-					for (var i of cs) target.storage.jiaoying2.add(get.color(i, player));
+				forced: true,
+				getIndex(event, player) {
+					if (!event.getl || !event.getg) {
+						return [];
+					}
+					let evt = event.getl(player);
+					if (!evt || !evt.hs || !evt.hs.length) {
+						return [];
+					}
+					return game
+						.filterPlayer(current => {
+							let evtx = event.getg(current);
+							return evtx && evtx.some(card => evt.hs.includes(card));
+						})
+						.sortBySeat();
+				},
+				logTarget(_1, _2, _3, target) {
+					return target;
+				},
+				async content(event, trigger, player) {
+					const target = event.indexedData;
+					if (!target.storage.jiaoying2) {
+						target.storage.jiaoying2 = [];
+					}
+					const cs = trigger.getl(player).hs,
+						cards = trigger.getg(target).filter(card => cs.includes(card));
+					for (let i of cards) {
+						target.storage.jiaoying2.add(get.color(i, player));
+					}
 					target.addTempSkill("jiaoying2");
 					target.markSkill("jiaoying2");
 					player.addTempSkill("jiaoying3");
-					if (!player.storage.jiaoying3) player.storage.jiaoying3 = [];
+					if (!player.storage.jiaoying3) {
+						player.storage.jiaoying3 = [];
+					}
 					player.storage.jiaoying3.add(target);
 				},
 				ai: {
 					directHit_ai: true,
-					skillTagFilter: function (player, tag, arg) {
+					skillTagFilter(player, tag, arg) {
 						var target = arg.target;
-						if (target.getStorage("jiaoying2").includes("red") && get.tag(arg.card, "respondShan") && !target.hasSkillTag("respondShan", true, null, true)) return true;
+						if (target.getStorage("jiaoying2").includes("red") && get.tag(arg.card, "respondShan") && !target.hasSkillTag("respondShan", true, null, true)) {
+							return true;
+						}
 						return false;
 					},
 				},
@@ -20291,11 +20326,11 @@ game.import("character", function () {
 			dcchixing_info: "一名角色的出牌阶段结束时，若本阶段有【杀】进入弃牌堆，则你可以摸X张牌（X为本阶段进入弃牌堆的【杀】数），若你以此法获得了【杀】，则你可以使用其中的一张。",
 			zhugejing: "诸葛京",
 			dcyanzuo: "研作",
-			dcyanzuo_info: "出牌阶段限一次，你可以将一张基本牌或普通锦囊牌置于武将牌上，然后视为使用一张“研作”牌。",
+			dcyanzuo_info: "出牌阶段限一次，你可以将一张牌置于武将牌上，然后视为使用一张“研作”中包含的基本牌或普通锦囊牌。",
 			dczuyin: "祖荫",
-			dczuyin_info: "锁定技，你成为其他角色使用【杀】或普通锦囊牌的目标后，若你有与此牌同名的“研作”牌，令此牌无效并弃置所有同名“研作”牌；否则从牌堆或弃牌堆中将一张同名牌置于武将牌上，然后令〖研作〗发动次数+1（至多为3）。",
+			dczuyin_info: "锁定技，你成为其他角色使用【杀】或普通锦囊牌的目标后，若你有与此牌同名的“研作”牌，令此牌无效并弃置所有同名“研作”牌；否则令〖研作〗发动次数+1（至多为3），然后从牌堆或弃牌堆中将一张同名牌作为“研作”牌置于武将牌上。",
 			dcpijian: "辟剑",
-			dcpijian_info: "结束阶段，若你的“研作”牌数不小于存活人数，你可弃置这些牌，对一名角色造成2点伤害。",
+			dcpijian_info: "锁定技，结束阶段，若你的“研作”牌数不小于存活人数，你弃置这些牌，对一名角色造成2点伤害。",
 			dc_lingcao: "新杀凌操",
 			dc_lingcao_prefix: "新杀",
 			dcdufeng: "独锋",
@@ -20359,13 +20394,13 @@ game.import("character", function () {
 			sp2_huangjia: "皇家贵胄",
 			sp2_zhangtai: "章台春望",
 			sp2_jinse: "锦瑟良缘",
-			sp2_yinyu: "隐山之玉",
 			sp2_wangzhe: "往者可谏",
 			sp2_doukou: "豆蔻梢头",
 			sp2_jichu: "计将安出",
 			sp2_yuxiu: "钟灵毓秀",
-			sp2_qifu: "祈福",
+			sp2_yinyu: "隐山之玉",
 			sp2_gaoshan: "高山仰止",
+			sp2_qifu: "祈福",
 			sp2_wumiao: "武庙",
 			
 			xianding_waitforsort: "等待分包",
