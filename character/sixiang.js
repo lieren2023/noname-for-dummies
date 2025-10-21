@@ -41,9 +41,6 @@ game.import("character", function () {
 			std_zhonghui: ["male", "wei", 4, ["stdxingfa"], ["clan:颍川钟氏"]],
 			std_huaxin: ["male", "wei", 3, ["stdyuanqing", "stdshuchen"]],
 		},
-		characterFilter: {
-			
-		},
 		characterSort: {
 			sixiang: {
 				// 分包调整（by棘手怀念摧毁）
@@ -57,16 +54,22 @@ game.import("character", function () {
 				// taiyang_dui: [],
 			},
 		},
+		characterSubstitute: {
+			
+		},
 		characterIntro: {
 			std_guanxing: "关兴，名将关羽之子，继承了父亲汉寿亭侯的爵位。年少时即受诸葛亮器重，在蜀汉担任侍中、中监军之职，后在夷陵之战中报了杀父之仇。",
 		},
 		characterTitle: {
 			
 		},
-		card: {
+		characterFilter: {
 			
 		},
-		perfectPair: {
+		characterInitFilter: {
+			
+		},
+		card: {
 			
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -2086,12 +2089,6 @@ game.import("character", function () {
 		dynamicTranslate: {
 			
 		},
-		characterReplace: {
-			sunhao: ["sunhao", "std_sunhao"],
-			lvlingqi: ["lvlingqi", "std_lvlingqi"],
-			chengyu: ["chengyu", "std_chengyu", "dc_sb_chengyu"],
-			fanyufeng: ["fanyufeng", "std_fanyufeng"],
-		},
 		translate: {
 			std_sunhao: "少阴孙皓",
 			std_sunhao_prefix: "少阴",
@@ -2273,6 +2270,12 @@ game.import("character", function () {
 			shaoyang_kan: "少阳·坎",
 			taiyang_qian: "太阳·乾",
 			taiyang_dui: "太阳·兑",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			

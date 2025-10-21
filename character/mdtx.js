@@ -26,9 +26,6 @@ game.import("character", function () {
 			dc_sb_zhouyu: ["male", "wu", 4, ["dcsbronghuo", "dcsbyingmou"]],
 			dc_sb_lusu: ["male", "wu", 3, ["dcsbmingshi", "dcsbmengmou"]],
 		},
-		characterFilter: {
-			
-		},
 		characterSort: {
 			mdtx: {
 				mdtx_mouding: ["dc_sb_jiaxu", "dc_sb_lusu", "dc_sb_zhouyu", "dc_sb_simayi", "yj_sb_guojia"],
@@ -44,16 +41,22 @@ game.import("character", function () {
 				// mdtx_waitforsort: [],
 			},
 		},
+		characterSubstitute: {
+			
+		},
 		characterIntro: {
 			
 		},
 		characterTitle: {
 			
 		},
-		card: {
+		characterFilter: {
 			
 		},
-		perfectPair: {
+		characterInitFilter: {
+			
+		},
+		card: {
 			
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -414,9 +417,6 @@ game.import("character", function () {
 		dynamicTranslate: {
 			
 		},
-		characterReplace: {
-			
-		},
 		translate: {
 			dc_sb_hucheer: "新杀谋胡车儿",
 			dc_sb_hucheer_prefix: "新杀谋",
@@ -440,6 +440,12 @@ game.import("character", function () {
 			mdtx_boyan: "伯言绽火",
 			
 			mdtx_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			

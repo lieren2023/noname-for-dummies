@@ -3,73 +3,9 @@ game.import("character", function () {
 	return {
 		name: "jsrg",
 		connect: true,
-		characterSort: {
-			jsrg: {
-				jiangshanrugu_qi: [
-					"jsrg_liuhong",
-					"jsrg_hejin",
-					"jsrg_sunjian",
-					"jsrg_huangfusong",
-					"jsrg_xushao",
-					"jsrg_dongbai",
-					"jsrg_qiaoxuan",
-					"jsrg_yangbiao",
-					"jsrg_kongrong",
-					"jsrg_zhujun",
-					"jsrg_liubei",
-					"jsrg_wangyun",
-					"jsrg_liuyan",
-					"jsrg_caocao",
-					"jsrg_nanhualaoxian",
-				],
-				jiangshanrugu_cheng: [
-					"jsrg_sunce",
-					"jsrg_xuyou",
-					"jsrg_lvbu",
-					"jsrg_zhanghe",
-					"jsrg_zoushi",
-					"jsrg_guanyu",
-					"jsrg_chendeng",
-					"jsrg_zhenji",
-					"jsrg_zhangliao",
-					"jsrg_xugong",
-					"jsrg_chunyuqiong",
-				],
-				jiangshanrugu_zhuan: [
-					"jsrg_guojia",
-					"jsrg_zhangfei",
-					"jsrg_machao",
-					"jsrg_lougui",
-					"jsrg_zhangren",
-					"jsrg_huangzhong",
-					"jsrg_xiahourong",
-					"jsrg_sunshangxiang",
-					"jsrg_pangtong",
-					"jsrg_hansui",
-					"jsrg_zhangchu",
-					"jsrg_xiahouen",
-					"jsrg_fanjiangzhangda",
-				],
-				jiangshanrugu_he: [
-					"jsrg_zhugeliang",
-					"jsrg_jiangwei",
-					"jsrg_luxun",
-					"jsrg_zhaoyun",
-					"jsrg_simayi",
-					"jsrg_guoxun",
-					"jsrg_sunlubansunluyu",
-					"jsrg_caofang",
-					"jsrg_sunjun",
-					"jsrg_liuyong",
-					"jsrg_weiwenzhugezhi",
-					"jsrg_zhangxuan",
-					"jsrg_gaoxiang",
-					"jsrg_guozhao",
-				],
-				jiangshanrugu_shuai: ["jsrg_yuanshao", "jsrg_caojiewangfu", "jsrg_songhuanghou", "jsrg_zhangjiao", "jsrg_dongzhuo", "jsrg_yangqiu", "jsrg_zhanghuan", "jsrg_liubiao", "jsrg_yl_luzhi", "jsrg_chenfan", "jsrg_zhangju"],
-				jiangshanrugu_xing: ["jsrg_jiananfeng", "jsrg_wenyang", "jsrg_zhugedan", "jsrg_wangjun", "jsrg_limi"],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
 			//起
 			jsrg_liuhong: ["male", "qun", 4, ["jsrgchaozheng", "jsrgshenchong", "jsrgjulian"], ["zhu"]],
@@ -159,6 +95,76 @@ game.import("character", function () {
 			jsrg_wangjun: ["male", "jin", 4, ["jsrgchengliu", "jsrgjianlou"]],
 			jsrg_limi: ["male", "jin", 3, ["jsrgnanquan", "jsrgminfeng"]],
 		},
+		characterSort: {
+			jsrg: {
+				jiangshanrugu_qi: [
+					"jsrg_liuhong",
+					"jsrg_hejin",
+					"jsrg_sunjian",
+					"jsrg_huangfusong",
+					"jsrg_xushao",
+					"jsrg_dongbai",
+					"jsrg_qiaoxuan",
+					"jsrg_yangbiao",
+					"jsrg_kongrong",
+					"jsrg_zhujun",
+					"jsrg_liubei",
+					"jsrg_wangyun",
+					"jsrg_liuyan",
+					"jsrg_caocao",
+					"jsrg_nanhualaoxian",
+				],
+				jiangshanrugu_cheng: [
+					"jsrg_sunce",
+					"jsrg_xuyou",
+					"jsrg_lvbu",
+					"jsrg_zhanghe",
+					"jsrg_zoushi",
+					"jsrg_guanyu",
+					"jsrg_chendeng",
+					"jsrg_zhenji",
+					"jsrg_zhangliao",
+					"jsrg_xugong",
+					"jsrg_chunyuqiong",
+				],
+				jiangshanrugu_zhuan: [
+					"jsrg_guojia",
+					"jsrg_zhangfei",
+					"jsrg_machao",
+					"jsrg_lougui",
+					"jsrg_zhangren",
+					"jsrg_huangzhong",
+					"jsrg_xiahourong",
+					"jsrg_sunshangxiang",
+					"jsrg_pangtong",
+					"jsrg_hansui",
+					"jsrg_zhangchu",
+					"jsrg_xiahouen",
+					"jsrg_fanjiangzhangda",
+				],
+				jiangshanrugu_he: [
+					"jsrg_zhugeliang",
+					"jsrg_jiangwei",
+					"jsrg_luxun",
+					"jsrg_zhaoyun",
+					"jsrg_simayi",
+					"jsrg_guoxun",
+					"jsrg_sunlubansunluyu",
+					"jsrg_caofang",
+					"jsrg_sunjun",
+					"jsrg_liuyong",
+					"jsrg_weiwenzhugezhi",
+					"jsrg_zhangxuan",
+					"jsrg_gaoxiang",
+					"jsrg_guozhao",
+				],
+				jiangshanrugu_shuai: ["jsrg_yuanshao", "jsrg_caojiewangfu", "jsrg_songhuanghou", "jsrg_zhangjiao", "jsrg_dongzhuo", "jsrg_yangqiu", "jsrg_zhanghuan", "jsrg_liubiao", "jsrg_yl_luzhi", "jsrg_chenfan", "jsrg_zhangju"],
+				jiangshanrugu_xing: ["jsrg_jiananfeng", "jsrg_wenyang", "jsrg_zhugedan", "jsrg_wangjun", "jsrg_limi"],
+			},
+		},
+		characterSubstitute: {
+			
+		},
 		characterIntro: {
 			qiaoxuan:
 				"桥玄（110年－184年6月6日），一作乔玄，字公祖。梁国睢阳县（今河南省商丘市睢阳区）人。东汉时期名臣。桥玄年轻时曾任睢阳县功曹，因坚持追究陈国相羊昌的恶行而闻名。后被举为孝廉，历任洛阳左尉、齐相及上谷、汉阳太守、司徒长史、将作大匠。汉桓帝末年，出任度辽将军，击败鲜卑、南匈奴、高句丽侵扰，保境安民。汉灵帝初年，迁任河南尹、少府、大鸿胪。建宁三年（170年），迁司空。次年，拜司徒。光和元年（178年），升任太尉。桥玄有感于国势日衰，于是称病请辞，改任太中大夫。光和七年（184年），桥玄去世，年七十五。桥玄性格刚强，不阿权贵，待人谦俭，尽管屡历高官，但不因为自己处在高位而有所私请。他为官清廉，去世后连下葬的钱都没有，被时人称为名臣。",
@@ -189,8 +195,23 @@ game.import("character", function () {
 			jiananfeng: "贾南风（257年—300年），小名峕，字南风，晋平阳襄陵（今山西襄汾）人。曹魏豫州刺史贾逵孙女，晋初大臣贾充之女，晋惠帝司马衷的皇后。",
 			limi: "李密（224年—287年），又名宓，一名虔，字令伯，益州犍为郡武阳县（今四川省眉山市彭山区）人。西晋时期大臣、文学家。",
 		},
-		characterTitle: {},
-		perfectPair: {},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			jsrg_caocao(mode) {
+				return mode != "chess" && mode != "tafang";
+			},
+			jsrg_xushao: function (mode) {
+				return mode != "guozhan";
+			},
+			jsrg_jiangwei(mode) {
+				return mode !== "guozhan";
+			},
+		},
+		characterInitFilter: {
+			
+		},
 		card: {
 			xumou_jsrg: {
 				type: "special_delay",
@@ -244,17 +265,7 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterFilter: {
-			jsrg_caocao(mode) {
-				return mode != "chess" && mode != "tafang";
-			},
-			jsrg_xushao: function (mode) {
-				return mode != "guozhan";
-			},
-			jsrg_jiangwei(mode) {
-				return mode !== "guozhan";
-			},
-		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//江山如故·衰
 			//张举
@@ -12062,7 +12073,6 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterReplace: {},
 		dynamicTranslate: {
 			jsrgshichong: function (player) {
 				if (player.storage.jsrgshichong)
@@ -12666,6 +12676,15 @@ game.import("character", function () {
 			jiangshanrugu_he: "江山如故·合",
 			jiangshanrugu_shuai: "江山如故·衰",
 			jiangshanrugu_xing: "江山如故·兴",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

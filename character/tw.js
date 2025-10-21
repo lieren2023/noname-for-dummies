@@ -3,64 +3,9 @@ game.import("character", function () {
 	return {
 		name: "tw",
 		connect: true,
-		characterSort: {
-			tw: {
-				tw_zhu: ["tw_beimihu", "ol_liuyu", "tw_menghuo"],
-				tw_swordsman: [
-					"xia_yuzhenzi",
-					"xia_shie",
-					"xia_shitao",
-					"xia_guanyu",
-					"xia_liubei",
-					"xia_xiahousone",
-					"xia_xiahoudun",
-					"xia_zhangwei",
-					"xia_xushu",
-					"xia_wangyue",
-					"xia_liyàn",
-					"xia_tongyuan",
-					"xia_lusu",
-					"xia_dianwei",
-					"xia_zhaoe",
-					"xia_xiahouzie",
-				],
-				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
-				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
-				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
-				tw_standard: ["tw_zhangfei"],
-				tw_shenhua_yin: ['tw_yl_luzhi'],
-				tw_shenhua_lei: ["tw_guanqiujian"],
-				tw_yijiang1: ["tw_re_fazheng"],
-				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
-				tw_yijiang3: ["tw_fuhuanghou", "tw_guohuai"],
-				tw_yijiang4: ["tw_sunluban", "tw_guyong"],
-				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
-				tw_yijiang7: ["tw_xuezong"],
-				tw_yunchouzhi: [
-					"tw_wangcan",
-					"tw_dongzhao",
-					"tw_bianfuren",
-					"tw_feiyi",
-					"tw_chenzhen",
-					"tw_xunchen",
-				],
-				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
-				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
-				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
-				tw_yunchouyan: ["tw_jiangqing"],
-				tw_yijiang: [
-					"tw_caoang",
-					"tw_caohong",
-					"tw_zumao",
-					"tw_dingfeng",
-					"tw_maliang",
-					"tw_xiahouba",
-				],
-				tw_english: ["kaisa"],
-				
-				// tw_waitingforsort: [],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
 			tw_sunluban: ['female', 'wu', 3, ['twzenhui', 'xinjiaojin'], ['die_audio:xin_sunluban']],
 			tw_mazhong: ['male', 'shu', 4, ['twfuman'], ['die_audio:mazhong']],
@@ -192,6 +137,69 @@ game.import("character", function () {
 			tw_caohong: ["male", "wei", 4, ["twhuzhu", "twliancai"]],
 			tw_maliang: ["male", "shu", 3, ["twrangyi", "twbaimei"]],
 			kaisa: ["male", "western", 4, ["zhengfu"]],
+		},
+		characterSort: {
+			tw: {
+				tw_zhu: ["tw_beimihu", "ol_liuyu", "tw_menghuo"],
+				tw_swordsman: [
+					"xia_yuzhenzi",
+					"xia_shie",
+					"xia_shitao",
+					"xia_guanyu",
+					"xia_liubei",
+					"xia_xiahousone",
+					"xia_xiahoudun",
+					"xia_zhangwei",
+					"xia_xushu",
+					"xia_wangyue",
+					"xia_liyàn",
+					"xia_tongyuan",
+					"xia_lusu",
+					"xia_dianwei",
+					"xia_zhaoe",
+					"xia_xiahouzie",
+				],
+				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
+				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
+				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
+				tw_standard: ["tw_zhangfei"],
+				tw_shenhua_yin: ['tw_yl_luzhi'],
+				tw_shenhua_lei: ["tw_guanqiujian"],
+				tw_yijiang1: ["tw_re_fazheng"],
+				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
+				tw_yijiang3: ["tw_fuhuanghou", "tw_guohuai"],
+				tw_yijiang4: ["tw_sunluban", "tw_guyong"],
+				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
+				tw_yijiang7: ["tw_xuezong"],
+				tw_yunchouzhi: [
+					"tw_wangcan",
+					"tw_dongzhao",
+					"tw_bianfuren",
+					"tw_feiyi",
+					"tw_chenzhen",
+					"tw_xunchen",
+				],
+				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
+				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
+				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
+				tw_yunchouyan: ["tw_jiangqing"],
+				tw_yijiang: [
+					"tw_caoang",
+					"tw_caohong",
+					"tw_zumao",
+					"tw_dingfeng",
+					"tw_maliang",
+					"tw_xiahouba",
+				],
+				tw_english: ["kaisa"],
+				
+				// tw_waitingforsort: [],
+			},
+		},
+		characterSubstitute: {
+			huan_zhugeliang: [
+				["huan_zhugeliang_shadow", []],
+			],
 		},
 		characterIntro: {
 			huan_luxun:
@@ -362,6 +370,20 @@ game.import("character", function () {
 			zhanghong:
 				"张纮（153年～212年），字子纲，徐州广陵（江苏省扬州市广陵区人）人。东汉末年文学家、官员，和张昭一起合称“二张”。曾被大将军何进、太尉朱儁、司空荀爽辟为掾属，皆不就，避难江东。孙策平定江东前，亲自多次登门邀请，张纮出仕为官。孙权即位时，建议孙权迁都秣陵。建安十七年（212年），病逝，时年六十岁，孙权为之流涕。",
 		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			nashime: function (mode) {
+				return mode != "guozhan";
+			},
+			tw_xiahouba: function (mode) {
+				return mode != "guozhan";
+			},
+		},
+		characterInitFilter: {
+			
+		},
 		card: {
 			dz_mantianguohai: {
 				fullskin: true,
@@ -470,14 +492,7 @@ game.import("character", function () {
 				skills: ["meiyingqiang"],
 			},
 		},
-		characterFilter: {
-			nashime: function (mode) {
-				return mode != "guozhan";
-			},
-			tw_xiahouba: function (mode) {
-				return mode != "guozhan";
-			},
-		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//TW孙鲁班
 			twzenhui: {
@@ -22585,27 +22600,6 @@ game.import("character", function () {
 				},
 			},
 		},
-		perfectPair: {
-			tw_liufuren: ["yuanshao"],
-			tw_xiahoushang: ["caopi"],
-		},
-		characterReplace: {
-			tw_caocao: ["tw_caocao", "jsrg_caocao", "yj_caocao", "ol_jsrg_caocao"],
-			mateng: ["tw_mateng", "mateng", "std_mateng", "dc_mateng"],
-			tw_xiahouen: ["tw_xiahouen", "jsrg_xiahouen"],
-			jiangji: ["dc_jiangji", "tw_jiangji", "jiangji"],
-			baoxin: ["tw_baoxin", "baoxin"],
-			yanxiang: ["yanxiang", "tw_yanxiang"],
-			liwei: ["liwei", "tw_liwei"],
-			tw_jiling: ["jiling", "dc_jiling", "tw_jiling"],
-			tw_zhangji: ["tw_zhangji", "ol_tw_zhangji"],
-			yuejiu: ["yuejiu", "dc_yuejiu"],
-		},
-		characterSubstitute: {
-			huan_zhugeliang: [
-				["huan_zhugeliang_shadow", []],
-			],
-		},
 		dynamicTranslate: {
 			twfeifu: function (player) {
 				var str = "锁定技，转换技。";
@@ -23687,6 +23681,12 @@ game.import("character", function () {
 			tw_english: "英文版",
 			
 			tw_waitingforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			凯撒: ["Caesar"],

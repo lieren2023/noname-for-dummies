@@ -23,9 +23,6 @@ game.import("character", function () {
 			ol_sb_pangtong: ["male", "shu", 3, ["olsbhongtu", "olsbqiwu"], ["die_audio:ol_sb_pangtong:ol_sb_pangtong2:ol_sb_pangtong3"]],
 			ol_sb_kongrong: ["male", "qun", 4, ["olsbliwen", "olsbzhengyi"]],
 		},
-		characterFilter: {
-			
-		},
 		characterSort: {
 			sbfm: {
 				sbfm_sb_mouding: ["ol_sb_jiangwei", "ol_sb_pangtong"],
@@ -39,16 +36,22 @@ game.import("character", function () {
 				// sbfm_waitingforsort: [],
 			},
 		},
+		characterSubstitute: {
+			
+		},
 		characterIntro: {
 			
 		},
 		characterTitle: {
 			
 		},
-		card: {
+		characterFilter: {
 			
 		},
-		perfectPair: {
+		characterInitFilter: {
+			
+		},
+		card: {
 			
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -284,9 +287,6 @@ game.import("character", function () {
 		dynamicTranslate: {
 			
 		},
-		characterReplace: {
-			
-		},
 		translate: {
 			ol_sb_huaxiong: "OL谋华雄",
 			ol_sb_huaxiong_prefix: "OL谋",
@@ -304,6 +304,12 @@ game.import("character", function () {
 			sbfm_sb_huahao: "花好月圆",
 			
 			sbfm_waitingforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			

@@ -86,14 +86,14 @@ game.import("character", function () {
 			vtb_xiaojiu: ["female", "qun", 4, ["vtbmeiniang", "vtbyaoli"]],
 			vtb_xiaole: ["female", "qun", 4, ["vtbleyu", "vtbyuanli"]],
 		},
-		characterFilter: {
-			
-		},
 		characterSort: {
 			shengxiao: {
 				collab_shengxiao: ["ol_zishu", "ol_chouniu", "ol_yinhu", "ol_maotu", "ol_chenlong", "ol_sishe", "ol_wuma", "ol_weiyang", "ol_shenhou", "ol_youji", "ol_xugou", "ol_haizhu"],
 				offline_vtuber: ["vtb_xiaosha", "vtb_xiaoshan", "vtb_xiaotao", "vtb_xiaojiu", "vtb_xiaole"],
 			},
+		},
+		characterSubstitute: {
+			
 		},
 		characterIntro: {
 			zishu: "子鼠，十二生肖之一。",
@@ -112,10 +112,13 @@ game.import("character", function () {
 		characterTitle: {
 			
 		},
-		card: {
+		characterFilter: {
 			
 		},
-		perfectPair: {
+		characterInitFilter: {
+			
+		},
+		card: {
 			
 		},
 		/** @type { importCharacterConfig['skill'] } */
@@ -549,9 +552,6 @@ game.import("character", function () {
 		dynamicTranslate: {
 			
 		},
-		characterReplace: {
-			
-		},
 		translate: {
 			ol_zishu: "子鼠",
 			ol_chouniu: "丑牛",
@@ -592,6 +592,12 @@ game.import("character", function () {
 
 			collab_shengxiao: "三国杀·十二生肖",
 			offline_vtuber: "天书乱斗·虚拟偶像",/*S特别系列*/
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			

@@ -3,6 +3,57 @@ game.import("character", function () {
 	return {
 		name: "shiji",
 		connect: true,
+		connectBanned: [
+			
+		],
+		character: {
+			liuba: ["male", "shu", 3, ["duanbi", "tongduo"]],
+			sp_zhujun: ["male", "qun", 4, ["xinyangjie", "xinjuxiang", "houfeng"]],
+			sp_huangfusong: ["male", "qun", 4, ["spzhengjun", "spshiji", "sptaoluan"]],
+			sp_lvfan: ["male", "wu", 3, ["mbdiaodu", "mbdiancai", "spyanji"]],
+			sp_jiangqing: ["male", "wu", 4, ["spjianyi", "spshangyi"]],
+			sp_jiangwan: ["male", "shu", 3, ["spzhenting", "spjincui"]],
+			sp_zhangchangpu: ["female", "wei", 3, ["spdifei", "spyanjiao"]],
+			sp_cuiyan: ["male", "wei", 3, ["spyajun", "spzundi"]],
+			sp_huaman: ["female", "shu", 4, ["spxiangzhen", "spfangzong", "spxizhan"]],
+			sp_gaolan: ["male", "qun", 4, ["spjungong", "spdengli"]],
+			sunyi: ["male", "wu", 4, ["zaoli"]],
+			sp_wangshuang: ["male", "wei", 4, ["yiyong", "shanxie"]],
+			sp_zongyu: ["male", "shu", 3, ["zhibian", "yuyan"]],
+			yuanhuan: ["male", "wei", 3, ["qingjue", "fengjie"]],
+			sp_chendong: ["male", "wu", 4, ["spyilie", "spfenming"]],
+			db_wenyang: [
+				"male",
+				"wei",
+				4,
+				["dbquedi", "dbzhuifeng", "dbchongjian", "dbchoujue"],
+				["doublegroup:wei:wu"],
+			],
+			sp_yanghu: ["male", "qun", 3, ["mingfa", "rongbei"]],
+			qiaogong: ["male", "wu", 3, ["yizhu", "luanchou"]],
+			liuzhang: ["male", "qun", 3, ["jutu", "yaohu", "rehuaibi"], ["zhu"]],
+			sp_zhangwen: ["male", "wu", 3, ["gebo", "spsongshu"]],
+			zhangzhongjing: ["male", "qun", 3, ["jishi", "xinliaoyi", "binglun"]],
+			sp_xujing: ["male", "shu", 3, ["boming", "ejian"]],
+			sp_huaxin: ["male", "wei", 3, ["yuanqing", "shuchen"]],
+			xiangchong: ["male", "shu", 4, ["guying", "muzhen"]],
+			caizhenji: ["female", "wei", 3, ["sheyi", "tianyin"]],
+			sp_kongrong: ["male", "qun", 3, ["xinlirang", "xinmingshi"]],
+			zhouchu: ["male", "wu", 4, ["xianghai", "rechuhai"]],
+			wangfuzhaolei: ["male", "shu", 4, ["xunyi"]],
+			wangling: ["male", "wei", 4, ["xingqi", "xinzifu", "mibei"], ["clan:太原王氏"]],
+			wujing: ["male", "wu", 4, ["heji", "liubing"]],
+			sp_mifuren: ["female", "shu", 3, ["xinguixiu", "qingyu"]],
+			sp_xinpi: ["male", "wei", 3, ["spyinju", "spchijie"]],
+			feiyi: ["male", "shu", 3, ["mjshengxi", "fyjianyu"]],
+			sp_bianfuren: ["female", "wei", 3, ["spwanwei", "spyuejian"]],
+			sp_duyu: ["male", "qun", 4, ["spwuku", "spsanchen"]],
+			luotong: ["male", "wu", 4, ["qinzheng"]],
+			sp_wangcan: ["male", "wei", 3, ["spqiai", "spshanxi"]],
+			sp_chenzhen: ["male", "shu", 3, ["shameng"]],
+			sp_sunshao: ["male", "wu", 3, ["mjdingyi", "mjzuici", "mjfubi"]],
+			sp_xunchen: ["male", "qun", 3, ["mjweipo", "mjchenshi", "mjmouzhi"], ["clan:颍川荀氏"]],
+		},
 		characterSort: {
 			shiji: {
 				mobile_shijizhi: [
@@ -57,54 +108,25 @@ game.import("character", function () {
 				],
 			},
 		},
-		character: {
-			liuba: ["male", "shu", 3, ["duanbi", "tongduo"]],
-			sp_zhujun: ["male", "qun", 4, ["xinyangjie", "xinjuxiang", "houfeng"]],
-			sp_huangfusong: ["male", "qun", 4, ["spzhengjun", "spshiji", "sptaoluan"]],
-			sp_lvfan: ["male", "wu", 3, ["mbdiaodu", "mbdiancai", "spyanji"]],
-			sp_jiangqing: ["male", "wu", 4, ["spjianyi", "spshangyi"]],
-			sp_jiangwan: ["male", "shu", 3, ["spzhenting", "spjincui"]],
-			sp_zhangchangpu: ["female", "wei", 3, ["spdifei", "spyanjiao"]],
-			sp_cuiyan: ["male", "wei", 3, ["spyajun", "spzundi"]],
-			sp_huaman: ["female", "shu", 4, ["spxiangzhen", "spfangzong", "spxizhan"]],
-			sp_gaolan: ["male", "qun", 4, ["spjungong", "spdengli"]],
-			sunyi: ["male", "wu", 4, ["zaoli"]],
-			sp_wangshuang: ["male", "wei", 4, ["yiyong", "shanxie"]],
-			sp_zongyu: ["male", "shu", 3, ["zhibian", "yuyan"]],
-			yuanhuan: ["male", "wei", 3, ["qingjue", "fengjie"]],
-			sp_chendong: ["male", "wu", 4, ["spyilie", "spfenming"]],
-			db_wenyang: [
-				"male",
-				"wei",
-				4,
-				["dbquedi", "dbzhuifeng", "dbchongjian", "dbchoujue"],
-				["doublegroup:wei:wu"],
-			],
-			sp_yanghu: ["male", "qun", 3, ["mingfa", "rongbei"]],
-			qiaogong: ["male", "wu", 3, ["yizhu", "luanchou"]],
-			liuzhang: ["male", "qun", 3, ["jutu", "yaohu", "rehuaibi"], ["zhu"]],
-			sp_zhangwen: ["male", "wu", 3, ["gebo", "spsongshu"]],
-			zhangzhongjing: ["male", "qun", 3, ["jishi", "xinliaoyi", "binglun"]],
-			sp_xujing: ["male", "shu", 3, ["boming", "ejian"]],
-			sp_huaxin: ["male", "wei", 3, ["yuanqing", "shuchen"]],
-			xiangchong: ["male", "shu", 4, ["guying", "muzhen"]],
-			caizhenji: ["female", "wei", 3, ["sheyi", "tianyin"]],
-			sp_kongrong: ["male", "qun", 3, ["xinlirang", "xinmingshi"]],
-			zhouchu: ["male", "wu", 4, ["xianghai", "rechuhai"]],
-			wangfuzhaolei: ["male", "shu", 4, ["xunyi"]],
-			wangling: ["male", "wei", 4, ["xingqi", "xinzifu", "mibei"], ["clan:太原王氏"]],
-			wujing: ["male", "wu", 4, ["heji", "liubing"]],
-			sp_mifuren: ["female", "shu", 3, ["xinguixiu", "qingyu"]],
-			sp_xinpi: ["male", "wei", 3, ["spyinju", "spchijie"]],
-			feiyi: ["male", "shu", 3, ["mjshengxi", "fyjianyu"]],
-			sp_bianfuren: ["female", "wei", 3, ["spwanwei", "spyuejian"]],
-			sp_duyu: ["male", "qun", 4, ["spwuku", "spsanchen"]],
-			luotong: ["male", "wu", 4, ["qinzheng"]],
-			sp_wangcan: ["male", "wei", 3, ["spqiai", "spshanxi"]],
-			sp_chenzhen: ["male", "shu", 3, ["shameng"]],
-			sp_sunshao: ["male", "wu", 3, ["mjdingyi", "mjzuici", "mjfubi"]],
-			sp_xunchen: ["male", "qun", 3, ["mjweipo", "mjchenshi", "mjmouzhi"], ["clan:颍川荀氏"]],
+		characterSubstitute: {
+			
 		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//刘巴
 			duanbi: {
@@ -8026,35 +8048,8 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterFilter: {},
-		dynamicTranslate: {},
-		perfectPair: {
-			wujing: ["sunce", "sunben", "wuguotai"],
-		},
-		characterReplace: {
-			wangcan: ["wangcan", "sp_wangcan", "tw_wangcan"],
-			sunshao: ["sunshao", "sp_sunshao", "std_sunshao"],
-			xunchen: ["xunchen", "re_xunchen", "sp_xunchen", "tw_xunchen", "clan_xunchen"],
-			xinpi: ["xinpi", "sp_xinpi"],
-			duyu: ["duyu", "dc_duyu", "sp_duyu", "pk_sp_duyu"],
-			zhangwen: ["zhangwen", "sp_zhangwen"],
-			ol_bianfuren: ["ol_bianfuren", "sp_bianfuren", "tw_bianfuren"],
-			wangshuang: ["wangshuang", "sp_wangshuang"],
-			huaman: ["huaman", "sp_huaman"],
-			gaolan: ["gaolan", "dc_gaolan", "sp_gaolan"],
-			cuiyan: ["cuiyan", "sp_cuiyan"],
-			wujing: ["wujing", "tw_wujing"],
-			zhouchu: ["jin_zhouchu", "zhouchu", "tw_zhouchu", "std_zhouchu"],
-			liuzhang: ["liuzhang", "tw_liuzhang", "std_liuzhang"],
-			sp_chenzhen: ["sp_chenzhen", "tw_chenzhen"],
-			feiyi: ["ol_feiyi", "feiyi", "tw_feiyi", "std_feiyi"],
-			wangling: ["dc_wangling", "wangling", "tw_wangling", "clan_wangling"],
-			qiaogong: ["qiaogong", "tw_qiaogong"],
-			sp_chendong: ["sp_chendong", "tw_chendong", "chendong"],
-			sp_jiangqing: ["sp_jiangqing", "tw_jiangqing", "jiangqing", "dc_jiangqing"],
-			kongrong: ["ol_sb_kongrong", "dc_kongrong", "sp_kongrong", "jsrg_kongrong", "kongrong"],
-			dc_mifuren: ["dc_mifuren", "sp_mifuren"],
-			sp_jiangwan: ["ol_jiangwan", "sp_jiangwan", "std_jiangwan"],
+		dynamicTranslate: {
+			
 		},
 		translate: {
 			liuba_prefix: "手杀",
@@ -8484,6 +8479,15 @@ game.import("character", function () {
 			mobile_shijiren: "始计篇·仁",
 			mobile_shijiyong: "始计篇·勇",
 			mobile_shijiyan: "始计篇·严",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

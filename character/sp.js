@@ -3,30 +3,9 @@ game.import("character", function () {
 	return {
 		name: "sp",
 		connect: true,
-		characterSort: {
-			sp: {
-				sp_tianji: ["caoteng", "sunhao", "liuxie", "caoang", "hetaihou", "sunluyu", "ol_wangrong", "zuofen", "ol_bianfuren", "qinghegongzhu", "tengfanglan", "ruiji", "caoxiancaohua", "caoyu"],
-				sp_sibi: ["ol_lukai", "yangxiu", "guotu", "chenlin", "chengyu", "shixie", "fuwan", "wangyun", "zhugejin", "simalang", "maliang", "buzhi", "dongyun", "kanze", "sunqian", "xizhicai", "sunshao", "duxi", "jianggan", "ol_dengzhi", "ol_yangyi", "ol_dongzhao", "ol_chendeng", "jin_yanghu", "wangyan", "xiahouxuan", "quhuang", "zhanghua", "wangguan", "sunhong", "caoxi", "tianchou"],
-				sp_tianzhu: ["ol_liupi", "budugen", "ol_kebineng", "yadan", "liyi", "zhangyan", "niujin", "hejin", "hansui", "wutugu", "yanbaihu", "shamoke", "zhugedan", "huangzu", "gaogan", "tadun", "fanjiangzhangda", "ahuinan", "dongtuna", "ol_wenqin", "mawan"],
-				sp_nvshi: ["ol_sunru", "ol_yuanji", "ol_dingshangwan", "lingju", "guanyinping", "zhangxingcai", "mayunlu", "dongbai", "zhaoxiang", "ol_zhangchangpu", "daxiaoqiao", "jin_guohuai", "ol_hujinding", "ol_luyusheng", "ol_liwan", "kongshu"],
-				sp_shaowei: ["ol_pengyang", "simahui", "zhangbao", "zhanglu", "zhugeguo", "xujing", "zhangling", "huangchengyan", "zhangzhi", "lushi"],
-				sp_huben: ["wangkuang", "duanjiong", "liupan", "ol_mengda", "caohong", "xiahouba", "zhugeke", "zumao", "wenpin", "litong", "mazhong", "heqi", "quyi", "luzhi", "yuejin", "dingfeng", "wuyan", "ol_zhuling", "tianyu", "huojun", "zhaoyǎn", "dengzhong", "ol_furong", "macheng", "ol_zhangyì", "ol_zhujun", "maxiumatie", "luoxian", "ol_huban", "haopu", "ol_qianzhao", "caimao"],
-				sp_liesi: ["lvboshe", "mizhu", "weizi", "ol_liuba", "zhangshiping"],
-				
-				// sp_waitforsort: [],
-			},
-		},
-		characterFilter: {
-			tianyu: function (mode) {
-				return mode != "chess" && mode != "tafang" && mode != "stone";
-			},
-			ol_dongzhao: function (mode) {
-				return mode == "identity" && ["normal", "zhong"].includes(_status.mode);
-			},
-			ol_mengda(mode) {
-				return mode !== "guozhan";
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
 			wangkuang: ["male", "qun", 4, ["olrenxia"]],
 			kongshu: ["female", "qun", 3, ["olleiluan", "olfuchao"]],
@@ -173,6 +152,22 @@ game.import("character", function () {
 			quyi: ["male", "qun", 4, ["fuqi", "jiaozi"]],
 
 			luzhi: ["male", "wei", 3, ["qingzhong", "weijing"]],
+		},
+		characterSort: {
+			sp: {
+				sp_tianji: ["caoteng", "sunhao", "liuxie", "caoang", "hetaihou", "sunluyu", "ol_wangrong", "zuofen", "ol_bianfuren", "qinghegongzhu", "tengfanglan", "ruiji", "caoxiancaohua", "caoyu"],
+				sp_sibi: ["ol_lukai", "yangxiu", "guotu", "chenlin", "chengyu", "shixie", "fuwan", "wangyun", "zhugejin", "simalang", "maliang", "buzhi", "dongyun", "kanze", "sunqian", "xizhicai", "sunshao", "duxi", "jianggan", "ol_dengzhi", "ol_yangyi", "ol_dongzhao", "ol_chendeng", "jin_yanghu", "wangyan", "xiahouxuan", "quhuang", "zhanghua", "wangguan", "sunhong", "caoxi", "tianchou"],
+				sp_tianzhu: ["ol_liupi", "budugen", "ol_kebineng", "yadan", "liyi", "zhangyan", "niujin", "hejin", "hansui", "wutugu", "yanbaihu", "shamoke", "zhugedan", "huangzu", "gaogan", "tadun", "fanjiangzhangda", "ahuinan", "dongtuna", "ol_wenqin", "mawan"],
+				sp_nvshi: ["ol_sunru", "ol_yuanji", "ol_dingshangwan", "lingju", "guanyinping", "zhangxingcai", "mayunlu", "dongbai", "zhaoxiang", "ol_zhangchangpu", "daxiaoqiao", "jin_guohuai", "ol_hujinding", "ol_luyusheng", "ol_liwan", "kongshu"],
+				sp_shaowei: ["ol_pengyang", "simahui", "zhangbao", "zhanglu", "zhugeguo", "xujing", "zhangling", "huangchengyan", "zhangzhi", "lushi"],
+				sp_huben: ["wangkuang", "duanjiong", "liupan", "ol_mengda", "caohong", "xiahouba", "zhugeke", "zumao", "wenpin", "litong", "mazhong", "heqi", "quyi", "luzhi", "yuejin", "dingfeng", "wuyan", "ol_zhuling", "tianyu", "huojun", "zhaoyǎn", "dengzhong", "ol_furong", "macheng", "ol_zhangyì", "ol_zhujun", "maxiumatie", "luoxian", "ol_huban", "haopu", "ol_qianzhao", "caimao"],
+				sp_liesi: ["lvboshe", "mizhu", "weizi", "ol_liuba", "zhangshiping"],
+				
+				// sp_waitforsort: [],
+			},
+		},
+		characterSubstitute: {
+			
 		},
 		characterIntro: {
 			wangkuang: "王匡（生卒年不详），字公节，东汉末年的地方军阀。兖州泰山郡（位于当今中国山东省泰安市东北方）人。起初，王匡在大将军何进手下任大将军府掾。何进死后，受拜为河内郡太守。董卓执政时，王匡与各地群雄同时起兵来讨伐董卓。最后，因妹夫胡母班的亲属和曹操的联手攻击而死。在纪传体史书《三国志》和《后汉书》中，皆有叙述王匡相关事迹；但无个人传记。",
@@ -339,32 +334,22 @@ game.import("character", function () {
 			wanglang: "字景兴，汉末三国经学家，曹魏初期重臣。曾任会稽太守举兵抵抗孙策，后为曹操所征，被拜为谏议大夫等职。曹丕建立魏国后任命为司空。小说《三国演义》中他在阵前与诸葛亮饶舌比拼，最终被诸葛亮言词所驳倒，一时气愤坠马身亡。",
 			zhangliang: "东汉末年黄巾起义首领之一，张角的三弟。中平元年（184）随兄起义，号称“人公将军”。遭到朝廷所派左中郎将皇甫嵩进攻时，他率军在广宗（今河北威县）进行反击。后因警戒疏忽，遭到汉军夜袭，兵败身亡。",
 		},
-		characterTitle: {},
-		perfectPair: {
-			yuejin: ["re_lidian"],
-			zhugejin: ["zhugeke", "sunquan"],
-			guanyinping: ["guanyu"],
-			zhangxingcai: ["liushan"],
-			fuwan: ["fuhuanghou"],
-			sunshangxiang: ["liubei"],
-			caoang: ["caocao"],
-			zhangbao: ["zhangliang", "zhangjiao"],
-			zhangliang: ["zhangjiao"],
-			maliang: ["masu"],
-			lingcao: ["lingtong"],
-			lingju: ["diaochan", "lvbu"],
-			jiangqing: ["zhoutai"],
-			dingfeng: ["xusheng", "re_xusheng", "zhugeke"],
-			caohong: ["caoren"],
-			daxiaoqiao: ["zhouyu", "sunce"],
-			cuiyan: ["caocao"],
-			guansuo: ["guanyu"],
-			mateng: ["machao", "madai", "mayunlu"],
-			chengpu: ["zhouyu"],
-			hanba: ["swd_muyun"],
-			dongbai: ["dongzhuo"],
-			cuimao: ["caopi"],
-			simazhao: ["wangyuanji"],
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			tianyu: function (mode) {
+				return mode != "chess" && mode != "tafang" && mode != "stone";
+			},
+			ol_dongzhao: function (mode) {
+				return mode == "identity" && ["normal", "zhong"].includes(_status.mode);
+			},
+			ol_mengda(mode) {
+				return mode !== "guozhan";
+			},
+		},
+		characterInitFilter: {
+			
 		},
 		card: {
 			//蒲元衍生
@@ -701,6 +686,7 @@ game.import("character", function () {
 				loseDelay: false,
 			},
 		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//王匡
 			olrenxia: {
@@ -31349,78 +31335,6 @@ game.import("character", function () {
 				return str;
 			},
 		},
-		characterReplace: {
-			yuejin: ["yuejin", "std_yuejin"],
-			chenlin: ["chenlin", "dc_sb_chenlin"],
-			shamoke: ["shamoke", "ty_shamoke"],
-			guanyinping: ["guanyinping", "old_guanyinping", "ty_guanyinping"],
-			shixie: ["shixie", "dc_shixie", "old_shixie"],
-			caoshuang: ["caoshuang", "dc_caoshuang", "ns_caoshuang"],
-			caoang: ["caoang", "yj_caoang", "tw_caoang"],
-			caohong: ["caohong", "tw_re_caohong", "tw_caohong", "yj_caohong"],
-			xiahouba: ["xiahouba", "dc_xiahouba", "tw_xiahouba"],
-			maliang: ["maliang", "re_maliang", "tw_maliang", "ol_maliang", "old_maliang", "std_maliang"],
-			dingfeng: ["dingfeng", "tw_dingfeng", "old_dingfeng"],
-			zumao: ["zumao", "tw_zumao"],
-			tw_beimihu: ["beimihu", "tw_beimihu"],
-			panfeng: ["panfeng", "re_panfeng", "std_panfeng"],
-			sunluyu: ["sunluyu", "re_sunluyu", "mb_sunluyu"],
-			jin_simazhao: ["jin_simazhao", "simazhao", "sp_simazhao", "jd_jin_simazhao"],
-			jin_wangyuanji: ["jin_wangyuanji", "wangyuanji", "sp_wangyuanji", "std_wangyuanji", "jd_jin_wangyuanji"],
-			wangyun: ["clan_wangyun", "wangyun", "dc_wangyun", "re_wangyun", "jsrg_wangyun", "old_wangyun", "pe_wangyun"],
-			zhangliang: ["xin_zhangliang", "re_zhangliang", "zhangliang"],
-			lingju: ["lingju", "old_lingju"],
-			guansuo: ["guansuo", "dc_guansuo"],
-			zhangxingcai: ["zhangxingcai", "old_zhangxingcai"],
-			lisu: ["ol_lisu", "lisu"],
-			fuwan: ["fuwan", "tw_fuwan", "sp_fuwan"],
-			huaxin: ["ol_huaxin", "huaxin", "sp_huaxin", "std_huaxin", "jd_ol_huaxin"],
-			xujing: ["xujing", "dc_xujing", "sp_xujing", "tw_xujing"],
-			zhaoxiang: ["zhaoxiang", "dc_zhaoxiang", "tw_zhaoxiang"],
-			dengzhi: ["ol_dengzhi", "re_dengzhi", "dengzhi", "tw_dengzhi", "std_re_dengzhi"],
-			wangrong: ["ol_wangrong", "wangrong"],
-			zongyu: ["zongyu", "sp_zongyu", "tw_zongyu"],
-			ol_dongzhao: ["ol_dongzhao", "dc_dongzhao", "tw_dongzhao"],
-			mayunlu: ["mayunlu", "tw_mayunlu", "std_mayunlu"],
-			zhuling: ["ol_zhuling", "dc_zhuling", "zhuling"],
-			zangba: ["zangba", "tw_zangba"],
-			zhangbao: ["zhangbao", "re_zhangbao"],
-			jianggan: ["jianggan", "sp_jianggan", "std_jianggan"],
-			dc_jiben: ["dc_jiben", "sp_jiben"],
-			yangyi: ["ol_yangyi", "yangyi", "tw_yangyi"],
-			tianyu: ["tianyu", "tw_tianyu"],
-			huangchengyan: ["huangchengyan", "dc_huangchengyan"],
-			puyuan: ["ol_puyuan", "puyuan"],
-			huangzu: ["huangzu", "dc_huangzu"],
-			huojun: ["huojun", "dc_huojun", "xin_huojun", "tw_huojun"],
-			zhaoyǎn: ["zhaoyǎn", "dc_zhaoyǎn"],
-			furong: ["ol_furong", "furong", "tw_furong"],
-			daxiaoqiao: ["daxiaoqiao", "dc_daxiaoqiao", "tw_daxiaoqiao"],
-			zhugeguo: ["zhugeguo", "tw_zhugeguo", "yue_zhugeguo", "huan_zhugeguo"],
-			wanglang: ["ol_wanglang", "wanglang", "old_wanglang", "std_wanglang"],
-			tengfanglan: ["tengfanglan", "dc_tengfanglan"],
-			zhangyì: ["ol_zhangyì", "zhangyì", "std_zhangyì"],
-			yuantanyuanshang: ["yuantanyuanshang", "yuantanyuanxiyuanshang"],
-			ruiji: ["ruiji", "dc_ruiji"],
-			jsp_huangyueying: ["jsp_huangyueying", "re_jsp_huangyueying"],
-			ganfuren: ["ganfuren", "dc_ganfuren", "jsp_ganfuren"],
-			zhouqun: ["ol_zhouqun", "zhouqun"],
-			qianzhao: ["ol_qianzhao", "qianzhao"],
-			ol_pengyang: ["ol_pengyang", "sp_pengyang", "std_pengyang"],
-			ol_luyusheng: ["ol_luyusheng", "luyusheng"],
-			fanjiangzhangda: ["fanjiangzhangda", "jsrg_fanjiangzhangda"],
-			simalang: ["re_simalang", "simalang"],
-			zhugedan: ["re_zhugedan", "zhugedan", "jsrg_zhugedan"],
-			dc_zhangren: ["dc_zhangren", "jsrg_zhangren"],
-			ol_wenqin: ["ol_wenqin", "pe_wenqin", "mb_wenqin"],
-			lukai: ["ol_lukai", "lukai"],
-			liupi: ["ol_liupi", "liupi"],
-			kanze: ["kanze", "re_kanze"],
-			lvfan: ["lvfan", "sp_lvfan"],
-			dongbai: ["dongbai", "re_dongbai", "jsrg_dongbai"],
-			sp_jiaxu: ["sp_jiaxu", "dc_sp_jiaxu", "yj_jiaxu"],
-			buzhi: ["buzhi", "ty_buzhi"],
-		},
 		translate: {
 			xinfu_lingren: "凌人",
 			xinfu_lingren_info: "每回合限一次。当你使用带有「伤害」标签的基本牌或普通锦囊牌指定目标后，你可以猜测其中的一个目标的手牌中是否有基本牌，锦囊牌或装备牌。若你猜中的项目数：≥1，此牌对该角色的伤害+1；≥2，你摸两张牌；≥3，你获得技能〖奸雄〗和〖行殇〗直到你的下回合开始。",
@@ -32739,6 +32653,15 @@ game.import("character", function () {
 			sp_liesi: "列肆·豪商巨贾",
 			
 			sp_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

@@ -3,82 +3,9 @@ game.import("character", function () {
 	return {
 		name: "offline",
 		connect: true,
-		connectBanned: ["zhangliang", "yj_tianchuan"],
-		characterSort: {
-			offline: {
-				offline_star: [
-					"jsp_ganfuren",
-					"sp_xiahoushi",
-					"jsp_zhaoyun",
-					"huangjinleishi",
-					"sp_pangtong",
-					"sp_daqiao",
-					"sp_ganning",
-					"sp_xiahoudun",
-					"sp_lvmeng",
-					"sp_zhangfei",
-					"sp_liubei",
-					"old_machao",
-					"zhangliang",
-					"jsp_caoren",
-				],
-				offline_sticker: [
-					"sp_gongsunzan",
-					"sp_simazhao",
-					"sp_wangyuanji",
-					"sp_xinxianying",
-					"sp_liuxie",
-				],
-				offline_yijiang: ["ol_xinxianying"],
-				offline_luanwu: ["ns_lijue", "ns_zhangji", "ns_fanchou"],
-				offline_yongjian: [
-					"ns_chendao",
-					"yj_caoang",
-					"yj_caocao",
-					"yj_liru",
-					"yj_caohong",
-					"yj_zhangfei",
-					"yongjian_ganning",
-					"yj_dongzhuo",
-					"yj_xuyou",
-					"yj_jiaxu",
-					"yj_zhenji",
-				],
-				offline_piracyE: ["yj_zhouji", "yj_ehuan", "yj_tianchuan", "yj_zhonghui"],
-				offline_piracyE_zy: ["shen_jiaxu", "pe_wangyun", "pe_zhonghui", "pe_sunchen", "pe_mengda", "pe_wenqin", "ns_caoanmin", "jiangqing", "kongrong", "jiling", "tianfeng", "mateng"],
-				offline_piracyS: [
-					"ns_jiaxu",
-					"longyufei",
-					"ps_guanyu",
-					"ps1059_guojia",
-					"ps2070_guojia",
-					"ps2063_zhaoyun",
-					"ps2067_zhaoyun",
-					"ps1062_zhouyu",
-					"ps2080_zhouyu",
-					"ps_caozhi",
-					"ps_jin_simayi",
-					"ps_caopi",
-					"ps_simayi",
-					"ps2068_simayi",
-					"ps_machao",
-					"ps_zhugeliang",
-					"ps2066_zhugeliang",
-					"ps_jiaxu",
-					"ps_lvbu",
-					"ps_shen_machao",
-					"jsp_liubei",
-				],
-				offline_piracyK: ["pk_sp_duyu"],
-				offline_longyutao: ["drag_guanyu", "drag_caoren", "drag_lvchang"],
-				offline_taoyuan: ["ty_guanyu", "ty_sunquan", "ty_liubei", "ty_chenshi", "ty_chengjix", "ty_zhaorong", "ty_zhangnan", "ty_fengxí", "ty_liaohua", "ty_huangzhong", "ty_wuban", "ty_shicong", "ty_guanxing", "ty_shamoke", "ty_guanyinping", "ty_shen_liubei", "ty_luxun", "ty_ganning", "ty_buzhi", "ty_tanxiong", "ty_liue", "ty_zhangda", "ty_fanjiang", "ty_shen_zhangfei", "ty_shen_guanyu", "ty_anying", "ty_anyingx", "ty_wuque", "ty_yanque", "ty_wangque"],
-				offline_jingxiang: ["jx_shen_caoren", "jx_shen_liubiao", "jx_zhouyu", "jx_guanyu"],
-				offline_jiudin: ["jd_sb_xuhuang", "jd_jin_wangyuanji", "jd_ol_huaxin", "jd_sp_yangwan", "jd_sb_huangyueying", "jd_sb_zhaoyun", "jd_sb_ganning", "jd_sb_pangtong", "jd_hanlong", "jd_jin_xiahouhui", "jd_jin_simazhao", "jd_sb_caocao", "jd_sb_sp_zhugeliang", "jd_simayan", "jd_sb_sunquan", "jd_sb_xiaoqiao", "jd_sb_guanyu", "jd_sb_jiangwei", "jd_sb_daqiao", "jd_sb_menghuo", "jd_sb_yuanshao", "jd_sb_yujin", "jd_sb_sunshangxiang", "jd_sb_liubei", "jd_sb_fazheng", "jd_sb_zhangfei", "jd_jin_simashi"],
-				offline_yanyou: ["yy_quyi", "yy_gongsunzan", "yy_wenchou", "yy_gongsunyuan", "yy_yuanshao", "yy_simayi", "yy_caorui", "yy_zhaoyun", "yy_quancong"],
-				offline_scl: ["scl_pangdegong", "scl_sunhanhua", "scl_miheng", "scl_peixiu", "scl_caoying", "scl_luotong"],
-				offline_huan: ["jun_lvbu"],
-			},
-		},
+		connectBanned: [
+			"zhangliang", "yj_tianchuan"
+		],
 		character: {
 			jun_lvbu: ["male", "qun", 4, ["wushuang", "yjqingjiao"], ["zhu", "die_audio:lvbu"]],
 			yy_quyi: ["male", "qun", 4, ["yyfuqi", "jiaozi"], ["die_audio:quyi"]],
@@ -233,6 +160,84 @@ game.import("character", function () {
 			ns_caoanmin: ["male", "wei", 4, ["nskuishe"]],
 			jsp_liubei: ["male", "qun", 4, ["jsprende"]],
 		},
+		characterSort: {
+			offline: {
+				offline_star: [
+					"jsp_ganfuren",
+					"sp_xiahoushi",
+					"jsp_zhaoyun",
+					"huangjinleishi",
+					"sp_pangtong",
+					"sp_daqiao",
+					"sp_ganning",
+					"sp_xiahoudun",
+					"sp_lvmeng",
+					"sp_zhangfei",
+					"sp_liubei",
+					"old_machao",
+					"zhangliang",
+					"jsp_caoren",
+				],
+				offline_sticker: [
+					"sp_gongsunzan",
+					"sp_simazhao",
+					"sp_wangyuanji",
+					"sp_xinxianying",
+					"sp_liuxie",
+				],
+				offline_yijiang: ["ol_xinxianying"],
+				offline_luanwu: ["ns_lijue", "ns_zhangji", "ns_fanchou"],
+				offline_yongjian: [
+					"ns_chendao",
+					"yj_caoang",
+					"yj_caocao",
+					"yj_liru",
+					"yj_caohong",
+					"yj_zhangfei",
+					"yongjian_ganning",
+					"yj_dongzhuo",
+					"yj_xuyou",
+					"yj_jiaxu",
+					"yj_zhenji",
+				],
+				offline_piracyE: ["yj_zhouji", "yj_ehuan", "yj_tianchuan", "yj_zhonghui"],
+				offline_piracyE_zy: ["shen_jiaxu", "pe_wangyun", "pe_zhonghui", "pe_sunchen", "pe_mengda", "pe_wenqin", "ns_caoanmin", "jiangqing", "kongrong", "jiling", "tianfeng", "mateng"],
+				offline_piracyS: [
+					"ns_jiaxu",
+					"longyufei",
+					"ps_guanyu",
+					"ps1059_guojia",
+					"ps2070_guojia",
+					"ps2063_zhaoyun",
+					"ps2067_zhaoyun",
+					"ps1062_zhouyu",
+					"ps2080_zhouyu",
+					"ps_caozhi",
+					"ps_jin_simayi",
+					"ps_caopi",
+					"ps_simayi",
+					"ps2068_simayi",
+					"ps_machao",
+					"ps_zhugeliang",
+					"ps2066_zhugeliang",
+					"ps_jiaxu",
+					"ps_lvbu",
+					"ps_shen_machao",
+					"jsp_liubei",
+				],
+				offline_piracyK: ["pk_sp_duyu"],
+				offline_longyutao: ["drag_guanyu", "drag_caoren", "drag_lvchang"],
+				offline_taoyuan: ["ty_guanyu", "ty_sunquan", "ty_liubei", "ty_chenshi", "ty_chengjix", "ty_zhaorong", "ty_zhangnan", "ty_fengxí", "ty_liaohua", "ty_huangzhong", "ty_wuban", "ty_shicong", "ty_guanxing", "ty_shamoke", "ty_guanyinping", "ty_shen_liubei", "ty_luxun", "ty_ganning", "ty_buzhi", "ty_tanxiong", "ty_liue", "ty_zhangda", "ty_fanjiang", "ty_shen_zhangfei", "ty_shen_guanyu", "ty_anying", "ty_anyingx", "ty_wuque", "ty_yanque", "ty_wangque"],
+				offline_jingxiang: ["jx_shen_caoren", "jx_shen_liubiao", "jx_zhouyu", "jx_guanyu"],
+				offline_jiudin: ["jd_sb_xuhuang", "jd_jin_wangyuanji", "jd_ol_huaxin", "jd_sp_yangwan", "jd_sb_huangyueying", "jd_sb_zhaoyun", "jd_sb_ganning", "jd_sb_pangtong", "jd_hanlong", "jd_jin_xiahouhui", "jd_jin_simazhao", "jd_sb_caocao", "jd_sb_sp_zhugeliang", "jd_simayan", "jd_sb_sunquan", "jd_sb_xiaoqiao", "jd_sb_guanyu", "jd_sb_jiangwei", "jd_sb_daqiao", "jd_sb_menghuo", "jd_sb_yuanshao", "jd_sb_yujin", "jd_sb_sunshangxiang", "jd_sb_liubei", "jd_sb_fazheng", "jd_sb_zhangfei", "jd_jin_simashi"],
+				offline_yanyou: ["yy_quyi", "yy_gongsunzan", "yy_wenchou", "yy_gongsunyuan", "yy_yuanshao", "yy_simayi", "yy_caorui", "yy_zhaoyun", "yy_quancong"],
+				offline_scl: ["scl_pangdegong", "scl_sunhanhua", "scl_miheng", "scl_peixiu", "scl_caoying", "scl_luotong"],
+				offline_huan: ["jun_lvbu"],
+			},
+		},
+		characterSubstitute: {
+			jd_sb_sp_zhugeliang: [["sb_zhugeliang", []]],
+		},
 		characterIntro: {
 			simayan: "晋武帝司马炎（236年—290年5月16日），字安世，河内郡温县（今河南省温县）人。中国西晋开国皇帝（266年2月8日—290年5月16日在位），晋宣帝司马懿之孙，晋文帝司马昭嫡长子，母为文明皇后王元姬。司马炎出身河内司马氏。曹魏末年，其祖司马懿、伯父司马师、父司马昭相继控制朝政。咸熙元年（264年），司马炎被立为晋王世子，翌年司马昭去世，他继任为相国，袭封晋王。同年十二月（266年2月），逼迫魏元帝曹奂禅让，即位为帝，建立西晋，改元泰始。即位之初，鉴于曹魏宗室屏藩无力以致孤立而亡，大封同姓诸王，又委任几位宗王统领重兵，出镇要地；重视法律的修订，其颁行的《晋律》是中国古代重要的法典。咸宁五年（279年），发兵南下，次年灭亡吴国，实现全国统一。其间颁行占田制、户调式，促进人口增长，使得经济社会呈现繁荣景象，史称“太康之治”。但随着天下安定，司马炎逐渐“怠于政术，耽于游宴”，使统治阶层中奢侈荒淫之风广泛蔓延。他执意立智力低下的司马衷为继承人，又在统一前后命诸王就国、废除州郡武备，为西晋短暂统治的覆亡埋下了深刻隐患。太熙元年（290年），司马炎在洛阳含章殿病逝，时年五十五岁，谥号武皇帝，庙号世祖，安葬于峻阳陵。司马炎在父祖开创的政治基础上，建立晋朝，渡江灭吴，完成了三国统一的历史伟业。由他制定的有晋一代的政治、经济、律法制度，还深刻影响了后世王朝的政治体制。",
 			ehuan: "鄂焕，古典文学名著《三国演义》人物，为蜀将高定部将，身长九尺，面目狰狞，使一只方天戟，有万夫不当之勇。于孔明征朱褒、雍闿时粉墨登场，与魏延大战不分胜负，后中计被魏延、王平、张翼联手擒获，孔明以礼相待，成功离间高定与朱、雍二人。后高定派鄂焕斩朱褒、平雍闿，二人一起归蜀，鄂焕遂因其功而被封为牙门将。",
@@ -297,7 +302,12 @@ game.import("character", function () {
 			ps_caozhi: "S2081",
 			ps_shen_machao: "SX015",
 		},
-		perfectPair: {},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
 		card: {
 			sclc_wolong: {
 				type: "takaramono",
@@ -588,10 +598,7 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterFilter: {},
-		characterSubstitute: {
-			jd_sb_sp_zhugeliang: [["sb_zhugeliang", []]],
-		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//线下幻系列
 			yjqingjiao: {
@@ -16784,13 +16791,6 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterReplace: {
-			ty_guanxing: ["ty_guanxing", "std_guanxing"],
-			ty_fengxí: ["ty_fengxí", "tw_fengxí"],
-			ty_zhangnan: ["ty_zhangnan", "tw_zhangnan"],
-			ty_chenshi: ["ty_chenshi", "chenshi"],
-			ty_anying: ["ty_anying", "ty_anyingx"],
-		},
 		dynamicTranslate: {
 			scls_miaojian(player) {
 				if (player.hasMark("scls_miaojian")) return "出牌阶段限一次，你可视为使用一张刺【杀】或【无中生有】。";
@@ -17847,6 +17847,15 @@ game.import("character", function () {
 			
 			// offline_feihongyingxue: "飞鸿映雪",
 			// offline_others: "线下其他系列",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

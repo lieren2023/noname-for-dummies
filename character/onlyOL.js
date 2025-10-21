@@ -3,6 +3,9 @@ game.import("character", function () {
 	return {
 		name: "onlyOL",
 		connect: true,
+		connectBanned: [
+			
+		],
 		character: {
 			ol_caozhang: ["male", "wei", 4, ["oljiangchi"], ["die_audio:xin_caozhang"]],
 			ol_jianyong: [
@@ -99,12 +102,22 @@ game.import("character", function () {
 				onlyOL_waitingforsort: ["ol_tw_zhangji"],
 			},
 		},
-		characterIntro: {},
-		characterReplace: {},
 		characterSubstitute: {
 			ol_sb_yuanshao: [
 				["ol_sb_yuanshao_shadow", []],
 			],
+		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
 		},
 		card: {
 			sizhaojian: {
@@ -126,6 +139,7 @@ game.import("character", function () {
 				skills: ["sizhaojian_skill"],
 			},
 		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			// 部分武将代码位于sp.js
 			
@@ -3805,6 +3819,15 @@ game.import("character", function () {
 			sp_others: "其他",
 			
 			onlyOL_waitingforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

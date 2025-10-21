@@ -4,6 +4,9 @@ game.import("character", function () {
 		//strategy and battle, "sb" in short
 		name: "sb",
 		connect: true,
+		connectBanned: [
+			
+		],
 		character: {
 			sb_zhugejin: ["male", "wu", 3, ["sbhuanshi", "sbhongyuan", "sbmingzhe"]],
 			sb_jiaxu: ["male", "qun", 3, ["sbwansha", "sbluanwu", "sbweimu"]],
@@ -77,6 +80,22 @@ game.import("character", function () {
 		characterSubstitute: {
 			sb_sp_zhugeliang: [["sb_zhugeliang", []]],
 		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//诸葛瑾
 			sbhuanshi: {
@@ -9887,6 +9906,15 @@ game.import("character", function () {
 			sb_neng: "谋攻篇·能",
 			
 			sb_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

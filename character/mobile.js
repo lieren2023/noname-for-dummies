@@ -2,31 +2,10 @@ import { lib, game, ui, get, ai, _status } from "../noname.js";
 game.import("character", function () {
 	return {
 		name: "mobile",
-		//connectBanned:['miheng'],
 		connect: true,
-		characterSort: {
-			mobile: {
-				mobile_default: ["xin_huojun", "muludawang", "mb_chengui", "mb_huban", "mb_xianglang", "yanxiang", "xin_wuban", "laimin", "baoxin", "jiangji", "liwei", "xin_guozhao", "miheng", "taoqian", "lingcao", "sunru", "lifeng", "zhuling", "liuye", "zhaotongzhaoguang", "majun", "simazhao", "wangyuanji", "pangdegong", "shenpei", "hujinding", "zhangyì", "jiakui", "yangbiao", "chendeng", "dongcheng", "yangyi", "dengzhi", "zhengxuan", "sp_sufei", "furong", "dingyuan", "simashi", "yanghuiyu", "hucheer", "gongsunkang", "nanhualaoxian", "zhouqun", "qiaozhou", "fuqian", "mayuanyi", "yanpu", "sunhanhua", "sp_maojie", "peixiu", "sp_jianggan", "ruanhui", "xin_mamidi", "sp_caosong", "yangfu", "wangjun", "sp_pengyang", "qianzhao", "shichangshi", "yangfeng", "zhangbu", "mb_zhangfen"],
-				mobile_longxue: ["mb_simafu", "mb_wenqin", "mb_simazhou", "mb_sp_guanqiujian", "mb_caomao", "chengji", "lizhaojiaobo", "mb_wangjing", "mb_jiachong"],
-				mobile_yijiang: ["yj_zhanghe", "yj_zhangliao", "yj_xuhuang", "yj_ganning", "yj_huangzhong", "yj_weiyan", "yj_zhoubuyi", "new_yj_dongzhuo"],
-				mobile_standard: ["xin_xiahoudun", "xin_zhangfei"],
-				mobile_shenhua_feng: ["re_xiaoqiao", "xin_zhoutai"],
-				mobile_shenhua_huo: ["re_pangtong", "re_sp_zhugeliang", "re_xunyu", "re_dianwei", "re_yanwen", "xin_yuanshao"],
-				mobile_shenhua_lin: ["re_dongzhuo", "re_sunjian", "re_zhurong"],
-				mobile_shenhua_shan: ["re_liushan", "re_dengai", "re_jiangwei", "re_caiwenji", "re_zhangzhang", "re_sunben"],
-				mobile_shenhua_yin: ["xin_sunliang"],
-				mobile_shenhua_lei: ["re_guanqiujian"],
-				mobile_yijiang1: ["re_xusheng", "re_lingtong", "ol_yujin", "re_wuguotai", "re_gaoshun", "re_caozhi"],
-				mobile_yijiang2: ["xin_liaohua", "xin_caozhang", "re_liubiao", "re_handang", "xin_chengpu", "xin_gongsunzan", "re_zhonghui", "re_bulianshi"],
-				mobile_yijiang3: ["re_liru", "xin_jianyong", "xin_zhuran", "xin_guohuai", "xin_panzhangmazhong", "xin_fuhuanghou", "re_yufan"],
-				mobile_yijiang4: ["xin_zhoucang", "xin_caifuren", "xin_guyong", "xin_sunluban", "xin_caozhen", "xin_jushou", "xin_wuyi", "xin_zhuhuan", "re_chenqun"],
-				mobile_yijiang5: ["xin_zhangyi", "xin_sunxiu", "xin_quancong", "xin_zhuzhi", "xin_caoxiu"],
-				mobile_yijiang7: ["re_jikang"],
-				mobile_sp: ["old_yuanshu", "re_wangyun", "re_baosanniang", "re_weiwenzhugezhi", "re_zhanggong", "re_xugong", "re_heqi", "liuzan", "xin_hansui", "mb_sunluyu", "mb_sp_zhenji"],
-				
-				mobile_changshi: ["scs_zhangrang", "scs_zhaozhong", "scs_sunzhang", "scs_bilan", "scs_xiayun", "scs_hankui", "scs_lisong", "scs_duangui", "scs_guosheng", "scs_gaowang"],
-			},
-		},
+		connectBanned: [
+			// "miheng"
+		],
 		character: {
 			mb_sp_zhenji: ["female", "qun", 3, ["mbbojian", "mbjiwei"]],
 			mb_zhangfen: ["male", "wu", 4, ["mbquchong", "mbxunjie"]],
@@ -193,6 +172,36 @@ game.import("character", function () {
 			scs_gaowang: ["male", "qun", "", ["scsmiaoyu"], ["unseen", "sex:male_castrated"]],
 			new_yj_dongzhuo: ["male", "qun", "4/5", ["xiongjin", "xiawei", "baoxi"]],
 		},
+		characterSort: {
+			mobile: {
+				mobile_default: ["xin_huojun", "muludawang", "mb_chengui", "mb_huban", "mb_xianglang", "yanxiang", "xin_wuban", "laimin", "baoxin", "jiangji", "liwei", "xin_guozhao", "miheng", "taoqian", "lingcao", "sunru", "lifeng", "zhuling", "liuye", "zhaotongzhaoguang", "majun", "simazhao", "wangyuanji", "pangdegong", "shenpei", "hujinding", "zhangyì", "jiakui", "yangbiao", "chendeng", "dongcheng", "yangyi", "dengzhi", "zhengxuan", "sp_sufei", "furong", "dingyuan", "simashi", "yanghuiyu", "hucheer", "gongsunkang", "nanhualaoxian", "zhouqun", "qiaozhou", "fuqian", "mayuanyi", "yanpu", "sunhanhua", "sp_maojie", "peixiu", "sp_jianggan", "ruanhui", "xin_mamidi", "sp_caosong", "yangfu", "wangjun", "sp_pengyang", "qianzhao", "shichangshi", "yangfeng", "zhangbu", "mb_zhangfen"],
+				mobile_longxue: ["mb_simafu", "mb_wenqin", "mb_simazhou", "mb_sp_guanqiujian", "mb_caomao", "chengji", "lizhaojiaobo", "mb_wangjing", "mb_jiachong"],
+				mobile_yijiang: ["yj_zhanghe", "yj_zhangliao", "yj_xuhuang", "yj_ganning", "yj_huangzhong", "yj_weiyan", "yj_zhoubuyi", "new_yj_dongzhuo"],
+				mobile_standard: ["xin_xiahoudun", "xin_zhangfei"],
+				mobile_shenhua_feng: ["re_xiaoqiao", "xin_zhoutai"],
+				mobile_shenhua_huo: ["re_pangtong", "re_sp_zhugeliang", "re_xunyu", "re_dianwei", "re_yanwen", "xin_yuanshao"],
+				mobile_shenhua_lin: ["re_dongzhuo", "re_sunjian", "re_zhurong"],
+				mobile_shenhua_shan: ["re_liushan", "re_dengai", "re_jiangwei", "re_caiwenji", "re_zhangzhang", "re_sunben"],
+				mobile_shenhua_yin: ["xin_sunliang"],
+				mobile_shenhua_lei: ["re_guanqiujian"],
+				mobile_yijiang1: ["re_xusheng", "re_lingtong", "ol_yujin", "re_wuguotai", "re_gaoshun", "re_caozhi"],
+				mobile_yijiang2: ["xin_liaohua", "xin_caozhang", "re_liubiao", "re_handang", "xin_chengpu", "xin_gongsunzan", "re_zhonghui", "re_bulianshi"],
+				mobile_yijiang3: ["re_liru", "xin_jianyong", "xin_zhuran", "xin_guohuai", "xin_panzhangmazhong", "xin_fuhuanghou", "re_yufan"],
+				mobile_yijiang4: ["xin_zhoucang", "xin_caifuren", "xin_guyong", "xin_sunluban", "xin_caozhen", "xin_jushou", "xin_wuyi", "xin_zhuhuan", "re_chenqun"],
+				mobile_yijiang5: ["xin_zhangyi", "xin_sunxiu", "xin_quancong", "xin_zhuzhi", "xin_caoxiu"],
+				mobile_yijiang7: ["re_jikang"],
+				mobile_sp: ["old_yuanshu", "re_wangyun", "re_baosanniang", "re_weiwenzhugezhi", "re_zhanggong", "re_xugong", "re_heqi", "liuzan", "xin_hansui", "mb_sunluyu", "mb_sp_zhenji"],
+				
+				mobile_changshi: ["scs_zhangrang", "scs_zhaozhong", "scs_sunzhang", "scs_bilan", "scs_xiayun", "scs_hankui", "scs_lisong", "scs_duangui", "scs_guosheng", "scs_gaowang"],
+			},
+		},
+		characterSubstitute: {
+			mb_caomao: [
+				["mb_caomao_shadow", ["die_audio:mb_caomao"]],
+				["mb_caomao_dead", ["die_audio:mb_caomao"]],
+			],
+			shichangshi: [["shichangshi_dead", ["die_audio:shichangshi"]]],
+		},
 		characterIntro: {
 			lizhaojiaobo: "李昭（？—约公元260年），三国时期曹魏官吏，官拜冗从仆射，为魏帝曹髦的亲信。<br>焦伯，三国时期人物，魏帝曹髦护卫，官拜黄门从官。<br>曹髦见自己权力威势日渐削弱，感到不胜忿恨，于公元260年（甘露五年）五月初六夜里，令李昭和焦伯等在陵云台布署甲士，出讨司马昭，但最终失败，曹髦为成济所弑，李昭和焦伯等应该也战死。在《三国演义》里，焦伯挺枪出战成济，亦被成济所杀。",
 			chengji: "成济（？～260年6月21日），三国时期曹魏官员。官至太子舍人。在魏帝曹髦起兵讨司马昭时，受到司马昭之心腹贾充指使，刺死曹髦。司马昭为平息众怒，将成倅、成济兄弟二人杀死。",
@@ -245,7 +254,19 @@ game.import("character", function () {
 			zhangbu:"张布（？-264年），三国时吴国将领。张布在孙休受封为琅琊王时，为左右将督。太平三年（258年），孙休即位后，张布由长水校尉迁辅义将军，封永康侯。不久，孙休听说孙綝阴谋反叛，于是暗中和张布商量计策，孙綝被杀后，左将军张布因功加封中军督。由于孙休对张布厚加恩宠，因此张布专擅朝廷大权，多行无礼之事。永安七年（264年），孙休去世，丞相濮阳兴、左将军张布推荐孙皓为帝。同年八月初三，孙皓即皇帝位，封张布为骠骑将军，加侍中。孙皓粗暴骄盈、暴虐治国，又好酒色，濮阳兴和张布暗地里感到后悔，有人将此事报告孙皓，濮阳兴和张布二人被诛。",
 			mb_wangjing:"王经（？—260年），字彦纬，冀州清河郡人，三国时代曹魏大臣。《三国志》无传。王经为农民出身，因得到同乡崔林的赏识，被提拔任官。其母说他太快出头会不吉利，但他平步青云，历任江夏太守、雍州刺史。正元二年（255年），蜀将姜维攻入陇西郡时，他率军出狄道城迎击蜀军，却被击败。被包围在城中，陷入穷途末路的境况。幸亏得到大将陈泰和邓艾的援助，合力击破姜维，才脱险。此后，他被朝廷召回。不久迁司隶校尉、尚书。甘露五年（260年），魏帝曹髦召见王沈、王经、王业，提出进讨司马昭的计划。王经进谏，但曹髦不听；王沈、王业向司马昭告密，王经不从。司马昭弑君后，王经因未向司马昭告急，而和其母一同被逮捕并被处死。",
 		},
-		characterTitle: {},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			simashi: function (mode) {
+				if (["boss", "chess", "tafang", "stone"].includes(mode)) return false;
+				if (mode == "versus") return _status.mode != "three";
+				return true;
+			},
+		},
+		characterInitFilter: {
+			
+		},
 		card: {
 			ly_piliche: {
 				fullskin: true,
@@ -441,13 +462,7 @@ game.import("character", function () {
 				skills: ["dagongche_defend_skill", "mbquchong_effect"],
 			},
 		},
-		characterFilter: {
-			simashi: function (mode) {
-				if (["boss", "chess", "tafang", "stone"].includes(mode)) return false;
-				if (mode == "versus") return _status.mode != "three";
-				return true;
-			},
-		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//SP甄宓
 			mbbojian: {
@@ -19473,43 +19488,6 @@ game.import("character", function () {
 				return str+="（X为你已损失的体力值，至少为1，至多为3）。";
 			},
 		},
-		perfectPair: {
-			simazhao: ["simayi", "jin_simayi", "jin_wangyuanji"],
-			xugong: ["yanbaihu"],
-		},
-		characterReplace: {
-			caochun: ["caochun", "old_caochun"],
-			majun: ["majun", "yj_majun", "old_majun"],
-			zhanggong: ["zhanggong", "re_zhanggong"],
-			baosanniang: ["xin_baosanniang", "re_baosanniang", "baosanniang"],
-			heqi: ["re_heqi", "heqi"],
-			weiwenzhugezhi: ["weiwenzhugezhi", "re_weiwenzhugezhi", "jsrg_weiwenzhugezhi"],
-			xugong: ["xugong", "re_xugong", "jsrg_xugong"],
-			liuzan: ["re_liuzan", "liuzan"],
-			yj_sufei: ["yj_sufei", "sp_sufei", "xf_sufei"],
-			jiakui: ["jiakui", "old_jiakui"],
-			shenpei: ["shenpei", "sp_shenpei"],
-			sunru: ["dc_sunru", "ol_sunru", "sunru"],
-			liuye: ["dc_liuye", "liuye"],
-			zhaotongzhaoguang: ["dc_zhaotongzhaoguang", "zhaotongzhaoguang"],
-			yangbiao: ["yangbiao", "dc_yangbiao", "jsrg_yangbiao"],
-			qiaozhou: ["yj_qiaozhou", "qiaozhou", "tw_qiaozhou"],
-			sunhanhua: ["dc_sunhanhua", "sunhanhua"],
-			zhoubuyi: ["zhoubuyi", "yj_zhoubuyi"],
-			xianglang: ["xianglang", "mb_xianglang"],
-			miheng: ["yue_miheng", "re_miheng", "miheng"],
-			peixiu: ["ol_peixiu", "peixiu"],
-			chendeng: ["chendeng", "re_chendeng", "ol_chendeng", "jsrg_chendeng"],
-			liuba: ["liuba", "ol_liuba", "dc_liuba"],
-			lingcao: ["lingcao", "dc_lingcao"],
-		},
-		characterSubstitute: {
-			mb_caomao: [
-				["mb_caomao_shadow", ["die_audio:mb_caomao"]],
-				["mb_caomao_dead", ["die_audio:mb_caomao"]],
-			],
-			shichangshi: [["shichangshi_dead", ["die_audio:shichangshi"]]],
-		},
 		translate: {
 			liuzan: "手杀留赞",
 			liuzan_prefix: "手杀",
@@ -20486,6 +20464,15 @@ game.import("character", function () {
 			
 			mobile_changshi: "十常侍单体",
 			// mobile_others: "其他",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

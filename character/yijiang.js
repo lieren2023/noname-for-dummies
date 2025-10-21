@@ -3,21 +3,9 @@ game.import("character", function () {
 	return {
 		name: "yijiang",
 		connect: true,
-		//connectBanned:['qinmi'],
-		characterSort: {
-			yijiang: {
-				yijiang_2011: ["caozhi", "yujin", "zhangchunhua", "xin_fazheng", "xin_masu", "xin_xushu", "xusheng", "lingtong", "wuguotai", "chengong", "gaoshun"],
-				yijiang_2012: ["wangyi", "xunyou", "zhonghui", "old_madai", "liaohua", "guanzhang", "bulianshi", "handang", "chengpu", "liubiao", "old_huaxiong", "caozhang"],
-				yijiang_2013: ["manchong", "guohuai", "caochong", "guanping", "liufeng", "jianyong", "yufan", "panzhangmazhong", "zhuran", "xin_liru", "fuhuanghou"],
-				yijiang_2014: ["hanhaoshihuan", "chenqun", "caozhen", "zhangsong", "wuyi", "zhoucang", "zhuhuan", "guyong", "sunluban", "yj_jushou", "caifuren"],
-				yijiang_2015: ["caoxiu", "caorui", "zhongyao", "xiahoushi", "liuchen", "zhangyi", "zhuzhi", "quancong", "sunxiu", "gongsunyuan", "guotufengji"],
-				yijiang_2016: ["guohuanghou", "sunziliufang", "huanghao", "liyan", "sundeng", "cenhun", "zhangrang", "liuyu"],
-				yijiang_2017: ["xinxianying", "jikang", "wuxian", "qinmi", "xuezong", "xushi", "caiyong", "caojie"],
-				yijiang_2022: ["lukai", "kebineng", "zhugeshang", "liwan", "wuanguo", "hanlong", "yj_sufei", "yj_qiaozhou"],
-				yijiang_2023: ["xiahoumao", "chenshi", "sunli", "feiyao", "linghuyu", "yj_simafu", "yj_xuangongzhu", "xukun", "yj_majun"],
-				// yijiang_2025: [],
-			},
-		},
+		connectBanned: [
+			// "qinmi"
+		],
 		character: {
 			xiahoumao: ["male", "wei", 4, ["tongwei", "cuguo"]],
 			chenshi: ["male", "shu", 4, ["qingbei"]],
@@ -119,6 +107,23 @@ game.import("character", function () {
 			xukun: ["male", "wu", 4, ["fazhu"]],
 			yj_majun: ["male", "wei", 3, ["yjgongqiao", "yjjingyi"]],
 		},
+		characterSort: {
+			yijiang: {
+				yijiang_2011: ["caozhi", "yujin", "zhangchunhua", "xin_fazheng", "xin_masu", "xin_xushu", "xusheng", "lingtong", "wuguotai", "chengong", "gaoshun"],
+				yijiang_2012: ["wangyi", "xunyou", "zhonghui", "old_madai", "liaohua", "guanzhang", "bulianshi", "handang", "chengpu", "liubiao", "old_huaxiong", "caozhang"],
+				yijiang_2013: ["manchong", "guohuai", "caochong", "guanping", "liufeng", "jianyong", "yufan", "panzhangmazhong", "zhuran", "xin_liru", "fuhuanghou"],
+				yijiang_2014: ["hanhaoshihuan", "chenqun", "caozhen", "zhangsong", "wuyi", "zhoucang", "zhuhuan", "guyong", "sunluban", "yj_jushou", "caifuren"],
+				yijiang_2015: ["caoxiu", "caorui", "zhongyao", "xiahoushi", "liuchen", "zhangyi", "zhuzhi", "quancong", "sunxiu", "gongsunyuan", "guotufengji"],
+				yijiang_2016: ["guohuanghou", "sunziliufang", "huanghao", "liyan", "sundeng", "cenhun", "zhangrang", "liuyu"],
+				yijiang_2017: ["xinxianying", "jikang", "wuxian", "qinmi", "xuezong", "xushi", "caiyong", "caojie"],
+				yijiang_2022: ["lukai", "kebineng", "zhugeshang", "liwan", "wuanguo", "hanlong", "yj_sufei", "yj_qiaozhou"],
+				yijiang_2023: ["xiahoumao", "chenshi", "sunli", "feiyao", "linghuyu", "yj_simafu", "yj_xuangongzhu", "xukun", "yj_majun"],
+				// yijiang_2025: [],
+			},
+		},
+		characterSubstitute: {
+			
+		},
 		characterIntro: {
 			linghuyu: "令狐愚（？－249年），字公治，太原人。曹魏时期将领， 原名浚。太尉王凌的外甥，弘农太守令狐邵之侄。黄初年间出任和戎护军，后任曹爽府长史、兖州刺史。嘉平年间，与王凌一起密谋废除曹芳，共立楚王曹彪，事未行而病卒。嘉平三年（251年），事泄，王凌服毒自尽，与此事相连者，皆夷三族。王凌及令狐愚被开棺暴尸三日， 亲土埋之。",
 			xukun: "徐琨，字号不详，吴郡富春县（今浙江省杭州市富阳区）人。三国时期吴国开国功臣，武烈皇帝孙坚的外甥，吴大帝孙权的表兄弟，徐夫人的生父。出身吴郡豪门，最初担任郡吏。投靠舅舅孙坚，参与征伐董卓有功，拜偏将军。孙坚逝后，追随孙策，攻讨扬州刺史刘繇，采取奇袭作战方式，占领丹阳郡，为孙策开拓江东事业奠定基础，领丹杨太守。适逢吴景归附江东，改授督军中郎将。孙权嗣位后，平定庐江太守李术叛乱，击破皖城，册封广德侯，加号平虏将军。后来，随孙权征讨黄祖，身中流矢，不治而亡。",
@@ -204,28 +209,22 @@ game.import("character", function () {
 			caiyong: "蔡邕（133年－192年），字伯喈。陈留郡圉县（今河南杞县南）人。东汉时期名臣，文学家、书法家，才女蔡文姬之父。蔡邕早年拒朝廷征召之命，后被征辟为司徒掾属，任河平长、郎中、议郎等职，曾参与续写《东观汉记》及刻印熹平石经。后因罪被流放朔方，几经周折，避难江南十二年。董卓掌权时，强召蔡邕为祭酒。三日之内，历任侍御史、治书侍御史、尚书、侍中、左中郎将等职，封高阳乡侯，世称“蔡中郎”。董卓被诛杀后，蔡邕因在王允座上感叹而被下狱，不久便死于狱中，年六十。",
 			caojie: "曹节（196年―260年），沛国谯县（今安徽亳州）人，汉献帝刘协第二任皇后，魏武帝曹操的女儿。建安十八年（213年），曹操将女儿曹宪、曹节、曹华三姐妹同时入宫中，封为夫人。建安十九年（214年），并封为贵人。曹操废掉汉献帝第一位皇后伏寿,将她囚禁而死。曹操要汉献帝立曹节为皇后，汉献帝只得依从。建安二十五年（220年），曹操去世，曹丕袭封魏王位。曹丕授意华歆去逼汉献帝让位。曹节怒斥华歆，华歆只好退出宫去。第二天又逼汉献帝将帝位禅让给曹丕。并以武力威胁，向曹节索要玺印，曹节无奈，将玺印掷于栏板之下。面对曹丕篡位，她极为愤怒，高喊：“老天有眼，决不让你长久！”汉献帝被废为山阳公，曹节为山阳公夫人。景元元年（260年），曹节病逝，仍以汉朝礼仪合葬于献帝的禅陵，谥号献穆皇后。",
 		},
-		perfectPair: {
-			wuguotai: ["sunjian", "sunshangxiang"],
-			zhangchunhua: ["simayi"],
-			caozhi: ["zhenji"],
-			xunyou: ["xunyu"],
-			xushu: ["liubei"],
-			lingtong: ["ganning"],
-			chengong: ["lvbu"],
-			bulianshi: ["sunquan"],
-			fuhuanghou: ["liuxie"],
-			sunluban: ["quancong"],
-			caifuren: ["liubiao"],
-			xiahoushi: ["zhangfei"],
-			zhoucang: ["guanyu"],
-			guanping: ["guanyu"],
-			sundeng: ["sunquan", "zhoufei"],
-			liru: ["dongzhuo"],
-			liuchen: ["liushan"],
-			yujin: ["xiahoudun"],
-			fazheng: ["liubei"],
-			zhonghui: ["jiangwei"],
+		characterTitle: {
+			
 		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			lukai_spade: { fullskin: true },
+			lukai_heart: { fullskin: true },
+			lukai_diamond: { fullskin: true },
+			lukai_club: { fullskin: true },
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//一将2024
 			// 新杀马钧-临时写法 #1607
@@ -15279,12 +15278,6 @@ game.import("character", function () {
 				},
 			},
 		},
-		card: {
-			lukai_spade: { fullskin: true },
-			lukai_heart: { fullskin: true },
-			lukai_diamond: { fullskin: true },
-			lukai_club: { fullskin: true },
-		},
 		dynamicTranslate: {
 			rejueqing: function (player) {
 				if (player.storage.rejueqing_rewrite) return "锁定技，你即将造成的伤害均视为失去体力。";
@@ -15329,83 +15322,6 @@ game.import("character", function () {
 				}
 				return str + yinStr + "；" + yangStr + "。";
 			},
-		},
-		characterReplace: {
-			caozhi: ["caozhi", "dc_caozhi", "re_caozhi", "ps_caozhi", "ol_caozhi"],
-			zhangchunhua: ["zhangchunhua", "re_zhangchunhua", "ol_zhangchunhua", "jin_zhangchunhua", "star_zhangchunhua"],
-			yujin: ["yujin", "yujin_yujin", "ol_yujin", "sb_yujin", "xin_yujin", "re_yujin", "jd_sb_yujin"],
-			dc_xushu: ["re_xushu", "dc_xushu"],
-			xushu: ["xin_xushu", "xushu", "std_xushu"],
-			fazheng: ["xin_fazheng", "ol_fazheng", "re_fazheng", "sb_fazheng", "tw_re_fazheng", "fazheng", "jd_sb_fazheng"],
-			masu: ["xin_masu", "re_masu", "masu"],
-			xusheng: ["xusheng", "xin_xusheng", "re_xusheng", "old_xusheng"],
-			wuguotai: ["wuguotai", "xin_wuguotai", "re_wuguotai", "ol_wuguotai"],
-			lingtong: ["lingtong", "xin_lingtong", "ol_lingtong", "re_lingtong", "old_lingtong"],
-			gaoshun: ["gaoshun", "xin_gaoshun", "ol_gaoshun", "re_gaoshun", "sb_gaoshun", "old_gaoshun"],
-			zhonghui: ["zhonghui", "xin_zhonghui", "re_zhonghui", "old_zhonghui", "pe_zhonghui", "clan_zhonghui", "yj_zhonghui", "std_zhonghui"],
-			wangyi: ["wangyi", "ol_wangyi", "re_wangyi", "old_wangyi"],
-			caozhang: ["caozhang", "ol_caozhang", "re_caozhang", "xin_caozhang"],
-			guanzhang: ["guanzhang", "re_guanzhang", "old_guanzhang"],
-			madai: ["old_madai", "re_madai", "tw_madai", "madai"],
-			liaohua: ["liaohua", "re_liaohua", "xin_liaohua", "ty_liaohua"],
-			bulianshi: ["bulianshi", "dc_bulianshi", "re_bulianshi", "old_bulianshi"],
-			handang: ["handang", "xin_handang", "re_handang", "tw_handang", "sb_handang", "old_handang"],
-			chengpu: ["chengpu", "ol_chengpu", "re_chengpu", "xin_chengpu", "tw_chengpu", "ns_chengpu", "std_chengpu"],
-			liubiao: ["liubiao", "xin_liubiao", "re_liubiao", "jsrg_liubiao", "sb_liubiao", "oldre_liubiao", "old_liubiao", "ol_liubiao", "std_liubiao"],
-			manchong: ["manchong", "re_manchong"],
-			caochong: ["caochong", "re_caochong", "old_caochong", "ol_caochong"],
-			guohuai: ["guohuai", "re_guohuai", "xin_guohuai", "tw_guohuai"],
-			jianyong: ["jianyong", "ol_jianyong", "re_jianyong", "xin_jianyong"],
-			panzhangmazhong: ["panzhangmazhong", "re_panzhangmazhong", "xin_panzhangmazhong"],
-			yufan: ["yufan", "ol_yufan", "xin_yufan", "re_yufan"],
-			zhuran: ["zhuran", "re_zhuran", "xin_zhuran", "old_zhuran"],
-			liru: ["xin_liru", "liru", "dc_liru", "re_liru", "yj_liru", "ol_liru"],
-			fuhuanghou: ["fuhuanghou", "re_fuhuanghou", "xin_fuhuanghou", "tw_fuhuanghou", "old_fuhuanghou", "std_fuhuanghou"],
-			chenqun: ["chenqun", "dc_chenqun", "re_chenqun", "old_chenqun"],
-			hanhaoshihuan: ["hanhaoshihuan", "re_hanhaoshihuan"],
-			caozhen: ["caozhen", "re_caozhen", "xin_caozhen", "old_caozhen"],
-			wuyi: ["wuyi", "re_wuyi", "xin_wuyi", "dc_wuyi"],
-			sunluban: ["re_sunluban", "xin_sunluban", "tw_sunluban", "sunluban"],
-			zhuhuan: ["re_zhuhuan", "xin_zhuhuan", "zhuhuan", "old_zhuhuan"],
-			caoxiu: ["caoxiu", "re_caoxiu", "xin_caoxiu", "tw_caoxiu", "old_caoxiu"],
-			xiahoushi: ["xiahoushi", "re_xiahoushi", "sb_xiahoushi", "sp_xiahoushi"],
-			zhangyi: ["zhangyi", "re_zhangyi", "xin_zhangyi"],
-			quancong: ["quancong", "re_quancong", "xin_quancong", "old_quancong", "yy_quancong"],
-			sunxiu: ["sunxiu", "re_sunxiu", "xin_sunxiu"],
-			zhuzhi: ["zhuzhi", "re_zhuzhi", "xin_zhuzhi", "old_zhuzhi"],
-			liuyu: ["liuyu", "dc_liuyu", "ol_liuyu"],
-			zhangrang: ["zhangrang", "ol_zhangrang", "junk_zhangrang"],
-			jikang: ["jikang", "re_jikang", "dc_jikang"],
-			xinxianying: ["xinxianying", "re_xinxianying", "ol_xinxianying", "sp_xinxianying"],
-			gongsunyuan: ["gongsunyuan", "re_gongsunyuan", "std_gongsunyuan", "yy_gongsunyuan"],
-			zhoucang: ["zhoucang", "re_zhoucang", "xin_zhoucang"],
-			guotufengji: ["guotufengji", "re_guotufengji"],
-			guanping: ["guanping", "re_guanping", "dc_sb_guanping"],
-			caifuren: ["caifuren", "re_caifuren", "xin_caifuren", "ol_caifuren"],
-			guyong: ["guyong", "re_guyong", "xin_guyong", "tw_guyong"],
-			yj_jushou: ["yj_jushou", "re_jushou", "xin_jushou", "dc_sb_jushou"],
-			guohuanghou: ["guohuanghou", "re_guohuanghou"],
-			liuchen: ["liuchen", "re_liuchen"],
-			liufeng: ["liufeng", "re_liufeng"],
-			sundeng: ["sundeng", "re_sundeng", "ns_sundeng"],
-			caiyong: ["caiyong", "re_caiyong", "yue_caiyong"],
-			chengong: ["chengong", "re_chengong", "sb_chengong"],
-			xunyou: ["xunyou", "re_xunyou", "clan_xunyou"],
-			xuezong: ["xuezong", "tw_xuezong", "std_xuezong"],
-			huanghao: ["huanghao", "dc_huanghao", "old_huanghao"],
-			caorui: ["caorui", "re_caorui", "old_caorui", "yy_caorui"],
-			sunziliufang: ["sunziliufang", "dc_sunziliufang"],
-			liyan: ["liyan", "old_liyan"],
-			zhangsong: ["zhangsong", "re_zhangsong"],
-			zhongyao: ["zhongyao", "re_zhongyao", "clan_zhongyao"],
-			liwan: ["ol_liwan", "liwan"],
-			wuxian: ["wuxian", "clan_wuxian"],
-			simafu: ["mb_simafu", "simafu", "yj_simafu"],
-			xuangongzhu: ["yj_xuangongzhu", "xuangongzhu"],
-			cenhun: ["cenhun", "std_cenhun"],
-			
-			kebineng: ["kebineng", "ol_kebineng", "ddd_kebineng"],
-			hanlong: ["hanlong", "jd_hanlong"],
 		},
 		translate: {
 			old_huaxiong: "将华雄",
@@ -16081,6 +15997,15 @@ game.import("character", function () {
 			yijiang_2022: "一将成名2022",
 			yijiang_2023: "一将成名2023",
 			yijiang_2025: "一将成名2025",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

@@ -3,52 +3,9 @@ game.import("character", function () {
 	return {
 		name: "old",
 		connect: true,
-		characterSort: {
-			old: {
-				old_standard: ["ol_yuanshu"],
-				old_shenhua_feng: ["yuji", "zhangjiao", "xiahouyuan", "weiyan", "old_xiaoqiao", "huangzhong", "new_caoren"],
-				old_shenhua_huo: ["pangde"],
-				old_shenhua_lin: ["xuhuang"],
-				old_shenhua_lei: ["old_zhugezhan", "old_guanqiujian", "old_chendao"],
-				old_yijiang1: [
-					"masu",
-					"xushu",
-					"xin_yujin",
-					"old_xusheng",
-					"old_lingtong",
-					"fazheng",
-					"old_gaoshun",
-					"re_yujin",
-				],
-				old_yijiang2: [
-					"old_zhonghui",
-					"madai",
-					"old_handang",
-					"old_liubiao",
-					"oldre_liubiao",
-					"old_guanzhang",
-					"old_wangyi",
-				],
-				old_yijiang3: ["liru", "old_zhuran", "old_fuhuanghou", "old_caochong"],
-				old_yijiang4: ["old_caozhen", "old_chenqun", "old_zhuhuan", "old_caorui"],
-				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
-				old_yijiang6: ["ol_zhangrang", "old_huanghao", "old_liyan"],
-				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
-				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
-				old_sp: [
-					"old_shixie",
-					"panfeng",
-					"old_wanglang",
-					"old_maliang",
-					"old_zhangxingcai",
-					"old_wangyun",
-					"old_dingfeng",
-					"old_guanyinping",
-				],
-				old_yingbian: ["junk_simayi", "old_yangyan", "old_yangzhi"],
-				old_mobile: ["old_caochun"],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
 			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu", "die_audio:shen_huangzhong"]],
 			junk_zhangjiao: ["male", "shen", 3, ["yizhao", "junksijun", "tianjie"], ["qun", "die_audio:shen_zhangjiao"]],
@@ -125,6 +82,71 @@ game.import("character", function () {
 			old_wangyi: ["female", "wei", 3, ["oldzhenlie", "oldmiji"]],
 			re_yujin: ["male", "wei", 4, ["yizhong"], ["die_audio:yujin"]],
 		},
+		characterSort: {
+			old: {
+				old_standard: ["ol_yuanshu"],
+				old_shenhua_feng: ["yuji", "zhangjiao", "xiahouyuan", "weiyan", "old_xiaoqiao", "huangzhong", "new_caoren"],
+				old_shenhua_huo: ["pangde"],
+				old_shenhua_lin: ["xuhuang"],
+				old_shenhua_lei: ["old_zhugezhan", "old_guanqiujian", "old_chendao"],
+				old_yijiang1: [
+					"masu",
+					"xushu",
+					"xin_yujin",
+					"old_xusheng",
+					"old_lingtong",
+					"fazheng",
+					"old_gaoshun",
+					"re_yujin",
+				],
+				old_yijiang2: [
+					"old_zhonghui",
+					"madai",
+					"old_handang",
+					"old_liubiao",
+					"oldre_liubiao",
+					"old_guanzhang",
+					"old_wangyi",
+				],
+				old_yijiang3: ["liru", "old_zhuran", "old_fuhuanghou", "old_caochong"],
+				old_yijiang4: ["old_caozhen", "old_chenqun", "old_zhuhuan", "old_caorui"],
+				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
+				old_yijiang6: ["ol_zhangrang", "old_huanghao", "old_liyan"],
+				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
+				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
+				old_sp: [
+					"old_shixie",
+					"panfeng",
+					"old_wanglang",
+					"old_maliang",
+					"old_zhangxingcai",
+					"old_wangyun",
+					"old_dingfeng",
+					"old_guanyinping",
+				],
+				old_yingbian: ["junk_simayi", "old_yangyan", "old_yangzhi"],
+				old_mobile: ["old_caochun"],
+			},
+		},
+		characterSubstitute: {
+			
+		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//初版神黄忠
 			"old_1！5！": {
@@ -1713,6 +1735,9 @@ game.import("character", function () {
 				},
 			},
 		},
+		dynamicTranslate: {
+			
+		},
 		translate: {
 			old_zhangxingcai: "旧张星彩",
 			old_zhangxingcai_prefix: "旧",
@@ -1908,6 +1933,15 @@ game.import("character", function () {
 			old_sp: "SP",
 			old_yingbian: "文德武备",
 			old_mobile: "移动版",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });
