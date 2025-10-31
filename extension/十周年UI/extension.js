@@ -666,7 +666,7 @@ content:function(config, pack){
 			totalLength = prefixlength + slimName.slice(prefix.length).length;
 			// 根据总长度设置对应样式
 			if (totalLength == 5) {
-				style = 'font-size: 14.2px';
+				style = 'font-size: 12.9px';
 				// 返回带有样式的slimName
 				//兼容版特化处理
 				if (lib.compatibleEdition) return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}　</span></span>`;
@@ -692,7 +692,7 @@ content:function(config, pack){
 		
 		// 根据总长度设置对应样式
 		if (totalLength == 5) {
-			style = 'font-size: 14.2px';
+			style = 'font-size: 12.9px';
 			// 返回带有样式的slimName
 			return `<span style="${style}">${slimName}</span>`;
 		} else if (totalLength == 6) {
@@ -1753,6 +1753,242 @@ content:function(config, pack){
 					if (scwei) { scwei.parentNode.removeChild(scwei); }
 				}
 				//  }        
+			},
+		};
+	}
+	
+	// 可见手牌显示-标记
+	if (lib.config.kjspxs!='off' && lib.config.kjspxs!='biankuang') {
+		lib.skill._szn_biaoji_showCards = {
+			trigger: {
+				global: ['gameStart', 'roundStart'],
+			},
+			mark: true,
+			marktext: "<img style = width:15px src=" + lib.assetURL + "extension/十周年UI/assets/image/jinjing.png>",
+			intro: {
+				name: "可见手牌",
+				markcount(storage, player) {
+					return storage.length;
+				},
+				mark(dialog, content, player) {
+					const cards = player.getCards('h',function(c){
+						return get.is.shownCard(c) || (player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+					});
+					if (cards.length) {
+						dialog.addAuto(cards);
+					} else {
+						return "无可见手牌";
+					}
+				},
+			},
+			forced: true,
+			popup: false,
+			silent: true,
+			charlotte: true,
+			priority: 30,
+			content() {
+				var libUpdates = () => {
+					var libUpdate = player => {
+						player.storage._szn_biaoji_showCards = player.getCards('h',function(c){
+							return get.is.shownCard(c) || (player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+						});
+						if (player != game.me) {
+							if(player.storage._szn_biaoji_showCards.length) player.markSkill("_szn_biaoji_showCards");
+							if(player.storage._szn_biaoji_showCards.length == 0) player.unmarkSkill("_szn_biaoji_showCards");
+						}
+					}
+					var players = game.filterPlayer().sortBySeat();
+					for (var i = 0; i < players.length; i++) {
+						if (player != game.me) libUpdate(players[i]);
+					}
+					game.me.unmarkSkill("_szn_biaoji_showCards");
+				}
+				
+				var interval = setInterval(() => {
+					// 清除定时器条件改为游戏结束
+					if (_status.over) return clearInterval(interval);
+					libUpdates();
+				}, 500);
+			},
+		};
+	}
+	// 可见手牌显示-边框（搬运自笨蛋插件扩展，原作者为铝宝）
+	if (lib.config.kjspxs=='biankuang') {
+		lib.skill._szn_Fool_showCards={
+			ruleSkill:true,
+			direct:true,
+			charlotte:true,
+			forceDie:true,
+			trigger:{
+				//player:["loseAfter","dieAfter"],
+				global:["loseAfter","die","equipAfter","addJudgeAfter","gainAfter","loseAsyncAfter","addToExpansionAfter","phaseBefore","enterGame","addShownCardsAfter"],
+			},
+			content:function(){
+				const styles = {
+					Fool_showPlayerCards: {
+						backgroundColor: 'rgba(0,0,0,.3)',
+						width: '35px',
+						height: '122px',
+						left: '-42px',
+						bottom: '0',
+						borderRadius: '5px',
+						overflow: 'scroll',
+						opacity: '1'
+					},
+					Fool_scard: {
+						position: 'relative',
+						marginTop: '5px',
+						textAlign: 'center',
+						width: '100%',
+						fontWeight: '700',
+						overflow: 'scroll',
+						color: 'rgba(245, 238, 212,1)',
+						fontSize: '14px',
+						fontFamily: "'shousha'"
+					}
+				};
+				const createElement = (tag, opts = {}) => {
+					const d = document.createElement(tag);
+					for (const key in opts) {
+						if (Object.hasOwnProperty.call(opts, key)) {
+							switch (key) {
+								case 'class':
+									opts[key].forEach(v => d.classList.add(v));
+									break;
+								case 'id':
+									d.id = opts[key];
+									break;
+								case 'innerHTML':
+									case 'innerText':
+									d[key] = opts[key];
+									break;
+								case 'parentNode':
+									opts[key].appendChild(d);
+									break;
+								case 'listen':
+									for (const evt in opts[key]) {
+										if (typeof opts[key][evt] == 'function') {
+											d[evt] = opts[key][evt];
+										}
+									}
+									break;
+								case 'style':
+									for (const s in opts[key]) {
+										d.style[s] = opts[key][s];
+									}
+									break;
+								case 'children':
+									opts[key].forEach(v => d.appendChild(v));
+									break;
+								case 'insertBefore':
+									opts[key][0].insertBefore(d, opts[key][1]);
+									break;
+							}
+						}
+					}
+					return d;
+				};
+				if(!player.node.showCards){
+					player.node.showCards = createElement('div', {
+						class: ['Fool_showPlayerCards'],
+						parentNode: player,
+						style: styles.Fool_showPlayerCards,
+					}).hide();
+					// 临时修复（by 棘手怀念摧毁）
+					_status.Fool_showCards = false;
+					player.node.showCards.onclick = function() {
+						if(_status.Fool_showCards || _status.over) return;
+						
+						const cards = player.getCards('h',function(c){
+							return get.is.shownCard(c)||(player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+						});
+						if (cards.length > 0) {
+							var Fool_showCards = ui.create.dialog(get.translation(player)+'的手牌', cards);
+							_status.Fool_showCards = true;
+							game.pause2();
+							
+							// 30秒后自动关闭（临时修复非点击边框关闭的方式关闭后无法打开的bug）
+							setTimeout(function () {
+								_status.Fool_showCards = false;
+								Fool_showCards.close();
+								Fool_showCards.delete();
+								game.resume2();
+							}, 30000);
+							
+							Fool_showCards.addEventListener('click', event => {
+								_status.Fool_showCards = false;
+								Fool_showCards.close();
+								Fool_showCards.delete();
+								game.resume2();
+							});
+						}
+					}
+				}
+				//setTimeout(() => {
+					const _rect = player.node.showCards.getBoundingClientRect();
+					if (_rect.left <= 10&&!player.node.showCards.classList['contains']('hidden')) {
+						player.node.showCards.style.left = player.offsetWidth + 15 + 'px';
+						player.node.showCards.style.top = 60 + 'px';
+					}
+				//}, 0);
+				player.node.showCards.onmouseover = player.node.showCards.ontouchend = function (e) {
+					const cards = player.getCards('h');
+					if (cards.length == 0) return;
+					cards.forEach(c => {
+						const copy = c.copy();
+						copy._customintro = c._customintro;
+					});
+					if (e.type == 'mouseover') {
+						player.node.showCards.onmouseleave = function (e) {
+							if (!e.toElement) return;
+							const evtPath = [e.toElement];
+							let target = evtPath[0];
+							while (target.parentNode && target.parentNode != document.body) {
+								evtPath.push(target.parentNode);
+								target = evtPath[evtPath.length - 1];
+							}
+						};
+					} else {
+						ui.window.addEventListener('touchend', function touch(event) {
+							const evtPath = [event.target];
+							let target = evtPath[0];
+							while (target.parentNode && target.parentNode != document.body) {
+								evtPath.push(target.parentNode);
+								target = evtPath[evtPath.length - 1];
+							}
+						});
+					}
+				}
+				if (player == game.me || player.isDead()) {
+					player.node.showCards.hide();
+					while (player.node.showCards.hasChildNodes()) {
+						player.node.showCards.removeChild(player.node.showCards.firstChild);
+					}
+					return;
+				}
+				if (!player.noclick && _status.gameStarted) {
+					const cards = player.getCards('h',function(c){
+						return get.is.shownCard(c)||(player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+					});
+					if (cards.length == 0) {
+						player.node.showCards.hide();
+						return;
+					}
+					const info = [];
+					cards.forEach(c => info.push(lib.translate[c.name].slice(0, 2)));
+					player.node.showCards.show();
+					while (player.node.showCards.hasChildNodes()) {
+						player.node.showCards.removeChild(player.node.showCards.firstChild);
+					}
+					info.forEach(i => {
+						createElement('div', {
+							class: ['Fool_scard'],
+							innerHTML: i,
+							parentNode: player.node.showCards,
+							style: styles.Fool_scard,
+						});
+					});
+				}
 			},
 		};
 	}
@@ -7705,7 +7941,7 @@ content:function(config, pack){
 					if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
 						audioname=audioinfo[0];
 						if(!fixednum) fixednum=audioinfo[1];//数组会取第一个指定语音数
-						audioinfo=lib.skill[audioname].audio;
+						audioinfo=lib.skill[audioname]?.audio;
 						continue;
 					}
 					// 适配写法audio: ["yuanjiangfenghuotu3.mp3", "yuanjiangfenghuotu4.mp3"],
@@ -9776,7 +10012,7 @@ content:function(config, pack){
 							this.classList.remove('fullborder');
 							this.dataset.cardName = card[2];
 							this.dataset.cardType = info.type || '';
-							this.dataset.cardSubype = info.subtype || '';
+							this.dataset.cardSubtype = info.subtype || '';
 							this.dataset.cardMultitarget = info.multitarget ? '1': '0';
 							if (this.node.name.dataset.nature) this.node.name.dataset.nature = '';
 							if (!lib.config.hide_card_image && lib.card[bg].fullskin) {
@@ -13381,7 +13617,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					event.finish();
 					return;
 				}
-				game.log(player, '对', target, '发起拼点');
+				game.log(player, "对", target, "发起", (event.isDelay ? "延时" : ""), "拼点");
 				event.lose_list = [];
 				
 				// 更新拼点框
@@ -13398,7 +13634,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					dialog.caption = get.translation(eventName) + '拼点';
 					dialog.player = player;
 					dialog.target = target;
-					dialog.open();
+					if (!event.isDelay) dialog.open();
 					
 					decadeUI.delay(400);
 					ui.dialogs[eventName] = dialog;
@@ -13425,7 +13661,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					}, event.ai);
 				} else {
 					event.localPlayer = true;
-					player.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
+					if (event.isDelay) player.chooseCard('请选择拼点牌', true).set('prompt', true).set('type', 'compare').ai = event.ai;
+					else player.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
 				}
 				
 				if (event.fixedResult && event.fixedResult[target.playerid]) {
@@ -13462,10 +13699,11 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					}, event.compareName);
 				}
 				if (event.localTarget) {
-					target.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
+					if (event.isDelay) target.chooseCard('请选择拼点牌', true).set('prompt', true).set('type', 'compare').ai = event.ai;
+					else target.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
 				}
 				
-				"step 3"			
+				"step 3"
 				if (event.localTarget) {
 					if (result.skill && lib.skill[result.skill] && lib.skill[result.skill].onCompare) {
 						target.logSkill(result.skill);
@@ -13547,7 +13785,44 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				}
 				
 				"step 5"
-				event.trigger('compareCardShowBefore');
+				if (event.isDelay) {
+					let cards = [];
+					for (let current of event.lose_list) {
+						current[0].$giveAuto(current[1], current[0], false);
+						
+						// 临时修改（by 棘手怀念摧毁）
+						// cards.addArray(current[1]);
+						for (let i = 0; i < current[1].length; i++) {
+							cards.set(current[1][i], 0);
+						}
+					}
+					game.cardsGotoSpecial(cards);
+					player
+						.when({
+							global: ["dieAfter", "phaseEnd"],
+						})
+						.assign({
+							forceDie: true,
+						})
+						.filter((event, player) => {
+							return event.name == "phase" || [player, target].includes(event.player);
+						})
+						.vars({
+							cardsx: cards,
+							evt: event,
+						})
+						.then(() => {
+							if (cardsx.some(card => get.position(card) == "s")) {
+								game.cardsDiscard(cards);
+								evt.isDestoryed = true;
+							}
+						});
+					event.untrigger();
+					event.finish();
+				}
+				else {
+					event.trigger("compareCardShowBefore");
+				}
 				"step 6"
 				// 更新拼点框
 				game.broadcastAll(function(eventName, player, target, playerCard, targetCard){
@@ -13649,6 +13924,140 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				} else if (event.preserve == 'lose') {
 					event.preserve = !event.result.bool;
 				}
+			};
+			
+			lib.element.content.chooseToCompareEffect =async function(event, trigger, player){
+				const evt = event.parentEvent;
+				for (const key of ["target", "card1", "card2", "lose_list", "forceWinner", "clear", "preserve"]) {
+					event[key] = evt[key];
+				}
+				if (evt.isDestoryed) {
+					event.untrigger();
+					return;
+				}
+				await game.cardsGotoOrdering([event.card1, event.card2]);
+				const target = event.target;
+				game.log(player, "揭示了和", target, "的延时拼点结果");
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelayx();
+				// await game.delayx();
+				await event.trigger("compareCardShowBefore");
+				
+				// 更新拼点框
+				game.broadcastAll(function(eventName, player, target, playerCard, targetCard){
+					if (!window.decadeUI) {
+						ui.arena.classList.add('thrownhighlight');
+						player.$compare(playerCard, target, targetCard);
+						return;
+					}
+					
+					var dialog = decadeUI.create.compareDialog();
+					dialog.caption = '延时拼点';
+					dialog.player = player;
+					dialog.target = target;
+					dialog.open();
+					
+					decadeUI.delay(400);
+					ui.dialogs[eventName] = dialog;
+					
+					dialog.playerCard = playerCard.copy();
+					dialog.targetCard = targetCard.copy();
+				}, event.parent.name, player, target, event.card1, event.card2);
+				
+				game.log(player, "的拼点牌为", event.card1);
+				game.log(target, "的拼点牌为", event.card2);
+				let getNum = function (card) {
+					for (var i of event.lose_list) {
+						// 临时修改（by 棘手怀念摧毁）
+						// if (i[1].includes(card)) {
+						if (i[1] == card) {
+							return get.number(card, i[0]);
+						}
+					}
+					return get.number(card, false);
+				};
+				event.num1 = getNum(event.card1);
+				event.num2 = getNum(event.card2);
+				await event.trigger("compare");
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelay(0, 1500);
+				// await game.delay(0, 1500);
+				event.result = {
+					player: event.card1,
+					target: event.card2,
+					num1: event.num1,
+					num2: event.num2,
+				};
+				await event.trigger("compareFixing");
+				let str;
+				if (event.forceWinner === player || (event.forceWinner !== target && event.num1 > event.num2)) {
+					event.result.bool = true;
+					event.result.winner = player;
+					str = get.translation(player) + "拼点成功";
+					player.popup("胜");
+					target.popup("负");
+				} else {
+					event.result.bool = false;
+					str = get.translation(player) + "拼点失败";
+					if (event.forceWinner !== target && event.num1 == event.num2) {
+						event.result.tie = true;
+						player.popup("平");
+						target.popup("平");
+					} else {
+						event.result.winner = target;
+						player.popup("负");
+						target.popup("胜");
+					}
+				}
+				
+				// 更新拼点框
+				game.broadcastAll(function(str, eventName, result) {
+					if (!window.decadeUI) {
+						var dialog = ui.create.dialog(str);
+						dialog.classList.add('center');
+						setTimeout(function(dialog) {
+							dialog.close();
+						}, 1000, dialog);
+						return;
+					}
+					
+					var dialog = ui.dialogs[eventName];
+					dialog.$playerCard.dataset.result = result ? '赢' : '没赢';
+					
+					setTimeout(function(dialog, eventName){
+						dialog.close();
+						setTimeout(function(dialog){
+							dialog.player.$throwordered2(dialog.playerCard, true);
+							dialog.target.$throwordered2(dialog.targetCard, true);
+						}, 180, dialog);
+						ui.dialogs[eventName] = undefined;
+						
+					}, 1400, dialog, eventName);
+					
+				}, str, event.parent.name, event.result.bool);
+				
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelay(2);
+				// await game.delay(2);
+				if (typeof target.ai.shown == "number" && target.ai.shown <= 0.85 && event.addToAI) {
+					target.ai.shown += 0.1;
+				}
+				game.broadcastAll(function () {
+					ui.arena.classList.remove("thrownhighlight");
+				});
+				game.addVideo("thrownhighlight2");
+				if (event.clear !== false) {
+					game.broadcastAll(ui.clear);
+				}
+				if (typeof event.preserve == "function") {
+					event.preserve = event.preserve(event.result);
+				} else if (event.preserve == "win") {
+					event.preserve = event.result.bool;
+				} else if (event.preserve == "lose") {
+					event.preserve = !event.result.bool;
+				}
+				await event.trigger("chooseToCompareAfter");
+				await event.trigger("chooseToCompareEnd");
 			};
 			
 			lib.element.content.chooseToCompareMultiple = function(){
@@ -17704,6 +18113,7 @@ config:{
 				'<br>- 新增座位布局调整开关选项，可调整座位布局（2-8人），即时生效。'+
 				'<br>- 新增折叠手牌开关选项，设置当手牌过多时，是否折叠手牌，即时生效；修复折叠手牌后手牌区可上下移动的bug。'+
 				'<br>- 新增装备栏布局调整开关选项，开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效；显示扩展装备区状态时，同步更新装备栏布局。'+
+				'<br>- 新增可见手牌显示选项，开启后，启用标记显示/边框显示。'+
 				'<br>- 新增手牌数显示修复开关选项，开启后，临时修复手牌数显示无法及时更新的bug（手牌上限显示开启后失效）。'+
 				'<br>- 新增手牌上限显示开关选项，原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可；开启后，游戏内显示的手牌数将改为显示手牌数与手牌上限(例：2/3，代表拥有2张牌，手牌上限为3)。'+
 				'<br>- 新增对话框美化开关选项（因短歌修改技能不全，为使对话框样式统一，并为避免旧代码出bug，设置默认关闭），可自行选用短歌修改的对话框美化，手动重启后生效。<br>① 拼点美化：开启后，启用chooseToCompare函数和chooseToCompareMultiple函数，美化拼点对话框。<br>② 观星美化：开启后，启用chooseToGuanxing函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项。'+
@@ -18249,7 +18659,21 @@ config:{
 	},
 	szn_fenjiexian27:{
 		clear:true,
-		name:"<font size='3'><li>手牌数/上限显示</font>",
+		name:"<font size='3'><li>手牌显示相关设置</font>",
+	},
+	"kjspxs":{
+		"name":"可见手牌显示",
+		"intro":"可自行选用，手动重启后生效<br>①标记：开启后，启用标记显示（有可见的手牌会加个眼睛标记，可点击展示完整手牌信息）<br>②边框：开启后，启用边框显示（在武将左侧显示其可见手牌，可上下滑动查看，还可点击展示完整手牌信息，点击边框关闭，建议在游戏人数较少的情况下开启）",
+		"init":lib.config.kjspxs === undefined ? "biaoji" : lib.config.kjspxs,
+		"item": {
+			"off":"关闭",
+			"biaoji":"标记",
+			"biankuang":"边框",
+		},
+		onclick:function(item){
+			game.saveConfig('extension_十周年UI_kjspxs',item);
+			game.saveConfig('kjspxs',item);
+		},
 	},
 	"szn_shoupaishuxsxf": {
 		name: '手牌数显示修复',

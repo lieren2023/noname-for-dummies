@@ -6487,8 +6487,11 @@ game.import("character", function () {
 			//贾诩
 			rewansha: {
 				audio: "wansha",
-				audioname: ["re_jiaxu", "boss_lvbu3", "new_simayi"],
-				audioname2: { shen_simayi: "jilue_wansha", xin_simayi: "jilue_wansha" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname: ["re_jiaxu", "boss_lvbu3", "new_simayi"],
+				// audioname2: { shen_simayi: "jilue_wansha" },
+				audioname: ["re_jiaxu", "boss_lvbu3"],
+				audioname2: { shen_simayi: "jilue_wansha", new_simayi: "wansha_new_simayi", xin_simayi: "wansha_new_simayi" },
 				global: "rewansha_global",
 				trigger: { global: "dyingBegin" },
 				forced: true,
@@ -15384,7 +15387,9 @@ game.import("character", function () {
 			},
 			rezhiheng: {
 				audio: 2,
-				audioname2: { shen_caopi: "rezhiheng_shen_caopi", xin_simayi: "jilue_zhiheng" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname2: { shen_caopi: "rezhiheng_shen_caopi", new_simayi: "rezhiheng_new_simayi" },
+				audioname2: { shen_caopi: "rezhiheng_shen_caopi", xin_simayi: "rezhiheng_new_simayi" },
 				mod: {
 					aiOrder: function (player, card, num) {
 						if (num <= 0 || get.itemtype(card) !== "card" || get.type(card) !== "equip")
@@ -15480,6 +15485,7 @@ game.import("character", function () {
 					threaten: 1.55,
 				},
 			},
+			rezhiheng_new_simayi: { audio: 1 },
 			reqicai: {
 				mod: {
 					targetInRange: function (card, player, target, now) {
@@ -15495,7 +15501,9 @@ game.import("character", function () {
 			},
 			rejizhi: {
 				audio: 2,
-				audioname2: { lukang: "rejizhi_lukang", xin_simayi: "jilue_jizhi" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname2: { lukang: "rejizhi_lukang", new_simayi: "rejizhi_new_simayi" },
+				audioname2: { lukang: "rejizhi_lukang", xin_simayi: "rejizhi_new_simayi" },
 				locked: false,
 				trigger: { player: "useCard" },
 				frequent: true,
@@ -15555,6 +15563,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			rejizhi_new_simayi: { audio: 1 },
 			rebiyue: {
 				audio: 2,
 				audioname2: { sp_diaochan: "biyue" },
@@ -15902,7 +15911,6 @@ game.import("character", function () {
 			},
 			reguicai: {
 				audio: 2,
-				audioname2: { xin_simayi: "jilue_guicai" },
 				audioname: ["new_simayi"],
 				trigger: { global: "judge" },
 				direct: true,
@@ -18098,8 +18106,7 @@ game.import("character", function () {
 			rezhiheng_info:
 				"出牌阶段限一次，你可以弃置任意张牌并摸等量的牌，若你在发动〖制衡〗时弃置了所有手牌，则你多摸一张牌。",
 			rejiuyuan: "救援",
-			rejiuyuan_info:
-				"主公技，其他吴势力角色对自己使用【桃】时，若其体力值大于你，则其可以选择令你回复1点体力，然后其摸一张牌。",
+			rejiuyuan_info: "主公技，其他吴势力角色于其回合内回复体力时，若其体力值大于等于你，则该角色可以改为令你回复1点体力，然后其摸一张牌。",
 
 			new_yajiao: "涯角",
 			new_yajiao_info:

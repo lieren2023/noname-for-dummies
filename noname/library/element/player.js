@@ -3628,10 +3628,18 @@ export class Player extends HTMLDivElement {
 	 * @param { boolean } [log] false: 不进行广播
 	 */
 	addCharge(num, log) {
-		if (typeof num != "number" || !num) num = 1;
+		if (typeof num != "number" || !num) {
+			num = 1;
+		}
 		let maxCharge = this.getMaxCharge();
-		num = Math.min(num, maxCharge - this.countMark("charge"));
-		if(num > 0) this.addMark("charge", num, log);
+		if (maxCharge == Infinity) {
+			this.addMark("charge", num, log);
+		} else {
+			num = Math.min(num, maxCharge - this.countMark("charge"));
+			if (num > 0) {
+				this.addMark("charge", num, log);
+			}
+		}
 	}
 	/**
 	 * 移去蓄力点
@@ -3649,7 +3657,12 @@ export class Player extends HTMLDivElement {
 	 * @returns { number }
 	 */
 	countCharge(max) {
-		if(max) return this.getMaxCharge() - this.countMark("charge");
+		if (max) {
+			if (this.getMaxCharge() == Infinity) {
+				return Infinity;
+			}
+			return this.getMaxCharge() - this.countMark("charge");
+		}
 		return this.countMark("charge");
 	}
 	/**
@@ -8285,7 +8298,9 @@ export class Player extends HTMLDivElement {
 		if (!nounmark) this.unmarkSkill(skill);
 		this.disableSkill(skill + "_awake", skill);
 		this.awakenedSkills.add(skill);
-		if (!this.storage[skill]) this.storage[skill] = true;
+		if (this.storage[skill] === undefined || this.storage[skill] === false) {
+			this.storage[skill] = true;
+		}
 		_status.event.clearStepCache();
 		return this;
 	}
@@ -9425,6 +9440,9 @@ export class Player extends HTMLDivElement {
 		}
 		return false;
 	}
+	isMine() {
+		return this == game.me && !_status.auto && !this.isMad() && !game.notMe;
+	}
 	isOnline() {
 		if (this.ws && lib.node && !this.ws.closed && this.ws.inited && !this.isAuto) {
 			return true;
@@ -9442,6 +9460,144 @@ export class Player extends HTMLDivElement {
 			return true;
 		}
 		return false;
+	}
+	isMajor() {
+		if (this.identity == "unknown") return false;
+		var list = game.filterPlayer(function (current) {
+			return current.identity != "unknown" && current.hasSkillTag("forceMajor");
+		});
+		if (list.length) {
+			for (var i of list) {
+				if (i.isFriendOf(this)) return true;
+			}
+			return false;
+		}
+		var map = {},
+			sides = [],
+			pmap = _status.connectMode ? lib.playerOL : game.playerMap,
+			player;
+		for (var i of game.players) {
+			if (i.identity == "unknown") continue;
+			var added = false;
+			for (var j of sides) {
+				if (i.isFriendOf(pmap[j])) {
+					added = true;
+					map[j].push(i);
+					if (i == this) player = j;
+					break;
+				}
+			}
+			if (!added) {
+				map[i.playerid] = [i];
+				sides.push(i.playerid);
+				if (i == this) player = i.playerid;
+			}
+		}
+		if (!player || map[player].length < 2) return false;
+		for (var i in map) {
+			if (map[i].length > map[player].length) return false;
+		}
+		return true;
+	}
+	isNotMajor() {
+		for (var i = 0; i < game.players.length; i++) {
+			if (game.players[i].isMajor()) {
+				return !this.isMajor();
+			}
+		}
+		return false;
+	}
+	isMinor(nomajor) {
+		if (this.identity == "unknown" || (!nomajor && this.isMajor())) return false;
+		if (
+			!nomajor &&
+			!game.hasPlayer(function (current) {
+				return current.isMajor();
+			})
+		) {
+			return false;
+		}
+		var map = {},
+			sides = [],
+			pmap = _status.connectMode ? lib.playerOL : game.playerMap,
+			player;
+		for (var i of game.players) {
+			if (i.identity == "unknown") continue;
+			var added = false;
+			for (var j of sides) {
+				if (i.isFriendOf(pmap[j])) {
+					added = true;
+					map[j].push(i);
+					if (i == this) player = j;
+					break;
+				}
+			}
+			if (!added) {
+				map[i.playerid] = [i];
+				sides.push(i.playerid);
+				if (i == this) player = i.playerid;
+			}
+		}
+		for (var i in map) {
+			if (map[i].length < map[player].length) return false;
+		}
+		return true;
+	}
+	siege(player) {
+		if (this.identity == "unknown" || this.hasSkill("undist")) return false;
+		if (!player) {
+			var next = this.getNext();
+			if (next && next.sieged()) return true;
+			var previous = this.getPrevious();
+			if (previous && previous.sieged()) return true;
+			return false;
+		} else {
+			return player.sieged() && (player.getNext() == this || player.getPrevious() == this);
+		}
+	}
+	sieged(player) {
+		if (this.identity == "unknown") return false;
+		if (player) {
+			return player.siege(this);
+		} else {
+			var next = this.getNext();
+			var previous = this.getPrevious();
+			if (next && previous && next != previous) {
+				if (next.identity == "unknown" || next.isFriendOf(this)) return false;
+				return next.isFriendOf(previous);
+			}
+			return false;
+		}
+	}
+	inline() {
+		if (this.identity == "unknown" || this.identity == "ye" || this.hasSkill("undist"))
+			return false;
+		var next = this,
+			previous = this;
+		var list = [];
+		for (var i = 0; next || previous; i++) {
+			if (next) {
+				next = next.getNext();
+				if (!next.isFriendOf(this) || next == this) {
+					next = null;
+				} else {
+					list.add(next);
+				}
+			}
+			if (previous) {
+				previous = previous.getPrevious();
+				if (!previous.isFriendOf(this) || previous == this) {
+					previous = null;
+				} else {
+					list.add(previous);
+				}
+			}
+		}
+		if (!list.length) return false;
+		for (var i = 0; i < arguments.length; i++) {
+			if (!list.includes(arguments[i]) && arguments[i] != this) return false;
+		}
+		return true;
 	}
 	checkShow(skill, showonly) {
 		var sourceSkill = get.info(skill);

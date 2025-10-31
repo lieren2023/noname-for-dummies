@@ -469,6 +469,11 @@ game.import("character", function () {
 				},
 				derivation: ["sbwansha_rewrite", "sbweimu_rewrite"],
 			},
+			sbwansha_rewrite: { nopop: true },
+			sbweimu_rewrite: {
+				locked: true,
+				nopop: true,
+			},
 			sbweimu: {
 				audio: 4,
 				trigger: {
@@ -1486,7 +1491,7 @@ game.import("character", function () {
 								lose_list.forEach((list) => list[0].unprompt());
 							}, lose_list);
 							resolve();
-						}, 2000 / (lib.config.speed == "vvfast" ? 3 : 1));
+						}, 2000 / (lib.config.game_speed == "vvfast" ? 3 : 1));
 					});
 					if (isMin) {
 						await mostPlayer.gain(myCards, "give", player);
@@ -5253,6 +5258,7 @@ game.import("character", function () {
 				audio: 2,
 				forced: true,
 				direct: true,
+				locked: true,
 				trigger: { player: "phaseZhunbeiBegin" },
 				filter: function (event, player) {
 					return game.hasPlayer((current) => current.hasMark("sbxuanhuo_mark"));
@@ -6738,11 +6744,7 @@ game.import("character", function () {
 						target: function (player, target) {
 							if (
 								game.hasPlayer((current) => {
-									return (
-										get.rawAttitude(player, current) > 0 &&
-										current != player &&
-										get.attitude(player, current) <= 0
-									);
+									return (!get.rawAttitude || get.rawAttitude(player, current) > 0) && current != player && get.attitude(player, current) <= 0;
 								}) &&
 								game.countPlayer((current) => {
 									return get.attitude(player, current) > 0;

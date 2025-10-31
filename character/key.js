@@ -1642,6 +1642,7 @@ game.import("character", function () {
 				discard: false,
 				lose: false,
 				delay: false,
+				locked: true,
 				promptfunc: () =>
 					"出牌阶段，你可以赠予一张“米券”，然后执行一项本回合内未被选择过的效果：⒈对其造成1点伤害；⒉摸两张牌；⒊弃置其的两张牌；⒋亮出牌堆顶的一张牌，然后你可以使用之。",
 				check: (card) => {
@@ -3123,6 +3124,7 @@ game.import("character", function () {
 						.set("ai", (serafu) => get.attitude(_status.event.player, serafu))
 						.forResult();
 				},
+				groupSkill: "key",
 				content() {
 					targets.sortBySeat();
 					game.asyncDraw(targets);
@@ -3192,6 +3194,7 @@ game.import("character", function () {
 						}
 					}
 				},
+				groupSkill: "shu",
 				async content(event, trigger, player) {
 					const result = event.cost_data;
 					if (result.type === "addSkill") {
@@ -3368,6 +3371,7 @@ game.import("character", function () {
 					player: "enterGame",
 				},
 				forced: true,
+				locked: false,
 				dutySkill: true,
 				derivation: "mia_fengfa",
 				filter(event, player) {
@@ -4957,6 +4961,7 @@ game.import("character", function () {
 			},
 			misuzu_zhongyuan: {
 				trigger: { player: "judge" },
+				limited: true,
 				skillAnimation: true,
 				animationColor: "key",
 				logTarget: "player",
@@ -8590,6 +8595,7 @@ game.import("character", function () {
 				},
 			},
 			kyoko_zhengyi: {
+				locked: true,
 				group: ["kyoko_jingce", "kyoko_shelie", "kyoko_zhiheng"],
 				count(player) {
 					var list = [];
@@ -10890,8 +10896,8 @@ game.import("character", function () {
 			saya_powei: {
 				audio: 2,
 				trigger: { player: "phaseAfter" },
-				locked: true,
 				limited: true,
+				locked: false,
 				unique: true,
 				skillAnimation: true,
 				animationColor: "metal",
@@ -12931,8 +12937,7 @@ game.import("character", function () {
 			rin_baoqiu_info:
 				"锁定技，你的攻击范围+2。当你使用【杀】指定目标后，你进行判定。若结果：为红色，此【杀】对其的伤害值基数+1；为黑色，其无法闪避此【杀】；为♠/♥，此【杀】不计入使用次数限制且你摸一张牌；为♦/♣，目标角色的所有非锁定技失效直到回合结束，且你弃置其一张牌。",
 			sasami_miaobian: "喵变",
-			sasami_miaobian_info:
-				"当你的体力值变为：3以下时，你获得技能〖公清〗，2以下时，你获得技能〖复难〗，1以下时，你获得技能〖暴球〗。",
+			sasami_miaobian_info: "锁定技，当你的体力值变为：3以下时，你获得技能〖公清〗，2以下时，你获得技能〖复难〗，1以下时，你获得技能〖暴球〗。",
 			sasami_gongqing: "公清",
 			sasami_gongqing_info:
 				"锁定技。当你受到伤害时，若伤害来源的攻击范围：<3，则你令此伤害的数值减为1。>3，你令此伤害+1。",

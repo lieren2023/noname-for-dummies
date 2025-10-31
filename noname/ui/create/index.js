@@ -1818,6 +1818,10 @@ export class Create {
 					if (key.indexOf("mode_extension") != 0) return false;
 					const extName = key.slice(15);
 					//if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+					
+					// 修复诸神降临扩展开启后的两个武将包无法在自由选将筛选里显示的bug
+					if((!(lib.config.mode=='versus'&&get.config('versus_mode')=='jiange')&&extName=='jiange')||(lib.config.mode!='boss'&&extName=='boss'))return true;
+					
 					return (
 						lib.config[`extension_${extName}_characters_enable`] ===
 						true

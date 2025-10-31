@@ -60,7 +60,7 @@ game.import("character", function () {
 			jin_guohuai: ["female", "jin", 3, ["zhefu", "yidu"]],
 			xiahouxuan: ["male", "wei", 3, ["olhuanfu", "olqingyi", "olzeyue"]],
 			dengzhong: ["male", "wei", 4, ["dzkanpo", "dzgengzhan"]],
-			wangyan: ["male", "jin", 4, ["yangkuang", "cihuang", "sanku"]],
+			wangyan: ["male", "qun", 4, ["yangkuang", "cihuang", "sanku"], ["border:jin"]],
 			huojun: ["male", "shu", 4, ["qiongshou", "fenrui"]],
 			caoxiancaohua: ["female", "qun", 3, ["huamu", "qianmeng", "liangyuan", "jisi"]],
 			zhaoyǎn: ["male", "wei", 4, ["tongxie"]],
@@ -2072,7 +2072,9 @@ game.import("character", function () {
 							return player.getExpansions("olxvfa").length;
 						});
 						dialog.add([list, "textbutton"]);
-						if (list.length == 1) dialog.direct = true;
+						// 临时修改（by 棘手怀念摧毁）
+						if (list.length == 1 && lib.device) dialog.direct = true;
+						// if (list.length == 1) dialog.direct = true;
 						return dialog;
 					},
 					filter(button, player) {
@@ -19571,6 +19573,7 @@ game.import("character", function () {
 			},
 			//统率三军诸葛瑾和文聘
 			zhenwei_three: {
+				locked: true,
 				global: "zhenwei_three_others",
 				subSkill: {
 					others: {
@@ -20788,7 +20791,7 @@ game.import("character", function () {
 				silent: true,
 				sourceSkill: "xianfu",
 				filter: function (event, player) {
-					return event.player == player || (player.storage.xianfu2 && player.storage.xianfu2.includes(player));
+					return event.player == player || (player.storage.xianfu2 && player.storage.xianfu2.includes(event.player));
 				},
 				content: function () {
 					if (player == trigger.player) lib.skill.xianfu2.onremove(player);
@@ -24836,6 +24839,7 @@ game.import("character", function () {
 				},
 			},
 			luoyan: {
+				locked: true,
 				group: ["luoyan_tianxiang", "luoyan_liuli"],
 				derivation: ["tianxiang", "liuli"],
 				ai: {

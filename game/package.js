@@ -7,13 +7,13 @@ window.noname_package = {
 		yijiang: "一将成名",
 		refresh: "界限突破",
 		extra: "神将",
-		//OL服
+		//OL服（老服）
 		onlyOL: "OL专属",
 		sbfm: "上兵伐谋",
 		sp: "璀璨星河",
 		clan: "门阀士族",
 		yingbian: "文德武备",
-		//十周年服
+		//新服
 		xinghuoliaoyuan: "星火燎原",
 		mdtx: "谋定天下",
 		huicui: "群英荟萃",
@@ -27,6 +27,7 @@ window.noname_package = {
 		//线下系列
 		offline: "线下武将",
 		jsrg: "江山如故",
+		sxrm: "蚀心入魔",
 		sixiang: "四象封印",
 		//各服联动+特殊武将+怀旧
 		collab: "联动卡",

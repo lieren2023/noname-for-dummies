@@ -359,7 +359,7 @@ export class Card extends HTMLDivElement {
 		this.classList.remove("fullborder");
 		this.dataset.cardName = card[2];
 		this.dataset.cardType = info.type || "";
-		this.dataset.cardSubype = info.subtype || "";
+		this.dataset.cardSubtype = info.subtype || "";
 		this.dataset.cardMultitarget = info.multitarget ? "1" : "0";
 		this.node.name.dataset.nature = "";
 		this.node.info.classList.remove("red");

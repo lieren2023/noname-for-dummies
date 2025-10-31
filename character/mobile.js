@@ -9,13 +9,13 @@ game.import("character", function () {
 		character: {
 			mb_sp_zhenji: ["female", "qun", 3, ["mbbojian", "mbjiwei"]],
 			mb_zhangfen: ["male", "wu", 4, ["mbquchong", "mbxunjie"]],
-			mb_jiachong: ["male", "qun", 3, ["mbbeini", "mbdingfa"], ["die_audio:jiachong"]],
-			mb_simazhou: ["male", "wei", 4, ["mbbifeng", "mbsuwang"]],
+			mb_jiachong: ["male", "qun", 3, ["mbbeini", "mbdingfa"], ["die_audio:jiachong", "border:jin"]],
+			mb_simazhou: ["male", "wei", 4, ["mbbifeng", "mbsuwang"], ["border:jin"]],
 			mb_wenqin: ["male", "wei", 4, ["mbbeiming", "mbchoumang"]],
-			mb_simafu: ["male", "wei", 3, ["mbpanxiang", "mbchenjie"]],
+			mb_simafu: ["male", "wei", 3, ["mbpanxiang", "mbchenjie"], ["border:jin"]],
 			mb_sp_guanqiujian: ["male", "wei", 4, ["mbcuizhen", "mbkuili"]],
 			mb_caomao: ["male", "wei", 3, ["mbqianlong", "mbweitong"], ["zhu"]],
-			chengji: ["male", "wei", 4, ["mbkuangli", "mbxiongsi"]],
+			chengji: ["male", "wei", 4, ["mbkuangli", "mbxiongsi"], ["border:jin"]],
 			lizhaojiaobo: ["male", "wei", 4, ["mbzuoyou", "mbshishou"]],
 			yangfeng: ["male", "qun", 4, ["mbxuetu", "mbweiming"]],
 			xin_huojun: ["male", "shu", 4, ["sidai", "jieyu"], ["character:tw_huojun", "die_audio:tw_huojun"]],
@@ -46,7 +46,7 @@ game.import("character", function () {
 			xin_caoxiu: ["male", "wei", 4, ["qianju", "xinqingxi"]],
 			xin_zhuhuan: ["male", "wu", 4, ["fenli", "xinpingkou"]],
 			sp_pengyang: ["male", "shu", 3, ["spdaming", "spxiaoni"]],
-			wangjun: ["male", "qun", 4, ["zhujian", "duansuo"]],
+			wangjun: ["male", "qun", 4, ["zhujian", "duansuo"], ["border:jin"]],
 			xin_zhuzhi: ["male", "wu", 4, ["sbanguo"]],
 			xin_wuyi: ["male", "shu", 4, ["sbbenxi"]],
 			yangfu: ["male", "wei", 3, ["jiebing", "hannan"]],
@@ -61,7 +61,7 @@ game.import("character", function () {
 			re_bulianshi: ["female", "wu", 3, ["reanxu", "zhuiyi"]],
 			re_caiwenji: ["female", "qun", 3, ["rebeige", "duanchang"]],
 			sp_jianggan: ["male", "wei", 3, ["mbdaoshu", "spdaizui"]],
-			peixiu: ["male", "qun", 3, ["xingtu", "juezhi"]],
+			peixiu: ["male", "qun", 3, ["xingtu", "juezhi"], ["border:jin"]],
 			re_gaoshun: ["male", "qun", 4, ["rexianzhen", "rejinjiu"]],
 			re_wuguotai: ["female", "wu", 3, ["reganlu", "buyi"]],
 			xin_sunxiu: ["male", "wu", 3, ["mobileyanzhu", "mobilexingxue", "zhaofu"], ["zhu"]],
@@ -96,8 +96,8 @@ game.import("character", function () {
 			hucheer: ["male", "qun", 4, ["daoji"]],
 			re_lingtong: ["male", "wu", 4, ["rexuanfeng"]],
 			re_liubiao: ["male", "qun", 3, ["zishou", "rezongshi"]],
-			simashi: ["male", "wei", 4, ["baiyi", "jinglve", "shanli"]],
-			yanghuiyu: ["female", "wei", 3, ["hongyi", "requanfeng"]],
+			simashi: ["male", "wei", 4, ["baiyi", "jinglve", "shanli"], ["border:jin"]],
+			yanghuiyu: ["female", "wei", 3, ["hongyi", "requanfeng"], ["border:jin"]],
 			xin_zhuran: ["male", "wu", 4, ["mobiledanshou"]],
 			xin_gongsunzan: ["male", "qun", 4, ["xinyicong", "qiaomeng"], ["die_audio:gongsunzan"]],
 			dingyuan: ["male", "qun", 4, ["beizhu"]],
@@ -138,8 +138,8 @@ game.import("character", function () {
 			liuye: ["male", "wei", 3, ["polu", "choulve"]],
 			zhaotongzhaoguang: ["male", "shu", 4, ["yizan_use", "xinfu_longyuan"]],
 			majun: ["male", "wei", 3, ["xinfu_jingxie1", "qiaosi"]],
-			simazhao: ["male", "wei", 3, ["xinfu_daigong", "xinfu_zhaoxin"]],
-			wangyuanji: ["female", "wei", 3, ["xinfu_qianchong", "xinfu_shangjian"]],
+			simazhao: ["male", "wei", 3, ["xinfu_daigong", "xinfu_zhaoxin"], ["border:jin"]],
+			wangyuanji: ["female", "wei", 3, ["xinfu_qianchong", "xinfu_shangjian"], ["border:jin"]],
 			pangdegong: ["male", "qun", 3, ["xinfu_pingcai", "xinfu_pdgyingshi"]],
 			old_yuanshu: ["male", "qun", 4, ["xinyongsi", "yjixi"]],
 			zhangbu: ["male", "wu", 4, ["mbchengxiong", "mbwangzhuang"]],
@@ -1295,17 +1295,15 @@ game.import("character", function () {
 			//张布
 			mbchengxiong: {
 				audio: 2,
-				trigger: {
-					player: "useCardToTargeted",
-				},
-				locked: false,
-				filter: function (event, player) {
-					if (get.type2(event.card) != "trick") return false;
-					if (!event.targets.some(current => current != player)) return false;
+				trigger: { player: "useCardToTargeted" },
+				filter(event, player) {
+					if (get.type2(event.card) !== "trick" || !event.isFirstTarget || event.targets.includes(player)) {
+						return false;
+					}
 					const num = lib.skill.mbchengxiong.phaseUsed(event, player);
-					return game.hasPlayer(current => current.countCards("he") >= num);
+					return game.hasPlayer(current => current !== player && current.countCards("he") >= num);
 				},
-				phaseUsed: function (event, player) {
+				phaseUsed(event, player) {
 					let phase = null;
 					for (let i of lib.phaseName) {
 						if (event.getParent(i, true)) {
@@ -1313,52 +1311,77 @@ game.import("character", function () {
 							break;
 						}
 					}
-					if (!phase) return 0;
+					if (!phase) {
+						return 0;
+					}
 					return player.getHistory("useCard", evt => evt.getParent(phase) == event.getParent(phase)).length;
 				},
 				async cost(event, trigger, player) {
 					const num = lib.skill.mbchengxiong.phaseUsed(trigger, player);
-					event.result = await player.chooseTarget(get.prompt2("mbchengxiong"), function (card, player, target) {
-						const num = get.event("num");
-						return target.countCards("he") >= num;
-					}).set("num", num).set("color", get.color(trigger.card)).set("ai", function (target) {
-						let player = get.player(), eff = get.effect(target, { name: "guohe_copy2" }, player, player);
-						const color = get.event("color");
-						if (target.getCards("e").some(card => get.color(card) == color)) eff += get.damageEffect(target, player, player) / 2;
-						return eff;
-					}).forResult();
+					event.result = await player
+						.chooseTarget(get.prompt2(event.skill), function (card, player, target) {
+							const num = get.event("num");
+							return target !== player && target.countCards("he") >= num;
+						})
+						.set("num", num)
+						.set("color", get.color(trigger.card))
+						.set("ai", function (target) {
+							let player = get.player(),
+								eff = get.effect(target, { name: "guohe_copy2" }, player, player);
+							const color = get.event("color");
+							if (target.getCards("e").some(card => get.color(card) == color)) {
+								eff += get.damageEffect(target, player, player) / 2;
+							}
+							return eff;
+						})
+						.forResult();
 				},
 				async content(event, trigger, player) {
 					const target = event.targets[0];
-					const result = await player.discardPlayerCard("he", target, true).set("ai", function (button) {
-						let val = get.buttonValue(button);
-						if (get.attitude(_status.event.player, get.owner(button.link)) > 0) val *= -1;
-						if (get.position(button.link) == "e" && get.color(button.link) == get.event("color")) return val *= 2;
-						return val;
-					}).set("color", get.color(trigger.card)).forResult();
-					if (result.bool && get.color(result.links[0]) == get.color(trigger.card)) await target.damage();
+					const result = await player
+						.discardPlayerCard("he", target, true)
+						.set("ai", function (button) {
+							let val = get.buttonValue(button);
+							if (get.attitude(_status.event.player, get.owner(button.link)) > 0) {
+								val *= -1;
+							}
+							if (get.position(button.link) == "e" && get.color(button.link) == get.event("color")) {
+								return (val *= 2);
+							}
+							return val;
+						})
+						.set("color", get.color(trigger.card))
+						.forResult();
+					if (result?.bool && get.color(result.links[0]) == get.color(trigger.card)) {
+						await target.damage();
+					}
 				},
+				locked: false,
 				mod: {
-					aiOrder: function (player, card, num) {
-						if (get.type2(card) == "trick") return num + 10;
+					aiOrder(player, card, num) {
+						if (get.type2(card) == "trick") {
+							return num + 10;
+						}
 					},
 				},
 			},
 			mbwangzhuang: {
 				audio: 2,
-				trigger: {
-					global: "damageEnd",
-				},
-				filter: function (event, player) {
-					if (event.card) return false;
+				trigger: { global: "damageEnd" },
+				filter(event, player) {
+					if (event.card) {
+						return false;
+					}
 					return [event.source, event.player].includes(player);
 				},
-				logTarget: function (event, player) {
+				logTarget(event, player) {
 					return _status.currentPhase || player;
 				},
 				async content(event, trigger, player) {
-					await player.draw(2);
-					if (_status.currentPhase) _status.currentPhase.addTempSkill("fengyin");
+					await player.draw();
+					if (_status.currentPhase) {
+						_status.currentPhase.addTempSkill("fengyin");
+					}
 				},
 			},
 			//王经
@@ -1581,7 +1604,7 @@ game.import("character", function () {
 			mbpanxiang: {
 				audio: 4,
 				trigger: {
-					global: "damageBegin3",	
+					global: "damageBegin3",
 				},
 				async cost(event, trigger, player) {
 					const { player: target, source, card } = trigger;
@@ -2121,6 +2144,7 @@ game.import("character", function () {
 					player: "mbqianlong_beginBegin",
 				},
 				forced: true,
+				locked: false,
 				content() {},
 				ai: {
 					combo: "mbqianlong",
@@ -2581,7 +2605,7 @@ game.import("character", function () {
 					return true;
 				},
 				zhuanhuanji2(skill, player) {
-					return player && player.countMark("mbxuetu_status") !== 1;
+					return !player || player.countMark("mbxuetu_status") !== 1;
 				},
 				position: "he",
 				onremove: ["mbxuetu", "mbxuetu_status"],
@@ -20340,7 +20364,8 @@ game.import("character", function () {
 			sidai_info: "限定技，出牌阶段，你可以将手牌区内的所有基本牌当做【杀】使用。若此牌对应的实体牌中：包含【闪】，则目标角色成为此牌的目标后，需弃置一张基本牌，否则不可响应此牌；包含【桃】，则当目标角色受到此牌的伤害后，其减1点体力上限。",
 			jieyu: "竭御",
 			jieyu_info: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",
-			//jieyu_info_identity: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",			yangfeng: "杨奉",
+			// jieyu_info_identity: "结束阶段，你可以从弃牌堆中获得共X张不同牌名的基本牌（X为3-你上次发动〖竭御〗至今你成为其他角色使用伤害类卡牌目标的次数，且X至少为1）。",
+			yangfeng: "杨奉",
 			mbxuetu: "血途",
 			mbxuetu_info: "转换技。出牌阶段限一次，阴：你可以令一名角色回复1点体力；阳：你可以令一名角色摸两张牌。",
 			mbxuetu_achieve: "血途·成功",
@@ -20388,9 +20413,9 @@ game.import("character", function () {
 			mbchenjie_info: "锁定技。当一名角色死亡后，若你有〖蹒襄〗且其成为过你〖蹒襄〗的目标，你弃置区域里的所有牌，摸四张牌。",
 			zhangbu: "张布",
 			mbchengxiong: "惩凶",
-			mbchengxiong_info: "你使用锦囊牌指定其他角色为目标后，可选择一名牌数不小于X的角色，弃置其一张牌（X为你此阶段使用的牌数）。若此牌颜色与你使用的锦囊牌相同，你对其造成1点伤害。",
+			mbchengxiong_info: "你使用锦囊牌仅指定其他角色为目标后，可选择一名牌数不小于X的其他角色，弃置其一张牌（X为你此阶段使用的牌数）。若此牌颜色与你使用的锦囊牌相同，你对其造成1点伤害。",
 			mbwangzhuang: "妄专",
-			mbwangzhuang_info: "一名角色受到非牌造成的伤害后，若你是伤害来源或受伤角色，你可以摸两张牌，令当前回合角色本回合非锁定技失效。",
+			mbwangzhuang_info: "一名角色受到非牌造成的伤害后，若你是伤害来源或受伤角色，你可以摸一张牌，令当前回合角色本回合非锁定技失效。",
 			mb_wangjing: "王经",
 			mbzujin: "阻进",
 			mbzujin_info: "每回合每种牌名限一次，若你未受伤或体力值不为最低，你可将一张基本牌当作【杀】使用或打出；若你已受伤，你可将一张基本牌当作【闪】或【无懈可击】使用或打出。",

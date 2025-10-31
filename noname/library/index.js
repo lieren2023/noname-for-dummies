@@ -113,14 +113,17 @@ export class Library {
 	ondb2 = [];
 	chatHistory = [];
 	emotionList = {
+		huangdou_emotion: 50,
 		xiaowu_emotion: 14,
 		xiaokuo_emotion: 8,
 		shibing_emotion: 15,
+		wanglang_emotion: 20,
 		guojia_emotion: 20,
 		zhenji_emotion: 20,
 		xiaosha_emotion: 20,
 		xiaotao_emotion: 20,
 		xiaojiu_emotion: 20,
+		mobile_emotion: 15,
 	};
 	animate = {
 		skill: {},
@@ -10038,6 +10041,7 @@ export class Library {
 		_disableJudge: "判定区",
 
 		xiaowu_emotion: "小无表情",
+		wanglang_emotion: "王朗表情",
 		guojia_emotion: "郭嘉表情",
 		zhenji_emotion: "甄姬表情",
 		shibing_emotion: "士兵表情",
@@ -10045,6 +10049,8 @@ export class Library {
 		xiaotao_emotion: "小桃表情",
 		xiaojiu_emotion: "小酒表情",
 		xiaokuo_emotion: "小扩表情",
+		huangdou_emotion: "黄豆表情",
+		mobile_emotion: "手杀表情",
 
 		pause: "暂停",
 		config: "选项",
@@ -11437,7 +11443,10 @@ export class Library {
 			markimage: "image/card/charge.png",
 			intro: {
 				content(storage, player) {
-					const max = player.getMaxCharge();
+					let max = player.getMaxCharge();
+					if (max == Infinity) {
+						max = "∞";
+					}
 					return `当前蓄力点数：${storage}/${max}`;
 				},
 			},
@@ -14219,6 +14228,13 @@ export class Library {
 			},
 		],
 		[
+			"慢",
+			{
+				color: "#5a6968",
+				nature: "graymm",
+			},
+		],
+		[
 			"用间",
 			{
 				color: "#c3f9ff",
@@ -14945,8 +14961,40 @@ export class Library {
 				nature: "firemm",
 			},
 		],
+		[
+			"26",
+			{
+				getSpan: () => {
+					const span = document.createElement("span"),
+						style = span.style;
+					style.writingMode = style.webkitWritingMode = "horizontal-tb";
+					style.fontFamily = "MotoyaLMaru";
+					style.transform = "scaleY(0.85)";
+					span.textContent = "26";
+					return span.outerHTML;
+				},
+			},
+		],
 		
 		// 补充by棘手怀念摧毁
+		[
+			"极略神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"应天神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("神")}`,
+			},
+		],
 		[
 			"少阴",
 			{

@@ -5573,9 +5573,9 @@ game.import("character", function () {
 			},
 			fangzhu: {
 				audio: 2,
-				audioname2: {
-					xin_simayi: "jilue_fangzhu",
-				},
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname2: { new_simayi: "fangzhu_new_simayi" },
+				audioname2: { xin_simayi: "fangzhu_new_simayi" },
 				trigger: { player: "damageEnd" },
 				direct: true,
 				preHidden: true,
@@ -5659,6 +5659,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			fangzhu_new_simayi: { audio: 1 },
 			songwei: {
 				unique: true,
 				group: "songwei2",
@@ -6372,8 +6373,11 @@ game.import("character", function () {
 			wansha: {
 				locked: true,
 				audio: 2,
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname: ["boss_lvbu3", "new_simayi"],
+				// audioname2: { shen_simayi: "jilue_wansha" },
 				audioname: ["boss_lvbu3"],
-				audioname2: { shen_simayi: "jilue_wansha", xin_simayi: "jilue_wansha" },
+				audioname2: { shen_simayi: "jilue_wansha", new_simayi: "wansha_new_simayi", xin_simayi: "wansha_new_simayi" },
 				global: "wansha2",
 				trigger: { global: "dying" },
 				priority: 15,
@@ -6410,6 +6414,8 @@ game.import("character", function () {
 					},
 				},
 			},
+			// 临时修改（by 棘手怀念摧毁）
+			wansha_new_simayi: { audio: 2 },
 			weimu: {
 				trigger: { global: "useCard1" },
 				audio: 2,
@@ -7443,7 +7449,18 @@ game.import("character", function () {
 				audioname2: {
 					dc_xiahouba: "shensu1_xiahouba",
 				},
-				group: ["shensu1", "shensu2", "shensu4"],
+				group: ["xinshensu_1", "xinshensu_2", "shensu4"],
+				subSkill: {
+					1: {
+						audio: "shensu1",
+						inherit: "shensu1",
+						sourceSkill: "xinshensu",
+					},
+					2: {
+						inherit: "shensu2",
+						sourceSkill: "xinshensu",
+					},
+				},
 			},
 			shensu1_xiahouba: { audio: 2 },
 			shensu1: {
@@ -7471,10 +7488,12 @@ game.import("character", function () {
 							if (!_status.event.check) return 0;
 							return get.effect(target, { name: "sha" }, _status.event.player);
 						})
-						.setHiddenSkill("shensu1");
+						// 临时修改（by 棘手怀念摧毁）
+						.setHiddenSkill(get.sourceSkillFor(event.name));
 					"step 1";
 					if (result.bool) {
-						player.logSkill("shensu1", result.targets);
+						// 临时修改（by 棘手怀念摧毁），修复国战不亮将的bug
+						player.logSkill(get.sourceSkillFor(event.name), result.targets);
 						player.useCard({ name: "sha", isCard: true }, result.targets[0], false);
 						trigger.cancel();
 						player.skip("phaseDraw");
@@ -7526,10 +7545,12 @@ game.import("character", function () {
 								}) >
 								player.hp - 1,
 						})
-						.setHiddenSkill("shensu2");
+						// 临时修改（by 棘手怀念摧毁）
+						.setHiddenSkill(get.sourceSkillFor(event.name));
 					"step 1";
 					if (result.bool) {
-						player.logSkill("shensu2", result.targets);
+						// 临时修改（by 棘手怀念摧毁），修复国战不亮将的bug
+						player.logSkill(get.sourceSkillFor(event.name), result.targets);
 						player.discard(result.cards[0]);
 						player.useCard({ name: "sha", isCard: true }, result.targets[0], false);
 						trigger.cancel();
@@ -7544,7 +7565,7 @@ game.import("character", function () {
 				},
 				trigger: { player: "phaseDiscardBefore" },
 				direct: true,
-				sourceSkill: "shensu",
+				sourceSkill: "xinshensu",
 				content() {
 					"step 0";
 					var check =

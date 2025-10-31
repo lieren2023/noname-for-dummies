@@ -20,7 +20,7 @@ game.import("character", function () {
 			scl_pangdegong: ["male", "qun", 3, ["scls_yinshi", "scls_pingcai"], ["character:pangdegong", "die_audio:pangdegong"]],
 			scl_sunhanhua: ["female", "wu", 3, ["scls_chongxu", "scls_miaojian", "scls_lianhua"], ["character:sunhanhua", "die_audio:sunhanhua"]],
 			scl_miheng: ["male", "qun", 3, ["scls_kuangcai", "scls_shejian"], ["character:miheng", "die_audio:miheng"]],
-			scl_peixiu: ["male", "qun", 3, ["xingtu", "scls_juezhi"], ["character:peixiu", "die_audio:peixiu"]],
+			scl_peixiu: ["male", "qun", 3, ["xingtu", "scls_juezhi"], ["character:peixiu", "die_audio:peixiu", "border:jin"]],
 			scl_caoying: ["female", "wei", 4, ["scls_lingren"], ["character:caoying", "die_audio:caoying"]],
 			scl_luotong: ["male", "wu", 4, ["scls_qinzheng"], ["character:luotong", "die_audio:luotong"]],
 			ty_anyingx: ["male", "qun", 4, ["tyzhuiling", "tyxihun", "tyxianqi", "tyfansheng"], ["name:null|null"]],
@@ -102,7 +102,7 @@ game.import("character", function () {
 			jiling: ["male", "qun", 4, ["shuangren"]],
 			kongrong: ["male", "qun", 3, ["zymingshi", "lirang"]],
 			jiangqing: ["male", "wu", 4, ["zyshangyi"]],
-			pk_sp_duyu: ["male", "qun", 4, ["pkwuku", "pksanchen"]],
+			pk_sp_duyu: ["male", "qun", 4, ["pkwuku", "pksanchen"], ["border:jin"]],
 			ps_lvbu: ["male", "qun", 4, ["wushuang", "pssheji"]],
 			ps_jiaxu: ["male", "qun", 4, ["wansha", "psqupo", "psbaoquan"]],
 			ps_machao: ["male", "shu", 4, ["mashu", "tieji", "psweihou"]],
@@ -121,7 +121,7 @@ game.import("character", function () {
 			ps2070_guojia: ["male", "wei", 3, ["yiji", "psquanmou"]],
 			ps_guanyu: ["male", "shu", 4, ["wusheng", "pszhonghun", "nuzhan"]],
 			pe_wenqin: ["male", "wei", 4, ["gzjinfa"]],
-			pe_sunchen: ["male", "wu", 4, ["zyshilu", "zyxiongnve"]],
+			pe_sunchen: ["male", "wu", 4, ["zyshilu", "zyxiongnve"], ["die_audio:gz_sunchen"]],
 			pe_mengda: ["male", "wei", 4, ["qiuan", "liangfan"]],
 			pe_zhonghui: ["male", "wei", 4, ["zyquanji", "zypaiyi"], ["clan:颍川钟氏"]],
 			pe_wangyun: ["male", "qun", 3, ["zylianji", "zymoucheng"], ["clan:太原王氏"]],
@@ -147,8 +147,8 @@ game.import("character", function () {
 			jsp_zhaoyun: ["male", "qun", 3, ["chixin", "reyicong", "suiren"]],
 			sp_xiahoushi: ["female", "shu", 3, ["xinfu_yanyu", "xinfu_xiaode"]],
 			sp_gongsunzan: ["male", "qun", 4, ["spyicong", "sptuji"]],
-			sp_simazhao: ["male", "wei", 3, ["spzhaoxin", "splanggu"]],
-			sp_wangyuanji: ["female", "wei", 3, ["spfuluan", "spshude"]],
+			sp_simazhao: ["male", "wei", 3, ["spzhaoxin", "splanggu"], ["border:jin"]],
+			sp_wangyuanji: ["female", "wei", 3, ["spfuluan", "spshude"], ["border:jin"]],
 			sp_xinxianying: ["female", "wei", 3, ["spmingjian", "spyinzhi"]],
 			sp_liuxie: ["male", "qun", 3, ["sphuangen", "sphantong"]],
 			ns_lijue: ["male", "qun", "4/6", ["nsfeixiong", "nscesuan"]],
@@ -770,7 +770,7 @@ game.import("character", function () {
 					return event.card.name == "sha";
 				},
 				check(event, player) {
-					return get.attitude(player, event.target) < 0 || event.targets.some(i => get.attitude(player, target) < 0);
+					return get.attitude(player, event.target) < 0 || event.targets.some(i => get.attitude(player, i) < 0);
 				},
 				logTarget: "target",
 				content() {
@@ -969,6 +969,7 @@ game.import("character", function () {
 				},
 			},
 			yylinzhen: {
+				locked: true,
 				zhuSkill: true,
 				global: "yylinzhen_global",
 				subSkill: {
@@ -5179,6 +5180,9 @@ game.import("character", function () {
 								"草诏：请选择一个基本牌或锦囊牌",
 								[
 									lib.inpile.filter(i => {
+										if (!["basic", "trick"].includes(get.type(i))) {
+											return false;
+										}
 										return !player.getStorage("jdcaozhao").includes(i);
 									}),
 									"vcard",
@@ -17478,7 +17482,7 @@ game.import("character", function () {
 			jdsbtongye: "统业",
 			jdsbtongye_info: "锁定技，若牌堆未洗过牌，你视为拥有〖英姿〗和〖固政〗。",
 			jdsbjiuyuan: "救援",
-			jdsbjiuyuan_info: "出牌阶段限一次，你可以获得一名其他吴势力角色装备区的所有牌，然后你回复1点体力。",
+			jdsbjiuyuan_info: "主公技，出牌阶段限一次，你可以获得一名其他吴势力角色装备区的所有牌，然后你回复1点体力。",
 			jd_sb_xiaoqiao: "九鼎小乔",
 			jd_sb_xiaoqiao_prefix: "九鼎",
 			jdsbtianxiang: "天香",
@@ -17783,7 +17787,8 @@ game.import("character", function () {
 			yyqizhen: "骑阵",
 			yyqizhen_info: "当你使用【杀】指定目标后，你可以对其发动此技能。若此【杀】结算完毕后，此【杀】：造成过伤害，你摸造成伤害数的牌；未造成过伤害，你弃置其装备区的一张牌。",
 			yymujun: "募军",
-			yymujun_info: "主公技，限定技。出牌阶段，你可以令一名群势力角色获得〖义从〗。",			yy_wenchou: "燕幽文丑",
+			yymujun_info: "主公技，限定技。出牌阶段，你可以令一名群势力角色获得〖义从〗。",
+			yy_wenchou: "燕幽文丑",
 			yy_wenchou_prefix: "燕幽",
 			yyxuezhan: "血战",
 			yyxuezhan_info: "锁定技。①你的锦囊牌视为【决斗】。②你使用【决斗】不可被【无懈可击】响应。",
@@ -17802,7 +17807,8 @@ game.import("character", function () {
 			yyqishe: "齐射",
 			yyqishe_info: "①游戏开始时，你从游戏外获得一张【万箭齐发】。②结束阶段，你可以获得弃牌堆中的一张【万箭齐发】。",
 			yylinzhen: "临阵",
-			yylinzhen_info: "主公技，锁定技。你视为在其他群势力角色的攻击范围内。",			yy_simayi: "燕幽司马懿",
+			yylinzhen_info: "主公技，锁定技。你视为在其他群势力角色的攻击范围内。",
+			yy_simayi: "燕幽司马懿",
 			yy_simayi_prefix: "燕幽",
 			yyyanggu: "佯固",
 			yyyanggu_info: "转换技。阳，当你受到伤害后，你可以回复1点体力；阴，你可以将一张手牌当作【声东击西】使用。",

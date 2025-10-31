@@ -1052,6 +1052,11 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 									list.push([i, lib.translate[i]]);
 							}
 
+							// 修复由于禁将导致的报错（武将数为零报错）
+							if (!list.length) {
+								return;
+							}
+
 							list.sort(function (a, b) {
 								a = a[0]; b = b[0];
 								var aa = a, bb = b;
@@ -2397,9 +2402,43 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			for (var i = 0; i < characterlist.length; i++) {
 				createModeConfig(characterlist[i], start.firstChild);
 			}
+			
+			// 剑阁和挑战武将包排最后
+			/*
 			if (!connectMenu) Object.keys(lib.characterPack).forEach(key => {
 				if (key.startsWith('mode_')) createModeConfig(key, start.firstChild);
 			});
+			*/
+			if (!connectMenu) {
+				// 获取所有以 'mode_' 开头的键
+				const modeKeys = Object.keys(lib.characterPack).filter(key => key.startsWith('mode_'));
+				
+				// 定义指定顺序的 key 列表（按从前到后）
+				const specificOrder = [
+					"mode_extension_jiange",
+					"mode_extension_boss",
+					"mode_versus",
+					"mode_boss",
+					"mode_guozhan"
+				];
+				
+				// 创建 Set 用于快速查找（提高性能）
+				const modeKeySet = new Set(modeKeys);
+				
+				// 1. 先处理非指定的 mode_ 键
+				const otherModeKeys = modeKeys.filter(key => !specificOrder.includes(key));
+				otherModeKeys.forEach(key => {
+					createModeConfig(key, start.firstChild);
+				});
+				
+				// 2. 再处理指定的 mode_ 键
+				specificOrder.forEach(key => {
+					if (modeKeySet.has(key)) {
+						createModeConfig(key, start.firstChild);
+					}
+				});
+			}
+			
 			var active = start.firstChild.querySelector('.active');
 			if (!active) {
 				active = start.firstChild.firstChild;
@@ -2430,7 +2469,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				};
 				
 				lib.config.nocharacters=[];
-				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','sixiang','sbfm','mdtx','shengxiao','old'];
+				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','sxrm','onlyOL','sixiang','sbfm','mdtx','shengxiao','old'];
 				lib.config.notdefaultcharacters=['diy','ddd','key','yxs','hearth','gwent','mtg','ow','swd','gujian','xianjian'];
 				lib.config.benticharacters=lib.config.defaultcharacters.concat(lib.config.notdefaultcharacters);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {

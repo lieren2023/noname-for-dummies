@@ -49,9 +49,9 @@ game.import("character", function () {
 			dc_daxiaoqiao: ["female", "wu", 3, ["dcxingwu", "dcluoyan"], ["tempname:daxiaoqiao"]],
 			tianshangyi: ["female", "wei", 3, ["dcposuo", "dcxiaoren"]],
 			sunlingluan: ["female", "wu", 3, ["dclingyue", "dcpandi"]],
-			dc_wangjun: ["male", "qun", 4, ["dctongye", "dcchangqu"]],
+			dc_wangjun: ["male", "qun", 4, ["dctongye", "dcchangqu"], ["border:jin"]],
 			zhoubuyi: ["male", "wei", 3, ["dcshiji", "dcsilun"]],
-			dc_duyu: ["male", "wei", 4, ["dcjianguo", "dcdyqingshi"]],
+			dc_duyu: ["male", "wei", 4, ["dcjianguo", "dcdyqingshi"], ["border:jin"]],
 			ganfurenmifuren: ["female", "shu", 3, ["dcchanjuan", "dcxunbie"]],
 			dc_ganfuren: ["female", "shu", 3, ["dcshushen", "dcshenzhi"]],
 			dc_mifuren: ["female", "shu", 3, ["dcguixiu", "dccunsi"]],
@@ -1310,7 +1310,7 @@ game.import("character", function () {
 								if (!lib.filter.cardEnabled(card, evt.player, evt)) return false;
 								let cards = [card];
 								if (Array.isArray(card.cards)) cards.addArray(card.cards);
-								return cards.containsSome(...evt.cards) && get.name(card, false) == "sha";
+								return get.itemtype(evt.cards) == "cards" && cards.containsSome(...evt.cards) && get.name(card, false) == "sha";
 							}, "迟行：是否使用一张【杀】？")
 							.set("cards", result);
 					}
@@ -8446,8 +8446,7 @@ game.import("character", function () {
 					else choiceList[0] = '<span style="opacity:0.5">' + choiceList[0] + "(无目标角色)</span>";
 					if (game.countPlayer(i => i != player)) choices.push("选项二");
 					else choiceList[1] = '<span style="opacity:0.5">' + choiceList[1] + "</span>";
-					if (player.hp > 0) choices.push("选项三");
-					else choiceList[2] = '<span style="opacity:0.5">' + choiceList[1] + "(体力值为0)</span>";
+					choices.push("选项三");
 					player
 						.chooseControl(choices, "cancel2")
 						.set("choiceList", choiceList)

@@ -93,7 +93,7 @@ game.import("character", function () {
 			jsrg_wenyang: ["male", "wei", 4, ["jsrgfuzhen"]],
 			jsrg_zhugedan: ["male", "wei", 4, ["jsrgbeizhi", "jsrgshenji"]],
 			jsrg_wangjun: ["male", "jin", 4, ["jsrgchengliu", "jsrgjianlou"]],
-			jsrg_limi: ["male", "jin", 3, ["jsrgnanquan", "jsrgminfeng"]],
+			jsrg_limi: ["male", "shu", 3, ["jsrgnanquan", "jsrgminfeng"], ["border:jin"]],
 		},
 		characterSort: {
 			jsrg: {
@@ -6123,7 +6123,7 @@ game.import("character", function () {
 			jsrgjiemeng: {
 				audio: 2,
 				zhuSkill: true,
-				forced: true,
+				locked: true,
 				init: () => {
 					game.addGlobalSkill("jsrgjiemeng_effect");
 				},
@@ -9271,6 +9271,8 @@ game.import("character", function () {
 					return player.countCards("he") && event.card.name == "sha";
 				},
 				direct: true,
+				// 临时修改（by 棘手怀念摧毁）
+				// logAudio: () => ["jsrgjuelie3.mp3", "jsrgjuelie4.mp3"],
 				content: function () {
 					"step 0";
 					player
@@ -9335,6 +9337,7 @@ game.import("character", function () {
 				group: "jsrgjuelie_pojun",
 				subSkill: {
 					pojun: {
+						audio: ["jsrgjuelie1.mp3", "jsrgjuelie2.mp3"],
 						trigger: { source: "damageBegin1" },
 						filter: function (event, player) {
 							if (!player.isMinHandcard() && !player.isMinHp()) return false;
@@ -12486,7 +12489,7 @@ game.import("character", function () {
 				"当你翻面时，你可以观看牌堆底的三张牌（若死亡角色数大于2则改为五张），然后将其中任意数量的牌以任意顺序置于牌堆顶，其余以任意顺序置于牌堆底。",
 			jsrgtuigu: "蜕骨",
 			jsrgtuigu_info:
-				"①回合开始时，你可以翻面并令你本回合的手牌上限+X，然后摸X张牌并视为使用一张【解甲归田】（X为存活角色数的一半，向下取整），目标角色不能使用以此法得到的牌直到其回合结束。②一轮游戏开始时，若你上一轮未执行过回合（因〖蜕骨②〗执行的回合除外），你获得一个额外的回合。③当你失去装备牌里的牌后，你回复1点体力。",
+				"①回合开始时，你可以翻面并令你本回合的手牌上限+X，然后摸X张牌并视为使用一张【解甲归田】（X为存活角色数的一半，向下取整），目标角色不能使用以此法得到的牌直到其回合结束。②一轮游戏开始时，若你上一轮未执行过回合（因〖蜕骨②〗执行的回合除外），你获得一个额外的回合。③当你失去装备区里的牌后，你回复1点体力。",
 			jsrg_guoxun: "合郭循",
 			jsrg_guoxun_prefix: "合",
 			jsrgeqian: "遏前",

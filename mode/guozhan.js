@@ -648,6 +648,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_liuba",
 					"gz_zhuling",
 				],
+				guozhan_jun: ["gz_jun_caocao", "gz_jun_sunquan", "gz_jun_liubei", "gz_jun_zhangjiao"],
+				guozhan_yexinjia: ["gz_zhonghui", "gz_simazhao", "gz_gongsunyuan", "gz_sunchen"],
 				guozhan_double: [
 					"gz_tangzi",
 					"gz_liuqi",
@@ -662,8 +664,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_wenqin",
 					"gz_pengyang",
 				],
-				guozhan_jun: ["gz_jun_caocao", "gz_jun_sunquan", "gz_jun_liubei", "gz_jun_zhangjiao"],
-				guozhan_yexinjia: ["gz_zhonghui", "gz_simazhao", "gz_gongsunyuan", "gz_sunchen"],
+				guozhan_online: ["gz_re_xusheng"],
 				guozhan_jin: [
 					"gz_jin_simayi",
 					"gz_jin_simazhao",
@@ -708,14 +709,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_jin_yanghu",
 				],
 				guozhan_mobile: ["gz_lingcao", "gz_lifeng", "gz_sp_duyu"],
-				guozhan_qunxiong: [
-					"gz_xf_huangquan",
-					"gz_guohuai",
-					"gz_guanqiujian",
-					"gz_zhujun",
-					"gz_chengong",
-					"gz_re_xugong",
-				],
 				guozhan_tw: [
 					"gz_yangxiu",
 					"gz_tw_tianyu",
@@ -729,7 +722,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_old_huaxiong",
 				],
 				guozhan_others: ["gz_beimihu", "gz_key_ushio", "gz_re_nanhualaoxian"],
-				guozhan_online: ["gz_re_xusheng"],
+				guozhan_qunxiong: [
+					"gz_xf_huangquan",
+					"gz_guohuai",
+					"gz_guanqiujian",
+					"gz_zhujun",
+					"gz_chengong",
+					"gz_re_xugong",
+				],
 			},
 		},
 		characterPack: {
@@ -4501,7 +4501,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					);
 					await game.cardsGotoOrdering(cards);
 					for (const card of cards) {
-						if (player.hasUseTarget(card, false, false)) {
+						if (player.hasUseTarget(card, false, false) || (get.info(card).notarget && lib.filter.cardEnabled(card, player))) {
 							await player.chooseUseTarget(card, true, false, "nodistance");
 						} else gains.push(card);
 					}
@@ -10007,8 +10007,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			gzshensu: {
 				audio: "shensu1",
 				audioname: ["xiahouba", "re_xiahouyuan", "ol_xiahouyuan"],
-				group: ["shensu1", "shensu2"],
-				preHidden: ["shensu1", "shensu2", "gzshensu"],
+				group: ["gzshensu_1", "gzshensu_2"],
+				preHidden: ["gzshensu_1", "gzshensu_2", "gzshensu"],
 				trigger: { player: "phaseDiscardBegin" },
 				direct: true,
 				filter: function (event, player) {
@@ -10039,6 +10039,17 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						trigger.cancel();
 						player.useCard({ name: "sha", isCard: true }, target, false);
 					}
+				},
+				subSkill: {
+					1: {
+						audio: "shensu1",
+						inherit: "shensu1",
+						sourceSkill: "gzshensu",
+					},
+					2: {
+						inherit: "shensu2",
+						sourceSkill: "gzshensu",
+					},
 				},
 			},
 			//吕玲绮
@@ -23086,6 +23097,112 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 		},
 		translate: {
+			// 修复使用国战武将关闭后国战武将包翻译丢失的bug
+			gz_caocao: "曹操",
+			gz_caopi: "曹丕",
+			gz_dianwei: "典韦",
+			gz_guojia: "郭嘉",
+			gz_simayi: "司马懿",
+			gz_xiahoudun: "夏侯惇",
+			gz_xunyu: "荀彧",
+			gz_xuzhu: "许褚",
+			gz_yuejin: "乐进",
+			gz_zhanghe: "张郃",
+			gz_zhangliao: "张辽",
+			gz_zhenji: "甄宓",
+			gz_ganfuren: "甘夫人",
+			gz_guanyu: "关羽",
+			gz_huangyueying: "黄月英",
+			gz_liubei: "刘备",
+			gz_liushan: "刘禅",
+			gz_machao: "马超",
+			gz_menghuo: "孟获",
+			gz_pangtong: "庞统",
+			gz_zhangfei: "张飞",
+			gz_zhaoyun: "赵云",
+			gz_sp_zhugeliang: "卧龙",
+			gz_zhugeliang: "诸葛亮",
+			gz_zhurong: "祝融",
+			gz_daqiao: "大乔",
+			gz_dingfeng: "丁奉",
+			gz_ganning: "甘宁",
+			gz_huanggai: "黄盖",
+			gz_re_lusu: "鲁肃",
+			gz_luxun: "陆逊",
+			gz_lvmeng: "吕蒙",
+			gz_sunjian: "孙坚",
+			gz_sunquan: "孙权",
+			gz_sunshangxiang: "孙尚香",
+			gz_xiaoqiao: "小乔",
+			gz_zhangzhang: "张昭张纮",
+			gz_zhouyu: "周瑜",
+			gz_caiwenji: "蔡琰",
+			gz_diaochan: "貂蝉",
+			gz_huatuo: "华佗",
+			gz_jiaxu: "贾诩",
+			gz_lvbu: "吕布",
+			gz_yanwen: "颜良文丑",
+			gz_re_yuanshao: "袁绍",
+			gz_caohong: "曹洪",
+			gz_dengai: "邓艾",
+			gz_jiangwei: "姜维",
+			gz_xusheng: "徐盛",
+			gz_hetaihou: "何太后",
+			gz_zangba: "臧霸",
+			gz_chendong: "陈武董袭",
+			gz_sunce: "孙策",
+			gz_xunyou: "荀攸",
+			gz_lingtong: "凌统",
+			gz_zuoci: "左慈",
+			gz_wuguotai: "吴国太",
+			gz_zhuling: "朱灵",
+			gz_liuba: "刘巴",
+			gz_wujing: "吴景",
+			gz_zhugeke: "诸葛恪",
+			gz_yanbaihu: "严虎",
+			gz_gongsunyuan: "公孙渊",
+			gz_simazhao: "司马昭",
+			gz_zhonghui: "钟会",
+			gz_xuyou: "许攸",
+			gz_xiahouba: "夏侯霸",
+			gz_panjun: "潘濬",
+			gz_shibao: "石苞",
+			gz_simazhou: "司马伷",
+			gz_weiguan: "卫瓘",
+			gz_xinchang: "辛敞",
+			gz_yangyan: "杨艳",
+			gz_yangzhi: "杨芷",
+			gz_zhanghuyuechen: "张虎乐綝",
+			gz_zhongyan: "钟琰",
+			gz_zuofen: "左棻",
+			gz_huaxin: "华歆",
+			gz_jianggan: "蒋干",
+			gz_dc_yanghu: "羊祜",
+			gz_zongyu: "宗预",
+			gz_fengxi: "冯熙",
+			gz_luyusheng: "陆郁生",
+			gz_re_xunchen: "荀谌",
+			gz_yangwan: "杨婉",
+			gz_yanyan: "严颜",
+			gz_zhouyi: "周夷",
+			gz_gaoshun: "高顺",
+			gz_lvlingqi: "吕玲绮",
+			gz_lingcao: "凌操",
+			gz_tw_xiahoushang: "夏侯尚",
+			gz_yangxiu: "杨修",
+			gz_chendao: "陈到",
+			gz_liaohua: "廖化",
+			gz_zhugejin: "诸葛瑾",
+			gz_zumao: "祖茂",
+			gz_fuwan: "伏完",
+			gz_tw_liufuren: "刘夫人",
+			gz_beimihu: "卑弥呼",
+			gz_re_nanhualaoxian: "南华老仙",
+			gz_guanqiujian: "毌丘俭",
+			gz_guohuai: "郭淮",
+			gz_zhujun: "朱儁",
+			gz_chengong: "陈宫",
+
 			yexinjia_mark: "野心家",
 
 			bumingzhi: "不明置",
@@ -24087,17 +24204,17 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			guozhan_bian: "君临天下·变",
 			guozhan_quan: "君临天下·权",
 			guozhan_single: "君临天下EX",
-			guozhan_double: "双势力武将",
 			guozhan_jun: "君主武将",
 			guozhan_yexinjia: "野心家武将",
+			guozhan_double: "双势力武将",
+			guozhan_online: "Online专属",
 			guozhan_jin: "文德武备",
 			guozhan_zongheng: "纵横捭阖",
 			guozhan_decade: "十年踪迹十年心",
-			guozhan_mobile: "移动版",
-			guozhan_qunxiong: "群雄割据",
+			guozhan_mobile: "移动版专属",
 			guozhan_tw: "海外服专属",
 			guozhan_others: "线下版",
-			guozhan_online: "Online专属",
+			guozhan_qunxiong: "群雄割据",
 		},
 		junList: ["liubei", "zhangjiao", "sunquan", "caocao"],
 		guozhanPile_yingbian: [
@@ -25425,144 +25542,6 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						(lib.perfectPair[name1] && lib.perfectPair[name1].flat(Infinity).includes(name2)) ||
 						(lib.perfectPair[name2] && lib.perfectPair[name2].flat(Infinity).includes(name1))
 					);
-				},
-				siege: function (player) {
-					if (this.identity == "unknown" || this.hasSkill("undist")) return false;
-					if (!player) {
-						var next = this.getNext();
-						if (next && next.sieged()) return true;
-						var previous = this.getPrevious();
-						if (previous && previous.sieged()) return true;
-						return false;
-					} else {
-						return player.sieged() && (player.getNext() == this || player.getPrevious() == this);
-					}
-				},
-				sieged: function (player) {
-					if (this.identity == "unknown") return false;
-					if (player) {
-						return player.siege(this);
-					} else {
-						var next = this.getNext();
-						var previous = this.getPrevious();
-						if (next && previous && next != previous) {
-							if (next.identity == "unknown" || next.isFriendOf(this)) return false;
-							return next.isFriendOf(previous);
-						}
-						return false;
-					}
-				},
-				inline: function () {
-					if (this.identity == "unknown" || this.identity == "ye" || this.hasSkill("undist"))
-						return false;
-					var next = this,
-						previous = this;
-					var list = [];
-					for (var i = 0; next || previous; i++) {
-						if (next) {
-							next = next.getNext();
-							if (!next.isFriendOf(this) || next == this) {
-								next = null;
-							} else {
-								list.add(next);
-							}
-						}
-						if (previous) {
-							previous = previous.getPrevious();
-							if (!previous.isFriendOf(this) || previous == this) {
-								previous = null;
-							} else {
-								list.add(previous);
-							}
-						}
-					}
-					if (!list.length) return false;
-					for (var i = 0; i < arguments.length; i++) {
-						if (!list.includes(arguments[i]) && arguments[i] != this) return false;
-					}
-					return true;
-				},
-				isMajor: function () {
-					if (this.identity == "unknown") return false;
-					var list = game.filterPlayer(function (current) {
-						return current.identity != "unknown" && current.hasSkillTag("forceMajor");
-					});
-					if (list.length) {
-						for (var i of list) {
-							if (i.isFriendOf(this)) return true;
-						}
-						return false;
-					}
-					var map = {},
-						sides = [],
-						pmap = _status.connectMode ? lib.playerOL : game.playerMap,
-						player;
-					for (var i of game.players) {
-						if (i.identity == "unknown") continue;
-						var added = false;
-						for (var j of sides) {
-							if (i.isFriendOf(pmap[j])) {
-								added = true;
-								map[j].push(i);
-								if (i == this) player = j;
-								break;
-							}
-						}
-						if (!added) {
-							map[i.playerid] = [i];
-							sides.push(i.playerid);
-							if (i == this) player = i.playerid;
-						}
-					}
-					if (!player || map[player].length < 2) return false;
-					for (var i in map) {
-						if (map[i].length > map[player].length) return false;
-					}
-					return true;
-				},
-				isNotMajor: function () {
-					for (var i = 0; i < game.players.length; i++) {
-						if (game.players[i].isMajor()) {
-							return !this.isMajor();
-						}
-					}
-					return false;
-				},
-				isMinor: function (nomajor) {
-					if (this.identity == "unknown" || (!nomajor && this.isMajor())) return false;
-					if (
-						!nomajor &&
-						!game.hasPlayer(function (current) {
-							return current.isMajor();
-						})
-					) {
-						return false;
-					}
-					var map = {},
-						sides = [],
-						pmap = _status.connectMode ? lib.playerOL : game.playerMap,
-						player;
-					for (var i of game.players) {
-						if (i.identity == "unknown") continue;
-						var added = false;
-						for (var j of sides) {
-							if (i.isFriendOf(pmap[j])) {
-								added = true;
-								map[j].push(i);
-								if (i == this) player = j;
-								break;
-							}
-						}
-						if (!added) {
-							map[i.playerid] = [i];
-							sides.push(i.playerid);
-							if (i == this) player = i.playerid;
-						}
-					}
-					for (var i in map) {
-						if (map[i].length < map[player].length) return false;
-					}
-					return true;
 				},
 				logAi: function (targets, card) {
 					if (this.ai.shown == 1 || this.isMad()) return;

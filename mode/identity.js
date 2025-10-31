@@ -4529,6 +4529,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (get.population("zhong") == 0 && player.identity == "fan") return false;
 					return Math.abs(get.attitude(player, event.player)) <= 1;
 				},
+				charlotte: true,
+				ruleSkill: true,
 				content: () => {
 					player.changeFury(-1, true);
 					player.insightInto(trigger.player);
@@ -4670,6 +4672,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				filter: function (event, player) {
 					return player.identity == "rYe" || player.identity == "bYe";
 				},
+				charlotte: true,
+				ruleSkill: true,
 				skillAnimation: "legend",
 				animationColor: "thunder",
 				content: function () {
@@ -4703,6 +4707,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				trigger: { player: "phaseZhunbeiBegin" },
 				silent: true,
+				charlotte: true,
 				content: function () {
 					"step 0";
 					var cards = get.cards(3);
@@ -4770,6 +4775,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return num + 1;
 					},
 				},
+				charlotte: true,
 			},
 			identity_zeishou: {
 				name: "贼首",
@@ -4782,6 +4788,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return num - 1;
 					},
 				},
+				charlotte: true,
 			},
 			dongcha: {
 				trigger: { player: "phaseBegin" },
@@ -4792,6 +4799,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return current.countCards("ej");
 					});
 				},
+				charlotte: true,
 				forceunique: true,
 				content: function () {
 					"step 0";
@@ -4900,6 +4908,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				trigger: { global: "dieBefore" },
 				forced: true,
 				unique: true,
+				charlotte: true,
 				forceunique: true,
 				filter: function (event, player) {
 					return event.player == game.zhu && player.hp > 0;

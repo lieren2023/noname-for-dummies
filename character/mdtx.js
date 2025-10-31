@@ -17,7 +17,7 @@ game.import("character", function () {
 			dc_sb_caoang: ["male", "wei", 4, ["dcsbfengmin", "dcsbzhiwang"]],
 			dc_sb_dianwei: ["male", "wei", "4/5", ["dcsbkuangzhan", "dcsbkangyong"]],
 			dc_caoshuang: ["male", "wei", 4, ["dcjianzhuan", "dcfanshi"]],
-			dc_simashi: ["male", "wei", 3, ["dcsanshi", "dczhenrao", "dcchenlve"]],
+			dc_simashi: ["male", "wei", 3, ["dcsanshi", "dczhenrao", "dcchenlve"], ["border:jin"]],
 			dc_wangling: ["male", "wei", 4, ["dcjichou", "dcmouli"], ["clan:太原王氏"]],
 			dc_jiangji: ["male", "wei", 3, ["dcshiju", "dcyingshi"]],
 			dc_sb_zhugejin: ["male", "wu", 3, ["dcsbtaozhou", "dcsbhoude"]],
@@ -288,6 +288,7 @@ game.import("character", function () {
 						cards.removeArray(nodamages);
 						await target.gain(nodamages, "gain2");
 					}
+					// 临时修改（by 棘手怀念摧毁）
 					if(cards.length) await game.cardsGotoPile(cards.reverse(), "insert");
 				},
 			},

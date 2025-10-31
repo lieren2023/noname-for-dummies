@@ -708,7 +708,7 @@ export class GameEvent {
 		return this;
 	}
 	isMine() {
-		return this.player && this.player == game.me && !_status.auto && !this.player.isMad() && !game.notMe;
+		return this.player?.isMine();
 	}
 	isOnline() {
 		return this.player && this.player.isOnline();

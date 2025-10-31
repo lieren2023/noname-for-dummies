@@ -31,7 +31,7 @@ game.import("character", function () {
 			qinyilu: ["male", "qun", 3, ["piaoping", "tuoxian", "chuaili"]],
 			yanrou: ["male", "wei", 4, ["choutao", "xiangshu"]],
 			dc_zhuling: ["male", "wei", 4, ["dczhanyi"]],
-			licaiwei: ["female", "wei", 3, ["yijiao", "qibie"]],
+			licaiwei: ["female", "qun", 3, ["yijiao", "qibie"], ["border:wei"]],
 			yanfuren: ["female", "qun", 3, ["channi", "nifu"]],
 			haomeng: ["male", "qun", 7, ["xiongmang"]],
 			re_pangdegong: ["male", "qun", 3, ["heqia", "yinyi"]],
@@ -228,7 +228,7 @@ game.import("character", function () {
 			dufuren:
 				"杜夫人（生卒年不详），东汉末年至三国时人。有异色，原为吕布将秦宜禄之妻，生子秦朗。后为曹操纳为妾，又生曹林、曹衮、金乡公主。",
 			mifangfushiren:
-				"麋芳（生卒年不详），字子方，东海郡朐县（今江苏省连云港市）人。汉末三国时期蜀国将领，刘备糜夫人的兄弟。麋芳本为徐州牧陶谦部下，曾被曹操表为彭城相。后来辞官，随刘备从徐州辗转至邺城、汝南、新野、长坂坡、江夏等地，奔波多年。傅士仁（生卒年不详），字君义，幽州广阳郡（今北京市）人，刘备手下将领。受到刘备的重用，但被关羽轻慢。<br>刘备称汉中王时，糜芳为南郡太守，但受到关羽的轻慢。后来，因未完成供给军资的任务而被关羽责骂，心中不安。吕蒙袭取荆州时，将已经投降的傅士仁展示给糜芳，麋芳于是选择投降，导致关羽兵败被杀。此后，在吴国担任将军，并且为吴征伐。",
+				"糜芳（生卒年不详），字子方，东海郡朐县（今江苏省连云港市）人。汉末三国时期蜀国将领，刘备糜夫人的兄弟。糜芳本为徐州牧陶谦部下，曾被曹操表为彭城相。后来辞官，随刘备从徐州辗转至邺城、汝南、新野、长坂坡、江夏等地，奔波多年。傅士仁（生卒年不详），字君义，幽州广阳郡（今北京市）人，刘备手下将领。受到刘备的重用，但被关羽轻慢。<br>刘备称汉中王时，糜芳为南郡太守，但受到关羽的轻慢。后来，因未完成供给军资的任务而被关羽责骂，心中不安。吕蒙袭取荆州时，将已经投降的傅士仁展示给糜芳，糜芳于是选择投降，导致关羽兵败被杀。此后，在吴国担任将军，并且为吴征伐。",
 			tongyuan:
 				"童渊，字雄付，武术名家，与并州李彦是结拜兄弟，两人均师承义父玉真子，两人分别娶了河北颜家的两位大小姐颜云、颜雨。童飞之父，有张任、张绣为入室弟子，晚年收赵云为关门弟子，传其毕生所学。其成名技为“百鸟朝凤枪”。童渊是南方苏州评话三国中的原创人物，在历史中以及《三国演义》中并不存在。",
 			//zhangning:'张宁，东汉末年大贤良师张角的女儿。自幼学习太平道法，掌握天地法则。',
@@ -606,7 +606,7 @@ game.import("character", function () {
 				content() {
 					const evt = trigger.getParent(2);
 					const cards = evt.cards.filter(card => {
-						if (trigger.source._start_cards.includes(card)) return true;
+						if (trigger.source._start_cards?.includes(card)) return true;
 						return trigger.source.getAllHistory("gain", evt => {
 							return evt.cards.includes(card);
 						}).length;
@@ -619,7 +619,7 @@ game.import("character", function () {
 							for (let i = history.length - 1; i >= 0; i--) {
 								if (history[i].gain.some(evtx => evtx.cards.includes(card))) break;
 								if (history[i].isRound) num++;
-								if (i == 0 && trigger.source._start_cards.includes(card)) num--;
+								if (i == 0 && trigger.source._start_cards?.includes(card)) num--;
 							}
 							return sum + num;
 						}, 0);

@@ -49,20 +49,20 @@ game.import("play", function () {
 					}
 				}
 				lib.characterIntro.boss_liedixuande = lib.characterIntro.liubei;
-				lib.characterIntro.boss_gongshenyueying =
-					lib.characterIntro.huangyueying;
-				lib.characterIntro.boss_tianhoukongming =
-					lib.characterIntro.shen_zhugeliang;
-				lib.characterIntro.boss_yuhuoshiyuan =
-					lib.characterIntro.pangtong;
-				lib.characterIntro.boss_qiaokuijunyi =
-					lib.characterIntro.zhanghe;
-				lib.characterIntro.boss_jiarenzidan =
-					lib.characterIntro.caozhen;
-				lib.characterIntro.boss_duanyuzhongda =
-					lib.characterIntro.simayi;
-				lib.characterIntro.boss_juechenmiaocai =
-					lib.characterIntro.xiahouyuan;
+				lib.characterIntro.boss_gongshenyueying = lib.characterIntro.huangyueying;
+				lib.characterIntro.boss_tianhoukongming = lib.characterIntro.shen_zhugeliang;
+				lib.characterIntro.boss_yuhuoshiyuan = lib.characterIntro.pangtong;
+				lib.characterIntro.boss_qiaokuijunyi = lib.characterIntro.zhanghe;
+				lib.characterIntro.boss_jiarenzidan = lib.characterIntro.caozhen;
+				lib.characterIntro.boss_duanyuzhongda = lib.characterIntro.simayi;
+				lib.characterIntro.boss_juechenmiaocai = lib.characterIntro.xiahouyuan;
+				lib.characterIntro.boss_kumuyuanrang = lib.characterIntro.xiahoudun;
+				lib.characterIntro.boss_baijiwenyuan = lib.characterIntro.zhangliao;
+				lib.characterIntro.boss_yihanyunchang = lib.characterIntro.guanyu;
+				lib.characterIntro.boss_fuweizilong = lib.characterIntro.zhaoyun;
+				lib.characterIntro.boss_lvbu1 = lib.characterIntro.lvbu;
+				lib.characterIntro.boss_lvbu2 = lib.characterIntro.lvbu;
+				lib.characterIntro.boss_lvbu3 = lib.characterIntro.lvbu;
 			} else if (_status.mode != "jiange") {
 				for (var i in list2) {
 					lib.character[i] = list2[i];

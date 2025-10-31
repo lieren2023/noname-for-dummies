@@ -22,10 +22,10 @@ game.import("character", function () {
 			huan_zhugeguo: ["female", "shu", 3, ["rexianyuan", "twlingyin"]],
 			huan_zhanghe: ["male", "wei", 4, ["twkuiduan"]],
 			huan_zhaoyun: ["male", "shu", 4, ["twjiezhan", "twlongjin"]],
-			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"]],
+			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"], ["border:ye"]],
 			huan_weiyan: ["male", "shu", 4, ["twqiji", "twpiankuang"]],
 			tw_zhugejun: ["male", "qun", 3, ["twshouzhu", "twdaigui", "twcairu"]],
-			simafu: ["male", "wei", 3, ["xunde", "chenjie"]],
+			simafu: ["male", "wei", 3, ["xunde", "chenjie"], ["border:jin"]],
 			tw_yanliang: ["male", "qun", 4, ["twduwang", "twylyanshi"]],
 			tw_wenchou: ["male", "qun", 4, ["twjuexing", "twxiayong"]],
 			tw_yuantan: ["male", "qun", 4, ["twqiaosi", "twbaizu"]],
@@ -125,7 +125,7 @@ game.import("character", function () {
 			yuejiu: ["male", "qun", 4, ["cuijin"]],
 			wuban: ["male", "shu", 4, ["jintao"], ["clan:陈留吴氏"]],
 			duosidawang: ["male", "qun", "4/5", ["equan", "manji"]],
-			jiachong: ["male", "qun", 3, ["beini", "dingfa"]],
+			jiachong: ["male", "qun", 3, ["beini", "dingfa"], ["border:jin"]],
 			tw_dongzhao: ["male", "wei", 3, ["twmiaolve", "twyingjia"]],
 			tw_gexuan: ["male", "qun", 3, ["twdanfa", "twlingbao", "twsidao"]],
 			tw_beimihu: ["female", "qun", 3, ["zongkui", "guju", "baijia", "bingzhao"], ["zhu"]],
@@ -1395,7 +1395,9 @@ game.import("character", function () {
 							while (storage.length) {
 								const name = storage.shift(),
 									card = get.autoViewAs({ name: name[0].name, nature: name[0].nature, isCard: true });
-								if (!player.hasUseTarget(card, false)) continue;
+								if ((!get.info(card).notarget || !lib.filter.cardEnabled(card, player)) && !player.hasUseTarget(card, false)) {
+									continue;
+								}
 								const targets = await player.chooseUseTarget(`请选择${get.translation(card)}的目标，若此牌的目标不包含${get.translation(target)}，则其摸一张牌`, card, true, false, "nodistance").forResultTargets();
 								if (!targets.includes(target) && target.isIn()) await target.draw();
 							}
@@ -2712,7 +2714,7 @@ game.import("character", function () {
 						}
 					}, videoId);
 					game.addVideo("cardDialog", null, videoId);
-				},		
+				},
 			},
 			twcairu: {
 				audio: 2,
@@ -7650,7 +7652,7 @@ game.import("character", function () {
 			},
 			//蒋济
 			twjichou: {
-				audio: 2,
+				audio: 3,
 				enable: "chooseToUse",
 				group: ["twjichou_ban", "twjichou_give"],
 				filter: function (event, player) {
@@ -16833,6 +16835,7 @@ game.import("character", function () {
 					global: "loseAsyncAfter",
 				},
 				forced: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "wood",
 				filter: function (event, player) {
@@ -19258,7 +19261,7 @@ game.import("character", function () {
 				derivation: "twzhian",
 			},
 			twzhian: {
-				audio: 2,
+				audio: 3,
 				init: function (player) {
 					game.addGlobalSkill("twzhian_ai");
 				},
@@ -19820,6 +19823,7 @@ game.import("character", function () {
 			},
 			twfengqi: {
 				audio: 2,
+				locked: true,
 				zhuSkill: true,
 				trigger: { player: "twgezhi_buffAfter" },
 				direct: true,

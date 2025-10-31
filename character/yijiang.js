@@ -102,7 +102,7 @@ game.import("character", function () {
 			yujin: ["male", "wei", 4, ["rezhenjun"], ["die_audio:ol_yujin"]],
 
 			linghuyu: ["male", "wei", 4, ["xvzhi"]],
-			yj_simafu: ["male", "wei", 4, ["beiyu", "duchi"]],
+			yj_simafu: ["male", "wei", 4, ["beiyu", "duchi"], ["border:jin"]],
 			yj_xuangongzhu: ["female", "wei", 3, ["yjqimei", "yjzhuiji"]],
 			xukun: ["male", "wu", 4, ["fazhu"]],
 			yj_majun: ["male", "wei", 3, ["yjgongqiao", "yjjingyi"]],
@@ -985,7 +985,7 @@ game.import("character", function () {
 				direct: true,
 				content: function () {
 					"step 0";
-					var next = player.chooseButton(['###擎北：是否选择任意种花色？###<div class="text center">你不能于本轮能使用这些花色，且使用牌后摸等同于选择花色数的牌</div>', [lib.suit.map(i => ["", "", "lukai_" + i]), "vcard"]], [1, 4]);
+					var next = player.chooseButton(['###擎北：是否选择任意种花色？###<div class="text center">你不能于本轮使用这些花色，且使用牌后摸等同于选择花色数的牌</div>', [lib.suit.map(i => ["", "", "lukai_" + i]), "vcard"]], [1, 4]);
 					next.set("ai", button => {
 						var player = _status.event.player;
 						var suit = button.link[2].slice(6);
@@ -9032,6 +9032,7 @@ game.import("character", function () {
 			},
 			rezhaofu: {
 				unique: true,
+				locked: true,
 				global: "rezhaofu2",
 				zhuSkill: true,
 			},

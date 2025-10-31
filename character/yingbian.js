@@ -7,7 +7,7 @@ game.import("character", function () {
 			
 		],
 		character: {
-			chengjichengcui: ["male", "jin", 6, ["oltousui", "olchuming"]],
+			chengjichengcui: ["male", "wei", 6, ["oltousui", "olchuming"], ["border:jin"]],
 			wangxiang: ["male", "jin", 3, ["bingxin"]],
 			jin_jiachong: ["male", "jin", 3, ["xiongshu", "jianhui"]],
 			xuangongzhu: ["female", "jin", 3, ["gaoling", "qimei", "ybzhuiji"], ["hiddenSkill"]],
@@ -2056,7 +2056,7 @@ game.import("character", function () {
 					var card = get.cards()[0];
 					event.card = card;
 					player.showCards(card);
-					if (!player.hasUseTarget(card)) {
+					if ((!get.info(card).notarget || !lib.filter.cardEnabled(card, player)) && !player.hasUseTarget(card)) {
 						card.fix();
 						ui.cardPile.insertBefore(card, ui.cardPile.firstChild);
 						game.updateRoundNumber();

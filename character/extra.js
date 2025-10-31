@@ -9,7 +9,7 @@ game.import("character", function () {
 		character: {
 			shen_huangzhong: ["male", "shen", 4, ["1！5！", "chiren"], ["shu"]],
 			new_simayi: ["male", "shen", 4, ["jilin", "yingyou", "yingtian"], ["wei"]],
-			xin_simayi: ["male", "shen", 4, ["xinrenjie", "xinbaiyin", "xinlianpo"], ["tempname:shen_simayi", "wei", "die_audio:shen_simayi"]],
+			xin_simayi: ["male", "shen", 4, ["xinrenjie", "xinbaiyin", "xinlianpo"], ["tempname:new_simayi", "wei", "die_audio:new_simayi"]],
 			dc_shen_huatuo: ["male", "shen", 3, ["jingyu", "lvxin", "huandao"], ["qun"]],
 			shen_xuzhu: ["male", "shen", 5, ["zhengqing", "zhuangpo"], ["wei"]],
 			shen_lusu: ["male", "shen", 3, ["tamo", "dingzhou", "zhimeng"], ["wu"]],
@@ -1216,7 +1216,7 @@ game.import("character", function () {
 			},
 			//极略神司马！
 			xinrenjie: {
-				audio: "renjie2",
+				audio: 2,
 				trigger: {
 					player: ["chooseToUseAfter", "chooseToRespondAfter"],
 					global: "_wuxieAfter",
@@ -1261,7 +1261,7 @@ game.import("character", function () {
 				},
 			},
 			xinbaiyin: {
-				audio: "sbaiyin",
+				audio: 2,
 				inherit: "sbaiyin",
 				filter(event, player) {
 					return player.countMark("xinrenjie") >= 4;
@@ -1280,6 +1280,7 @@ game.import("character", function () {
 			},
 			xinlianpo: {
 				audio: "lianpo",
+				audioname: ["new_simayi"],
 				trigger: {
 					source: "dieAfter",
 				},
@@ -2652,6 +2653,7 @@ game.import("character", function () {
 				},
 				audio: 2,
 				enable: "phaseUse",
+				usable: 1,
 				filter(event, player) {
 					return _status.renku.length > 0;
 				},
@@ -6196,6 +6198,9 @@ game.import("character", function () {
 				},
 				content() {
 					"step 0";
+					trigger.cancel();
+					player.loseMaxHp();
+					"step 1";
 					player.chooseCardTarget({
 						prompt: "请选择【冯河】的牌和目标",
 						prompt2:
@@ -6223,14 +6228,12 @@ game.import("character", function () {
 							return 4 + att;
 						},
 					});
-					"step 1";
+					"step 2";
 					if (result.bool) {
 						var target = result.targets[0];
 						//player.logSkill('pinghe',target);
 						player.line(target, "green");
 						player.give(result.cards, target);
-						trigger.cancel();
-						player.loseMaxHp();
 						if (player.hasSkill("yingba")) {
 							trigger.source.addMark("yingba_mark", 1);
 						}
@@ -8664,6 +8667,7 @@ game.import("character", function () {
 			},
 			jilue: {
 				unique: true,
+				audio: 2,
 				group: ["jilue_guicai", "jilue_fangzhu", "jilue_wansha", "jilue_zhiheng", "jilue_jizhi"],
 				ai: {
 					combo: "renjie",
@@ -11648,7 +11652,8 @@ game.import("character", function () {
 			// xin_simayi_prefix: "手杀神",
 			xin_simayi_prefix: "极略神",
 			xinrenjie: "忍戒",
-			xinrenjie_info: "锁定技。①当你需要响应一张延时锦囊牌或其他角色使用的牌时，若你未响应此牌，你获得1枚“忍”标记（你每轮以此法至多获得4枚“忍”标记）。②游戏开始时，若你为神势力且你未执行神武将势力选择，则你可以变更势力。",			xinbaiyin: "拜印",
+			xinrenjie_info: "锁定技。①当你需要响应一张延时锦囊牌或其他角色使用的牌时，若你未响应此牌，你获得1枚“忍”标记（你每轮以此法至多获得4枚“忍”标记）。②游戏开始时，若你为神势力且你未执行神武将势力选择，则你可以变更势力。",
+			xinbaiyin: "拜印",
 			xinbaiyin_info: "觉醒技，准备阶段，若你的“忍”标记数不小于4，你减少1点体力上限，然后获得〖极略〗。",
 			xinlianpo: "连破",
 			xinlianpo_info: "当你杀死一名角色后，你可以选择一项：1.于此回合结束后获得一个额外回合；2.若你拥有〖极略〗，你获得一个你未拥有的〖极略〗技能。",

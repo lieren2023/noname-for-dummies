@@ -607,12 +607,13 @@ var node6= ui.create.div('.shenfenpic', ui.arena);
 						item.addEventListener("mouseenter", function (e) {
 							if (tip.innerHTML == "") return;
 							tip.style.display = "block";
-							let rect = item.getBoundingClientRect();
-							if (rect.top < window.innerHeight / 2) {
+							// 修复点开查看牌时向上弹出方向无法完全显示的bug，现均向下弹出（by 棘手怀念摧毁）
+							// let rect = item.getBoundingClientRect();
+							// if (rect.top < window.innerHeight / 2) {
 								tip.style.top = "110%";
-							} else {
-								tip.style.bottom = "110%";
-							}
+							// } else {
+								// tip.style.bottom = "110%";
+							// }
 						});
 						item.addEventListener("mouseleave", function (e) {
 							tip.style.display = "none";

@@ -2088,14 +2088,12 @@ game.import("card", function () {
 						get.is.single() ? "he" : "hej"
 					);
 				},
-				content: function () {
+				async content(event, trigger, player) {
+					const target = event.target;
 					let pos = get.is.single() ? "he" : "hej";
-					if (target.countGainableCards(player, pos))
-						player
-							.gainPlayerCard(pos, target, true)
-							.set("target", target)
-							.set("complexSelect", false)
-							.set("ai", lib.card.shunshou.ai.button);
+					if (target.countGainableCards(player, pos)) {
+						await player.gainPlayerCard(pos, target, true).set("target", target).set("complexSelect", false).set("ai", lib.card.shunshou.ai.button);
+					}
 				},
 				ai: {
 					wuxie: function (target, card, player, viewer) {

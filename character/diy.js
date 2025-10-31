@@ -3382,6 +3382,7 @@ game.import("character", function () {
 				trigger: {
 					global: "dying",
 				},
+				limited: true,
 				priority: 8,
 				unique: true,
 				skillAnimation: true,
@@ -3578,6 +3579,7 @@ game.import("character", function () {
 			},
 			nsanruo: {
 				unique: true,
+				locked: true,
 				init(player) {
 					if (!player.node.handcards1.cardMod) {
 						player.node.handcards1.cardMod = {};
@@ -4987,6 +4989,7 @@ game.import("character", function () {
 						}
 					},
 				},
+				locked: true,
 				ai: {
 					neg: true,
 				},
@@ -5004,6 +5007,7 @@ game.import("character", function () {
 			nscangxi: {
 				unique: true,
 				global: "nscangxi2",
+				locked: false,
 				zhuSkill: true,
 				init(player) {
 					player.storage.nscangxi = 0;
@@ -6188,6 +6192,7 @@ game.import("character", function () {
 				filter(event, player) {
 					return event.cards.length >= 3;
 				},
+				forced: true,
 				content() {
 					player.insertPhase();
 					player.storage.nsjihui_use = _status.currentPhase;
@@ -6241,6 +6246,7 @@ game.import("character", function () {
 				forbid: ["guozhan"],
 				unique: true,
 				forceunique: true,
+				locked: true,
 				init(player) {
 					if (player.storage.nscongjun_show) return false;
 					var change = function (target) {

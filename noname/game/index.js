@@ -715,6 +715,48 @@ export class Game {
 		return history;
 	}
 	/**
+	 * 快速获取当前轮次/倒数第X轮次游戏的历史
+	 * @template { keyof GameHistory } T
+	 * @param {T} key
+	 * @param {(event:GameEvent)=>boolean} filter 筛选条件，不填写默认为lib.filter.all
+	 * @param {number} [num] 获取倒数第num轮的历史，默认为0，表示当前轮
+	 * @param {boolean} [keep] 若为true,则获取倒数第num轮到现在的所有历史
+	 * @param {GameEvent} last 代表最后一个事件，获取该事件之前的历史
+	 * @returns { GameHistory[T] }
+	 */
+	getRoundHistory(key, filter = lib.filter.all, num = 0, keep, last) {
+		if (!filter || typeof filter != "function") {
+			filter = lib.filter.all;
+		}
+		let evts = [],
+			history = _status.globalHistory;
+		for (let i = history.length - 1; i >= 0; i--) {
+			if (keep === true || num == 0) {
+				let currentHistory = history[i];
+				if (key) {
+					currentHistory = currentHistory[key];
+				}
+				if (filter) {
+					currentHistory = currentHistory.filter(filter);
+				}
+				evts.addArray(currentHistory.slice().reverse());
+			}
+			if (history[i].isRound) {
+				if (num > 0) {
+					num--;
+				} else {
+					break;
+				}
+			}
+		}
+		evts.reverse();
+		if (last && evts.includes(last)) {
+			const lastIndex = evts.indexOf(last);
+			return evts.filter(evt => evts.indexOf(evt) <= lastIndex);
+		}
+		return evts;
+	}
+	/**
 	 * @overload
 	 * @returns { void }
 	 */
@@ -6379,7 +6421,7 @@ export class Game {
 		if (typeof time != "number") time = 1;
 		if (typeof time2 != "number") time2 = 0;
 		time = time * lib.config.duration + time2;
-		if (lib.config.speed == "vvfast") time /= 3;
+		if (lib.config.game_speed == "vvfast") time /= 3;
 		_status.timeout = setTimeout(game.resume, time);
 	}
 	/**
@@ -6421,7 +6463,7 @@ export class Game {
 		if (typeof time != "number") time = 1;
 		if (typeof time2 != "number") time2 = 0;
 		time = time * lib.config.duration + time2;
-		if (lib.config.speed == "vvfast") time /= 3;
+		if (lib.config.game_speed == "vvfast") time /= 3;
 		//_status.timeout=setTimeout(game.resume,time);
 		return delay(time);
 	}

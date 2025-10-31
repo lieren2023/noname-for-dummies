@@ -20,9 +20,11 @@ game.import('extension', function(lib, game, ui, get, ai, _status) {
 			}
 			game.saveConfig('splash_style',item);
 			
+			// 启动页修改案例
 			// lib.extensionMenu['extension_手杀ui'].qidongye.onclick(item);
 			// game.saveConfig('extension_手杀ui_qidongye',item);
 			// game.saveConfig('qidongye',item);
+			
 			game.saveConfig('extension_手杀ui_splash_styleinit',true);
 		}
 		
@@ -789,6 +791,9 @@ if (document.getElementById("jindutiao")) {
 	  var jin=game.countPlayer(function(current){
         return current.identity=='jin';
       })
+	  var western=game.countPlayer(function(current){
+        return current.identity=='western';
+      })
       var ye=game.countPlayer(function(current){
         return current.identity=='ye';
       })
@@ -837,6 +842,7 @@ if (document.getElementById("jindutiao")) {
 	  if(wu>0) str+='<font color="#00ff00">'+get.translation('wu')+'</font> x '+wu+'  ';
 	  if(qun>0) str+='<font color="#ffff00">'+get.translation('qun')+'</font> x '+qun+'  ';
 	  if(jin>0) str+='<font color="#9e00ff">'+get.translation('jin')+'</font> x '+jin+'  ';
+	  if(western>0) str+='<font color="#9e00ff">'+get.translation('western')+'</font> x '+western+'  ';
 	  if(ye>0) str+='<font color="#9e00ff">'+get.translation('ye')+'</font> x '+ye+'  ';
 	  if(key>0) str+='<font color="#9e00ff">'+get.translation('key')+'</font> x '+key+'  ';
 	  if(key1>0) str+='<font color="#9e00ff">'+'夏'+'</font> x '+key1+'  ';
@@ -1028,6 +1034,7 @@ if (document.getElementById("jindutiao")) {
           undefined:'未选择势力',
           unknown:'保持隐蔽',
           ye:'击败场上<br>所有其他角色',
+		  western:'击败所有<br>非西势力角色',
 		  key:'击败所有<br>非键势力角色',
 		  夏:'击败所有<br>非夏势力角色',
 		  商:'击败所有<br>非商势力角色',

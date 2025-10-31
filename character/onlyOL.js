@@ -44,7 +44,7 @@ game.import("character", function () {
 			ol_wanglang: ["male", "wei", 3, ["gushe", "oljici"]],
 			ol_puyuan: ["male", "shu", 4, ["olshengong", "olqisi"]],
 			ol_zhouqun: ["male", "shu", 4, ["oltianhou", "olchenshuo"]],
-			ol_peixiu: ["male", "jin", 4, ["olmaozhu", "oljinlan"]],
+			ol_peixiu: ["male", "wei", 4, ["olmaozhu", "oljinlan"], ["border:jin"]],
 			sp_diaochan: ["female", "qun", 3, ["lihun", "rebiyue"], ["die_audio:diaochan"]],
 			sp_caoren: ["male", "wei", 4, ["weikui", "lizhan"]],
 			yuanshu: ["male", "qun", 4, ["yongsi", "weidi"]],
