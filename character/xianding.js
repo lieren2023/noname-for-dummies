@@ -10805,22 +10805,20 @@ game.import("character", function () {
 						});
 					}
 				},
-				content: function () {
-					"step 0";
-					var cards = get.cards(3 - player.countMark("dcxialei_clear"));
-					event.cards = cards;
+				async content(event, trigger, player) {
+					let cards = get.cards(3 - player.countMark("dcxialei_clear"));
 					game.cardsGotoOrdering(cards);
-					if (cards.length == 1) event._result = { bool: true, links: cards };
-					else player.chooseButton(["霞泪：获得其中的一张牌", cards], true);
-					"step 1";
+					let result;
+					if (cards.length == 1) result = { bool: true, links: cards };
+					else result = await player.chooseButton(["霞泪：获得其中的一张牌", cards], true).forResult();
 					if (result.bool) {
-						var card = result.links[0];
-						player.gain(card, "draw");
-						event.cards.remove(card);
-						if (event.cards.length) {
-							player
+						let card = result.links[0];
+						await player.gain(card, "draw");
+						cards.remove(card);
+						if (cards.length) {
+							const result2 = await player
 								.chooseBool()
-								.set("createDialog", ["是否将剩余牌置于牌堆底？", event.cards])
+								.set("createDialog", ["是否将剩余牌置于牌堆底？", cards])
 								.set("ai", () => _status.event.bool)
 								.set(
 									"bool",
@@ -10834,7 +10832,7 @@ game.import("character", function () {
 												var att = get.attitude(player, next);
 												for (var i = 0; ; i++) {
 													var judge = judges[i] && get.judge(judges[i]),
-														card = event.cards[i];
+														card = cards[i];
 													if (!judge || !card) break;
 													val += judge(card) * att;
 													i++;
@@ -10844,7 +10842,7 @@ game.import("character", function () {
 											else if (val == 0) return Math.random() < 0.5;
 											return true;
 										}
-										var card = event.cards[0];
+										var card = cards[0];
 										if (
 											get.color(card, player) == "red" &&
 											player.isPhaseUsing() &&
@@ -10856,22 +10854,22 @@ game.import("character", function () {
 										if (get.color(card, player) == "black") return false;
 										return true;
 									})()
-								);
-						} else event.goto(3);
-					} else event.finish();
-					"step 2";
-					if (result.bool) {
-						player.popup("牌堆底");
-						game.log(player, "将" + get.cnNumber(event.cards.length) + "张牌置于了牌堆底");
-					} else player.popup("牌堆顶");
-					while (cards.length) {
-						var card = cards.pop();
-						card.fix();
-						if (result.bool) ui.cardPile.appendChild(card);
-						else ui.cardPile.insertBefore(card, ui.cardPile.firstChild);
+								)
+								.forResult();
+							if (result2.bool) {
+								player.popup("牌堆底");
+								game.log(player, "将" + get.cnNumber(cards.length) + "张牌置于了牌堆底");
+							}
+							else player.popup("牌堆顶");
+							while (cards.length) {
+								let cardx = cards.pop();
+								cardx.fix();
+								if (result2.bool) ui.cardPile.appendChild(cardx);
+								else ui.cardPile.insertBefore(cardx, ui.cardPile.firstChild);
+							}
+							game.updateRoundNumber();
+						}
 					}
-					game.updateRoundNumber();
-					"step 3";
 					player.addMark("dcxialei_clear", 1, false);
 					player.addTempSkill("dcxialei_clear");
 				},

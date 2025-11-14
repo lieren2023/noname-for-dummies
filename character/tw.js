@@ -39,8 +39,7 @@ game.import("character", function () {
 			xia_zhangwei: ["female", "qun", 3, ["twhuzhong", "twfenwang"]],
 			tw_zhanghong: ["male", "wu", 3, ["twquanqian", "twrouke"]],
 			tw_zhangzhao: ["male", "wu", 3, ["twlijian", "twchungang"]],
-			tw_menghuo: ["male", "qun", 4, ["huoshou", "rezaiqi", "twqiushou"], ["zhu"]],
-			ol_liuyu: ["male", "qun", 2, ["zongzuo", "zhige", "twchongwang"], ["zhu"]],
+			
 			tw_gongsunfan: ["male", "qun", 4, ["twhuiyuan", "twshoushou"]],
 			tw_yangang: ["male", "qun", 4, ["twzhiqu", "twxianfeng"]],
 			xia_xiahouzie: ["female", "qun", "3/4", ["twxuechang", "twduoren"]],
@@ -160,8 +159,8 @@ game.import("character", function () {
 					"xia_xiahouzie",
 				],
 				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
-				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
 				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
+				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
 				tw_standard: ["tw_zhangfei"],
 				tw_shenhua_yin: ['tw_yl_luzhi'],
 				tw_shenhua_lei: ["tw_guanqiujian"],
@@ -23429,8 +23428,6 @@ game.import("character", function () {
 			twpolu: "破虏",
 			twpolu_info:
 				"主公技，当吴势力角色杀死一名角色或死亡后，你可以令任意名角色各摸X张牌（X为你此前发动过此技能的次数+1）。",
-			tw_menghuo: "TW孟获",
-			tw_menghuo_prefix: "TW",
 			twqiushou: "酋首",
 			twqiushou_info:
 				"主公技，锁定技，当一张【南蛮入侵】结算结束后，若此牌造成的伤害大于3点或有角色因此死亡，所有蜀势力和群势力角色各摸一张牌。",
@@ -23440,8 +23437,6 @@ game.import("character", function () {
 			twniju: "逆拒",
 			twniju_info:
 				"主公技。当你的拼点牌亮出后，你可以令本次拼点事件中的一张拼点牌的点数+X或-X。然后当本次拼点事件结束后，若有两张拼点牌的点数相等，你摸X张牌（X为场上群势力角色数）。",
-			ol_liuyu: "TW刘虞",
-			ol_liuyu_prefix: "TW",
 			twchongwang: "崇望",
 			twchongwang_info:
 				"主公技，其他群势力角色的出牌阶段开始时，其可以交给你一张牌，然后你与其使用【杀】或伤害性锦囊牌指定目标时不能指定对方为目标直至你的下回合结束（每名角色限发动一次）。",
@@ -23665,8 +23660,8 @@ game.import("character", function () {
 			tw_zhu: "海外服·专属主公",
 			tw_swordsman: "海外服·武侠篇",
 			tw_beidingzhongyuan: "海外服·北定中原",
-			tw_sp: "海外服·SP",
 			tw_mobile: "海外服·稀有专属",
+			tw_sp: "海外服·SP",
 			tw_standard: "外服异构·标准包",
 			tw_shenhua_yin: "外服异构·难知如阴",
 			tw_shenhua_lei: "外服异构·动如雷霆",

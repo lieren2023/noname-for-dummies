@@ -35,8 +35,6 @@ game.import("character", function () {
 			yanfuren: ["female", "qun", 3, ["channi", "nifu"]],
 			haomeng: ["male", "qun", 7, ["xiongmang"]],
 			re_pangdegong: ["male", "qun", 3, ["heqia", "yinyi"]],
-			hanmeng: ["male", "qun", 4, ["jieliang", "quanjiu"]],
-			xinping: ["male", "qun", 3, ["fuyuan", "zhongjie", "yongdi"]],
 			zhangning: ["female", "qun", 3, ["tianze", "difa"]],
 			tongyuan: ["male", "qun", 4, ["chaofeng", "chuanshu"]],
 			sp_mifangfushiren: ["male", "shu", 4, ["fengshi"]],
@@ -75,10 +73,6 @@ game.import("character", function () {
 			zhanggong: ["male", "wei", 3, ["xinfu_zhenxing", "xinfu_qianxin"], []],
 			weiwenzhugezhi: ["male", "wu", 4, ["xinfu_fuhai"], []],
 			beimihu: ["female", "qun", 3, ["zongkui", "guju", "baijia"]],
-			sp_liuqi: ["male", "qun", 3, ["rewenji", "sptunjiang"]],
-			xf_tangzi: ["male", "wei", 4, ["xinfu_xingzhao"], []],
-			xf_huangquan: ["male", "shu", 3, ["xinfu_dianhu", "xinfu_jianji"], []],
-			xf_sufei: ["male", "wu", 4, ["xinfu_lianpian"], []],
 			xushao: ["male", "qun", 4, ["pingjian"]],
 			xinpi: ["male", "wei", 3, ["xpchijie", "yinju"]],
 			lisu: ["male", "qun", 2, ["lslixun", "lskuizhu"]],
@@ -86,13 +80,6 @@ game.import("character", function () {
 			mangyachang: ["male", "qun", 4, ["spjiedao"], []],
 			xugong: ["male", "wu", 3, ["biaozhao", "yechou"], []],
 			zhangchangpu: ["female", "wei", 3, ["yanjiao", "xingshen"], []],
-			gaolan: ["male", "qun", 4, ["xiying"]],
-			sp_shenpei: ["male", "qun", 3, ["gangzhi", "beizhan"]],
-			xunchen: ["male", "qun", 3, ["fenglve", "mouzhi"], ["clan:颍川荀氏"]],
-			sp_zhanghe: ["male", "qun", 4, ["yuanlve"]],
-			sp_xuyou: ["male", "qun", 3, ["spshicai", "spfushi"]],
-			chunyuqiong: ["male", "qun", 5, ["cangchu", "sushou", "liangying"]],
-			lvkuanglvxiang: ["male", "qun", 4, ["liehou", "qigong"]],
 		},
 		characterSort: {
 			sp2: {
@@ -143,19 +130,6 @@ game.import("character", function () {
 				sp2_zhongyuan: ["re_hucheer", "re_zoushi", "caoanmin", "re_dongcheng"],
 				sp2_xiaohu: ["haomeng", "yanfuren", "yanrou", "dc_zhuling"],
 				sp2_qunxiong: ["chezhou", "hansong", "matie"],
-				
-				sp2_guandu: [
-					"sp_zhanghe",
-					"xunchen",
-					"sp_shenpei",
-					"gaolan",
-					"lvkuanglvxiang",
-					"chunyuqiong",
-					"sp_xuyou",
-					"xinping",
-					"hanmeng",
-				],
-				sp2_longzhou: ["xf_tangzi", "xf_huangquan", "xf_sufei", "sp_liuqi"],
 				
 				sp2_waitforsort: ["caobuxing", "re_maliang", "dc_jikang"],
 			},
@@ -270,16 +244,10 @@ game.import("character", function () {
 			matie: "马铁（？－212年），扶风茂陵（今陕西兴平）人。马腾之子，马超之弟。马腾遭韩遂进攻，乃携马铁等入京受职。马铁被封为骑都尉。后在邺城居住。因其兄马超反曹而被曹操夷灭。",
 		},
 		characterTitle: {
-			chunyuqiong: "#b对决限定武将",
-			sp_xuyou: "#g4v4限定武将",
+			
 		},
 		characterFilter: {
-			chunyuqiong: function (mode) {
-				return mode != "identity" && mode != "guozhan";
-			},
-			sp_xuyou: function (mode) {
-				return mode == "versus" && ["guandu", "4v4", "four"].includes(_status.mode);
-			},
+			
 		},
 		characterInitFilter: {
 			
@@ -15386,7 +15354,7 @@ game.import("character", function () {
 			starcanxi_cancel: "向死",
 			starcanxi_info: "锁定技。①游戏开始时，你获得场上所有角色的势力对应的“玺角”标记（初始势力中未获得的“玺角”标记改为增加等量的体力上限）。②一轮游戏开始时，你选择一个“玺角”对应势力并选择以下一项：1.妄生：本轮被选择势力角色每回合首次造成的伤害+1且计算与其他角色间的距离-1；2.向死：本轮其他被选择势力角色每回合首次回复体力后失去1点体力且每回合对你使用的第一张牌无效。",
 			starpizhi: "圮秩",
-			starpizhi_info: "锁定技。①一名角色死亡后，若你拥有该角色对应的“玺角”标记且你本轮发动〖向死〗的势力与其相同，或其是该势力最后一名角色，你失去之，然后摸X张牌并回复1点体力。②结束阶段，你摸X张牌。（X为你本局游戏失去的“玺角”标记数）",
+			starpizhi_info: "锁定技。①一名角色死亡后，若你拥有该角色对应的“玺角”标记且你本轮发动〖残玺〗的势力与其相同，或其是该势力最后一名角色，你失去之，然后摸X张牌并回复1点体力。②结束阶段，你摸X张牌。（X为你本局游戏失去的“玺角”标记数）",
 			starzhonggu: "冢骨",
 			starzhonggu_info:
 				"主公技，锁定技。摸牌阶段，若游戏轮数大于等于场上的群势力角色数，则你额外摸两张牌，否则你少摸一张牌。",
@@ -15483,10 +15451,6 @@ game.import("character", function () {
 			sp2_zhongyuan: "武将列传·中原狼烟",
 			sp2_xiaohu: "武将列传·虓虎悲歌",
 			sp2_qunxiong: "武将列传·群雄伺动",
-			
-			// 活动场
-			sp2_guandu: "活动场·官渡之战",
-			sp2_longzhou: "活动场·同舟共济",
 			
 			sp2_waitforsort: "等待分包",
 		},

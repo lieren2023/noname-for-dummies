@@ -7,8 +7,6 @@ game.import("character", function () {
 			
 		],
 		character: {
-			// 加魔势力？还是先临时修改为神势力吧（by 棘手怀念摧毁）
-			
 			//慢
 			// 临时修改（by 棘手怀念摧毁）
 			sxrm_guanyu: [
@@ -201,7 +199,9 @@ game.import("character", function () {
 						// 临时修改（by 棘手怀念摧毁）
 						// target.addTip(`${skill}_${current.playerid}`, `撼国 ${get.translation(current)}`);
 					});
-					target.addTempSkill(skill, "roundEnd");
+					// 临时修改（by 棘手怀念摧毁）
+					target.addTempSkill(skill, "roundStart");
+					// target.addTempSkill(skill, "roundEnd");
 					const cards = target.getCards("he");
 					if (!cards.length) {
 						return;

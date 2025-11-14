@@ -75,7 +75,6 @@ game.import("character", function () {
 			old_zhuzhi: ["male", "wu", 4, ["anguo"]],
 
 			old_zhugezhan: ["male", "shu", 3, ["old_zuilun", "old_fuyin"]],
-			ol_zhangrang: ["male", "qun", 3, ["xintaoluan"], ["sex:male_castrated"]],
 			//ol_manchong:['male','wei',3,['yuce','junxing']],
 			old_guanqiujian: ["male", "wei", 4, ["drlt_zhenrong", "drlt_hongju"], []],
 			old_wanglang: ["male", "wei", 3, ["gushe", "jici"]],
@@ -111,7 +110,7 @@ game.import("character", function () {
 				old_yijiang3: ["liru", "old_zhuran", "old_fuhuanghou", "old_caochong"],
 				old_yijiang4: ["old_caozhen", "old_chenqun", "old_zhuhuan", "old_caorui"],
 				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
-				old_yijiang6: ["ol_zhangrang", "old_huanghao", "old_liyan"],
+				old_yijiang6: ["old_huanghao", "old_liyan"],
 				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
 				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
 				old_sp: [
@@ -1769,8 +1768,6 @@ game.import("character", function () {
 			old_huatuo_prefix: "OL",
 			old_guanyu: "旧关羽",
 			old_guanyu_prefix: "旧",
-			ol_zhangrang: "旧张让",
-			ol_zhangrang_prefix: "旧",
 			ol_liaohua: "OL廖化",
 			ol_liaohua_prefix: "OL",
 			ol_zhuran: "OL朱然",

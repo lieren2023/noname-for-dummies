@@ -670,6 +670,48 @@ export class Card extends HTMLDivElement {
 		}
 		return this;
 	}
+	/**
+	 * 给此牌添加特定的cardtag（如添加应变条件）
+	 * @param { string } tag
+	 */
+	addCardtag(tag) {
+		let card = this;
+		game.broadcastAll(
+			function (card, tag) {
+				if (!_status.cardtag) {
+					_status.cardtag = {};
+				}
+				if (!_status.cardtag[tag]) {
+					_status.cardtag[tag] = [];
+				}
+				_status.cardtag[tag].add(card.cardid);
+				card.$init([card.suit, card.number, card.name, card.nature]);
+			},
+			card,
+			tag
+		);
+	}
+	/**
+	 * 给此牌移除特定的cardtag（如移除应变条件）
+	 * @param { string } tag
+	 */
+	removeCardtag(tag) {
+		let card = this;
+		game.broadcastAll(
+			function (card, tag) {
+				if (!_status.cardtag) {
+					_status.cardtag = {};
+				}
+				if (!_status.cardtag[tag]) {
+					_status.cardtag[tag] = [];
+				}
+				_status.cardtag[tag].remove(card.cardid);
+				card.$init([card.suit, card.number, card.name, card.nature]);
+			},
+			card,
+			tag
+		);
+	}
 	updateTransform(bool, delay) {
 		if (delay) {
 			var that = this;

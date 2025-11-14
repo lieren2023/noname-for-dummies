@@ -905,6 +905,16 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								_status.event = _status.event.parent;
 								_status.event.step = 0;
 								_status.event.identity = link;
+								
+								if (ui.selected.buttons.length > 0) {
+									ui.selected.buttons.forEach(function (button) {
+										if (button && button.parentNode) {
+											button.classList.remove("selected");
+										}
+									});
+									ui.selected.buttons.length = 0;
+								}
+								
 								if (link != (event.zhongmode ? "mingzhong" : "zhu")) {
 									seats.previousSibling.style.display = "";
 									seats.style.display = "";

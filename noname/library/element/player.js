@@ -359,6 +359,31 @@ export class Player extends HTMLDivElement {
 	 * @type { boolean | undefined }
 	 */
 	identityShown;
+	/**
+	 * 获取一名角色的名字翻译
+	 * @param {boolean} forDialog 是否用于对话框显示，如【五谷丰登】/【惠民】之类多名角色选择卡牌的卡牌/技能的content中，方便知晓卡牌和角色的对应关系。默认为false。
+	 * @returns { string } 角色名字翻译，forDialog为true会返回HTML字符串，为对话框中的卡牌呈现类似卡牌动画信息的效果，否则根据player._tempTranslate、lib.translate[`${player.name}_ab`]、get.translation(player.name)的优先级返回纯文本。
+	 */
+	getName(forDialog = false) {
+		const { name } = this;
+		let playername, hasTempTranslate;
+		if (this._tempTranslate) {
+			playername = this._tempTranslate;
+			hasTempTranslate = true;
+		} else if (lib.translate[`${name}_ab`]) {
+			playername = lib.translate[`${name}_ab`];
+		} else {
+			playername = get.translation(name);
+		}
+		if (!forDialog) {
+			return playername;
+		} else {
+			const SeatNum = this.getSeatNum();
+			const addSeat = game.hasPlayer2(current => current != this && current.getName() == playername, true) && typeof SeatNum == "number";
+			const border = get.groupnature(get.bordergroup(name));
+			return `<span style="font-weight:560"><span data-nature=${border}><span style="letter-spacing:0.1em">${!hasTempTranslate ? get.slimName(name) : playername}${addSeat ? `[${SeatNum}]` : ""}</span></span><br/><span style="color:#FFD700">`;
+		}
+	}
 	//新函数
 	/**
 	 * 怒气

@@ -664,7 +664,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					"gz_wenqin",
 					"gz_pengyang",
 				],
-				guozhan_online: ["gz_re_xusheng"],
+				// guozhan_online: ["gz_re_xusheng"],
 				guozhan_jin: [
 					"gz_jin_simayi",
 					"gz_jin_simazhao",
@@ -962,7 +962,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				gz_jin_jiachong: ["male", "jin", 3, ["fakexiongshu", "fakejianhui"]],
 				gz_jin_yanghu: ["male", "jin", 4, ["fakechongxin", "fakeweirong"]],
 
-				gz_re_xusheng: ["male", "wu", 4, ["repojun"]],
+				// gz_re_xusheng: ["male", "wu", 4, ["repojun"]],
 			},
 		},
 		skill: {
@@ -23097,7 +23097,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			},
 		},
 		translate: {
-			// 修复使用国战武将关闭后国战武将包翻译丢失的bug
+			// 临时修复使用国战武将关闭后国战武将包翻译丢失的bug
 			gz_caocao: "曹操",
 			gz_caopi: "曹丕",
 			gz_dianwei: "典韦",
@@ -24207,7 +24207,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			guozhan_jun: "君主武将",
 			guozhan_yexinjia: "野心家武将",
 			guozhan_double: "双势力武将",
-			guozhan_online: "Online专属",
+			// 暂不更新
+			// guozhan_online: "Online专属",
 			guozhan_jin: "文德武备",
 			guozhan_zongheng: "纵横捭阖",
 			guozhan_decade: "十年踪迹十年心",

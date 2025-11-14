@@ -364,19 +364,29 @@ game.import("character", function () {
 									return evt.name === "showCards";
 								})
 								.reduce((list, evt) => list.addArray(evt.cards), []);
-							return player.getUseValue(card) + (shown.includes(card) ? 0 : get.effect(player, { name: "draw" }, player, player));
+							const cardx = {
+								name: get.name(card, player),
+								nature: get.nature(card, player),
+								isCard: true,
+							};
+							return player.getUseValue(cardx) + (shown.includes(card) ? 0 : get.effect(player, { name: "draw" }, player, player));
 						})
 						.forResult();
 				},
 				async content(event, trigger, player) {
 					const next = player.showCards(event.cards, get.translation(player) + "发动了【低讴】");
 					await next;
-					if (get.type(event.cards[0]) !== "equip" && get.type(event.cards[0]) !== "delay" && player.hasUseTarget(event.cards[0])) await player.chooseUseTarget(event.cards[0], false);
+					const cardx = {
+						name: get.name(event.cards[0], player),
+						nature: get.nature(event.cards[0], player),
+						isCard: true,
+					};
+					if (get.type(cardx) !== "equip" && get.type(cardx) !== "delay" && player.hasUseTarget(cardx)) await player.chooseUseTarget(cardx, true, false);
 					if (
 						!game.getGlobalHistory(
 							"everything",
 							evt => {
-								return evt.name === "showCards" && evt !== next;
+								return evt.name === "showCards" && evt !== next && evt.cards.includes(event.cards[0]);
 							},
 							next
 						).length

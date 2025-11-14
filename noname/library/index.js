@@ -12795,6 +12795,7 @@ export class Library {
 			logv: false,
 			forceDie: true,
 			silent: true,
+			forceOut: true,
 			//priority:-5,
 			content: function () {
 				"step 0";
@@ -14943,6 +14944,34 @@ export class Library {
 			{
 				showName: "智",
 				color: "#99e2ff",
+				nature: "firemm",
+			},
+		],
+		[
+			"闪耀",
+			{
+				showName: "闪",
+				color: "#c282b2",
+				nature: "keymm",
+			},
+		],
+		[
+			"闪耀战姬",
+			{
+				getSpan: () => {
+					const span = document.createElement("span");
+					span.style.fontFamily = "NonameSuits";
+					span.style.color = "#c282b2";
+					span.dataset.nature = "keymm";
+					span.textContent = "★";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
+			"领主",
+			{
+				color: "#2e002e",
 				nature: "firemm",
 			},
 		],

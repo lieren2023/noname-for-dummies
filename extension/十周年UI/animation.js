@@ -1578,8 +1578,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						y: [0, 0.21],
 						height: [0, 0.58],
 					},
-					舞剑铸缘: {
-						name: 'skin_baosanniang_WuJianZhuYuan',
+					嫣然一笑: {
+						name: 'skin_baosanniang_YanRanYiXiao',
 						action: 'DaiJi',
 						x: [0, 0.77],
 						y: [0, 0.245],
@@ -1940,8 +1940,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_zhangchunhua: {
-					花好月圆: {
-						name: 'skin_zhangchunhua_HuaHaoYueYuan',
+					绰约多姿: {
+						name: 'skin_zhangchunhua_ChuoYueDuoZi',
 						x: [0, 0.81],
 						y: [0, 0.27],
 						height: [0, 0.52],
@@ -2171,8 +2171,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						y: [0, 0.19],
 						height: [0, 0.53],
 					},
-					舞剑铸缘: {
-						name: 'skin_baosanniang_WuJianZhuYuan',
+					嫣然一笑: {
+						name: 'skin_baosanniang_YanRanYiXiao',
 						action: 'DaiJi',
 						x: [0, 0.75],
 						y: [0, 0.225],
@@ -2533,8 +2533,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_zhangchunhua: {
-					花好月圆: {
-						name: 'skin_zhangchunhua_HuaHaoYueYuan',
+					绰约多姿: {
+						name: 'skin_zhangchunhua_ChuoYueDuoZi',
 						x: [0, 0.82],
 						y: [0, 0.24],
 						height: [0, 0.47],

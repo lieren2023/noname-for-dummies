@@ -25,7 +25,7 @@ var pinyin_dict_polyphone = {
 	"纪灵": "jǐ ",
 	"笮融": "zé ",
 	"逢纪": "páng ",
-	"许褚": "xǔ chǔ",
+	"许褚": "xǔ chǔ", // 一说读xǔ zhǔ
 	"刘辟": " pì",
 	"刘禅": " shàn",
 	"甄宓": " fú",
@@ -41,6 +41,8 @@ var pinyin_dict_polyphone = {
 	"夏侯令女": " hóu lìng nǚ",
 	"马日磾": " mì dī",
 	"史阿": " ē",
+	"单福": "shàn ",
+	"秃发树机能": "tú fá shù jī néng",
 	
 	// "凯撒": " sà",
 	
@@ -96,6 +98,8 @@ var pinyin_dict_polyphone = {
 	"行图": "xíng ",
 	"绝行": " xíng",
 	"迟行": " xíng",
+	"险行": " xíng",
+	"任行": "rèn xíng",
 	"好施": "hào ",
 	"荐降": " xiáng",
 	"破降": " xiáng",
@@ -107,6 +111,7 @@ var pinyin_dict_polyphone = {
 	"应天": "yìng ",
 	"节应": "jié yìng",
 	"驰应": " yìng",
+	"辞应": " yìng",
 	"断发": " fà",
 	"旋风": "xuàn fēng",
 	"将驰": "jiàng ",
@@ -139,6 +144,7 @@ var pinyin_dict_polyphone = {
 	"辟撰": "pì ",
 	"辟境": "pì ",
 	"辟剑": "pì ",
+	"辟奇": "pì qí",
 	"斗阵": "dòu ",
 	"斗缠": "dòu ",
 	"覆斗": " dòu",
@@ -177,6 +183,7 @@ var pinyin_dict_polyphone = {
 	"天予": " yǔ",
 	"累卵": "lěi ",
 	"印卡": " kǎ",
+	"弊蒙": " méng",
 	
 	"蒙斥": "méng ",
 	
@@ -221,8 +228,34 @@ var pinyin_dict_polyphone = {
 	"桀骜": " ào",
 	
 	// 武将称号
-	"中才之相": "zhōng cái zhī xiàng",
-	"洞世权相": "   xiàng",
+	"西羌相": "  xiàng",
+	"魔将": " jiàng",
+	"福将": " jiàng",
+	"长儒赡宗": "zhǎng   ",
+	"雄长百越": " zhǎng  ",
+	"少传融业": "shào chuán  ",
+	
+	"冲应": "chōng yìng",
+	"降曹": "xiáng ",
+	"假降": "jiǎ xiáng",
+	"降将": "xiáng jiàng",
+	"没渊": "mò ",
+	"便辟": "pián pì",
+	"三朝": " cháo",
+	"中才": "zhōng ",
+	"之相": " xiàng",
+	"权相": "   xiàng",
+	"忠相": " xiàng",
+	"良相": " xiàng",
+	"背剑": "bēi ",
+	"之将": " jiàng",
+	"为将": "wéi jiàng",
+	"豪将": " jiàng",
+	"万将": "wàn jiàng",
+	"勇将": " jiàng",
+	"中郎将": "zhōng láng jiàng",
+	"长史": "zhǎng ",
+	"长公主": "zhǎng  ",
 	// END
 	
 	// 原版（含修复）
@@ -4773,7 +4806,7 @@ var pinyin_dict_polyphone = {
 	"幅员": " yuán",
 	"福地": " dì",
 	"福分": " fēn",
-	"福将": " jiāng",
+	// "福将": " jiāng",
 	"辐射": " shè",
 	"福相": " xiàng",
 	"辐条": " tiáo",

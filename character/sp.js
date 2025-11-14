@@ -3787,26 +3787,29 @@ game.import("character", function () {
 					for (let current of [player, target]) {
 						switch (list[result[current == player ? 0 : 1]]) {
 							case "重铸": {
-								let result2 = yield current.chooseCard("he", "请重铸一张牌", (card, player) => player.canRecast(card), true);
-								if (result2.bool) current.recast(result2.cards);
+								if (current.countCards("he", card => current.canRecast(card))) {
+									let result2 = yield current.chooseCard("he", "请重铸一张牌", (card, player) => player.canRecast(card), true);
+									if (result2.bool) current.recast(result2.cards);
+								}
 								break;
 							}
 							case "出杀": {
-								current.chooseToUse({
-									prompt: "请使用一张【杀】",
-									filterCard: function (card, player) {
-										if (card.name != "sha") return false;
-										return lib.filter.filterCard.apply(this, arguments);
-									},
-									forced: true,
-									ai1: function (card) {
-										return _status.event.player.getUseValue(card);
-									},
-								});
+								if (current.hasUsableCard("sha"))
+									current.chooseToUse({
+										prompt: "请使用一张【杀】",
+										filterCard: function (card, player) {
+											if (card.name != "sha") return false;
+											return lib.filter.filterCard.apply(this, arguments);
+										},
+										forced: true,
+										ai1: function (card) {
+											return _status.event.player.getUseValue(card);
+										},
+									});
 								break;
 							}
 							case "弃牌": {
-								current.chooseToDiscard("he", 2, true);
+								if (current.countCards("he", card => lib.filter.cardDiscardable(card, current))) current.chooseToDiscard("he", 2, true);
 								break;
 							}
 						}
@@ -26791,7 +26794,12 @@ game.import("character", function () {
 			},
 			kunfen: {
 				audio: 2,
-				audioname2: { ol_sb_jiangwei: "kunfen_ol_sb_jiangwei" },
+				audioname2: {
+					ol_sb_jiangwei: "kunfen_ol_sb_jiangwei",
+					pot_weiyan: "kunfen_pot_weiyan",
+					pot_weiyan_achieve: "kunfen_pot_weiyan",
+					pot_weiyan_fail: "kunfen_pot_weiyan",
+				},
 				trigger: { player: "phaseJieshuBegin" },
 				locked: function (skill, player) {
 					if (!player || !player.storage.kunfen) return true;

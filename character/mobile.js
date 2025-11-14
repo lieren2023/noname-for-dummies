@@ -174,10 +174,11 @@ game.import("character", function () {
 		},
 		characterSort: {
 			mobile: {
-				mobile_default: ["xin_huojun", "muludawang", "mb_chengui", "mb_huban", "mb_xianglang", "yanxiang", "xin_wuban", "laimin", "baoxin", "jiangji", "liwei", "xin_guozhao", "miheng", "taoqian", "lingcao", "sunru", "lifeng", "zhuling", "liuye", "zhaotongzhaoguang", "majun", "simazhao", "wangyuanji", "pangdegong", "shenpei", "hujinding", "zhangyì", "jiakui", "yangbiao", "chendeng", "dongcheng", "yangyi", "dengzhi", "zhengxuan", "sp_sufei", "furong", "dingyuan", "simashi", "yanghuiyu", "hucheer", "gongsunkang", "nanhualaoxian", "zhouqun", "qiaozhou", "fuqian", "mayuanyi", "yanpu", "sunhanhua", "sp_maojie", "peixiu", "sp_jianggan", "ruanhui", "xin_mamidi", "sp_caosong", "yangfu", "wangjun", "sp_pengyang", "qianzhao", "shichangshi", "yangfeng", "zhangbu", "mb_zhangfen"],
 				mobile_longxue: ["mb_simafu", "mb_wenqin", "mb_simazhou", "mb_sp_guanqiujian", "mb_caomao", "chengji", "lizhaojiaobo", "mb_wangjing", "mb_jiachong"],
 				mobile_yijiang: ["yj_zhanghe", "yj_zhangliao", "yj_xuhuang", "yj_ganning", "yj_huangzhong", "yj_weiyan", "yj_zhoubuyi", "new_yj_dongzhuo"],
-				mobile_standard: ["xin_xiahoudun", "xin_zhangfei"],
+				mobile_xlqk: ["sunru", "liuzan", "pangdegong", "miheng", "majun", "zhengxuan", "simashi", "nanhualaoxian", "shichangshi", "sunhanhua", "mb_zhangfen"],
+				mobile_sp: ["xin_huojun", "muludawang", "mb_chengui", "mb_huban", "mb_xianglang", "yanxiang", "xin_wuban", "laimin", "baoxin", "jiangji", "liwei", "xin_guozhao", "taoqian", "lingcao", "lifeng", "zhuling", "liuye", "zhaotongzhaoguang", "simazhao", "wangyuanji", "shenpei", "hujinding", "zhangyì", "jiakui", "yangbiao", "chendeng", "dongcheng", "yangyi", "dengzhi", "sp_sufei", "furong", "dingyuan", "yanghuiyu", "hucheer", "gongsunkang", "zhouqun", "qiaozhou", "fuqian", "mayuanyi", "yanpu", "sp_maojie", "peixiu", "sp_jianggan", "ruanhui", "xin_mamidi", "sp_caosong", "yangfu", "wangjun", "sp_pengyang", "qianzhao", "yangfeng", "zhangbu", "re_wangyun", "re_baosanniang", "re_weiwenzhugezhi", "re_zhanggong", "re_xugong", "re_heqi", "xin_hansui", "mb_sunluyu", "mb_sp_zhenji"],
+				mobile_standard: ["xin_xiahoudun", "xin_zhangfei", "old_yuanshu"],
 				mobile_shenhua_feng: ["re_xiaoqiao", "xin_zhoutai"],
 				mobile_shenhua_huo: ["re_pangtong", "re_sp_zhugeliang", "re_xunyu", "re_dianwei", "re_yanwen", "xin_yuanshao"],
 				mobile_shenhua_lin: ["re_dongzhuo", "re_sunjian", "re_zhurong"],
@@ -190,7 +191,6 @@ game.import("character", function () {
 				mobile_yijiang4: ["xin_zhoucang", "xin_caifuren", "xin_guyong", "xin_sunluban", "xin_caozhen", "xin_jushou", "xin_wuyi", "xin_zhuhuan", "re_chenqun"],
 				mobile_yijiang5: ["xin_zhangyi", "xin_sunxiu", "xin_quancong", "xin_zhuzhi", "xin_caoxiu"],
 				mobile_yijiang7: ["re_jikang"],
-				mobile_sp: ["old_yuanshu", "re_wangyun", "re_baosanniang", "re_weiwenzhugezhi", "re_zhanggong", "re_xugong", "re_heqi", "liuzan", "xin_hansui", "mb_sunluyu", "mb_sp_zhenji"],
 				
 				mobile_changshi: ["scs_zhangrang", "scs_zhaozhong", "scs_sunzhang", "scs_bilan", "scs_xiayun", "scs_hankui", "scs_lisong", "scs_duangui", "scs_guosheng", "scs_gaowang"],
 			},
@@ -2313,6 +2313,9 @@ game.import("character", function () {
 							return player.isTurnedOver();
 						},
 						filter(event, player) {
+							// 改回旧版
+							return event.mbcmjiushi;
+							/*
 							if (
 								player.hasHistory("useCard", evt => {
 									if (evt.card.name != "jiu" || evt.getParent().name != "mbcmjiushi_use") {
@@ -2324,6 +2327,7 @@ game.import("character", function () {
 								return false;
 							}
 							return player.isTurnedOver();
+							*/
 						},
 						prompt(event, player) {
 							return "是否发动【酒诗】，将武将牌翻面？";
@@ -19327,7 +19331,7 @@ game.import("character", function () {
 				intro: {
 					content(storage) {
 						if (!storage) return "出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）";
-						return "其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）";
+						return "其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有基本牌（X为你已损失的体力值，至少为1，至多为3）";
 					},
 				},
 				audio: 2,
@@ -19337,24 +19341,37 @@ game.import("character", function () {
 				},
 				logTarget: "player",
 				prompt2(event, player) {
-					return "令其摸" + get.cnNumber(Math.min(3, Math.max(1, player.getDamagedHp()))) + "张牌，然后本回合的弃牌阶段开始时，" + (event.player === player ? "" : "其") + "弃置所有非基本牌";
+					const goon = event.player === player;
+					return (goon ? "" : "令其") + "摸" + get.cnNumber(Math.min(3, Math.max(1, player.getDamagedHp()))) + "张牌，本回合的弃牌阶段开始时，" + (goon ? "弃置所有非基本牌" : "其弃置所有基本牌");
 				},
 				content() {
 					player.changeZhuanhuanji("xiongjin");
 					const target = trigger.player;
 					target.addTempSkill("xiongjin_effect");
+					target.markAuto("xiongjin_effect", [target === player ? "nobasic" : "basic"]);
 					target.draw(Math.min(3, Math.max(1, player.getDamagedHp())));
 				},
 				subSkill: {
 					effect: {
 						charlotte: true,
 						mark: true,
-						intro: { content: "弃牌阶段开始时，弃置所有非基本牌" },
+						intro: {
+							markcount: () => 0,
+							content(storage) {
+								if (storage.length > 1) return "弃牌阶段开始时，弃置所有牌";
+								return "弃牌阶段开始时，弃置所有" + (storage[0] === "basic" ? "基本" : "非基本") + "牌";
+							},
+						},
 						trigger: { player: "phaseDiscardBegin" },
 						forced: true,
 						popup: false,
 						content() {
-							const cards = player.getCards("he", card => lib.filter.cardDiscardable(card, player) && get.type(card) !== "basic");
+							const storage = player.getStorage("xiongjin_effect");
+							const cards = player.getCards("he", card => {
+								if (!lib.filter.cardDiscardable(card, player)) return false;
+								const type = get.type(card);
+								return (type === "basic" && storage.includes("basic")) || (type !== "basic" && storage.includes("nobasic"));
+							});
 							if (cards.length) player.discard(cards);
 						},
 					},
@@ -19507,7 +19524,7 @@ game.import("character", function () {
 				if (!storage) str += "</span>";
 				str += "；";
 				if (storage) str += '<span class="bluetext">';
-				str += "阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌";
+				str += "阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有基本牌";
 				if (storage) str += "</span>";
 				return str+="（X为你已损失的体力值，至少为1，至多为3）。";
 			},
@@ -20463,15 +20480,16 @@ game.import("character", function () {
 			new_yj_dongzhuo: "☆董卓",
 			new_yj_dongzhuo_prefix: "☆",
 			xiongjin: "雄进",
-			xiongjin_info: "转换技。阳：出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌；阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有非基本牌（X为你已损失的体力值，至少为1，至多为3）。",
+			xiongjin_info: "转换技。阳：出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌；阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有基本牌（X为你已损失的体力值，至少为1，至多为3）。",
 			xiawei: "侠威",
 			xiawei_info: "锁定技。①你的手牌上限等于体力上限。②有牌非因使用进入弃牌堆后，你记录这些牌的花色，然后若你因此记录了至少四种花色且你的体力上限小于9，则你增加1点体力上限并摸一张牌。",
 			baoxi: "暴袭",
 			baoxi_info: "每回合每项各限一次，当一次性至少有两张基本牌/非基本牌进入弃牌堆时，你可以减1点体力上限，视为对一名角色使用【决斗】/【杀】。",
 
-			mobile_default: "袖里乾坤",
 			mobile_longxue: "龙血玄黄",
 			mobile_yijiang: "将星独具",
+			mobile_xlqk: "袖里乾坤",
+			mobile_sp: "手杀·SP",
 			mobile_standard: "手杀异构·标准包",
 			mobile_shenhua_feng: "手杀异构·其疾如风",
 			mobile_shenhua_huo: "手杀异构·侵掠如火",
@@ -20485,7 +20503,6 @@ game.import("character", function () {
 			mobile_yijiang4: "手杀异构·将4",
 			mobile_yijiang5: "手杀异构·将5",
 			mobile_yijiang7: "手杀异构·原7",
-			mobile_sp: "手杀异构·SP",
 			
 			mobile_changshi: "十常侍单体",
 			// mobile_others: "其他",

@@ -78,7 +78,7 @@ game.import("character", function () {
 			xin_liru: ["male", "qun", 3, ["xinjuece", "xinmieji", "xinfencheng"]],
 
 			guohuanghou: ["female", "wei", 3, ["jiaozhao", "danxin"]],
-			liuyu: ["male", "qun", 2, ["xinzhige", "xinzongzuo"]],
+			liuyu: ["male", "qun", 2, ["zhige", "zongzuo", "twchongwang"], ["zhu"]],
 			liyan: ["male", "shu", 3, ["dcduliang", "fulin"]],
 			sundeng: ["male", "wu", 4, ["kuangbi"]],
 
@@ -2220,7 +2220,7 @@ game.import("character", function () {
 					},
 					draw: {
 						audio: "lkbushi",
-						trigger: { player: ["useCard", "respond"] },
+						trigger: { player: ["useCardAfter", "respondAfter"] },
 						forced: true,
 						locked: false,
 						filter: function (event, player) {

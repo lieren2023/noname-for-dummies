@@ -213,7 +213,7 @@ game.import("character", function () {
 				},
 				forced: true,
 				content() {
-					player.addTempSkill("olsbyangwei_attack");
+					player.addSkill("olsbyangwei_attack");
 					player.addMark("olsbyangwei_attack", 1, false);
 				},
 				group: "olsbyangwei_discard",
@@ -247,7 +247,7 @@ game.import("character", function () {
 						},
 						forced: true,
 						content() {
-							player.addTempSkill("olsbyangwei_defend");
+							player.addSkill("olsbyangwei_defend");
 							player.addMark("olsbyangwei_defend", 1, false);
 						},
 					},
@@ -293,7 +293,7 @@ game.import("character", function () {
 			olsbbojue: "搏决",
 			olsbbojue_info: "出牌阶段限两次，你可以选择一名其他角色，然后同时与其选择摸一张牌或弃置一张牌，然后若你与其的手牌数之和的变化值为：0，你与其依次弃置对方一张牌；2，你与其依次视为对对方使用一张【杀】。",
 			olsbyangwei: "扬威",
-			olsbyangwei_info: "锁定技。①当你于一回合不因摸牌阶段获得至少两张牌后，你本回合下次造成的伤害+1。②当你于一回合不因弃牌阶段弃置至少两张牌后，你本回合下次受到的伤害+1。",
+			olsbyangwei_info: "锁定技。①当你于一回合不因摸牌阶段获得至少两张牌后，你下次造成的伤害+1。②当你于一回合不因弃牌阶段弃置至少两张牌后，你下次受到的伤害+1。",
 
 			sbfm_sb_mouding: "谋定天下",
 			sbfm_sb_wudong: "武动乾坤",

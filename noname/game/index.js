@@ -120,6 +120,45 @@ export class Game {
 			});
 		}
 	})();
+	/**
+	 * 在指定节点（button）内部创建一个卡片内容区域（.cardsetion），并根据当前结构设置节点状态，用于五谷此类须多人选择的牌的执行过程中显示每张卡牌对应的选择角色
+	 * @param {string} innerHTML 要插入到.cardsetion中的HTML内容
+	 * @param {HTMLElement} button 目标节点
+	 */
+	createButtonCardsetion(innerHTML, button) {
+		const next = ui.create.div(".cardsetion", innerHTML, button);
+		next.style.setProperty("display", "block", "important");
+		if (!button.querySelector(".info")) {
+			button.classList.add("infoflip");
+			button.classList.add("infohidden");
+		}
+	}
+	/**
+	 * 初始化角色列表
+	 *
+	 * 仅无参时修改_status.characterlist
+	 * @param { boolean } [filter] 筛选逻辑：false跳过移除逻辑，否则执行默认移除逻辑
+	 * @returns { string[] }
+	 */
+	initCharacterList(filter) {
+		let list;
+		if (_status.connectMode) {
+			list = get.charactersOL();
+		} else {
+			list = Object.keys(lib.character).filter(name => !lib.filter.characterDisabled2(name) && !lib.filter.characterDisabled(name));
+		}
+		if (filter !== false) {
+			if (list.length) {
+				game.countPlayer2(current => {
+					list.removeArray(get.nameList(current));
+				});
+			}
+			if (filter === undefined) {
+				_status.characterlist = list;
+			}
+		}
+		return list;
+	}
 	//Stratagem
 	//谋攻
 	setStratagemBuffCost(cardName, cost) {
@@ -9064,6 +9103,146 @@ export class Game {
 			let target = sortedTargets[i];
 			await Promise.resolve(asyncFunc(target, i));
 		}
+	}
+	/**
+	 * 此方法用于让所有targets同时执行一个选择函数
+	 *
+	 * @param { Player[] } targets 需要执行选择函数的目标
+	 * @param { function } func 需要执行的函数
+	 * @param { Any[] } args 函数所需的参数
+	 * @returns { GameEventPromise }
+	 */
+	chooseAnyOL(targets, func, args) {
+		const next = game.createEvent("chooseAnyOL");
+		next.targets = targets;
+		next.func = func;
+		next.args = args;
+		next.setContent("chooseAnyOL");
+		return next;
+	}
+	/**
+	 * 用于玩家使用非自己手牌时生成的可以选择的假牌（其实就是复制一份出来）。
+	 *
+	 * @param { Card[] | Card } cards 需要被复制的真牌，允许传入单张卡牌或者卡牌数组
+	 * @param { Boolean } isBlank 是否生成只有牌背没有其他牌面信息的牌
+	 * @param { string } tempname 生成的假牌的临时名字，只有isBlank为true才会用到
+	 * @returns { Card[] }
+	 */
+	createFakeCards(cards, isBlank = false, tempname) {
+		if (!Array.isArray(cards)) {
+			cards = [cards];
+		}
+		const cardsx = cards.map(card => {
+			while (card.rcardSymbol) {
+				//好孩子不玩嵌套
+				card = card[card.rcardSymbol];
+			}
+			const cardx = ui.create.card();
+			const rcardSymbol = Symbol("card");
+			cardx.rcardSymbol = rcardSymbol;
+			cardx[rcardSymbol] = card;
+			cardx.isFake = true;
+			cardx._cardid = card.cardid;
+			if (isBlank) {
+				//没有tempname默认就是白板
+				cardx.init([null, null, tempname || "猜猜看啊", null]);
+				game.broadcastAll(cardx => {
+					cardx.classList.add("infohidden");
+					cardx.classList.add("infoflip");
+				}, cardx);
+			} else {
+				cardx.init(get.cardInfo(card));
+			}
+			return cardx;
+		});
+		return cardsx;
+	}
+	/**
+	 * 用于删除createFakeCards生成的假牌。
+	 *
+	 * @param { Card[] | Card } cards 需要被删除的假牌，允许传入单张卡牌或者卡牌数组
+	 * @returns { Card[] } 返回那些不是假牌的牌
+	 */
+	deleteFakeCards(cards) {
+		if (!Array.isArray(cards)) {
+			cards = [cards];
+		}
+		const fake = cards.filter(card => card.isFake && card.rcardSymbol && card._cardid),
+			other = cards.removeArray(fake),
+			wild = [],//野生的假牌
+			map = {};
+		fake.forEach(card => {
+			const owner = get.owner(card);
+			if (!owner) {
+				wild.push(card);
+				return;
+			}
+			// 临时修改（by 棘手怀念摧毁）
+			// map[owner.playerid] ??= [];
+			if (map[owner.playerid] == null) map[owner.playerid] = [];
+			map[owner.playerid].push(card);
+		});
+		wild.forEach(i => i.delete());
+		for (const id in map) {
+			const target = (_status.connectMode ? lib.playerOL : game.playerMap)[id];
+			const cards = map[id];
+			if (target?.isOnline2()) {
+				target.send(
+					function (cards, player) {
+						cards.forEach(i => i.delete());
+						if (player == game.me) {
+							ui.updatehl();
+						}
+					},
+					cards,
+					target
+				);
+			}
+			cards.forEach(i => i.delete());
+			if (target == game.me) {
+				ui.updatehl();
+			}
+		}
+		return other;
+	}
+	/**
+	 * find the skillname of the event
+	 * 获取触发事件的技能
+	 * @param { GameEvent } event
+	 * @param { Boolean } includeCharlotteSkill 是否包含夏洛特技
+	 * @param { Boolean } includeEquipSkill 是否包含装备技能
+	 * @param { Boolean } includeGlobalSkill 是否包含全局技能
+	 * @returns { string | null }
+	 */
+	findSkill(event, includeCharlotteSkill = false, includeEquipSkill = false, includeGlobalSkill = false) {
+		let skill = "";
+		let count = 0;
+		let evt = event;
+		do {
+			evt = evt.parent;
+			let name = evt?.skill || evt?.name;
+			if (!name) {
+				break;
+			}
+			if (name.startsWith("pre_")) {
+				name = name.slice(4);
+			}
+			for (const suffix of ["_backup", "ContentBefore", "ContentAfter", "_cost"]) {
+				if (name.endsWith(suffix)) {
+					name = name.slice(0, name.lastIndexOf(suffix));
+				}
+			}
+			skill = get.sourceSkillFor(name);
+			const info = lib.skill[skill];
+			if (!info || !Object.keys(info).length) {
+				continue;
+			}
+			if ((!includeCharlotteSkill && info.charlotte) || (!includeEquipSkill && info.equipSkill) || (!includeGlobalSkill && lib.skill.global.includes(skill))) {
+				return null;
+			}
+			return skill;
+		} while (++count < 5);
+		return null;
 	}
 }
 
