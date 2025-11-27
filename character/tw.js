@@ -3,64 +3,9 @@ game.import("character", function () {
 	return {
 		name: "tw",
 		connect: true,
-		characterSort: {
-			tw: {
-				tw_zhu: ["tw_beimihu", "tw_ol_sunjian", "ol_liuyu", "tw_menghuo"],
-				tw_swordsman: [
-					"xia_yuzhenzi",
-					"xia_shie",
-					"xia_shitao",
-					"xia_guanyu",
-					"xia_liubei",
-					"xia_xiahousone",
-					"xia_xiahoudun",
-					"xia_zhangwei",
-					"xia_xushu",
-					"xia_wangyue",
-					"xia_liyàn",
-					"xia_tongyuan",
-					"xia_lusu",
-					"xia_dianwei",
-					"xia_zhaoe",
-					"xia_xiahouzie",
-				],
-				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
-				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
-				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
-				tw_standard: ["tw_zhangfei"],
-				tw_shenhua_yin: ['tw_yl_luzhi'],
-				tw_shenhua_lei: ["tw_guanqiujian"],
-				tw_yijiang1: ["tw_re_fazheng"],
-				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
-				tw_yijiang3: ["tw_fuhuanghou", "tw_guohuai"],
-				tw_yijiang4: ["tw_sunluban", "tw_guyong"],
-				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
-				tw_yijiang7: ["tw_xuezong"],
-				tw_yunchouzhi: [
-					"tw_wangcan",
-					"tw_dongzhao",
-					"tw_bianfuren",
-					"tw_feiyi",
-					"tw_chenzhen",
-					"tw_xunchen",
-				],
-				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
-				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
-				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
-				tw_yunchouyan: ["tw_jiangqing"],
-				tw_yijiang: [
-					"tw_caoang",
-					"tw_caohong",
-					"tw_zumao",
-					"tw_dingfeng",
-					"tw_maliang",
-					"tw_xiahouba",
-				],
-				tw_english: ["kaisa"],
-				
-				// tw_waitingforsort: [],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
 			tw_sunluban: ['female', 'wu', 3, ['twzenhui', 'xinjiaojin'], ['die_audio:xin_sunluban']],
 			tw_mazhong: ['male', 'shu', 4, ['twfuman'], ['die_audio:mazhong']],
@@ -77,10 +22,10 @@ game.import("character", function () {
 			huan_zhugeguo: ["female", "shu", 3, ["rexianyuan", "twlingyin"]],
 			huan_zhanghe: ["male", "wei", 4, ["twkuiduan"]],
 			huan_zhaoyun: ["male", "shu", 4, ["twjiezhan", "twlongjin"]],
-			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"]],
+			huan_simayi: ["male", "wei", 4, ["twzongquan", "twguimou"], ["border:ye"]],
 			huan_weiyan: ["male", "shu", 4, ["twqiji", "twpiankuang"]],
 			tw_zhugejun: ["male", "qun", 3, ["twshouzhu", "twdaigui", "twcairu"]],
-			simafu: ["male", "wei", 3, ["xunde", "chenjie"]],
+			simafu: ["male", "wei", 3, ["xunde", "chenjie"], ["border:jin"]],
 			tw_yanliang: ["male", "qun", 4, ["twduwang", "twylyanshi"]],
 			tw_wenchou: ["male", "qun", 4, ["twjuexing", "twxiayong"]],
 			tw_yuantan: ["male", "qun", 4, ["twqiaosi", "twbaizu"]],
@@ -94,9 +39,7 @@ game.import("character", function () {
 			xia_zhangwei: ["female", "qun", 3, ["twhuzhong", "twfenwang"]],
 			tw_zhanghong: ["male", "wu", 3, ["twquanqian", "twrouke"]],
 			tw_zhangzhao: ["male", "wu", 3, ["twlijian", "twchungang"]],
-			tw_ol_sunjian: ["male", "wu", "4/5", ["gzyinghun", "wulie", "twpolu"], ["zhu"]],
-			tw_menghuo: ["male", "qun", 4, ["huoshou", "rezaiqi", "twqiushou"], ["zhu"]],
-			ol_liuyu: ["male", "qun", 2, ["zongzuo", "zhige", "twchongwang"], ["zhu"]],
+			
 			tw_gongsunfan: ["male", "qun", 4, ["twhuiyuan", "twshoushou"]],
 			tw_yangang: ["male", "qun", 4, ["twzhiqu", "twxianfeng"]],
 			xia_xiahouzie: ["female", "qun", "3/4", ["twxuechang", "twduoren"]],
@@ -181,7 +124,7 @@ game.import("character", function () {
 			yuejiu: ["male", "qun", 4, ["cuijin"]],
 			wuban: ["male", "shu", 4, ["jintao"], ["clan:陈留吴氏"]],
 			duosidawang: ["male", "qun", "4/5", ["equan", "manji"]],
-			jiachong: ["male", "qun", 3, ["beini", "dingfa"]],
+			jiachong: ["male", "qun", 3, ["beini", "dingfa"], ["border:jin"]],
 			tw_dongzhao: ["male", "wei", 3, ["twmiaolve", "twyingjia"]],
 			tw_gexuan: ["male", "qun", 3, ["twdanfa", "twlingbao", "twsidao"]],
 			tw_beimihu: ["female", "qun", 3, ["zongkui", "guju", "baijia", "bingzhao"], ["zhu"]],
@@ -194,13 +137,147 @@ game.import("character", function () {
 			tw_maliang: ["male", "shu", 3, ["twrangyi", "twbaimei"]],
 			kaisa: ["male", "western", 4, ["zhengfu"]],
 		},
+		characterSort: {
+			tw: {
+				tw_zhu: ["tw_beimihu", "ol_liuyu", "tw_menghuo"],
+				tw_swordsman: [
+					"xia_yuzhenzi",
+					"xia_shie",
+					"xia_shitao",
+					"xia_guanyu",
+					"xia_liubei",
+					"xia_xiahousone",
+					"xia_xiahoudun",
+					"xia_zhangwei",
+					"xia_xushu",
+					"xia_wangyue",
+					"xia_liyàn",
+					"xia_tongyuan",
+					"xia_lusu",
+					"xia_dianwei",
+					"xia_zhaoe",
+					"xia_xiahouzie",
+				],
+				tw_beidingzhongyuan: ["huan_luxun", "huan_liushan", "huan_zhugeliang", "huan_jiangwei", "huan_zhanghe", "huan_zhugeguo", "huan_weiyan", "huan_simayi", "huan_zhaoyun"],
+				tw_mobile: ["nashime", "tw_gexuan", "tw_zhugeguo", "tw_yj_zhanghe"],
+				tw_sp: ["tw_qiaozhou", "old_jiakui", "tw_jsp_guanyu", "tw_mazhong", "licuilianzhaoquanding", "simafu", "tw_zhugejun", "tw_yanliang", "tw_wenchou", "tw_yuantan", "tw_zhangzhao", "tw_zhanghong", "tw_fuwan", "tw_yujin", "tw_zhaoxiang", "tw_hucheer", "tw_hejin", "tw_mayunlu", "tw_re_caohong", "tw_zangba", "tw_liuhong", "tw_tianyu", "jiachong", "duosidawang", "wuban", "yuejiu", "tw_caocao", "tw_zhangmancheng", "tw_caozhao", "tw_wangchang", "tw_puyangxing", "tw_jiangji", "tw_niujin", "tw_xiahouen", "tw_xiahoushang", "tw_zhangji", "tw_zhangnan", "tw_fengxí", "tw_furong", "tw_liwei", "tw_yangyi", "tw_daxiaoqiao", "tw_dengzhi", "tw_baoxin", "tw_bingyuan", "tw_fanchou", "tw_haomeng", "tw_huchuquan", "tw_jianshuo", "tw_jiling", "tw_liufuren", "tw_liuzhang", "tw_mateng", "tw_niufudongxie", "tw_qiaorui", "tw_weixu", "tw_yanxiang", "tw_yufuluo", "tw_zhangning", "tw_dengzhi", "tw_yangyi", "tw_yangang", "tw_gongsunfan"],
+				tw_standard: ["tw_zhangfei"],
+				tw_shenhua_yin: ['tw_yl_luzhi'],
+				tw_shenhua_lei: ["tw_guanqiujian"],
+				tw_yijiang1: ["tw_re_fazheng"],
+				tw_yijiang2: ["tw_chengpu", "tw_madai", "tw_handang"],
+				tw_yijiang3: ["tw_fuhuanghou", "tw_guohuai"],
+				tw_yijiang4: ["tw_sunluban", "tw_guyong"],
+				tw_yijiang5: ["tw_caoxiu", "old_quancong"],
+				tw_yijiang7: ["tw_xuezong"],
+				tw_yunchouzhi: [
+					"tw_wangcan",
+					"tw_dongzhao",
+					"tw_bianfuren",
+					"tw_feiyi",
+					"tw_chenzhen",
+					"tw_xunchen",
+				],
+				tw_yunchouxin: ["tw_wangling", "tw_huojun", "tw_wujing", "tw_zhouchu"],
+				tw_yunchouren: ["tw_xujing", "tw_qiaogong"],
+				tw_yunchouyong: ["tw_zongyu", "tw_chendong", "tw_sunyi"],
+				tw_yunchouyan: ["tw_jiangqing"],
+				tw_yijiang: [
+					"tw_caoang",
+					"tw_caohong",
+					"tw_zumao",
+					"tw_dingfeng",
+					"tw_maliang",
+					"tw_xiahouba",
+				],
+				tw_english: ["kaisa"],
+				
+				// tw_waitingforsort: [],
+			},
+		},
+		characterSubstitute: {
+			huan_zhugeliang: [
+				["huan_zhugeliang_shadow", []],
+			],
+		},
 		characterIntro: {
-			huan_jiangwei: "在攻取陇右后，被诸葛亮委以重任，负责治理该地，确保稳定与繁荣。<br>于蜀汉攻打长安、洛阳之际，姜维挺身而出，担任后勤重任，从陇右源源不断地向前线输送粮草，确保军队无后顾之忧。<br>面对匈奴与羌族的侵扰，姜维展示出卓越的战略眼光，他巧妙利用两族间的矛盾，与羌族建立友好关系，透过贸易与合作，联合羌族逐步削弱并蚕食匈奴的势力范围，成功平定了蛮族之乱。<br>遵循诸葛亮的遗命，姜维在北方与司马懿展开激烈对峙。即便在诸葛亮离世后，他仍坚持奋战，最终举全国之力，成功灭亡了河北之地。<br>为肃清朝纲，姜维坚决执行大将军蒋琬的命令，果断诛杀了祸乱朝政的阉宦黄皓，为蜀汉政治环境的清明立下了汗马功劳。<br>在军事上，姜维更是势如破竹，他率领精锐之师，连续攻克东吴多座城池，最终迫使东吴在巨大的军事压力下选择投降，为蜀汉的统一大业奠定了坚实基础。",
-			huan_zhugeguo: "承继了诸葛亮的非凡灵根，自幼便对道教抱有深厚兴趣。及至成年，她踏遍蜀地山川，遍访道馆，深得诸多高人隐士的真传与指点。<br>南华真人，奉天命降临凡尘，化身为华城一位仙风道骨的老者，亲自指点诸葛果修行之道。此事亦被诸葛亮所察觉，南华老仙逐赠序诸葛亮山河镜，并预言若天命属蜀汉，此镜终有重圆之日。<br>蜀军北伐之际，粮草运输成为一大难题。虽有诸葛亮所创木牛流马相助，然路途遥远，运输效率仍显不足。诸葛果施展御风之术，令所有运粮器材皆沐于顺风之中，大大提升了运输速度。更于险峻峭壁之处，运用仙家法宝开关捷径，使运粮队伍与援军得以迅速通行，加速了北伐进程。<br>待诸葛亮集齐山河镜，并成功攻克长安之后，诸葛果之天命似乎又重归大汉之脤。于是，她再次踏上修仙之旅，从此杳无音信。后世传言，诸葛果最终在峨眉山筑庐修炼，终得羽化登仙，成就一段传奇佳话。",
+			huan_luxun:
+				"孙权见诸葛亮在北方攻城掠地，势如破竹，心中亦生攻魏之念。"+
+				"<br>遂派遣陆逊领兵，追击魏军。魏军南面由曹休为主将，主动迎战，两军最终会战于石亭。陆逊自居中部，令朱桓、全琮分居左右，大败魏军。魏军败退，陆逊等率军追杀，直至夹石，斩魏军一万余人，俘获牛马骡驴车乘万辆，军资器械不计其数。魏军残部得寿春援军接应，方得以逃脱。"+
+				"<br>陆逊乘胜追击，最终攻占合肥。"+
+				"<br>随后，陆逊率得胜之师，继续进攻寿春，寿春亦被攻陷。"+
+				"<br>东面战场捷报频传，然而西面吴军战事并不顺利。"+
+				"<br>孙权遂调陆逊至荆襄地区，领吴军进攻襄阳。但襄阳守将誓死抵抗，吴军久攻不下。"+
+				"<br>最终，襄阳魏将投降蜀汉。"+
+				"<br>襄阳归降蜀汉后，蜀汉遣使至东吴，赠予孙权诸多金银珠宝，意在两家修好，东吴罢兵撤围。陆逊虽不愿撤军，但孙权收下宝物，与蜀汉议和，陆逊无奈撤军。"+
+				"<br>就在此时，蜀汉大将军魏延突然率军，自襄阳追击陆逊。"+
+				"<br>陆逊初战不利，速败数阵，退至许昌。魏延穷追不舍，终因补给问题，在许昌城下被陆逊大败。"+
+				"<br>魏延回朝后被治罪，蜀汉归还荆州原被东吴所占之地，两家重新修好。"+
+				"<br>顾雍去世后，陆逊被任命为丞相、大将军。陆逊深知诸葛亮与姜维之志，意在统一全国，与东吴之和只是暂时。"+
+				"<br>因此，他多次上书孙权，劝其早做筹谋，趁汉魏对峙、无暇南顾之际，进攻中原，夺取襄阳、陈留等地。"+
+				"<br>但此时孙权深陷太子孙和与鲁王孙霸的党争，以蜀汉修好、襄阳防守坚固为由，仅令陆逊坚守，不得进攻。"+
+				"<br>太子与鲁王之争，终波及陆逊。"+
+				"<br>太子孙和与鲁王孙霸为争太子之位，两宫并立。朝廷内外官员，多遣子弟侍奉孙和或孙霸。全琮写信告知陆逊此事，陆逊认为子弟应凭才晋升，不应私邀荣利。他持中立立场，认为支持两宫之子弟必会各自结派，此乃古人所忌。时全琮次子全寄为孙霸宾客，陆逊遂回信劝全琮学金日?杀子以防家门之辱，全琮对其所言不满，两人积怨日深。"+
+				"<br>不久，全琮父子称陆逊之甥顾承曾串通陈恂，谎报战功以谋高位，致使顾承与其兄顾谭被流放。"+
+				"<br>孙权与孙和父子关系恶化后，孙和的役使藏于孙权床下，窃听孙权与杨竺谈论欲立孙霸为储之事。孙和惊恐，密召亲信陆胤，请其至武昌时请陆逊为自己申辩。太子太傅吾粲亦多次与陆逊互通消息。陆逊听二人所言，屡次上疏陈述嫡庶之分，又请求进京面见。孙权发觉禁中机密泄露，先后将杨竺、陆胤、吴粲收监审问。陆逊虽未立即被一同问罪，但也被遣使责备其打宫中机密。在狱中，杨竺招供陆逊二十条罪证．陆逊对孙和之事亦不发一言。陆逊愤恨难平，终怀恨而终。",
+			huan_liushan:
+				"诸葛亮在世之时，刘禅一切皆听从其安排。诸葛亮逝世后，刘禅亦遵循其遗命，妥善处理后续事务。"+
+				"<br>汉军攻克洛阳后，刘禅随诸葛亮入主洛阳，并还于旧都，以此完成了刘备的遗愿。"+
+				"<br>彼时，刘禅改元炎兴。"+
+				"<br>刘禅入主洛阳后，目睹中原的繁华景象，逐渐沉迷于享乐之中，并开始重用宦官黄皓等人。"+
+				"<br>起初，费祎、董允等大臣曾出面劝告刘禅，但他并未放在心上。"+
+				"<br>直至蒋琬亲自劝谏，并拿出诸葛亮临终前写给刘禅的表书，其中列举了桓灵二帝重用宦官导致国家衰亡的历史教训，刘禅才终于认识到了事态的严重性。于是，他下达诏书，命大司马蒋琬联合大将军姜维，共同清理了黄皓等宦官，并将其流放。"+
+				"<br>刘禅最终延续了汉室的香火，将刘邦、刘秀等汉朝皇帝请回了洛阳的宗庙，与刘备一同接受祭祀。"+
+				"<br>祭祀完毕后，刘禅大封功臣，其中诸葛亮、姜维、赵云等人因功劳卓著，分别被封为琅琊王、凉国公、冀国公等。"+
+				"<br>魏延去世后，刘禅念及其在北伐中的巨大贡献，仍为其平反，并追封为义阳侯。",
+			huan_zhugeliang:
+				"六年春，诸葛亮扬声取道斜谷，以赵云、邓芝为疑兵，驻守箕谷，吸引魏大将军曹真率众抵御。而诸葛亮亲率大军直攻祁山，军容严整，赏罚分明，号令如山。南安、天水、安定三郡因此叛魏归汉，关中震动。魏明帝亲赴长安坐镇，遣张郃抵御诸葛亮。"+
+				"<br>诸葛亮采纳众议，命魏延领兵在前，与张郃战于街亭。同时，诸葛亮采取里应外合之策，先取天水郡，再遣张翼分兵安定，自率大军围困南安。为诱敌深入，诸葛亮采纳马谡之计，对南安郡围三缺一，使敌派使求援。于榆中峡谷口，诸葛亮伏击金城援军，趁虚而入，攻克金城。随后，凉州刺史徐邈拒降，英勇战死。西平太守见势不妙，归降蜀汉，陇西遂平，凉州入蜀。张郃因此退守长安。"+
+				"<br>诸葛亮攻天水时，得良将姜维，如虎添翼。两年后，建兴八年春，诸葛亮两路出兵，以木牛流马运粮，再攻长安魏延领一路兵，经安定、新平至华阴，阻魏援军。诸葛亮亲率益州大军，以赵云为先锋，直逼长安。两军会战，赵云英勇、连斩数将，先登城楼，蜀军士气大振、长安告破。魏主帅曹真被俘，后送还洛阳，不久病逝。"+
+				"<br>长安既下，天下响应。东吴亦发兵合肥，攻魏新城。两年后，建兴十年春，诸葛亮挥师洛阳，魏以司马懿为主帅，两军对峙潼关。司马懿坚壁不出，蜀军难克。诸葛亮为激敌出战，送巾帼妇人衣物于司马懿，并书辱之。魏将愤慨，请战声起，司马懿笑而置之。"+
+				"<br>魏延献策，欲绕潼关奇袭洛阳，诸葛亮从之，并遣细作于洛阳散布司马懿叛国谣言，离间君臣。借此良机，蜀军克潼关。围洛阳三月，魏明帝调兵遣将，皆被蜀将张苞、关兴、赵广等击败。天下郡县，忠汉之士，纷纷响应，遥领蜀汉官职。"+
+				"<br>建兴十一年秋，蜀军发起总攻，洛阳城内士气低落，外援无望。经月余激战，洛阳终破。魏明帝自焚于宫。诸葛亮迎刘禅入主中原，蜀汉一统天下。"+
+				"<br>然诸葛亮未敢懈怠，内理朝政，外御强敌、兼及培养后继之人。日夜操劳，不辞辛劳。建兴十二年春，诸葛亮积劳成疾，病逝于洛阳。刘禅悲痛不已，追封其为琅琊王，以彰其盖世之功与无尽之忠。",
+			huan_jiangwei:
+				"在攻取陇右后，被诸葛亮委以重任，负责治理该地，确保稳定与繁荣。"+
+				"<br>于蜀汉攻打长安、洛阳之际，姜维挺身而出，担任后勤重任，从陇右源源不断地向前线输送粮草，确保军队无后顾之忧。"+
+				"<br>面对匈奴与羌族的侵扰，姜维展示出卓越的战略眼光，他巧妙利用两族间的矛盾，与羌族建立友好关系，透过贸易与合作，联合羌族逐步削弱并蚕食匈奴的势力范围，成功平定了蛮族之乱。"+
+				"<br>遵循诸葛亮的遗命，姜维在北方与司马懿展开激烈对峙。即便在诸葛亮离世后，他仍坚持奋战，最终举全国之力，成功灭亡了河北之地。"+
+				"<br>为肃清朝纲，姜维坚决执行大将军蒋琬的命令，果断诛杀了祸乱朝政的阉宦黄皓，为蜀汉政治环境的清明立下了汗马功劳。"+
+				"<br>在军事上，姜维更是势如破竹，他率领精锐之师，连续攻克东吴多座城池，最终迫使东吴在巨大的军事压力下选择投降，为蜀汉的统一大业奠定了坚实基础。",
+			huan_zhanghe:
+				"时诸葛亮出祁山，陇右三郡叛魏归汉，魏国震动。魏明帝急召张郃，授以重兵，命其速赴街亭，以解陇右之围。张郃领命，率军疾驰，至街亭，与蜀军交战。然蜀军设伏，张郃虽勇猛，终被围困。幸得亲卫死战，张郃方得突围而出，率军退回长安。"+
+				"<br>陇右既失，长安告急。大将军曹真镇守长安，命张郃巡视各城，加固防御。张郃依命行事。使各城得以稳固。"+
+				"<br>诸葛亮于陇右发展，以图返攻。曹真遣张郃率骑兵袭扰陇右，张郃领命，分兵五路，灵活出击。然蜀军早有防备，设下重重包围，张郃骑兵队活动范围渐小，终被迫退兵。"+
+				"<br>此后，诸葛亮亲自率大军进逼长安，魏国上下皆惊。张郃虽奋力抵抗，然终因蜀军势大，长安城破。张郃于乱军之忠，英勇战死，为国捐躯。",
+			huan_zhugeguo:
+				"承继了诸葛亮的非凡灵根，自幼便对道教抱有深厚兴趣。及至成年，她踏遍蜀地山川，遍访道馆，深得诸多高人隐士的真传与指点。"+
+				"<br>南华真人，奉天命降临凡尘，化身为华城一位仙风道骨的老者，亲自指点诸葛果修行之道。此事亦被诸葛亮所察觉，南华老仙逐赠序诸葛亮山河镜，并预言若天命属蜀汉，此镜终有重圆之日。"+
+				"<br>蜀军北伐之际，粮草运输成为一大难题。虽有诸葛亮所创木牛流马相助，然路途遥远，运输效率仍显不足。诸葛果施展御风之术，令所有运粮器材皆沐于顺风之中，大大提升了运输速度。更于险峻峭壁之处，运用仙家法宝开关捷径，使运粮队伍与援军得以迅速通行，加速了北伐进程。"+
+				"<br>待诸葛亮集齐山河镜，并成功攻克长安之后，诸葛果之天命似乎又重归大汉之脤。于是，她再次踏上修仙之旅，从此杳无音信。后世传言，诸葛果最终在峨眉山筑庐修炼，终得羽化登仙，成就一段传奇佳话。",
+			huan_weiyan:
+				"魏延既至街亭，于主道设拒马，令王平、吴懿分伏左右山林。张郃先锋骑至，魏延战不三合，佯败而退，至拒马处结阵御敌，张郃骑惊不能进。左右伏兵突起，杀声震耳，魏军不知蜀军众寡，心惧，且远来疲敝，无战心，为蜀军冲杀，遂溃。张郃得部将拼死护，乃出乱军，还营扎寨。两军遂于街亭相持。魏延依丞相策，布八门金锁阵，张郃久攻不破。蜀军夜结营，火光乱，虚实难辨，魏军不安。相持月余，张郃不得进。闻诸葛亮已取陕西全境，张郃乃退兵长安。"+
+				"<br>诸葛亮令魏延将一路，副将王平、吴懿，集陇右兵于安定，经新平，至华阴，阻魏军援。魏遣大将魏平援之，为魏延所截。魏军众，屡冲蜀军防线，几破。危急时，魏延大呼:“吾等受先帝厚恩，报之在今!”遂一马当先，冲入敌阵。蜀重振奋，力战魏军，终退之，成阻击之务。"+
+				"<br>战事胶着，潼关难下。魏延献计于诸葛亮，欲引兵走小径，绕潼关袭洛阳。诸葛亮许之。魏延令部卒着长安所获魏军甲胄，举魏军旗号，经河东郡，遇东垣，击洛阳。蜀军突现洛阳城下，城中大恐。魏明帝信谑言，以为司马懿有异志，故纵魏延入关，乃诏司马懿速回援。司马懿无奈还师。司马懿赶路着急，靠近洛阳时遭蜀军伏击，幸好指挥得当，得以保全主力。"+
+				"<br>然而魏延恃功自傲，刚愎自用，带兵南攻东吴，大败。"+
+				"<br>魏延归朝，获罪削爵。彼心不服，以为后勤误己，致败，牢骚不断。时东吴与北魏合，欲夹击蜀国。蒋琬遣谯周使吴，复和。且以“魏延为将，心狭志狂，无礼天地，刚愎自用，犯友邦”罪，废为庶人，以平舆论。",
+			huan_simayi:
+				"长安失陷后，魏国朝野震惊惶恐。魏明帝曹叡任命司马懿为新的统帅，驻守沧关。司马懿在潼关采取固守策略，蜀军久攻不下。此时，外部孙权蠢蠢欲动，意图趁火打劫；内部各郡太守人心不稳，多有人秘密与蜀汉勾结，显露投降之意。在内外交困之下，魏国亟需一场胜利以稳定人心。曹叡多次催促司马懿出兵决战，但司马懿深知蜀军士气正盛，故而坚持按兵不动。"+
+				"<br>在潼关久攻不克的情况下，魏延绕道至洛阳郊外，对魏国首都进行了突袭。虽魏延兵力有限，未能实质破城，但其突然现身首都城外，仍使魏国上下大为惊慌。朝中原本就有对司马懿避战策略的质疑之声，此番魏延来袭更是加剧了朝野的议论。部分大臣向曹叡进言，指责司马懿或有异心，不值拥兵自重，还可能故意放任蜀军以图不轨。"+
+				"<br>曹叡初时不以为意，但鉴于舆论压力及形势紧迫，最终下令召司马懿回朝面圣，以探其真意。司马懿无奈，只好率领精锐部队返回洛阳，途中遭遇魏延伏击。司马懿凭借出色的指挥能力，保持阵型有序撤退，虽损失数百人，但成功抵达洛阳。"+
+				"<br>面对曹叡的质问，司马懿在朝堂上详陈坚守潼关以消耗蜀军士气的战略考量，并解释了魏延能够接近京畿的原因。曹叡醒悟后，让司马懿稍作休整,重返潼关。然而,未传来消息,潼关已遭魏延里应外合攻破。曹叡惊愕之余,急召天下兵马勤王。洛阳随后被汉军包圉,各地援军或受阻于路途，或持观望态度,难以迅速救援。"+
+				"<br>鉴于南方孙权已发兵侵扰，洛阳守军不宜轻易言调动，司马懿主动请缨前往北方募兵。初时曹叡未允，但随着援兵受挫,最后任命司马懿为骠骑将军，假节钺，前往北方。司马懿连夜潜行，带领少量人马穿越重围，成功抵达北方，并在邺城集结三州兵力。"+
+				"<br>在司马懿募军期间，蜀汉对洛阳的围攻愈发猛烈。曹叡多次催促司马懿解围，但司马懿以兵力不足、训练未够以及粮草匮乏为由，多次推迟出兵。最终，洛阳城破，曹叡绝望自尽自焚于宫中。司马懿闻讯后，拥立东海定王曹霖为帝,改元正始，依靠新募军队害割据北方,与蜀汉形成对峙。"+
+				"<br>司马懿在稳固北方防线的同时，也对内部叛乱进行了镇压。正始元年,辽东太守公孙渊背叛魏国自立为王,勾结外族侵扰北方。正始二年。司马懿率部四万军征讨公孙渊。面对公孙渊的坚壁高垒，司马懿运用声东击西之计．成功诱敌出击并一击灭之。随后围困襄平，断绝敌军粮道，最终歼灭公孙渊部众，并严惩叛乱分子。"+
+				"<br>司马懿也利用蛮族内部矛盾，通过拉拢与打压结合的策略，逐步降服了羌胡和鲜卑等族，进一步辈固了北方地区的统治。"+
+				"<br>虽然曹霖名义上为北魏之君，但朝堂实权已落入司马懿家族之手。在平定北方后,司马懿派遣司马师和司马昭在南线与蜀汉展开长期对峙。双方虽互有胜负,但司马家族始终未能突破黄河防线。"+
+				"<br>正始十九年（公元251年），司马懿病逝于任上，享年七十三岁。其逝后，司马师和司马昭了篡权步伐，最后由司马师废除魏帝，自立为王，改国号为晋。"+
+				"<br>然而历史的车轮并未因此而停止转动。炎汉二十一年（253年），蜀汉大将军姜维率领大军对晋发动总攻，通过一系列战役最终消灭晋朝主力并攻占邺城，宣告了晋朝的短暂终结。",
+			huan_zhaoyun:
+				"建兴六年春，诸葛亮为牵制魏军，遣赵云与邓芝领兵出斜谷，佯攻郿县。赵云与邓芝率军疾行，沿途广布旗帜、擂鼓呐喊、声势浩大，成功吸引魏军主力。面对曹真大军，赵云临危不乱，凭借精妙的战术与士兵们的英勇，多次击退魏军进攻。期间，赵云更在乱军之中单骑救主，斩杀大将王双，令魏军胆寒。双方对峙月余，直至诸葛亮成功收复陇右，赵云与邓芝方率军撤回。"+
+				"<br>建兴八年，诸葛亮再次北伐，攻打魏国长安。赵云作为先锋大将，身先士卒，连克数城，直逼长安城下。在此战中，赵云与张郃激战数十回合，不分胜负。随后，赵云又独斗张虎、乐綝、戴陵三将，一一将其击败，展示了其超凡的武艺。最终，在与张郃的决战中，致其重伤身亡，为蜀军攻克长安立下大功。"+
+				"<br>然而，英雄也有迟暮时。在长安之战后不久，赵云因年事已高，体力不支，于军营中病逝。其一生忠诚于蜀汉，勇猛善战，深受士兵与百姓的爱戴。后主刘禅追封赵云为大将军，以表彰其卓越攻勋与忠诚精神。",
 			licuilianzhaoquanding: "李翠莲，是河北梆子《青釭剑》里赵云的妻子，性情贤惠，小家碧玉。剧中赵云长坂大战后又去阻挡追兵，结果与刘备失散，来到西川，遇到了翠莲，二人一见钟情，不久成婚。后赵云出发去找队伍，留下青釭剑作记认。李夫人在等待中生下一子，取名全定。十八年后刘备进了西川，全定带着青釭剑去认父亲，谁知赵云正与诸葛亮打赌，为了不输掉这个赌赵云不认这两母子，后来全定斩将立功，在诸葛亮与众将的劝说下，终于赵云夫妻相认，父子团圆。",
-			huan_zhaoyun: "赵云，字子龙，蜀国名将，以勇猛善战、忠诚义烈著称于世。其一生战功卓著，尤在建兴年间，多次随诸葛亮北伐，立下汗马功劳。<br>建兴六年春，诸葛亮为牵制魏军，遣赵云与邓芝领兵出斜谷，佯攻郿县。赵云与邓芝率军急行，沿途广布旗帐，擂鼓呐喊，声势浩大，成功吸引魏军主力。面对曹真大军，赵云临危不乱，凭借精妙的战术和士兵们的英勇，多次击退魏军进攻。期间，赵云更是在乱军之中单骑救主，斩杀大将王双，令魏军胆寒。双方对峙月余，直至诸葛亮成功收复陇右，赵云与邓芝方才率军撤回。<br>建兴八年，诸葛亮再次北伐，攻打魏国长安。赵云作为先锋大将，身先士卒，连克数城，直逼长安城下。在此战中，赵云与张郃激战数十回合，不分胜负。随后，赵云又独斗张虎、乐綝、戴陵三将，一一将其击败，展示了其超凡的武艺。最终，在和张郃的决战中，赵云以诈败之计诱敌深入，一枪刺中张郃，致其重伤身亡，为蜀军攻克长安立下大功。<br>然而，英雄也有迟暮时，在长安之战后不久，赵云因年事已高，体力不支，于军营中病逝。其一生忠诚于蜀汉，勇猛善战，深受士兵和百姓的爱戴。后主刘禅追封其为大将军，以表彰其卓越功勋和忠诚精神。",
-			huan_zhanghe: "张郃，魏国骁将，随太祖曹操征战四方，功勋卓著，以其智勇双全，成为魏国后期独当一面的大将。<br>时诸葛亮出祁山，闻陇右三郡叛魏归汉，魏国震动。魏明帝急召张郃，援以重兵，命其速赴街亭，以解陇右之围。张郃领命，率军疾驰，至街亭，与蜀军交战。然蜀军设伏，张郃虽勇猛，终被围困。幸得亲卫死战，张郃方得突围而出，率军退回长安。<br>陇右既失，长安告急。大将军曹真镇守长安，命张郃巡视各城，加固防御。张郃依令行事，使各城得以稳固。<br>诸葛亮于陇右发展，意图反攻。曹真遣张郃率骑兵袭扰陇右，张郃领命，分兵五路，灵活出击。然蜀军早有防备，设下重重包围，张郃骑兵活动范围渐小，终被迫退兵。<br>此后，诸葛亮亲率大军进逼长安，魏国上下皆惊。张郃虽奋力抵抗，然终因蜀军势大，长安城破。张郃于乱军之中，英勇战死，为国捐躯。",
-			huan_zhugeliang: "六年春，诸葛亮扬声取道斜谷，以赵云、邓芝为疑兵，驻守箕谷，吸引魏大将军曹真率众抵御。而诸葛亮亲率大军直攻祁山，军容严整，赏罚分明，号令如山。南安、天水、安定三郡因此叛魏归汉，关中震动。魏明帝亲赴长安坐镇，遭张郃抵御诸葛亮。<br>诸葛亮采纳众议，命魏延领兵在前，与张郃战于街亭。同时，诸葛亮采取里应外合之策，先取天水郡，再遣张翼分兵安定，自率大军围困南安。为诱敌深入，诸葛亮采纳马谡之计，对南安郡围三缺一，使敌派使求援。于榆中峡谷口，诸葛亮伏击金城援军，趁虚而入，攻克金城。随后，凉州刺史徐邈拒降，英勇战死。西平太守见势不妙，归降蜀汉，陇西遂平，凉州入蜀。张郃因此退守长安。<br>诸葛亮攻天水时，得良将姜维，如虎添翼。两年后，建兴八年春，诸葛亮两路出兵，以木牛流马运粮，再攻长安魏延领一路兵，经安定、新平至华阴，阻魏援军。诸葛亮亲率益州大军，以赵云为先锋，直逼长安。两军会战，赵云英勇、连斩数将，先登城楼，蜀军士气大振、长安告破。魏主帅曹真被俘，后送还洛阳，不久病逝。<br>长安既下，天下响应。东吴亦发兵合肥，攻魏新城。两年后，建兴十年春，诸葛亮挥师洛阳，魏以司马懿为主帅，两军对峙潼关。司马懿坚壁不出，蜀军难克。诸葛亮为激敌出战，送巾帼妇人衣物于司马懿，并书辱之。魏将愤慨，请战声起，司马懿笑而置之。<br>魏延献策，欲绕潼关奇袭洛阳，诸葛亮从之，并遣细作于洛阳散布司马懿叛国谣言，离间君臣。借此良机，蜀军克潼关。围洛阳三月，魏明帝调兵遣将，皆被蜀将张苞、关兴、赵广等击败。天下郡县，忠汉之士，纷纷响应，遥领蜀汉官职。<br>建兴十一年秋，蜀军发起总攻，洛阳城内士气低落，外援无望。经月余激战，洛阳终破。魏明帝自焚于宫。诸葛亮迎刘禅入主中原，蜀汉一统天下。<br>然诸葛亮未敢懈怠，内理朝政，外御强敌、兼及培养后继之人。日夜操劳，不辞辛劳。建兴十二年春，诸葛亮积劳成疾，病逝于洛阳。刘禅悲痛不已，追封其为琅琊王，以彰其盖世之功与无尽之忠。",
 			zhugejun: "诸葛均（生卒年不详），琅邪阳都（今山东省沂南县）人，诸葛珪之子。三国时吴大将军诸葛瑾、蜀汉丞相诸葛亮之弟。在蜀汉官至长水校尉。",
 			yanliang:
 				"颜良（？~200年），字公骥，安平郡堂阳县（今河北省新河县）人。东汉末年河北将领。颜良性格促狭，虽骁勇不可独任，为一夫之勇。官渡之战，袁绍令颜良进攻白马（今河南滑县）。曹操采用军师荀攸“声东击西、轻兵掩袭”之计，大败袁军，颜良本人也被关羽亲自斩杀死，白马之围遂解。据说颜之推是其后人。",
@@ -291,6 +368,20 @@ game.import("character", function () {
 				"张昭（156年－236年），字子布。徐州彭城县（今江苏省徐州市）人。汉末三国时期孙吴政权重臣。东汉末年，张昭为避战乱而南渡至扬州。孙策创业时，任命其为长史、抚军中郎将，将文武之事都委任于张昭。孙策临终前，将其弟孙权托付给张昭，张昭率群僚辅立孙权，并安抚百姓、讨伐叛军，与周瑜等辅助孙权稳定局势。孙权每次出征，常留张昭镇守后方，领幕府事，并敬称他为“张公”。赤壁之战时，张昭鉴于曹操势大，持主降论，从而被排挤出军政决策中心。孙权代理车骑将军时，任命张昭为军师。孙权被封为吴王后，任绥远将军，封由拳侯。此后曾参与撰定朝仪。孙权两次要设立丞相时，众人都推举张昭，孙权以张昭敢于直谏、性格刚直为由而不用他，先后用孙邵、顾雍。黄龙元年（229年），孙权称帝，张昭以年老多病为由，上还官位及所统领部属，改拜辅吴将军、班亚三司，改封娄侯。晚年时一度不参与政事，在家著书，即使偶有参加朝议，也常与孙权产生激烈冲突。嘉禾五年（236年），张昭去世，享年八十一岁，谥号“文”。张昭容貌严正，敢于直言谏诤，一生以忠于孙氏基业为任，但因其与孙权在个性、军政策略等方面的深层矛盾，使其以“入宫则拜孤，出宫则拜君”的地位，却终身不得任丞相。著有《春秋左氏传解》及《论语注》，今皆佚失。",
 			zhanghong:
 				"张纮（153年～212年），字子纲，徐州广陵（江苏省扬州市广陵区人）人。东汉末年文学家、官员，和张昭一起合称“二张”。曾被大将军何进、太尉朱儁、司空荀爽辟为掾属，皆不就，避难江东。孙策平定江东前，亲自多次登门邀请，张纮出仕为官。孙权即位时，建议孙权迁都秣陵。建安十七年（212年），病逝，时年六十岁，孙权为之流涕。",
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			nashime: function (mode) {
+				return mode != "guozhan";
+			},
+			tw_xiahouba: function (mode) {
+				return mode != "guozhan";
+			},
+		},
+		characterInitFilter: {
+			
 		},
 		card: {
 			dz_mantianguohai: {
@@ -400,14 +491,7 @@ game.import("character", function () {
 				skills: ["meiyingqiang"],
 			},
 		},
-		characterFilter: {
-			nashime: function (mode) {
-				return mode != "guozhan";
-			},
-			tw_xiahouba: function (mode) {
-				return mode != "guozhan";
-			},
-		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//TW孙鲁班
 			twzenhui: {
@@ -828,6 +912,7 @@ game.import("character", function () {
 							return get.event("cards").includes(button.link);
 						})
 						.forResult();
+					if (!result?.links?.length) return;
 					for (const owner of [player, target]) {
 						owner.addTempSkill("twniwo_block");
 						owner.addGaintag(result.links.filter(i => get.owner(i) == owner), "twniwo");
@@ -1309,7 +1394,9 @@ game.import("character", function () {
 							while (storage.length) {
 								const name = storage.shift(),
 									card = get.autoViewAs({ name: name[0].name, nature: name[0].nature, isCard: true });
-								if (!player.hasUseTarget(card, false)) continue;
+								if ((!get.info(card).notarget || !lib.filter.cardEnabled(card, player)) && !player.hasUseTarget(card, false)) {
+									continue;
+								}
 								const targets = await player.chooseUseTarget(`请选择${get.translation(card)}的目标，若此牌的目标不包含${get.translation(target)}，则其摸一张牌`, card, true, false, "nodistance").forResultTargets();
 								if (!targets.includes(target) && target.isIn()) await target.draw();
 							}
@@ -2626,7 +2713,7 @@ game.import("character", function () {
 						}
 					}, videoId);
 					game.addVideo("cardDialog", null, videoId);
-				},		
+				},
 			},
 			twcairu: {
 				audio: 2,
@@ -6394,10 +6481,11 @@ game.import("character", function () {
 					} else {
 						player.draw();
 						target.addSkill("twxianfeng_others");
-						if (!target.storage.twxianfeng_others) target.storage.twxianfeng_others = {};
-						if (typeof target.storage.twxianfeng_others[player.playerid] != "number")
-							target.storage.twxianfeng_others[player.playerid] = 0;
-						target.storage.twxianfeng_others[player.playerid]++;
+						game.broadcastAll((target, id) => {
+							if (!target.storage.twxianfeng_others) target.storage.twxianfeng_others = {};
+							if (typeof target.storage.twxianfeng_others[id] !== "number") target.storage.twxianfeng_others[id] = 1;
+							else target.storage.twxianfeng_others[id]++;
+						}, target, player.playerid);
 					}
 				},
 				subSkill: {
@@ -7563,7 +7651,7 @@ game.import("character", function () {
 			},
 			//蒋济
 			twjichou: {
-				audio: 2,
+				audio: 3,
 				enable: "chooseToUse",
 				group: ["twjichou_ban", "twjichou_give"],
 				filter: function (event, player) {
@@ -11589,6 +11677,7 @@ game.import("character", function () {
 						player.line(target);
 						target.storage.twqianxi2 = event.color;
 						target.addTempSkill("twqianxi2");
+						target.markSkill("twqianxi2");
 						player.addTempSkill("twqianxi_self");
 						player.markAuto("twqianxi_self", [target]);
 					}
@@ -11621,6 +11710,7 @@ game.import("character", function () {
 							for (var target of targets) {
 								target.storage.twqianxi3 = target.storage.twqianxi2;
 								target.addTempSkill("twqianxi3", { player: "phaseAfter" });
+								target.markSkill("twqianxi3");
 							}
 						},
 					},
@@ -12699,12 +12789,8 @@ game.import("character", function () {
 					gain: {
 						audio: "yinlang",
 						trigger: { global: "phaseUseBegin" },
-						filter: function (event, player) {
-							return (
-								event.player.group == player.storage.yaohu &&
-								event.player.isIn() &&
-								player.getExpansions("jutu").length > 0
-							);
+						filter(event, player) {
+							return player !== event.player && event.player.group === player.storage.yaohu && event.player.isIn() && player.getExpansions("jutu").length > 0;
 						},
 						forced: true,
 						locked: false,
@@ -16748,6 +16834,7 @@ game.import("character", function () {
 					global: "loseAsyncAfter",
 				},
 				forced: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "wood",
 				filter: function (event, player) {
@@ -19173,7 +19260,7 @@ game.import("character", function () {
 				derivation: "twzhian",
 			},
 			twzhian: {
-				audio: 2,
+				audio: 3,
 				init: function (player) {
 					game.addGlobalSkill("twzhian_ai");
 				},
@@ -19735,6 +19822,7 @@ game.import("character", function () {
 			},
 			twfengqi: {
 				audio: 2,
+				locked: true,
 				zhuSkill: true,
 				trigger: { player: "twgezhi_buffAfter" },
 				direct: true,
@@ -21255,7 +21343,7 @@ game.import("character", function () {
 						if (get.name(card) == "dz_mantianguohai") return true;
 					},
 					cardDiscardable: function (card, player, name) {
-						if (name == "cardsDiscard" && get.name(card) == "dz_mantianguohai") return false;
+						if (name == "phaseDiscard" && get.name(card) == "dz_mantianguohai") return false;
 					},
 				},
 			},
@@ -22515,27 +22603,6 @@ game.import("character", function () {
 				},
 			},
 		},
-		perfectPair: {
-			tw_liufuren: ["yuanshao"],
-			tw_xiahoushang: ["caopi"],
-		},
-		characterReplace: {
-			tw_caocao: ["tw_caocao", "jsrg_caocao", "yj_caocao"],
-			mateng: ["tw_mateng", "mateng", "std_mateng", "dc_mateng"],
-			tw_xiahouen: ["tw_xiahouen", "jsrg_xiahouen"],
-			jiangji: ["dc_jiangji", "tw_jiangji", "jiangji"],
-			baoxin: ["tw_baoxin", "baoxin"],
-			yanxiang: ["yanxiang", "tw_yanxiang"],
-			liwei: ["liwei", "tw_liwei"],
-			tw_jiling: ["jiling", "dc_jiling", "tw_jiling"],
-			tw_zhangji: ["tw_zhangji", "ol_tw_zhangji"],
-			yuejiu: ["yuejiu", "dc_yuejiu"],
-		},
-		characterSubstitute: {
-			huan_zhugeliang: [
-				["huan_zhugeliang_shadow", []],
-			],
-		},
 		dynamicTranslate: {
 			twfeifu: function (player) {
 				var str = "锁定技，转换技。";
@@ -23157,8 +23224,7 @@ game.import("character", function () {
 			tw_liuzhang: "TW刘璋",
 			tw_liuzhang_prefix: "TW",
 			twyaohu: "邀虎",
-			twyaohu_info:
-				"每轮限一次。回合开始时，你须选择场上的一个势力。该势力的角色的出牌阶段开始时，其获得你的一张“生”，然后其须选择一项：1.对你指定的另一名的其他角色使用一张【杀】（无距离限制）；2.本回合其使用伤害牌指定你为目标时须交给你两张牌，否则取消此目标。",
+			twyaohu_info: "每轮限一次。回合开始时，你须选择场上的一个势力。该势力的其他角色的出牌阶段开始时，其获得你的一张“生”，然后其须选择一项：1.对你指定的另一名的其他角色使用一张【杀】（无距离限制）；2.本回合其使用伤害牌指定你为目标时须交给你两张牌，否则取消此目标。",
 			tw_liwei: "TW李遗",
 			tw_liwei_prefix: "TW",
 			twjiaohua: "教化",
@@ -23359,13 +23425,9 @@ game.import("character", function () {
 			twjuxiang: "踞襄",
 			twjuxiang_info:
 				"主公技，其他群势力角色出牌阶段限一次，其可以选择其装备区的一张牌移动到你的装备区中，若你对应的装备栏已被废除，则改为交给你此装备牌，然后恢复你的对应装备栏。",
-			tw_ol_sunjian: "TW孙坚",
-			tw_ol_sunjian_prefix: "TW",
 			twpolu: "破虏",
 			twpolu_info:
 				"主公技，当吴势力角色杀死一名角色或死亡后，你可以令任意名角色各摸X张牌（X为你此前发动过此技能的次数+1）。",
-			tw_menghuo: "TW孟获",
-			tw_menghuo_prefix: "TW",
 			twqiushou: "酋首",
 			twqiushou_info:
 				"主公技，锁定技，当一张【南蛮入侵】结算结束后，若此牌造成的伤害大于3点或有角色因此死亡，所有蜀势力和群势力角色各摸一张牌。",
@@ -23375,8 +23437,6 @@ game.import("character", function () {
 			twniju: "逆拒",
 			twniju_info:
 				"主公技。当你的拼点牌亮出后，你可以令本次拼点事件中的一张拼点牌的点数+X或-X。然后当本次拼点事件结束后，若有两张拼点牌的点数相等，你摸X张牌（X为场上群势力角色数）。",
-			ol_liuyu: "TW刘虞",
-			ol_liuyu_prefix: "TW",
 			twchongwang: "崇望",
 			twchongwang_info:
 				"主公技，其他群势力角色的出牌阶段开始时，其可以交给你一张牌，然后你与其使用【杀】或伤害性锦囊牌指定目标时不能指定对方为目标直至你的下回合结束（每名角色限发动一次）。",
@@ -23600,8 +23660,8 @@ game.import("character", function () {
 			tw_zhu: "海外服·专属主公",
 			tw_swordsman: "海外服·武侠篇",
 			tw_beidingzhongyuan: "海外服·北定中原",
-			tw_sp: "海外服·SP",
 			tw_mobile: "海外服·稀有专属",
+			tw_sp: "海外服·SP",
 			tw_standard: "外服异构·标准包",
 			tw_shenhua_yin: "外服异构·难知如阴",
 			tw_shenhua_lei: "外服异构·动如雷霆",
@@ -23620,6 +23680,12 @@ game.import("character", function () {
 			tw_english: "英文版",
 			
 			tw_waitingforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			凯撒: ["Caesar"],

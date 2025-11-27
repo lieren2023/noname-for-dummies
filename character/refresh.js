@@ -2,6 +2,143 @@ import { lib, game, ui, get, ai, _status } from "../noname.js";
 game.import("character", function () {
 	return {
 		name: "refresh",
+		connect: true,
+		connectBanned: [
+			
+		],
+		character: {
+			re_xushu: ["male", "shu", 4, ["zhuhai", "qianxin"]],
+			re_lidian: ["male", "wei", 3, ["xunxun", "xinwangxi"]],
+			re_zhongyao: ["male", "wei", 3, ["rehuomo", "zuoding"], ["clan:颍川钟氏"]],
+			xin_zhangliang: ["male", "qun", 4, ["rejijun", "refangtong"]],
+			re_simalang: ["male", "wei", 3, ["requji", "rejunbing"]],
+			re_zhugedan: ["male", "wei", 4, ["regongao", "rejuyi"]],
+			re_caorui: ["male", "wei", 3, ["huituo", "remingjian", "xingshuai"], ["zhu"]],
+			re_caochong: ["male", "wei", 3, ["rechengxiang", "renxin"]],
+			ol_zhangzhang: ["male", "wu", 3, ["olzhijian", "olguzheng"]],
+			re_jsp_huangyueying: ["female", "qun", 3, ["rejiqiao", "relinglong"]],
+			re_zhangsong: ["male", "shu", 3, ["qiangzhi", "rexiantu"]],
+			re_zhuzhi: ["male", "wu", 4, ["reanguo"]],
+			dc_caozhi: ["male", "wei", 3, ["reluoying", "dcjiushi"]],
+			ol_huangzhong: ["male", "shu", 4, ["xinliegong", "remoshi"]],
+			re_wenpin: ["male", "wei", 5, ["rezhenwei"]],
+			re_guanzhang: ["male", "shu", 4, ["fuhun", "retongxin"]],
+			re_mazhong: ["male", "shu", 4, ["refuman"]],
+			dc_chenqun: ["male", "wei", 3, ["repindi", "dcfaen"]],
+			re_sundeng: ["male", "wu", 4, ["rekuangbi"]],
+			re_caiyong: ["male", "qun", 3, ["rebizhuan", "retongbo"]],
+			re_chengong: ["male", "qun", 3, ["remingce", "zhichi"]],
+			re_xunyou: ["male", "wei", 3, ["reqice", "rezhiyu"], ["clan:颍川荀氏"]],
+			dc_liru: ["male", "qun", 3, ["xinjuece", "dcmieji", "dcfencheng"]],
+			re_zhuhuan: ["male", "wu", 4, ["refenli", "repingkou"]],
+			ol_dianwei: ["male", "wei", 4, ["olqiangxi", "olninge"]],
+			re_sp_taishici: ["male", "qun", 4, ["rejixu"]],
+			re_liufeng: ["male", "shu", 4, ["rexiansi"]],
+			ol_xunyu: ["male", "wei", 3, ["quhu", "oljieming"], ["clan:颍川荀氏"]],
+			re_liuchen: ["male", "shu", 4, ["rezhanjue", "reqinwang"], ["zhu"]],
+			dc_gongsunzan: ["male", "qun", 4, ["dcyicong", "dcqiaomeng"]],
+			re_duji: ["male", "wei", 3, ["reandong", "reyingshi"]],
+			re_jushou: ["male", "qun", 3, ["dcjianying", "dcshibei"]],
+			re_zhanghe: ["male", "wei", 4, ["reqiaobian"]],
+			dc_xushu: ["male", "shu", 4, ["rezhuhai", "xsqianxin"]],
+			xin_gaoshun: ["male", "qun", 4, ["decadexianzhen", "decadejinjiu"]],
+			re_guohuanghou: ["female", "wei", 3, ["rejiaozhao", "redanxin"]],
+			re_xiahoushi: ["female", "shu", 3, ["reqiaoshi", "reyanyu"]],
+			ol_lusu: ["male", "wu", 3, ["olhaoshi", "oldimeng"]],
+			re_jiaxu: ["male", "qun", 3, ["rewansha", "reluanwu", "reweimu"]],
+			re_guyong: ["male", "wu", 3, ["reshenxing", "rebingyi"]],
+			xin_zhonghui: ["male", "wei", 4, ["xinquanji", "xinzili"], ["clan:颍川钟氏"]],
+			re_caifuren: ["female", "qun", 3, ["reqieting", "rexianzhou"]],
+			re_guanping: ["male", "shu", 4, ["relongyin", "jiezhong"]],
+			re_guotufengji: ["male", "qun", 3, ["rejigong", "shifei"]],
+			re_zhoucang: ["male", "shu", 4, ["rezhongyong"]],
+			ol_zhurong: ["female", "shu", 4, ["juxiang", "lieren", "changbiao"], ["doublegroup:shu:qun"]],
+			re_zhangchunhua: ["female", "wei", 3, ["rejueqing", "shangshi"]],
+			re_gongsunyuan: ["male", "qun", 4, ["rehuaiyi"]],
+			re_caozhen: ["male", "wei", 4, ["residi"]],
+			re_fuhuanghou: ["female", "qun", 3, ["rezhuikong", "reqiuyuan"]],
+			re_fazheng: ["male", "shu", 3, ["reenyuan", "rexuanhuo"]],
+			xin_lingtong: ["male", "wu", 4, ["decadexuanfeng", "yongjin"]],
+			xin_liubiao: ["male", "qun", 3, ["decadezishou", "decadezongshi"]],
+			re_caoxiu: ["male", "wei", 4, ["qianju", "reqingxi"]],
+			re_sunxiu: ["male", "wu", 3, ["reyanzhu", "rexingxue", "zhaofu"], ["zhu"]],
+			ol_dengai: ["male", "wei", 4, ["oltuntian", "olzaoxian"]],
+			re_gongsunzan: ["male", "qun", 4, ["reqiaomeng", "reyicong"]],
+			re_manchong: ["male", "wei", 3, ["rejunxing", "yuce"]],
+			xin_yufan: ["male", "wu", 3, ["xinzhiyan", "xinzongxuan"]],
+			dc_bulianshi: ["female", "wu", 3, ["dcanxu", "dczhuiyi"]],
+			re_hanhaoshihuan: ["male", "wei", 4, ["reshenduan", "reyonglve"]],
+			re_panzhangmazhong: ["male", "wu", 4, ["reduodao", "reanjian"]],
+			re_wangyi: ["female", "wei", 4, ["zhenlie", "miji"]],
+			re_madai: ["male", "shu", 4, ["mashu", "reqianxi"]],
+			xin_xusheng: ["male", "wu", 4, ["decadepojun"]],
+			re_taishici: ["male", "wu", 4, ["tianyi", "hanzhan"]],
+			re_masu: ["male", "shu", 3, ["resanyao", "rezhiman"]],
+			re_sunluban: ["female", "wu", 3, ["rechanhui", "rejiaojin"]],
+			xin_handang: ["male", "wu", 4, ["xingongji", "xinjiefan"]],
+			yujin_yujin: ["male", "wei", 4, ["decadezhenjun"], ["die_audio:xin_yujin"]],
+			re_caozhang: ["male", "wei", 4, ["xinjiangchi"]],
+			re_chengpu: ["male", "wu", 4, ["ollihuo", "rechunlao"]],
+			re_quancong: ["male", "wu", 4, ["xinyaoming"]],
+			re_liaohua: ["male", "shu", 4, ["xindangxian", "xinfuli"]],
+			re_guohuai: ["male", "wei", 4, ["decadejingce"]],
+			re_wuyi: ["male", "shu", 4, ["xinbenxi"], ["clan:陈留吴氏"]],
+			re_zhuran: ["male", "wu", 4, ["xindanshou"]],
+			ol_pangtong: ["male", "shu", 3, ["ollianhuan", "olniepan"], []],
+			re_zhangyi: ["male", "shu", 5, ["rewurong", "reshizhi"]],
+			xin_wuguotai: ["female", "wu", 3, ["xinganlu", "xinbuyi"]],
+			re_caocao: ["male", "wei", 4, ["new_rejianxiong", "rehujia"], ["zhu"]],
+			re_simayi: ["male", "wei", 3, ["refankui", "reguicai"]],
+			re_guojia: ["male", "wei", 3, ["tiandu", "new_reyiji"]],
+			re_zhangliao: ["male", "wei", 4, ["new_retuxi"]],
+			re_xuzhu: ["male", "wei", 4, ["new_reluoyi"]],
+			re_xiahoudun: ["male", "wei", 4, ["reganglie", "new_qingjian"]],
+			re_zhangfei: ["male", "shu", 4, ["olpaoxiao", "oltishen"]],
+			re_zhaoyun: ["male", "shu", 4, ["ollongdan", "olyajiao"]],
+			re_guanyu: ["male", "shu", 4, ["new_rewusheng", "new_yijue"]],
+			re_machao: ["male", "shu", 4, ["mashu", "retieji"]],
+			re_zhouyu: ["male", "wu", 3, ["reyingzi", "refanjian"]],
+			re_lvmeng: ["male", "wu", 4, ["keji", "qinxue", "rebotu"]],
+			re_ganning: ["male", "wu", 4, ["qixi", "fenwei"]],
+			re_luxun: ["male", "wu", 3, ["reqianxun", "relianying"]],
+			re_daqiao: ["female", "wu", 3, ["reguose", "liuli"]],
+			re_huanggai: ["male", "wu", 4, ["rekurou", "zhaxiang"]],
+			re_lvbu: ["male", "qun", 5, ["wushuang", "new_liyu"]],
+			re_huatuo: ["male", "qun", 3, ["jijiu", "new_reqingnang"]],
+			re_liubei: ["male", "shu", 4, ["rerende", "rejijiang"], ["zhu"]],
+			re_diaochan: ["female", "qun", 3, ["lijian", "rebiyue"]],
+			re_huangyueying: ["female", "shu", 3, ["rejizhi", "reqicai"]],
+			re_sunquan: ["male", "wu", 4, ["rezhiheng", "rejiuyuan"], ["zhu"]],
+			re_sunshangxiang: ["female", "wu", 3, ["xiaoji", "rejieyin"]],
+			re_zhenji: ["female", "wei", 3, ["reluoshen", "qingguo"]],
+			re_zhugeliang: ["male", "shu", 3, ["reguanxing", "kongcheng"]],
+			re_huaxiong: ["male", "qun", 6, ["reyaowu", "shizhan"]],
+
+			re_zhangjiao: ["male", "qun", 3, ["xinleiji", "xinguidao", "xinhuangtian"], ["zhu"]],
+			xin_yuji: ["male", "qun", 3, ["reguhuo"]],
+			re_zuoci: ["male", "qun", 3, ["rehuashen", "rexinsheng"]],
+
+			ol_xiahouyuan: ["male", "wei", 4, ["xinshensu", "shebian"]],
+			caoren: ["male", "wei", 4, ["xinjushou", "xinjiewei"]],
+			ol_weiyan: ["male", "shu", 4, ["xinkuanggu", "reqimou"]],
+			ol_xiaoqiao: ["female", "wu", 3, ["oltianxiang", "olhongyan", "piaoling"]],
+			zhoutai: ["male", "wu", 4, ["buqu", "fenji"]],
+			ol_pangde: ["male", "qun", 4, ["mashu", "rejianchu"]],
+			ol_xuhuang: ["male", "wei", 4, ["olduanliang", "oljiezi"]],
+			ol_sp_zhugeliang: ["male", "shu", 3, ["bazhen", "olhuoji", "olkanpo", "cangzhuo"], []],
+			ol_yanwen: ["male", "qun", 4, ["olshuangxiong"], []],
+			ol_yuanshao: ["male", "qun", 4, ["olluanji", "olxueyi"], ["zhu"]],
+			re_menghuo: ["male", "shu", 4, ["huoshou", "rezaiqi", "twqiushou"], ["zhu", "doublegroup:shu:qun"]],
+			ol_dongzhuo: ["male", "qun", 8, ["oljiuchi", "roulin", "benghuai", "olbaonue"], ["zhu"]],
+			ol_sunjian: ["male", "wu", "4/5", ["gzyinghun", "wulie", "twpolu"], ["zhu"]],
+			re_caopi: ["male", "wei", 3, ["rexingshang", "refangzhu", "songwei"], ["zhu"]],
+			ol_jiangwei: ["male", "shu", 4, ["oltiaoxin", "olzhiji"]],
+			ol_caiwenji: ["female", "qun", 3, ["olbeige", "duanchang"]],
+			ol_liushan: ["male", "shu", 3, ["xiangle", "olfangquan", "olruoyu"], ["zhu"]],
+
+			re_sunce: ["male", "wu", 4, ["oljiang", "olhunzi", "olzhiba"], ["zhu"]],
+			re_jianyong: ["male", "shu", 3, ["reqiaoshui", "jyzongshi"]],
+		},
 		characterSort: {
 			refresh: {
 				refresh_standard: [
@@ -155,139 +292,8 @@ game.import("character", function () {
 				],
 			},
 		},
-		connect: true,
-		character: {
-			re_xushu: ["male", "shu", 4, ["zhuhai", "qianxin"]],
-			re_lidian: ["male", "wei", 3, ["xunxun", "xinwangxi"]],
-			re_zhongyao: ["male", "wei", 3, ["rehuomo", "zuoding"], ["clan:颍川钟氏"]],
-			xin_zhangliang: ["male", "qun", 4, ["rejijun", "refangtong"]],
-			re_simalang: ["male", "wei", 3, ["requji", "rejunbing"]],
-			re_zhugedan: ["male", "wei", 4, ["regongao", "rejuyi"]],
-			re_caorui: ["male", "wei", 3, ["huituo", "remingjian", "xingshuai"], ["zhu"]],
-			re_caochong: ["male", "wei", 3, ["rechengxiang", "renxin"]],
-			ol_zhangzhang: ["male", "wu", 3, ["olzhijian", "olguzheng"]],
-			re_jsp_huangyueying: ["female", "qun", 3, ["rejiqiao", "relinglong"]],
-			re_zhangsong: ["male", "shu", 3, ["qiangzhi", "rexiantu"]],
-			re_zhuzhi: ["male", "wu", 4, ["reanguo"]],
-			dc_caozhi: ["male", "wei", 3, ["reluoying", "dcjiushi"]],
-			ol_huangzhong: ["male", "shu", 4, ["xinliegong", "remoshi"]],
-			re_wenpin: ["male", "wei", 5, ["rezhenwei"]],
-			re_guanzhang: ["male", "shu", 4, ["fuhun", "retongxin"]],
-			re_mazhong: ["male", "shu", 4, ["refuman"]],
-			dc_chenqun: ["male", "wei", 3, ["repindi", "dcfaen"]],
-			re_sundeng: ["male", "wu", 4, ["rekuangbi"]],
-			re_caiyong: ["male", "qun", 3, ["rebizhuan", "retongbo"]],
-			re_chengong: ["male", "qun", 3, ["remingce", "zhichi"]],
-			re_xunyou: ["male", "wei", 3, ["reqice", "rezhiyu"], ["clan:颍川荀氏"]],
-			dc_liru: ["male", "qun", 3, ["xinjuece", "dcmieji", "dcfencheng"]],
-			re_zhuhuan: ["male", "wu", 4, ["refenli", "repingkou"]],
-			ol_dianwei: ["male", "wei", 4, ["olqiangxi", "olninge"]],
-			re_sp_taishici: ["male", "qun", 4, ["rejixu"]],
-			re_liufeng: ["male", "shu", 4, ["rexiansi"]],
-			ol_xunyu: ["male", "wei", 3, ["quhu", "oljieming"], ["clan:颍川荀氏"]],
-			re_liuchen: ["male", "shu", 4, ["rezhanjue", "reqinwang"], ["zhu"]],
-			dc_gongsunzan: ["male", "qun", 4, ["dcyicong", "dcqiaomeng"]],
-			re_duji: ["male", "wei", 3, ["reandong", "reyingshi"]],
-			re_jushou: ["male", "qun", 3, ["dcjianying", "dcshibei"]],
-			re_zhanghe: ["male", "wei", 4, ["reqiaobian"]],
-			dc_xushu: ["male", "shu", 4, ["rezhuhai", "xsqianxin"]],
-			xin_gaoshun: ["male", "qun", 4, ["decadexianzhen", "decadejinjiu"]],
-			re_guohuanghou: ["female", "wei", 3, ["rejiaozhao", "redanxin"]],
-			re_xiahoushi: ["female", "shu", 3, ["reqiaoshi", "reyanyu"]],
-			ol_lusu: ["male", "wu", 3, ["olhaoshi", "oldimeng"]],
-			re_jiaxu: ["male", "qun", 3, ["rewansha", "reluanwu", "reweimu"]],
-			re_guyong: ["male", "wu", 3, ["reshenxing", "rebingyi"]],
-			xin_zhonghui: ["male", "wei", 4, ["xinquanji", "xinzili"], ["clan:颍川钟氏"]],
-			re_caifuren: ["female", "qun", 3, ["reqieting", "rexianzhou"]],
-			re_guanping: ["male", "shu", 4, ["relongyin", "jiezhong"]],
-			re_guotufengji: ["male", "qun", 3, ["rejigong", "shifei"]],
-			re_zhoucang: ["male", "shu", 4, ["rezhongyong"]],
-			ol_zhurong: ["female", "shu", 4, ["juxiang", "lieren", "changbiao"]],
-			re_zhangchunhua: ["female", "wei", 3, ["rejueqing", "shangshi"]],
-			re_gongsunyuan: ["male", "qun", 4, ["rehuaiyi"]],
-			re_caozhen: ["male", "wei", 4, ["residi"]],
-			re_fuhuanghou: ["female", "qun", 3, ["rezhuikong", "reqiuyuan"]],
-			re_fazheng: ["male", "shu", 3, ["reenyuan", "rexuanhuo"]],
-			xin_lingtong: ["male", "wu", 4, ["decadexuanfeng", "yongjin"]],
-			xin_liubiao: ["male", "qun", 3, ["decadezishou", "decadezongshi"]],
-			re_caoxiu: ["male", "wei", 4, ["qianju", "reqingxi"]],
-			re_sunxiu: ["male", "wu", 3, ["reyanzhu", "rexingxue", "zhaofu"], ["zhu"]],
-			ol_dengai: ["male", "wei", 4, ["oltuntian", "olzaoxian"]],
-			re_gongsunzan: ["male", "qun", 4, ["reqiaomeng", "reyicong"]],
-			re_manchong: ["male", "wei", 3, ["rejunxing", "yuce"]],
-			xin_yufan: ["male", "wu", 3, ["xinzhiyan", "xinzongxuan"]],
-			dc_bulianshi: ["female", "wu", 3, ["dcanxu", "dczhuiyi"]],
-			re_hanhaoshihuan: ["male", "wei", 4, ["reshenduan", "reyonglve"]],
-			re_panzhangmazhong: ["male", "wu", 4, ["reduodao", "reanjian"]],
-			re_wangyi: ["female", "wei", 4, ["zhenlie", "miji"]],
-			re_madai: ["male", "shu", 4, ["mashu", "reqianxi"]],
-			xin_xusheng: ["male", "wu", 4, ["decadepojun"]],
-			re_taishici: ["male", "wu", 4, ["tianyi", "hanzhan"]],
-			re_masu: ["male", "shu", 3, ["resanyao", "rezhiman"]],
-			re_sunluban: ["female", "wu", 3, ["rechanhui", "rejiaojin"]],
-			xin_handang: ["male", "wu", 4, ["xingongji", "xinjiefan"]],
-			yujin_yujin: ["male", "wei", 4, ["decadezhenjun"], ["die_audio:xin_yujin"]],
-			re_caozhang: ["male", "wei", 4, ["xinjiangchi"]],
-			re_chengpu: ["male", "wu", 4, ["ollihuo", "rechunlao"]],
-			re_quancong: ["male", "wu", 4, ["xinyaoming"]],
-			re_liaohua: ["male", "shu", 4, ["xindangxian", "xinfuli"]],
-			re_guohuai: ["male", "wei", 4, ["decadejingce"]],
-			re_wuyi: ["male", "shu", 4, ["xinbenxi"], ["clan:陈留吴氏"]],
-			re_zhuran: ["male", "wu", 4, ["xindanshou"]],
-			ol_pangtong: ["male", "shu", 3, ["ollianhuan", "olniepan"], []],
-			re_zhangyi: ["male", "shu", 5, ["rewurong", "reshizhi"]],
-			xin_wuguotai: ["female", "wu", 3, ["xinganlu", "xinbuyi"]],
-			re_caocao: ["male", "wei", 4, ["new_rejianxiong", "rehujia"], ["zhu"]],
-			re_simayi: ["male", "wei", 3, ["refankui", "reguicai"]],
-			re_guojia: ["male", "wei", 3, ["tiandu", "new_reyiji"]],
-			re_zhangliao: ["male", "wei", 4, ["new_retuxi"]],
-			re_xuzhu: ["male", "wei", 4, ["new_reluoyi"]],
-			re_xiahoudun: ["male", "wei", 4, ["reganglie", "new_qingjian"]],
-			re_zhangfei: ["male", "shu", 4, ["olpaoxiao", "oltishen"]],
-			re_zhaoyun: ["male", "shu", 4, ["ollongdan", "olyajiao"]],
-			re_guanyu: ["male", "shu", 4, ["new_rewusheng", "new_yijue"]],
-			re_machao: ["male", "shu", 4, ["mashu", "retieji"]],
-			re_zhouyu: ["male", "wu", 3, ["reyingzi", "refanjian"]],
-			re_lvmeng: ["male", "wu", 4, ["keji", "qinxue", "rebotu"]],
-			re_ganning: ["male", "wu", 4, ["qixi", "fenwei"]],
-			re_luxun: ["male", "wu", 3, ["reqianxun", "relianying"]],
-			re_daqiao: ["female", "wu", 3, ["reguose", "liuli"]],
-			re_huanggai: ["male", "wu", 4, ["rekurou", "zhaxiang"]],
-			re_lvbu: ["male", "qun", 5, ["wushuang", "new_liyu"]],
-			re_huatuo: ["male", "qun", 3, ["jijiu", "new_reqingnang"]],
-			re_liubei: ["male", "shu", 4, ["rerende", "rejijiang"], ["zhu"]],
-			re_diaochan: ["female", "qun", 3, ["lijian", "rebiyue"]],
-			re_huangyueying: ["female", "shu", 3, ["rejizhi", "reqicai"]],
-			re_sunquan: ["male", "wu", 4, ["rezhiheng", "rejiuyuan"], ["zhu"]],
-			re_sunshangxiang: ["female", "wu", 3, ["xiaoji", "rejieyin"]],
-			re_zhenji: ["female", "wei", 3, ["reluoshen", "qingguo"]],
-			re_zhugeliang: ["male", "shu", 3, ["reguanxing", "kongcheng"]],
-			re_huaxiong: ["male", "qun", 6, ["reyaowu", "shizhan"]],
-
-			re_zhangjiao: ["male", "qun", 3, ["xinleiji", "xinguidao", "xinhuangtian"], ["zhu"]],
-			xin_yuji: ["male", "qun", 3, ["reguhuo"]],
-			re_zuoci: ["male", "qun", 3, ["rehuashen", "rexinsheng"]],
-
-			ol_xiahouyuan: ["male", "wei", 4, ["xinshensu", "shebian"]],
-			caoren: ["male", "wei", 4, ["xinjushou", "xinjiewei"]],
-			ol_weiyan: ["male", "shu", 4, ["xinkuanggu", "reqimou"]],
-			ol_xiaoqiao: ["female", "wu", 3, ["oltianxiang", "olhongyan", "piaoling"]],
-			zhoutai: ["male", "wu", 4, ["buqu", "fenji"]],
-			ol_pangde: ["male", "qun", 4, ["mashu", "rejianchu"]],
-			ol_xuhuang: ["male", "wei", 4, ["olduanliang", "oljiezi"]],
-			ol_sp_zhugeliang: ["male", "shu", 3, ["bazhen", "olhuoji", "olkanpo", "cangzhuo"], []],
-			ol_yanwen: ["male", "qun", 4, ["olshuangxiong"], []],
-			ol_yuanshao: ["male", "qun", 4, ["olluanji", "olxueyi"], ["zhu"]],
-			re_menghuo: ["male", "shu", 4, ["huoshou", "rezaiqi"]],
-			ol_dongzhuo: ["male", "qun", 8, ["oljiuchi", "roulin", "benghuai", "olbaonue"], ["zhu"]],
-			ol_sunjian: ["male", "wu", "4/5", ["gzyinghun", "wulie"]],
-			re_caopi: ["male", "wei", 3, ["rexingshang", "refangzhu", "songwei"], ["zhu"]],
-			ol_jiangwei: ["male", "shu", 4, ["oltiaoxin", "olzhiji"]],
-			ol_caiwenji: ["female", "qun", 3, ["olbeige", "duanchang"]],
-			ol_liushan: ["male", "shu", 3, ["xiangle", "olfangquan", "olruoyu"], ["zhu"]],
-
-			re_sunce: ["male", "wu", 4, ["oljiang", "olhunzi", "olzhiba"], ["zhu"]],
-			re_jianyong: ["male", "shu", 3, ["reqiaoshui", "jyzongshi"]],
+		characterSubstitute: {
+			
 		},
 		characterIntro: {
 			jsp_huangyueying:
@@ -298,16 +304,21 @@ game.import("character", function () {
 				"字曼成，曹操麾下将领。李典深明大义，不与人争功，崇尚学习与高贵儒雅，尊重博学之士，在军中被称为长者。李典有长者之风，官至破虏将军，三十六岁去世。魏文帝曹丕继位后追谥号为愍侯。",
 			sunben: " ",
 		},
+		characterTitle: {
+			
+		},
 		characterFilter: {
 			re_zuoci: function (mode) {
 				return mode != "guozhan";
 			},
 		},
-		perfectPair: {
-			sunben: ["zhouyu", "taishici", "re_taishici", "daqiao"],
-			re_xushu: ["zhaoyun", "sp_zhugeliang"],
-			re_guohuai: ["xiahouyuan", "zhanghe"],
+		characterInitFilter: {
+			
 		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			ollianhuan: {
 				audio: "xinlianhuan",
@@ -5531,6 +5542,7 @@ game.import("character", function () {
 						player.line(target, "green");
 						target.storage.reqianxi_effect = [event.color, player];
 						target.addTempSkill("reqianxi_effect");
+						target.markSkill("reqianxi_effect");
 					}
 				},
 				subSkill: {
@@ -5669,9 +5681,10 @@ game.import("character", function () {
 						},
 						logTarget: "player",
 						content: function () {
-							var next = trigger.player.phaseDraw();
-							event.next.remove(next);
-							trigger.getParent().next.add(next);
+							const evt = trigger.getParent("phase", true, true);
+							if (evt?.phaseList) {
+								evt.phaseList.splice(evt.num + 1, 0, "phaseDraw|oljiezi");
+							}
 							trigger.player.removeMark("oljiezi", trigger.player.countMark("oljiezi"));
 						},
 					},
@@ -6400,6 +6413,7 @@ game.import("character", function () {
 				},
 			},
 			oldimeng: {
+				audio: 2,
 				enable: "phaseUse",
 				usable: 1,
 				filter: function (event, player) {
@@ -6429,11 +6443,8 @@ game.import("character", function () {
 				multiline: true,
 				content: function () {
 					targets[0].swapHandcards(targets[1]);
-					var num = Math.abs(targets[0].countCards("h") - targets[1].countCards("h"));
-					if (num > 0) {
-						player.addMark("oldimeng_discard", num, false);
-						player.addTempSkill("oldimeng_discard", "phaseUseAfter");
-					}
+					player.addTempSkill("oldimeng_discard", "phaseUseAfter");
+					player.markAuto("oldimeng_discard", [targets]);
 				},
 				ai: {
 					threaten: 4.5,
@@ -6455,6 +6466,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					discard: {
+						audio: "oldimeng",
 						trigger: { player: "phaseUseEnd" },
 						forced: true,
 						charlotte: true,
@@ -6462,8 +6474,12 @@ game.import("character", function () {
 						filter: function (event, player) {
 							return player.countCards("he") > 0;
 						},
-						content: function () {
-							player.chooseToDiscard("he", true, player.countMark("oldimeng_discard"));
+						async content(event, trigger, player) {
+							for (let targets of player.getStorage("oldimeng_discard")) {
+								if (targets.length < 2) continue;
+								const num = Math.abs(targets[0].countCards("h") - targets[1].countCards("h"));
+								if (num > 0 && player.countCards("he") > 0) await player.chooseToDiscard("he", true, num);
+							}
 						},
 					},
 				},
@@ -6471,8 +6487,11 @@ game.import("character", function () {
 			//贾诩
 			rewansha: {
 				audio: "wansha",
-				audioname: ["re_jiaxu", "boss_lvbu3", "new_simayi"],
-				audioname2: { shen_simayi: "jilue_wansha", xin_simayi: "jilue_wansha" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname: ["re_jiaxu", "boss_lvbu3", "new_simayi"],
+				// audioname2: { shen_simayi: "jilue_wansha" },
+				audioname: ["re_jiaxu", "boss_lvbu3"],
+				audioname2: { shen_simayi: "jilue_wansha", new_simayi: "wansha_new_simayi", xin_simayi: "wansha_new_simayi" },
 				global: "rewansha_global",
 				trigger: { global: "dyingBegin" },
 				forced: true,
@@ -7324,15 +7343,17 @@ game.import("character", function () {
 							.chooseControl("摸牌阶段", "出牌阶段")
 							.set("prompt", "精策：选择要执行的额外阶段");
 					"step 1";
-					if (event.goon || result.index == 0) {
-						var next = player.phaseDraw();
-						event.next.remove(next);
-						trigger.getParent().next.push(next);
-					}
+					//插入阶段，后来的先插
+					const evt = trigger.getParent("phase", true, true);
 					if (event.goon || result.index == 1) {
-						var next = player.phaseUse();
-						event.next.remove(next);
-						trigger.getParent().next.push(next);
+						if (evt?.phaseList) {
+							evt.phaseList.splice(evt.num + 1, 0, `phaseUse|${event.name}`);
+						}
+					}
+					if (event.goon || result.index == 0) {
+						if (evt?.phaseList) {
+							evt.phaseList.splice(evt.num + 1, 0, `phaseDraw|${event.name}`);
+						}
 					}
 				},
 			},
@@ -10519,7 +10540,7 @@ game.import("character", function () {
 						.set("ai", function (button) {
 							if (!_status.event.att) return 0;
 							if (get.position(button.link) == "e") {
-								if (get.subtype(button.link) == "equip2") return 2 * get.value(button.link);
+								if (get.subtype(button.link) == "equip2") return 5 * get.value(button.link);
 								return get.value(button.link);
 							}
 							return 1;
@@ -12230,6 +12251,7 @@ game.import("character", function () {
 						event.card.name == "sha" && event.target.hp > 0 && event.target.countCards("he") > 0
 					);
 				},
+				preHidden: true,
 				content: function () {
 					"step 0";
 					var next = player.choosePlayerCard(
@@ -12246,6 +12268,7 @@ game.import("character", function () {
 					});
 					next.set("goon", get.attitude(player, trigger.target) <= 0);
 					next.set("forceAuto", true);
+					next.setHiddenSkill(event.name);
 					"step 1";
 					if (result.bool) {
 						var target = trigger.target;
@@ -12283,6 +12306,10 @@ game.import("character", function () {
 				forced: true,
 				locked: false,
 				logTarget: "player",
+				preHidden: true,
+				check(event, player) {
+					return get.attitude(player, event.player) < 0;
+				},
 				content: function () {
 					trigger.num++;
 				},
@@ -12431,7 +12458,7 @@ game.import("character", function () {
 					"step 1";
 					event.count--;
 					player
-						.chooseToDiscard("是否弃置一张牌并令一名其他角色进行一个额外回合？")
+						.chooseToDiscard("是否弃置一张手牌并令一名其他角色进行一个额外回合？")
 						.set("logSkill", "olfangquan").ai = function (card) {
 						return 20 - get.value(card);
 					};
@@ -13774,11 +13801,28 @@ game.import("character", function () {
 						player.logSkill("xinleiji");
 						player.recover();
 					}
-					player.chooseTarget("雷击：是否对一名角色造成" + event.num + "点雷电伤害？").ai =
-						function (target) {
-							var player = _status.event.player;
-							return get.damageEffect(target, player, player, "thunder");
-						};
+					player
+						.chooseTarget("雷击：是否对一名角色造成" + event.num + "点雷电伤害？")
+						.set("ai", target => {
+							const player = _status.event.player;
+							let eff = get.damageEffect(target, player, target, "thunder");
+							if (
+								get.event("num") > 1 &&
+								!target.hasSkillTag("filterDamage", null, {
+									player: player,
+									card: null,
+									nature: "thunder",
+								})
+							) {
+								if (eff > 0) {
+									eff -= 25;
+								} else if (eff < 0) {
+									eff *= 2;
+								}
+							}
+							return eff * get.attitude(player, target);
+						})
+						.set("num", event.num);
 					"step 1";
 					if (result.bool && result.targets && result.targets.length) {
 						if (!event.logged) player.logSkill("xinleiji", result.targets);
@@ -15343,7 +15387,9 @@ game.import("character", function () {
 			},
 			rezhiheng: {
 				audio: 2,
-				audioname2: { shen_caopi: "rezhiheng_shen_caopi", xin_simayi: "jilue_zhiheng" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname2: { shen_caopi: "rezhiheng_shen_caopi", new_simayi: "rezhiheng_new_simayi" },
+				audioname2: { shen_caopi: "rezhiheng_shen_caopi", xin_simayi: "rezhiheng_new_simayi" },
 				mod: {
 					aiOrder: function (player, card, num) {
 						if (num <= 0 || get.itemtype(card) !== "card" || get.type(card) !== "equip")
@@ -15439,6 +15485,7 @@ game.import("character", function () {
 					threaten: 1.55,
 				},
 			},
+			rezhiheng_new_simayi: { audio: 1 },
 			reqicai: {
 				mod: {
 					targetInRange: function (card, player, target, now) {
@@ -15446,14 +15493,17 @@ game.import("character", function () {
 						if (type == "trick" || type == "delay") return true;
 					},
 					canBeDiscarded: function (card) {
-						if (get.position(card) == "e" && ["equip2", "equip5"].includes(get.subtype(card)))
+						if (get.position(card) == "e" && get.subtypes(card).some(slot => slot == "equip2" || slot == "equip5")) {
 							return false;
+						}
 					},
 				},
 			},
 			rejizhi: {
 				audio: 2,
-				audioname2: { lukang: "rejizhi_lukang", xin_simayi: "jilue_jizhi" },
+				// 临时修改（by 棘手怀念摧毁）
+				// audioname2: { lukang: "rejizhi_lukang", new_simayi: "rejizhi_new_simayi" },
+				audioname2: { lukang: "rejizhi_lukang", xin_simayi: "rejizhi_new_simayi" },
 				locked: false,
 				trigger: { player: "useCard" },
 				frequent: true,
@@ -15513,6 +15563,7 @@ game.import("character", function () {
 					},
 				},
 			},
+			rejizhi_new_simayi: { audio: 1 },
 			rebiyue: {
 				audio: 2,
 				audioname2: { sp_diaochan: "biyue" },
@@ -15860,7 +15911,6 @@ game.import("character", function () {
 			},
 			reguicai: {
 				audio: 2,
-				audioname2: { xin_simayi: "jilue_guicai" },
 				audioname: ["new_simayi"],
 				trigger: { global: "judge" },
 				direct: true,
@@ -16024,6 +16074,7 @@ game.import("character", function () {
 					);
 				},
 				forced: true,
+				charlotte: true,
 				content: function () {
 					trigger.num++;
 				},
@@ -18055,8 +18106,7 @@ game.import("character", function () {
 			rezhiheng_info:
 				"出牌阶段限一次，你可以弃置任意张牌并摸等量的牌，若你在发动〖制衡〗时弃置了所有手牌，则你多摸一张牌。",
 			rejiuyuan: "救援",
-			rejiuyuan_info:
-				"主公技，其他吴势力角色对自己使用【桃】时，若其体力值大于你，则其可以选择令你回复1点体力，然后其摸一张牌。",
+			rejiuyuan_info: "主公技，其他吴势力角色于其回合内回复体力时，若其体力值大于等于你，则该角色可以改为令你回复1点体力，然后其摸一张牌。",
 
 			new_yajiao: "涯角",
 			new_yajiao_info:
@@ -18619,8 +18669,7 @@ game.import("character", function () {
 			olhaoshi_info:
 				"摸牌阶段开始时，你可以多摸两张牌。然后摸牌阶段结束时，若你的手牌数大于5，则你将手牌数的一半（向下取整）交给一名手牌最少其他角色并获得如下效果直到你下回合开始：当你成为【杀】或普通锦囊牌的目标后，其可以交给你一张手牌。",
 			oldimeng: "缔盟",
-			oldimeng_info:
-				"出牌阶段限一次，你可令两名满足X≤Y的其他角色交换手牌并获得如下效果：出牌阶段结束时，你弃置X张牌（X为这两名角色手牌数之差的绝对值；Y为你的牌数）。",
+			oldimeng_info: "出牌阶段限一次，你可令两名手牌数之差不大于你牌数的其他角色交换手牌。若如此做，此阶段结束时，你弃置X张牌（X为这两名角色手牌数之差）。",
 
 			rejijiang: "激将",
 			rejijiang1: "激将",
@@ -18951,6 +19000,15 @@ game.import("character", function () {
 			refresh_yijiang5: "界限突破·将5",
 			refresh_yijiang6: "界限突破·原6",
 			refresh_xinghuo: "界限突破·星火",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

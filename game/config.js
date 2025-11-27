@@ -22,7 +22,7 @@ window.config={
 	zhinang_tricks:['guohe','wuxie','wuzhong','dongzhuxianji'],
 	connect_zhinang_tricks:['guohe','wuxie','wuzhong','dongzhuxianji'],
 	all:{
-		sgscharacters:['standard','shenhua','xinghuoliaoyuan','refresh','yijiang','sp','sp2','xianding','huicui','extra','old','mobile','shiji','tw','yingbian','offline','jsrg','sb','clan','collab','onlyOL','sixiang','sbfm','mdtx'],
+		sgscharacters:['standard','shenhua','xinghuoliaoyuan','refresh','yijiang','sp','sp2','xianding','huicui','extra','old','mobile','shiji','tw','yingbian','offline','jsrg','sxrm','sb','clan','collab','onlyOL','sixiang','bingshi','sbfm','mdtx','shengxiao'],
 		sgscards:['standard','extra','sp','guozhan','zhulu','yingbian','yongjian'],
 		sgsmodes:['identity','guozhan','versus','doudizhu','single','brawl','connect'],
 		stockmode:['identity','guozhan','versus','boss','doudizhu','single','chess','stone','connect','brawl','tafang'],
@@ -55,6 +55,7 @@ window.config={
 	pressure_taptic:true,
 	hover_handcard:true,
 	hover_all:true,
+	// hoveration:'1500',
 	right_info:true,
 	longpress_info:true,
 	long_info:true,
@@ -168,6 +169,7 @@ window.config={
 	gameconfig:false,
 	appearence:false,
 	video:'0',
+	max_loadtime:'60000',
 	coin:0,
 
 	intro:'i',
@@ -175,7 +177,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard','extra'],
-	characters:['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','onlyOL','sixiang','sbfm','mdtx','old'],
+	characters:['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','sxrm','onlyOL','sixiang','bingshi','sbfm','mdtx','shengxiao','old'],
 	connect_characters:['diy'],
 	connect_cards:['huanlekapai','guozhan','sp','zhulu','yingbian','yongjian'],
 	plays:[],

@@ -1341,6 +1341,7 @@ game.import("character", function () {
 			},
 			shenyan: {
 				trigger: { source: "damageBegin" },
+				limited: true,
 				skillAnimation: true,
 				animationColor: "fire",
 				filter: function (event, player) {
@@ -1642,6 +1643,7 @@ game.import("character", function () {
 			hxunzhi: {
 				unique: true,
 				enable: "phaseUse",
+				limited: true,
 				derivation: ["wusheng", "paoxiao"],
 				filter: function (event, player) {
 					return !player.storage.hxunzhi;
@@ -1995,6 +1997,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				unique: true,
 				mark: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "metal",
 				init: function (player) {
@@ -2235,6 +2238,7 @@ game.import("character", function () {
 				},
 			},
 			bingfeng: {
+				limited: true,
 				skillAnimation: "epic",
 				animationColor: "water",
 				unique: true,
@@ -3353,6 +3357,7 @@ game.import("character", function () {
 				},
 			},
 			shouyin: {
+				limited: true,
 				skillAnimation: "epic",
 				animationColor: "water",
 				unique: true,
@@ -4968,6 +4973,7 @@ game.import("character", function () {
 			},
 			yinmo: {},
 			miedao: {
+				locked: true,
 				group: ["miedao1", "miedao2"],
 				ai: {
 					threaten: 1.4,
@@ -8261,6 +8267,7 @@ game.import("character", function () {
 				},
 				mark: true,
 				unique: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "fire",
 				line: "fire",
@@ -9253,6 +9260,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				mark: true,
 				unique: true,
+				limited: true,
 				forceunique: true,
 				skillAnimation: true,
 				filter: function (event, player) {
@@ -10227,6 +10235,7 @@ game.import("character", function () {
 				filter: function (event, player) {
 					return !player.getEquip(5);
 				},
+				locked: true,
 				ai: {
 					order: 11,
 					result: {

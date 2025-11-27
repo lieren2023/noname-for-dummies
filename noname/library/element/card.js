@@ -186,11 +186,17 @@ export class Card extends HTMLDivElement {
 		return this.nature;
 	}
 	addGaintag(gaintag) {
+		//目前无名杀支持永久标记，只要加上前缀“eternal_”（即eternal，永恒的）均视为永久标记
+		//然后就是永久标记的翻译问题，前缀是eternal_可以选择只看后面的子字符串的对应翻译
 		if (Array.isArray(gaintag)) this.gaintag = gaintag.slice(0);
 		else this.gaintag.add(gaintag);
 		var str = "";
 		for (var gi = 0; gi < this.gaintag.length; gi++) {
-			var translate = get.translation(this.gaintag[gi]);
+			const tag = this.gaintag[gi];
+			var translate = get.translation(tag);
+			if (translate == tag && tag.startsWith("eternal_")) {
+				translate = get.translation(tag.slice(8));
+			}
 			if (translate != "invisible") {
 				str += translate;
 				if (gi < this.gaintag.length - 1) str += " ";
@@ -359,7 +365,7 @@ export class Card extends HTMLDivElement {
 		this.classList.remove("fullborder");
 		this.dataset.cardName = card[2];
 		this.dataset.cardType = info.type || "";
-		this.dataset.cardSubype = info.subtype || "";
+		this.dataset.cardSubtype = info.subtype || "";
 		this.dataset.cardMultitarget = info.multitarget ? "1" : "0";
 		this.node.name.dataset.nature = "";
 		this.node.info.classList.remove("red");
@@ -669,6 +675,48 @@ export class Card extends HTMLDivElement {
 			}
 		}
 		return this;
+	}
+	/**
+	 * 给此牌添加特定的cardtag（如添加应变条件）
+	 * @param { string } tag
+	 */
+	addCardtag(tag) {
+		let card = this;
+		game.broadcastAll(
+			function (card, tag) {
+				if (!_status.cardtag) {
+					_status.cardtag = {};
+				}
+				if (!_status.cardtag[tag]) {
+					_status.cardtag[tag] = [];
+				}
+				_status.cardtag[tag].add(card.cardid);
+				card.$init([card.suit, card.number, card.name, card.nature]);
+			},
+			card,
+			tag
+		);
+	}
+	/**
+	 * 给此牌移除特定的cardtag（如移除应变条件）
+	 * @param { string } tag
+	 */
+	removeCardtag(tag) {
+		let card = this;
+		game.broadcastAll(
+			function (card, tag) {
+				if (!_status.cardtag) {
+					_status.cardtag = {};
+				}
+				if (!_status.cardtag[tag]) {
+					_status.cardtag[tag] = [];
+				}
+				_status.cardtag[tag].remove(card.cardid);
+				card.$init([card.suit, card.number, card.name, card.nature]);
+			},
+			card,
+			tag
+		);
 	}
 	updateTransform(bool, delay) {
 		if (delay) {

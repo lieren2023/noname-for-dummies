@@ -7133,7 +7133,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (event.cards2.length == 0) {
 						event.finish();
 					} else {
-						var dialog = ui.create.dialog("将三张牌中的锦囊牌或装备牌交给一己方名角色", "hidden");
+						var dialog = ui.create.dialog("将五张牌中的锦囊牌或装备牌交给一名己方角色", "hidden");
 						dialog.add(event.cards);
 						for (var i = 0; i < dialog.buttons.length; i++) {
 							if (event.cards2.includes(dialog.buttons[i].link)) {

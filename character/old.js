@@ -3,54 +3,11 @@ game.import("character", function () {
 	return {
 		name: "old",
 		connect: true,
-		characterSort: {
-			old: {
-				old_standard: ["ol_yuanshu"],
-				old_shenhua_feng: ["yuji", "zhangjiao", "xiahouyuan", "weiyan", "old_xiaoqiao", "huangzhong", "new_caoren"],
-				old_shenhua_huo: ["pangde"],
-				old_shenhua_lin: ["xuhuang"],
-				old_shenhua_lei: ["old_zhugezhan", "old_guanqiujian", "old_chendao"],
-				old_yijiang1: [
-					"masu",
-					"xushu",
-					"xin_yujin",
-					"old_xusheng",
-					"old_lingtong",
-					"fazheng",
-					"old_gaoshun",
-					"re_yujin",
-				],
-				old_yijiang2: [
-					"old_zhonghui",
-					"madai",
-					"old_handang",
-					"old_liubiao",
-					"oldre_liubiao",
-					"old_guanzhang",
-					"old_wangyi",
-				],
-				old_yijiang3: ["liru", "old_zhuran", "old_fuhuanghou", "old_caochong"],
-				old_yijiang4: ["old_caozhen", "old_chenqun", "old_zhuhuan", "old_caorui"],
-				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
-				old_yijiang6: ["ol_zhangrang", "old_huanghao", "old_liyan"],
-				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
-				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
-				old_sp: [
-					"old_shixie",
-					"panfeng",
-					"old_wanglang",
-					"old_maliang",
-					"old_zhangxingcai",
-					"old_wangyun",
-					"old_dingfeng",
-					"old_guanyinping",
-				],
-				old_yingbian: ["junk_simayi", "old_yangyan", "old_yangzhi"],
-				old_mobile: ["old_caochun"],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
-			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu"]],
+			old_shen_huangzhong: ["male", "shen", 4, ["old_1！5！", "old_chiren"], ["shu", "die_audio:shen_huangzhong"]],
 			junk_zhangjiao: ["male", "shen", 3, ["yizhao", "junksijun", "tianjie"], ["qun", "die_audio:shen_zhangjiao"]],
 
 			old_shixie: ["male", "qun", 3, ["biluan", "lixia"]],
@@ -118,17 +75,83 @@ game.import("character", function () {
 			old_zhuzhi: ["male", "wu", 4, ["anguo"]],
 
 			old_zhugezhan: ["male", "shu", 3, ["old_zuilun", "old_fuyin"]],
-			ol_zhangrang: ["male", "qun", 3, ["xintaoluan"], ["sex:male_castrated"]],
 			//ol_manchong:['male','wei',3,['yuce','junxing']],
 			old_guanqiujian: ["male", "wei", 4, ["drlt_zhenrong", "drlt_hongju"], []],
 			old_wanglang: ["male", "wei", 3, ["gushe", "jici"]],
 			old_wangyi: ["female", "wei", 3, ["oldzhenlie", "oldmiji"]],
 			re_yujin: ["male", "wei", 4, ["yizhong"], ["die_audio:yujin"]],
 		},
+		characterSort: {
+			old: {
+				old_standard: ["ol_yuanshu"],
+				old_shenhua_feng: ["yuji", "zhangjiao", "xiahouyuan", "weiyan", "old_xiaoqiao", "huangzhong", "new_caoren"],
+				old_shenhua_huo: ["pangde"],
+				old_shenhua_lin: ["xuhuang"],
+				old_shenhua_lei: ["old_zhugezhan", "old_guanqiujian", "old_chendao"],
+				old_yijiang1: [
+					"masu",
+					"xushu",
+					"xin_yujin",
+					"old_xusheng",
+					"old_lingtong",
+					"fazheng",
+					"old_gaoshun",
+					"re_yujin",
+				],
+				old_yijiang2: [
+					"old_zhonghui",
+					"madai",
+					"old_handang",
+					"old_liubiao",
+					"oldre_liubiao",
+					"old_guanzhang",
+					"old_wangyi",
+				],
+				old_yijiang3: ["liru", "old_zhuran", "old_fuhuanghou", "old_caochong"],
+				old_yijiang4: ["old_caozhen", "old_chenqun", "old_zhuhuan", "old_caorui"],
+				old_yijiang5: ["old_caoxiu", "old_zhuzhi"],
+				old_yijiang6: ["old_huanghao", "old_liyan"],
+				old_refresh: ["old_zhangfei", "old_huatuo", "old_zhaoyun", "ol_huaxiong", "old_guanyu"],
+				old_extra: ["old_shen_zhaoyun", "old_caocao", "junk_sunquan", "old_shen_huangzhong", "junk_zhangjiao"],
+				old_sp: [
+					"old_shixie",
+					"panfeng",
+					"old_wanglang",
+					"old_maliang",
+					"old_zhangxingcai",
+					"old_wangyun",
+					"old_dingfeng",
+					"old_guanyinping",
+				],
+				old_yingbian: ["junk_simayi", "old_yangyan", "old_yangzhi"],
+				old_mobile: ["old_caochun"],
+			},
+		},
+		characterSubstitute: {
+			
+		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//初版神黄忠
 			"old_1！5！": {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dclieqiong",
+				// audio: 2,
 				trigger: { source: "damageSource" },
 				filter(event, player) {
 					return event.player.isIn() && event.source != event.player;
@@ -251,6 +274,9 @@ game.import("character", function () {
 						let list = [];
 						for (let i = 0; i < position.length; i++) {
 							const num_px = document.createElement("div");
+							num_px.classList.add("nodeintro");
+							num_px.nodeTitle = get.translation(position[i]);
+							num_px.nodeContent = get.skillInfoTranslation(position[i]);
 							num_px.style.width = "15%";
 							num_px.style.height = "15%";
 							num_px.id = position[i];
@@ -274,6 +300,14 @@ game.import("character", function () {
 								_status.imchoosing = false;
 								resolve(event._result);
 							});
+							if (!lib.config.touchscreen) {
+								if (lib.config.hover_all) {
+									lib.setHover(num_px, ui.click.hoverplayer);
+								}
+								if (lib.config.right_info) {
+									num_px.oncontextmenu = ui.click.rightplayer;
+								}
+							}
 							list.push(num_px);
 						}
 						const selectedList = list.filter(i => places.includes(i.id)).randomGets(Math.min(places.length, event.player.countMark("old_1！5！")));
@@ -466,7 +500,9 @@ game.import("character", function () {
 				},
 			},
 			old_chiren: {
-				audio: 2,
+				// 配音临时修改（by 棘手怀念摧毁）
+				audio: "dczhanjue",
+				// audio: 2,
 				trigger: { player: "phaseJieshuBegin" },
 				filter(event, player) {
 					return player.countMark("old_1！5！") >= Math.max(1, player.getDamagedHp());
@@ -870,19 +906,22 @@ game.import("character", function () {
 			},
 			oldjiefan: {
 				audio: "jiefan",
-				enable: "chooseToUse",
+				trigger: { player: "chooseToUseBegin" },
 				filter: function (event, player) {
-					return event.type == "dying" && _status.currentPhase && _status.currentPhase.isIn();
+					return event.type == "dying" && _status.currentPhase !== player;
 				},
 				direct: true,
+				clearTime: true,
 				content: function () {
+					const list = [event.name, trigger.dying];
 					player
 						.chooseToUse(function (card, player, event) {
 							if (get.name(card) != "sha") return false;
 							return lib.filter.filterCard.apply(this, arguments);
-						}, get.prompt2("oldjiefan"))
+						}, get.prompt2(...list))
 						.set("targetRequired", true)
 						.set("complexSelect", true)
+						.set("complexTarget", true)
 						.set("filterTarget", function (card, player, target) {
 							if (
 								target != _status.currentPhase &&
@@ -891,7 +930,7 @@ game.import("character", function () {
 								return false;
 							return lib.filter.filterTarget.apply(this, arguments);
 						})
-						.set("logSkill", "oldjiefan")
+						.set("logSkill", list)
 						.set("oncard", function () {
 							_status.event.player.addTempSkill("oldjiefan_recover");
 						})
@@ -1695,6 +1734,9 @@ game.import("character", function () {
 				},
 			},
 		},
+		dynamicTranslate: {
+			
+		},
 		translate: {
 			old_zhangxingcai: "旧张星彩",
 			old_zhangxingcai_prefix: "旧",
@@ -1726,8 +1768,6 @@ game.import("character", function () {
 			old_huatuo_prefix: "OL",
 			old_guanyu: "旧关羽",
 			old_guanyu_prefix: "旧",
-			ol_zhangrang: "旧张让",
-			ol_zhangrang_prefix: "旧",
 			ol_liaohua: "OL廖化",
 			ol_liaohua_prefix: "OL",
 			ol_zhuran: "OL朱然",
@@ -1890,6 +1930,15 @@ game.import("character", function () {
 			old_sp: "SP",
 			old_yingbian: "文德武备",
 			old_mobile: "移动版",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

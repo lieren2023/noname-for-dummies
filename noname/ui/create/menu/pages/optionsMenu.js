@@ -225,6 +225,11 @@ export const optionsMenu = function (connectMenu) {
 						if (lib.character[i][3].length) list.push([i, lib.translate[i]]);
 					}
 
+					// 修复由于禁将导致的报错（武将数为零报错）
+					if (!list.length) {
+						return;
+					}
+
 					list.sort(function (a, b) {
 						a = a[0];
 						b = b[0];

@@ -484,6 +484,7 @@ game.import("character", function () {
 				},
 			},
 			yixin: {
+				limited: true,
 				skillAnimation: true,
 				unique: true,
 				mark: true,
@@ -1367,6 +1368,7 @@ game.import("character", function () {
 				},
 			},
 			heqin: {
+				limited: true,
 				skillAnimation: true,
 				enable: "phaseUse",
 				filter: function (event, player) {
@@ -2165,6 +2167,7 @@ game.import("character", function () {
 				},
 			},
 			seyou: {
+				limited: true,
 				skillAnimation: true,
 				unique: true,
 				mark: true,

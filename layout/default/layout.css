@@ -1497,6 +1497,8 @@ div:not(.handcards) > .card > .info > span,
 }
 .buttons {
 	width: 100%;
+	/* 临时修改（by 棘手怀念摧毁） */
+	margin-left: 0px !important;
 }
 .buttons.guanxing {
 	min-height: 106px !important;
@@ -1788,9 +1790,12 @@ div:not(.handcards) > .card > .info > span,
 	margin-right: 4px;
 	position: relative;
 }
+
+/* 临时修改（by 棘手怀念摧毁） */
 /* .content > div:not(.pointerdiv) { */
 	/* width: calc(100% - 8px); */
 /* } */
+
 .content > .caption + .buttons:not(*:last-child) {
 	margin-top: 0;
 	margin-bottom: 0;
@@ -4846,10 +4851,20 @@ div[data-decoration="bronze"]::after {
 	opacity: 1;
 	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgb(255, 153, 51) 0 0 5px, rgba(255, 153, 51, 1) 0 0 10px;
 }
+
+/* 临时修改（by 棘手怀念摧毁） */
+/* .glow:not(.button):not(.card) { */
+	/* box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 133, 255, 0.4) 0 0 5px, rgba(0, 133, 255, 0.5) 0 0 12px, */
+		/* rgba(0, 133, 255, 0.8) 0 0 15px !important; */
+/* } */
 .glow:not(.button):not(.card) {
-	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 133, 255, 0.4) 0 0 5px, rgba(0, 133, 255, 0.5) 0 0 12px,
-		rgba(0, 133, 255, 0.8) 0 0 15px !important;
+	box-shadow:
+		inset rgba(0, 0, 0, 0.2) 0 0 0 1px,
+		inset rgba(0, 133, 255, 0.4) 0 0 5px,
+		inset rgba(0, 133, 255, 0.5) 0 0 12px,
+		inset rgba(0, 133, 255, 0.8) 0 0 15px !important;
 }
+
 .glow2:not(.player.glow_phase) > .avatar {
 	/*-webkit-animation:control_glow 4s infinite;*/
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(10, 155, 67, 1) 0 0 15px, rgba(10, 155, 67, 1) 0 0 15px !important;

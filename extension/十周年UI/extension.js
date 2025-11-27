@@ -339,6 +339,51 @@ content:function(config, pack){
 		return card;
 	};
 	
+	// 查看牌堆卡牌的显示美化
+	// 修改noname\ui\click的函数cardPileButton() {
+	ui.click.cardPileButton=function() {
+		var uiintro = ui.create.dialog("hidden");
+		uiintro.listen(function (e) {
+			e.stopPropagation();
+		});
+		var num;
+		if (game.online) {
+			num = _status.cardPileNum || 0;
+		} else {
+			num = ui.cardPile.childNodes.length;
+		}
+		uiintro.add('剩余 <span style="font-family:' + "xinwei" + '">' + num);
+
+		if (_status.connectMode) return uiintro;
+		uiintro.add(
+			'<div class="text center">轮数 <span style="font-family:xinwei">' +
+				game.roundNumber +
+				'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">' +
+				game.shuffleNumber +
+				"</div>"
+		);
+		uiintro.add('<div class="text center">弃牌堆</div>');
+		if (ui.discardPile.childNodes.length) {
+			var list = [];
+			for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
+				// 修改（与菜单卡牌的显示美化一样）
+				var cardx = ui.discardPile.childNodes[i];
+				var copy = game.createCard2(cardx.name, cardx.suit, cardx.number, cardx.nature);
+				copy.classList.add('menusize');
+				copy.node.suitnum.classList.add('menusizex');
+				copy.node.image.classList.add('menusize');
+				copy.$name.classList.add('menusize');
+				list.unshift(copy);
+				
+				// list.unshift(ui.discardPile.childNodes[i]);
+			}
+			uiintro.addSmall([list, "card"]);
+		} else {
+			uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+		}
+		return uiintro;
+	};
+	
 	// 对策、谋弈美化
 	if(lib.config['extension_十周年UI_cardPrettify']){
 		lib.element.content.chooseToDuiben = function () {
@@ -446,6 +491,10 @@ content:function(config, pack){
 			game.addVideo('throwEmotion',this,[target.dataset.position,name]);
 			var getLeft=function(player){
 				if(player==game.me&&!ui.fakeme&&!ui.chess) return player.getLeft()+player.node.avatar.offsetWidth/2;
+				
+				// 出牌记录栏靠左显示修复
+				if (lib.config.show_history == "left") return player.getLeft()+player.offsetWidth/2+50;
+				
 				return player.getLeft()+player.offsetWidth/2;
 			};
 			var player=this;
@@ -481,6 +530,90 @@ content:function(config, pack){
 			var player=lib.playerOL[this.id];
 			if(player){
 				player.throwEmotion(target,emotion);
+			}
+		};
+	}else{
+		// 新版noname\library\element\player.js、noname\library\index.js
+		/**
+		 * @param { Player } target
+		 * @param { string } name
+		 * @param {*} rotate
+		 */
+		lib.element.player.$throwEmotion = function(target, name, rotate) {
+			game.addVideo("throwEmotion", this, [target.dataset.position, name]);
+			var getLeft = function (player) {
+				if (player == game.me && !ui.fakeme && !ui.chess)
+					return player.getLeft() + player.node.avatar.offsetWidth / 2;
+				
+				// 出牌记录栏靠左显示修复
+				if (lib.config.show_history == "left") return player.getLeft() + player.offsetWidth / 2 +50;
+				
+				return player.getLeft() + player.offsetWidth / 2;
+			};
+			var player = this;
+			var emotion = ui.create.div(
+				"",
+				'<div style="text-align:center"> <img src="' +
+					lib.assetURL +
+					"image/emotion/throw_emotion/" +
+					name +
+					'1.png"> </div>',
+				game.chess ? ui.chess : ui.window
+			);
+			emotion.style.width = "60px";
+			emotion.style.height = "60px";
+			var width = emotion.offsetWidth / 2;
+			var height = emotion.offsetHeight / 2;
+			if (game.chess) width += 60;
+			var left = getLeft(player) - width;
+			var top = player.getTop() + player.offsetHeight / 3 - height;
+			emotion.style.left = left + "px";
+			emotion.style.top = top + "px";
+			var left2 = getLeft(target) - width;
+			var top2 = target.getTop() + target.offsetHeight / 3 - height;
+			if (["egg", "flower", "shoe"].includes(name) || rotate) {
+				var num1 = 0.95 + Math.random() * (1.1 - 0.95);
+				var num2 = 1 + Math.random() * (3 - 1);
+				var left2 = getLeft(target) / num1 - width;
+				var top2 = target.getTop() + target.offsetHeight / num2 - height;
+			} else {
+				var left2 = getLeft(target) - width;
+				var top2 = target.getTop() + target.offsetHeight / 3 - height;
+			}
+			emotion.style["z-index"] = 10;
+			emotion.style.transform = "translateY(" + (top2 - top) + "px) translateX(" + (left2 - left) + "px)";
+			// @ts-ignore
+			if (["egg", "flower", "shoe"].includes(name) || rotate)
+				emotion.firstElementChild.style.transform = "rotate(1440deg)";
+			if (lib.config.background_audio) game.playAudio("effect", "throw_" + name + get.rand(1, 2));
+			setTimeout(function () {
+				emotion.innerHTML =
+					'<div style="text-align:center"> <img src="' +
+					lib.assetURL +
+					"image/emotion/throw_emotion/" +
+					name +
+					'2.png"> </div>';
+				setTimeout(function () {
+					emotion.delete();
+				}, 1200);
+			}, 600);
+		};
+		lib.element.player.throwEmotion = function(target, emotion, rotate) {
+			game.broadcastAll(
+				function (player, target, emotion, rotate) {
+					player.$throwEmotion(target, emotion, rotate);
+				},
+				this,
+				target,
+				emotion,
+				rotate
+			);
+		};
+		lib.message.server.throwEmotion = function (target, emotion, rotate) {
+			if (lib.node.observing.includes(this)) return;
+			var player = lib.playerOL[this.id];
+			if (player) {
+				player.throwEmotion(target, emotion, rotate);
 			}
 		};
 	}
@@ -595,6 +728,42 @@ content:function(config, pack){
 			return span.outerHTML;
 		},
 	});
+	lib.namePrefix.delete('PE');
+	lib.namePrefix.set('PE',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = 'PE';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('ddd');
+	lib.namePrefix.set('ddd',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = '3D';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('26');
+	lib.namePrefix.set('26',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = '26';
+			return span.outerHTML;
+		},
+	});
 	// lib.namePrefix.delete('新杀');
 	// lib.namePrefix.set('新杀',{
 		// showName:'新杀',
@@ -666,7 +835,7 @@ content:function(config, pack){
 			totalLength = prefixlength + slimName.slice(prefix.length).length;
 			// 根据总长度设置对应样式
 			if (totalLength == 5) {
-				style = 'font-size: 14.2px';
+				style = 'font-size: 12.9px';
 				// 返回带有样式的slimName
 				//兼容版特化处理
 				if (lib.compatibleEdition) return `<span style="${style}">${get.prefixSpan(prefix, str)}<span>${slimName.slice(prefix.length)}　</span></span>`;
@@ -692,7 +861,7 @@ content:function(config, pack){
 		
 		// 根据总长度设置对应样式
 		if (totalLength == 5) {
-			style = 'font-size: 14.2px';
+			style = 'font-size: 12.9px';
 			// 返回带有样式的slimName
 			return `<span style="${style}">${slimName}</span>`;
 		} else if (totalLength == 6) {
@@ -1757,6 +1926,242 @@ content:function(config, pack){
 		};
 	}
 	
+	// 可见手牌显示-标记
+	if (lib.config.kjspxs!='off' && lib.config.kjspxs!='biankuang') {
+		lib.skill._szn_biaoji_showCards = {
+			trigger: {
+				global: ['gameStart', 'roundStart'],
+			},
+			mark: true,
+			marktext: "<img style = width:15px src=" + lib.assetURL + "extension/十周年UI/assets/image/jinjing.png>",
+			intro: {
+				name: "可见手牌",
+				markcount(storage, player) {
+					return storage.length;
+				},
+				mark(dialog, content, player) {
+					const cards = player.getCards('h',function(c){
+						return get.is.shownCard(c) || (player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+					});
+					if (cards.length) {
+						dialog.addAuto(cards);
+					} else {
+						return "无可见手牌";
+					}
+				},
+			},
+			forced: true,
+			popup: false,
+			silent: true,
+			charlotte: true,
+			priority: 30,
+			content() {
+				var libUpdates = () => {
+					var libUpdate = player => {
+						player.storage._szn_biaoji_showCards = player.getCards('h',function(c){
+							return get.is.shownCard(c) || (player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+						});
+						if (player != game.me) {
+							if(player.storage._szn_biaoji_showCards.length) player.markSkill("_szn_biaoji_showCards");
+							if(player.storage._szn_biaoji_showCards.length == 0) player.unmarkSkill("_szn_biaoji_showCards");
+						}
+					}
+					var players = game.filterPlayer().sortBySeat();
+					for (var i = 0; i < players.length; i++) {
+						if (player != game.me) libUpdate(players[i]);
+					}
+					game.me.unmarkSkill("_szn_biaoji_showCards");
+				}
+				
+				var interval = setInterval(() => {
+					// 清除定时器条件改为游戏结束
+					if (_status.over) return clearInterval(interval);
+					libUpdates();
+				}, 500);
+			},
+		};
+	}
+	// 可见手牌显示-边框（搬运自笨蛋插件扩展，原作者为铝宝）
+	if (lib.config.kjspxs=='biankuang') {
+		lib.skill._szn_Fool_showCards={
+			ruleSkill:true,
+			direct:true,
+			charlotte:true,
+			forceDie:true,
+			trigger:{
+				//player:["loseAfter","dieAfter"],
+				global:["loseAfter","die","equipAfter","addJudgeAfter","gainAfter","loseAsyncAfter","addToExpansionAfter","phaseBefore","enterGame","addShownCardsAfter"],
+			},
+			content:function(){
+				const styles = {
+					Fool_showPlayerCards: {
+						backgroundColor: 'rgba(0,0,0,.3)',
+						width: '35px',
+						height: '122px',
+						left: '-42px',
+						bottom: '0',
+						borderRadius: '5px',
+						overflow: 'scroll',
+						opacity: '1'
+					},
+					Fool_scard: {
+						position: 'relative',
+						marginTop: '5px',
+						textAlign: 'center',
+						width: '100%',
+						fontWeight: '700',
+						overflow: 'scroll',
+						color: 'rgba(245, 238, 212,1)',
+						fontSize: '14px',
+						fontFamily: "'shousha'"
+					}
+				};
+				const createElement = (tag, opts = {}) => {
+					const d = document.createElement(tag);
+					for (const key in opts) {
+						if (Object.hasOwnProperty.call(opts, key)) {
+							switch (key) {
+								case 'class':
+									opts[key].forEach(v => d.classList.add(v));
+									break;
+								case 'id':
+									d.id = opts[key];
+									break;
+								case 'innerHTML':
+									case 'innerText':
+									d[key] = opts[key];
+									break;
+								case 'parentNode':
+									opts[key].appendChild(d);
+									break;
+								case 'listen':
+									for (const evt in opts[key]) {
+										if (typeof opts[key][evt] == 'function') {
+											d[evt] = opts[key][evt];
+										}
+									}
+									break;
+								case 'style':
+									for (const s in opts[key]) {
+										d.style[s] = opts[key][s];
+									}
+									break;
+								case 'children':
+									opts[key].forEach(v => d.appendChild(v));
+									break;
+								case 'insertBefore':
+									opts[key][0].insertBefore(d, opts[key][1]);
+									break;
+							}
+						}
+					}
+					return d;
+				};
+				if(!player.node.showCards){
+					player.node.showCards = createElement('div', {
+						class: ['Fool_showPlayerCards'],
+						parentNode: player,
+						style: styles.Fool_showPlayerCards,
+					}).hide();
+					// 临时修复（by 棘手怀念摧毁）
+					_status.Fool_showCards = false;
+					player.node.showCards.onclick = function() {
+						if(_status.Fool_showCards || _status.over) return;
+						
+						const cards = player.getCards('h',function(c){
+							return get.is.shownCard(c)||(player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+						});
+						if (cards.length > 0) {
+							var Fool_showCards = ui.create.dialog(get.translation(player)+'的手牌', cards);
+							_status.Fool_showCards = true;
+							game.pause2();
+							
+							// 30秒后自动关闭（临时修复非点击边框关闭的方式关闭后无法打开的bug）
+							setTimeout(function () {
+								_status.Fool_showCards = false;
+								Fool_showCards.close();
+								Fool_showCards.delete();
+								game.resume2();
+							}, 30000);
+							
+							Fool_showCards.addEventListener('click', event => {
+								_status.Fool_showCards = false;
+								Fool_showCards.close();
+								Fool_showCards.delete();
+								game.resume2();
+							});
+						}
+					}
+				}
+				//setTimeout(() => {
+					const _rect = player.node.showCards.getBoundingClientRect();
+					if (_rect.left <= 10&&!player.node.showCards.classList['contains']('hidden')) {
+						player.node.showCards.style.left = player.offsetWidth + 15 + 'px';
+						player.node.showCards.style.top = 60 + 'px';
+					}
+				//}, 0);
+				player.node.showCards.onmouseover = player.node.showCards.ontouchend = function (e) {
+					const cards = player.getCards('h');
+					if (cards.length == 0) return;
+					cards.forEach(c => {
+						const copy = c.copy();
+						copy._customintro = c._customintro;
+					});
+					if (e.type == 'mouseover') {
+						player.node.showCards.onmouseleave = function (e) {
+							if (!e.toElement) return;
+							const evtPath = [e.toElement];
+							let target = evtPath[0];
+							while (target.parentNode && target.parentNode != document.body) {
+								evtPath.push(target.parentNode);
+								target = evtPath[evtPath.length - 1];
+							}
+						};
+					} else {
+						ui.window.addEventListener('touchend', function touch(event) {
+							const evtPath = [event.target];
+							let target = evtPath[0];
+							while (target.parentNode && target.parentNode != document.body) {
+								evtPath.push(target.parentNode);
+								target = evtPath[evtPath.length - 1];
+							}
+						});
+					}
+				}
+				if (player == game.me || player.isDead()) {
+					player.node.showCards.hide();
+					while (player.node.showCards.hasChildNodes()) {
+						player.node.showCards.removeChild(player.node.showCards.firstChild);
+					}
+					return;
+				}
+				if (!player.noclick && _status.gameStarted) {
+					const cards = player.getCards('h',function(c){
+						return get.is.shownCard(c)||(player.isUnderControl() || (game.me && game.me.hasSkillTag('viewHandcard', null, player, true)));
+					});
+					if (cards.length == 0) {
+						player.node.showCards.hide();
+						return;
+					}
+					const info = [];
+					cards.forEach(c => info.push(lib.translate[c.name].slice(0, 2)));
+					player.node.showCards.show();
+					while (player.node.showCards.hasChildNodes()) {
+						player.node.showCards.removeChild(player.node.showCards.firstChild);
+					}
+					info.forEach(i => {
+						createElement('div', {
+							class: ['Fool_scard'],
+							innerHTML: i,
+							parentNode: player.node.showCards,
+							style: styles.Fool_scard,
+						});
+					});
+				}
+			},
+		};
+	}
+	
 	if(lib.config.mode=='versus'){
 		// 修复对决-自由模式选将时按钮偏上的异常
 		// 修改versus.js的函数chooseCharacter:function(){
@@ -2664,6 +3069,30 @@ content:function(config, pack){
 					}
 					return false;
 				});
+				// 临时修复由于禁将导致的报错（武将数为零报错）
+				event.checkzhuList=['caocao','re_yuanshao'].filter(function(name){
+					if(lib.characterReplace[name]){
+						let goon = false;
+						for(let i of lib.characterReplace[name]){
+							if(lib.character[i]){
+								// lib.character[i][1] = 'wei';
+								goon = true;
+							}
+						}
+						return goon;
+					}
+					else if(lib.character[name]){
+						// lib.character[name][1] = 'wei';
+						return true;
+					}
+					return false;
+				});
+				if(event.falseList.length<4 || event.trueList.length<4 || event.checkzhuList.length<2){
+					console.log("武将不足，无法继续游戏，请开启武将包并确保武将充足");
+					alert("武将不足，无法继续游戏，请开启武将包并确保武将充足");
+					game.pause();
+					// event.finish();
+				}
 				'step 1'
 				game[event.enemySide+'Zhu'].chooseButton(['请选择你的武将牌',[event.zhuList[event.enemySide=='true'?1:0],'characterx']],true);
 				'step 2'
@@ -2675,7 +3104,8 @@ content:function(config, pack){
 				game.countPlayer(current=>{
 					if(current.side.toString()==event.enemySide&&current.identity=='zhong'){
 						let choice=event[event.enemySide+'List'].randomRemove(2)[0];
-						if(lib.characterReplace[choice]) choice=lib.characterReplace[choice].randomGet();
+						// 临时修改（by 棘手怀念摧毁）
+						if(lib.characterReplace[choice]) choice=lib.characterReplace[choice].filter(name => lib.character[name] != undefined).randomGet();
 						current.init(choice);
 					}
 				});
@@ -2752,7 +3182,8 @@ content:function(config, pack){
 					if(current!=game.me&&current.side.toString()==event.friendSide){
 						if(current.identity=='zhong'){
 							let choice=event[event.friendSide+'List'].randomRemove(2)[0];
-							if(lib.characterReplace[choice]) choice = lib.characterReplace[choice].randomGet();
+							// 临时修改（by 棘手怀念摧毁）
+							if(lib.characterReplace[choice]) choice = lib.characterReplace[choice].filter(name => lib.character[name] != undefined).randomGet();
 							current.init(choice);
 						}
 						else{
@@ -2801,6 +3232,134 @@ content:function(config, pack){
 			}
 		};
 		
+		// 对决-统率模式临时修复
+		// 修改versus.js的函数chooseCharacterThree: function () {
+		game.chooseCharacterThree=function () {
+			var next = game.createEvent("chooseCharacter");
+			next.setContent(function () {
+				"step 0";
+				if (lib.config.continue_name_versus_three) {
+					event.friendlist = lib.config.continue_name_versus_three.friend;
+					event.enemylist = lib.config.continue_name_versus_three.enemy;
+					_status.color = lib.config.continue_name_versus_three.color;
+					game.additionaldead = [];
+					game.saveConfig("continue_name_versus_three");
+					event.goto(2);
+					lib.init.onfree();
+				} else {
+					var chara = get.config("character_three") || lib.choiceThree;
+					
+					// 临时修复由于禁将导致的报错（武将数为零报错）
+					event.charaList=chara.filter(function(name){
+						if(lib.character[name]){
+							return true;
+						}
+						return false;
+					});
+					if(event.charaList.length<16){
+						console.log("武将不足，无法继续游戏，请开启武将包并确保武将充足；点击确定后将重启进入启动页界面");
+						alert("武将不足，无法继续游戏，请开启武将包并确保武将充足；点击确定后将重启进入启动页界面");
+						game.pause();
+						window.location.reload();
+					}
+					
+					game.chooseCharacterDouble(
+						function (i) {
+							if (get.config("enable_all_three")) {
+								if (lib.filter.characterDisabled(i)) return false;
+								return !lib.filter.characterDisabled(i);
+							} else {
+								return chara.includes(i);
+							}
+						},
+						function (i) {
+							return i == 1 ? "主帅" : "前锋";
+						}
+					);
+				}
+				"step 1";
+				game.addRecentCharacter.apply(this, result.friend);
+				event.friendlist = result.friend;
+				event.enemylist = result.enemy;
+				"step 2";
+				_status.friendBackup = event.friendlist.slice(0);
+				_status.enemyBackup = event.enemylist.slice(0);
+				_status.coinCoeff = get.coinCoeff(event.friendlist);
+
+				ui.create.players(6);
+				for (var i = 0; i < game.players.length; i++) {
+					game.players[i].getId();
+					game.players[i].node.action.innerHTML = "行动";
+				}
+				ui.arena.setNumber(7);
+				for (var i = 0; i < game.players.length; i++) {
+					game.players[i].dataset.position = parseInt(game.players[i].dataset.position) + 1;
+				}
+				game.singleHandcard = true;
+				ui.arena.classList.add("single-handcard");
+				ui.window.classList.add("single-handcard");
+				ui.fakeme = ui.create.div(".fakeme.avatar");
+				_status.prepareArena = true;
+				ui.create.me();
+				ui.me.appendChild(ui.fakeme);
+
+				game.friend = [];
+				game.enemy = [];
+
+				for (var i in lib.skill) {
+					if (lib.skill[i].seatRelated) {
+						lib.skill[i] = {};
+						if (lib.translate[i + "_info"]) {
+							lib.translate[i + "_info"] = "此模式下不可用";
+						}
+					}
+				}
+				for (i = 0; i < game.players.length; i++) {
+					if (i < 3) {
+						game.friend.push(game.players[i]);
+					} else {
+						game.enemy.push(game.players[i]);
+					}
+				}
+				game.friendZhu = game.players[1];
+				game.enemyZhu = game.players[4];
+				for (var i = 0; i < 3; i++) {
+					game.friend[i].side = _status.color;
+					game.enemy[i].side = !_status.color;
+					if (game.friendZhu == game.friend[i]) {
+						game.friend[i].identity = "zhu";
+						game.friend[i].setIdentity(_status.color + "Zhu");
+					} else {
+						game.friend[i].identity = "zhong";
+						game.friend[i].setIdentity(_status.color + "Zhong");
+					}
+					if (game.enemyZhu == game.enemy[i]) {
+						game.enemy[i].identity = "zhu";
+						game.enemy[i].setIdentity(!_status.color + "Zhu");
+					} else {
+						game.enemy[i].identity = "zhong";
+						game.enemy[i].setIdentity(!_status.color + "Zhong");
+					}
+					game.friend[i].init(event.friendlist[i]);
+					game.enemy[i].init(event.enemylist[i]);
+					game.friend[i].node.identity.dataset.color = get.translation(_status.color + "Color");
+					game.enemy[i].node.identity.dataset.color = get.translation(!_status.color + "Color");
+				}
+				if (!game.friendZhu.isInitFilter("noZhuHp")) {
+					game.friendZhu.maxHp++;
+					game.friendZhu.hp++;
+					game.friendZhu.update();
+				}
+
+				if (!game.enemyZhu.isInitFilter("noZhuHp")) {
+					game.enemyZhu.maxHp++;
+					game.enemyZhu.hp++;
+					game.enemyZhu.update();
+				}
+
+				game.onSwapControl();
+			});
+		};
 	}
 	
 	if(lib.config.mode=='chess'){
@@ -5262,6 +5821,56 @@ content:function(config, pack){
 					zhu:_status.characterlist.randomRemove(6),
 					fan:_status.characterlist.randomRemove(6),
 				};
+				
+				// 创建自由选将功能
+				const createCharacterDialog = function () {
+					// 配合搬运自用的自由选将增强功能使用
+					setTimeout(function(){
+						if (get.config("free_choose")) {
+							event.dialogxx = ui.create.characterDialog("heightset");
+						} else {
+							event.dialogxx = ui.create.characterDialog("heightset");
+						}
+					},1);
+				};
+				if (lib.onfree) {
+					lib.onfree.push(createCharacterDialog);
+				} else {
+					createCharacterDialog();
+				}
+				ui.create.cheat2 = function () {
+					ui.cheat2 = ui.create.control("自由选将", function () {
+						if (this.dialog == _status.event.dialog) {
+							if (game.changeCoin) {
+								game.changeCoin(10);
+							}
+							this.dialog.close();
+							_status.event.dialog = this.backup;
+							this.backup.open();
+							delete this.backup;
+							game.uncheck();
+							game.check();
+						} else {
+							if (game.changeCoin) {
+								game.changeCoin(-10);
+							}
+							this.backup = _status.event.dialog;
+							_status.event.dialog.close();
+							_status.event.dialog = _status.event.parent.dialogxx;
+							this.dialog = _status.event.dialog;
+							this.dialog.open();
+							game.uncheck();
+							game.check();
+						}
+					});
+					if (lib.onfree) {
+						ui.cheat2.classList.add("disabled");
+					}
+				};
+				if (!ui.cheat2 && get.config("free_choose")) {
+					ui.create.cheat2();
+				}
+				
 				const dialog=[
 					'请选择出场武将',
 					'<div class="text center">本局游戏Buff</div>',
@@ -5272,7 +5881,17 @@ content:function(config, pack){
 				dialog.add([_status.characterChoice[game.me.identity],'character']);
 				game.me.chooseButton(true,dialog);
 				'step 2'
+				// 创建自由选将功能
+				if (ui.cheat2) {
+					ui.cheat2.close();
+					delete ui.cheat2;
+				}
+				
 				game.me.init(result.links[0]);
+				
+				// 创建自由选将功能
+				game.addRecentCharacter(result.links[0]);
+				
 				_status.characterChoice[game.me.identity].removeArray(result.links);
 				var list=_status.characterChoice[game.me.enemy.identity].randomRemove(1);
 				game.me.enemy.init(list[0]);
@@ -7009,6 +7628,147 @@ content:function(config, pack){
 		};
 	}
 	
+	// 斗地主-智斗叫地主界面卡牌的显示美化
+	if(lib.config.mode=='doudizhu'){
+		game.chooseCharacterZhidou = function () {
+			var next = game.createEvent("chooseCharacter");
+			next.setContent(function () {
+				"step 0";
+				game.no_continue_game = true;
+				lib.init.onfree();
+				"step 1";
+				ui.arena.classList.add("choose-character");
+				var i;
+				var groups = [];
+				event.list = [];
+				event.map = {};
+				var chara = get.config("character_online") || lib.characterOnline;
+				for (i in chara) {
+					var list = chara[i];
+					for (var j = 0; j < list.length; j++) {
+						if (
+							!lib.character[list[j]] ||
+							(i == "key" && lib.filter.characterDisabled(list[j]))
+						)
+							list.splice(j--, 1);
+					}
+					if (list.length >= 3) {
+						groups.push(i);
+						event.list.addArray(list);
+					}
+				}
+				event.list.randomSort();
+				_status.characterlist = event.list.slice(0);
+				event.controls = ["不叫地主", "一倍", "两倍", "三倍"];
+				for (var player of game.players) {
+					var id = player.playerid;
+					player._group = groups.randomRemove(1)[0];
+					event.map[id] = chara[player._group].randomGets(4);
+					
+					// 修改
+					// player.storage.doudizhu_cardPile = get.cards(20).sort(function (a, b) {
+						// if (a.name != b.name) return lib.sort.card(a.name, b.name);
+						// else if (a.suit != b.suit) return lib.suit.indexOf(a) - lib.suit.indexOf(b);
+						// else return a.number - b.number;
+					// });
+					player.storage.doudizhu_cardPile = get.cards(20);
+					player.storage.doudizhu_cardPile_copy = [];
+					for (var i = 0; i < player.storage.doudizhu_cardPile.length; i++) {
+						// 修改（与菜单卡牌的显示美化一样）
+						var cardx = player.storage.doudizhu_cardPile[i];
+						var copy = game.createCard2(cardx.name, cardx.suit, cardx.number, cardx.nature);
+						copy.classList.add('menusize');
+						copy.node.suitnum.classList.add('menusizex');
+						player.storage.doudizhu_cardPile_copy.unshift(copy);
+					}
+					player.storage.doudizhu_cardPile_copy.sort(function (a, b) {
+						if (a.name != b.name) return lib.sort.card(a.name, b.name);
+						else if (a.suit != b.suit) return lib.suit.indexOf(a) - lib.suit.indexOf(b);
+						else return a.number - b.number;
+					});
+				}
+				event.dialog = ui.create.dialog(
+					"你的选将框与底牌",
+					[event.map[game.me.playerid], "character"],
+					// 修改
+					game.me.storage.doudizhu_cardPile_copy
+					// game.me.storage.doudizhu_cardPile
+				);
+				event.start = game.players.randomGet();
+				event.current = event.start;
+				game.delay(7);
+				"step 2";
+				event.current.classList.add("glow_phase");
+				if (event.current == game.me) event.dialog.content.firstChild.innerHTML = "是否叫地主？";
+				else {
+					event.dialog.content.firstChild.innerHTML = "请等待其他玩家叫地主";
+					game.delay(2);
+				}
+				event.current.chooseControl(event.controls).set("ai", function () {
+					return _status.event.getParent().controls.randomGet();
+				});
+				"step 3";
+				event.current.classList.remove("glow_phase");
+				event.current._control = result.control;
+				event.current.chat(result.control);
+				if (result.control == "三倍") {
+					game.bonusNum = 3;
+					game.zhu = event.current;
+					return;
+				} else if (result.control != "不叫地主") {
+					event.controls.splice(1, event.controls.indexOf(result.control));
+					event.tempDizhu = event.current;
+					if (result.control == "二倍") game.bonusNum = 2;
+				}
+				event.current = event.current.next;
+				if (
+					event.current == event.start &&
+					(event.start == event.tempDizhu || event.start._control == "不叫地主")
+				) {
+					game.zhu = event.tempDizhu || event.start.previous;
+				} else if (event.current == event.start.next && event.current._control) {
+					game.zhu = event.tempDizhu;
+				} else event.goto(2);
+				if (event.current == event.start.previous && !event.tempDizhu)
+					event.controls.remove("不叫地主");
+				"step 4";
+				game.updateRoundNumber();
+				for (var player of game.players) {
+					player.identity = player == game.zhu ? "zhu" : "fan";
+					player.showIdentity();
+				}
+				event.dialog.content.firstChild.innerHTML =
+					"请选择" + get.cnNumber(game.me == game.zhu ? 2 : 1) + "张武将牌";
+				game.me
+					.chooseButton(event.dialog, true, game.me == game.zhu ? 2 : 1)
+					.set("filterButton", function (button) {
+						return typeof button.link == "string";
+					});
+				"step 5";
+				game.me.init(result.links[0], result.links[1]);
+				for (var player of game.players) {
+					if (player != game.me) {
+						if (player == game.zhu) {
+							var list = event.map[player.playerid].randomGets(2);
+							player.init(list[0], list[1]);
+						} else player.init(event.map[player.playerid].randomGet());
+					}
+					player.markSkill("doudizhu_cardPile");
+				}
+				game.zhu.hp = 4;
+				game.zhu.maxHp = 4;
+				game.zhu.update();
+				for (var i = 0; i < game.players.length; i++) {
+					_status.characterlist.remove(game.players[i].name1);
+					_status.characterlist.remove(game.players[i].name2);
+				}
+				setTimeout(function () {
+					ui.arena.classList.remove("choose-character");
+				}, 500);
+			});
+		};
+	}
+	
 	// 神贾诩限制使用修改
 	lib.characterFilter.le_shen_jiaxu=function(mode){
 		if(lib.config.extensions && lib.config.extensions.contains('搬运自用') && lib.config['extension_搬运自用_enable']){
@@ -7053,6 +7813,15 @@ content:function(config, pack){
 	}
 	if(lib.character.nezha){
 		lib.character.nezha[1] = 'shen';
+	}
+	if(lib.character.jiangziya){
+		lib.character.jiangziya[1] = 'shen';
+	}
+	if(lib.character.shengongbao){
+		lib.character.shengongbao[1] = 'shen';
+	}
+	if(lib.character.nanjixianweng){
+		lib.character.nanjixianweng[1] = 'shen';
 	}
 	// 修复关闭武将包后不生效的bug
 	if(lib.characterPack.collab){
@@ -7598,11 +8367,169 @@ content:function(config, pack){
 			return audio;
 		};
 		
+		// 跟进新版本体logAudio属性及logSkill修改
+		// 修改noname\library\element\player.js的函数，以及修改game.trySkillAudio
+		/**
+		 * @param { string | string[] } name 
+		 * @param { Player | Player[] } [targets] 
+		 * @param { boolean | string } [nature] 
+		 * @param { boolean } [logv] 
+		 */
+		lib.element.player.logSkill=function(name, targets, nature, logv, args) {
+			if (get.itemtype(targets) == "player") targets = [targets];
+			var nopop = false;
+			var popname = name;
+			if (Array.isArray(name)) {
+				popname = name[1];
+				name = name[0];
+			}
+			var checkShow = this.checkShow(name);
+			if (lib.translate[name]) {
+				this.trySkillAnimate(name, popname, checkShow);
+				if (Array.isArray(targets) && targets.length) {
+					var str;
+					if (targets[0] == this) {
+						str = "#b自己";
+						if (targets.length > 1) {
+							str += "、";
+							str += get.translation(targets.slice(1));
+						}
+					} else str = targets;
+					game.log(this, "对", str, "发动了", "【" + get.skillTranslation(name, this) + "】");
+				} else {
+					game.log(this, "发动了", "【" + get.skillTranslation(name, this) + "】");
+				}
+			}
+			if (nature != false) {
+				if (nature === undefined) {
+					nature = "green";
+				}
+				this.line(targets, nature);
+			}
+			var info = lib.skill[name];
+			if (
+				info &&
+				info.ai &&
+				info.ai.expose != undefined &&
+				this.logAi &&
+				(!targets || targets.length != 1 || targets[0] != this)
+			) {
+				this.logAi(lib.skill[name].ai.expose);
+			}
+			if (info && info.round) {
+				var roundname = name + "_roundcount";
+				this.storage[roundname] = game.roundNumber;
+				this.syncStorage(roundname);
+				this.markSkill(roundname);
+			}
+			
+			// 修改
+			game.trySkillAudio(name, this, true, null, null, args);
+			// game.trySkillAudio(name, this, true);
+			
+			if (game.chess) {
+				this.chessFocus();
+			}
+			if (logv === true) {
+				game.logv(this, name, targets, null, true);
+			} else if (info && info.logv !== false) {
+				game.logv(this, name, targets);
+			}
+			if (info) {
+				var player = this;
+				var players = player.getSkills(false, false, false);
+				var equips = player.getSkills("e");
+				var global = lib.skill.global.slice(0);
+				var logInfo = {
+					skill: name,
+					targets: targets,
+					event: _status.event,
+				};
+				if (info.sourceSkill) {
+					logInfo.sourceSkill = info.sourceSkill;
+					if (global.includes(info.sourceSkill)) {
+						logInfo.type = "global";
+					} else if (players.includes(info.sourceSkill)) {
+						logInfo.type = "player";
+					} else if (equips.includes(info.sourceSkill)) {
+						logInfo.type = "equip";
+					}
+				} else {
+					if (global.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "global";
+					} else if (players.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "player";
+					} else if (equips.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "equip";
+					} else {
+						var bool = false;
+						for (var i of players) {
+							var expand = [i];
+							game.expandSkills(expand);
+							if (expand.includes(name)) {
+								bool = true;
+								logInfo.sourceSkill = i;
+								logInfo.type = "player";
+								break;
+							}
+						}
+						if (!bool) {
+							for (var i of players) {
+								var expand = [i];
+								game.expandSkills(expand);
+								if (expand.includes(name)) {
+									logInfo.sourceSkill = i;
+									logInfo.type = "equip";
+									break;
+								}
+							}
+						}
+					}
+				}
+				var next = game.createEvent("logSkill", false),
+					evt = _status.event;
+				next.player = player;
+				next.forceDie = true;
+				next.includeOut = true;
+				evt.next.remove(next);
+				if (evt.logSkill) evt = evt.getParent();
+				for (var i in logInfo) {
+					if (i == "event") next.log_event = logInfo[i];
+					else next[i] = logInfo[i];
+				}
+				evt.after.push(next);
+				next.setContent("emptyEvent");
+				player.getHistory("useSkill").push(logInfo);
+				//尽可能别往这写插入结算
+				//不能用来终止技能发动！！！
+				var next2 = game.createEvent("logSkillBegin", false);
+				next2.player = player;
+				next2.forceDie = true;
+				next2.includeOut = true;
+				for (var i in logInfo) {
+					if (i == "event") next2.log_event = logInfo[i];
+					else next2[i] = logInfo[i];
+				}
+				next2.setContent("emptyEvent");
+			}
+			if (this._hookTrigger) {
+				for (var i = 0; i < this._hookTrigger.length; i++) {
+					var info = lib.skill[this._hookTrigger[i]].hookTrigger;
+					if (info && info.log) {
+						info.log(this, name, targets);
+					}
+				}
+			}
+		};
+		
 		// 修改game.js的播放函数，trySkillAudio:function(skill,player,directaudio,nobroadcast/*,index*/){
 		// 旧版trySkillAudio函数已知bug：audioname2不适配？（例如：小游戏整合扩展-芙莉莲-发动技能语音修改开启-发动破军，会播放徐盛的技能配音、名将吴懿扩展弹窗）
 		// 适配新版本体（双形态原画配音、适配写法audio:'sbhuoji1.mp3',）
-		game.trySkillAudio=function(skill,player,directaudio,nobroadcast,skillInfo){
-			if(!nobroadcast) game.broadcast(game.trySkillAudio,skill,player,directaudio,nobroadcast,skillInfo);
+		game.trySkillAudio=function(skill,player,directaudio,nobroadcast,skillInfo,args){
+			if(!nobroadcast) game.broadcast(game.trySkillAudio,skill,player,directaudio,nobroadcast,skillInfo,args);
 			var info=skillInfo || get.info(skill);
 			if(!info) return;
 			if(!lib.config.background_speak) return;
@@ -7619,10 +8546,39 @@ content:function(config, pack){
 				var name2 = (player.skin && player.skin.name2) ? player.skin.name2 : player.name2;
 			}
 			
+			// 跟进新版本体logAudio属性及logSkill修改
+			// 可能需要进一步修改（by 棘手怀念摧毁）
+			if (info.logAudio && args) {
+				var result = info.logAudio(...args);
+				
+				// 扩展用logAudio不写ext:时修一下
+				if(typeof audioinfo=='string' && audioinfo.startsWith('ext:') && !result.startsWith('ext:')){
+					var fix=audioinfo.split(':');
+					if(fix.length==3) result = fix[0]+':'+fix[1]+':'+result;
+				}
+				
+				audioinfo = result;
+			}
+			
 			if(info.audioname2&&info.audioname2[name]){
 				audioname=info.audioname2[name];
 				audioinfo=lib.skill[audioname].audio;
 			}
+			
+			// 跟进新版本体logAudio2
+			// 可能需要进一步修改（by 棘手怀念摧毁）
+			if (info.logAudio2 && info.logAudio2[name] && args) {
+				var result1 = info.logAudio2[name](...args);
+				
+				// 扩展用logAudio2不写ext:时修一下
+				if(typeof audioinfo=='string' && audioinfo.startsWith('ext:') && !result.startsWith('ext:')){
+					var fix=audioinfo.split(':');
+					if(fix.length==3) result1 = fix[0]+':'+fix[1]+':'+result1;
+				}
+				
+				audioinfo = result1;
+			}
+			
 			var history=[];
 			while(true){//可以嵌套引用了
 				if(history.contains(audioname)) break;
@@ -7636,7 +8592,7 @@ content:function(config, pack){
 					if (audioinfo.length === 2 && typeof audioinfo[0] === "string" && typeof audioinfo[1] === "number") {
 						audioname=audioinfo[0];
 						if(!fixednum) fixednum=audioinfo[1];//数组会取第一个指定语音数
-						audioinfo=lib.skill[audioname].audio;
+						audioinfo=lib.skill[audioname]?.audio;
 						continue;
 					}
 					// 适配写法audio: ["yuanjiangfenghuotu3.mp3", "yuanjiangfenghuotu4.mp3"],
@@ -7655,8 +8611,15 @@ content:function(config, pack){
 			if(typeof audioinfo=='string'){
 				// 适配写法audio:'sbhuoji1.mp3',
 				if(audioinfo.endsWith('.mp3') || audioinfo.endsWith('.ogg')) { // 若audioinfo以'.mp3'或'.ogg'结尾
-					audioname = audioinfo.slice(0, -4); // 去掉'.mp3'或'.ogg'
-					game.playAudio('skill', audioname);
+					if(audioinfo.startsWith('ext:')) {
+						// 扩展适配
+						audioinfo=audioinfo.split(':');
+						if(audioinfo.length!=3) return;
+						game.playAudio('..','extension',audioinfo[1],audioinfo[2].slice(0, -4));
+					} else {
+						audioname = audioinfo.slice(0, -4); // 去掉'.mp3'或'.ogg'
+						game.playAudio('skill', audioname);
+					}
 				} else {
 					if(audioinfo.indexOf('ext:')!=0) return;
 					audioinfo=audioinfo.split(':');
@@ -7680,8 +8643,12 @@ content:function(config, pack){
 		
 	}
 	
-	// 标记修改（可能与其他同样魔改本体武将技能的扩展存在兼容问题）
-	if(lib.config['extension_十周年UI_biaojixiugai']){
+	// 标记修改
+	// 注1：可能与其他同样魔改本体武将技能的扩展存在兼容问题
+	// 注2：若遇冲突请关闭本选项！
+	// 为提升兼容性，增加游戏版本号判断（若本体版本与本扩展版本号不相同，则不开启标记修改）
+	// 备忘：若后续更新了本体，记得修改扩展版本号
+	if(lib.config['extension_十周年UI_biaojixiugai'] && lib.version == lib.extensionPack['十周年UI'].version){
 		// 神姜维九伐标记改文字
 		// 法一
 		if(lib.skill.jiufa != undefined){
@@ -7807,6 +8774,10 @@ content:function(config, pack){
 		// 族钟繇剩墨标记修改
 		if(lib.skill.clanshengmo != undefined){
 			lib.skill.clanshengmo.marktext = "剩墨";
+		}
+		// 界钟繇活墨标记修改
+		if(lib.skill.rehuomo != undefined){
+			lib.skill.rehuomo.marktext = "活墨";
 		}
 		// 起许劭访客标记修改
 		if(lib.skill.sbyingmen != undefined){
@@ -8076,10 +9047,6 @@ content:function(config, pack){
 		if(lib.skill.sbyangwei != undefined){
 			lib.skill.sbyangwei.subSkill.effect.marktext = "扬威";
 		}
-		// 李密难全标记修改
-		if(lib.skill.jsrgnanquan != undefined){
-			lib.skill.jsrgnanquan.subSkill.fengyin.marktext = "难全";
-		}
 		// 起孙坚平讨标记修改
 		if(lib.skill.jsrgpingtao != undefined){
 			lib.skill.jsrgpingtao.subSkill.sha.marktext = "平讨";
@@ -8263,6 +9230,10 @@ content:function(config, pack){
 		// 文丑历战标记修改
 		if(lib.skill.twjuexing != undefined){
 			lib.skill.twjuexing.subSkill.lizhan.marktext = "历战";
+		}
+		// 袁谭历战标记修改
+		if(lib.skill.twbaizu != undefined){
+			lib.skill.twbaizu.subSkill.lizhan.marktext = "历战";
 		}
 		// 夏侯子萼承袭标记修改
 		if(lib.skill.twchengxi != undefined){
@@ -8658,6 +9629,10 @@ content:function(config, pack){
 		if(lib.skill.zhuSkill_fancheng1 != undefined){
 			lib.skill.zhuSkill_fancheng1.marktext = "樊城";
 		}
+		// （挑战）麻醉标记修改
+		if(lib.skill.mazui2 != undefined){
+			lib.skill.mazui2.mark = true;
+		}
 		// 同心标记修改
 		if(lib.skill.beOfOneHeart != undefined){
 			lib.skill.beOfOneHeart.marktext = "同心";
@@ -8668,6 +9643,8 @@ content:function(config, pack){
 		// 来莺儿沙标记修改
 		lib.translate.shawu_bg = "沙";
 		// 技能含round:XXX,的标记修改
+		// 杨彪尽节标记修改
+		lib.translate.dcjinjie_bg = "尽节";
 		// 衰曹节王甫纵害标记修改
 		lib.translate.jsrgzonghai_bg = "纵害";
 		// 手杀费祎谏喻标记修改
@@ -8733,6 +9710,85 @@ content:function(config, pack){
 				lib.translate.weiwoduzun_bg='战神';
 			};
 		}
+		
+		// 棘手懒人包魔吕布、孙寒华等标记美化
+		// 临时修改，后续可能要直接改标记相关函数
+		// 魔吕布罡拳标记修改
+		if(lib.skill.olgangquan != undefined){
+			lib.skill.olgangquan.subSkill.mark.init = function (player, skill) {
+				const evt = get.info("dcjianying").getLastUsed(player);
+				const bool = evt.cards?.some(card => card.hasGaintag("eternal_olduoqi_tag"));
+				player.markSkill(skill);
+				game.broadcastAll(
+					function (index, player) {
+						const name = "olgangquan_mark";
+						const bgColor = get.info(name).markColor[index],
+							text = `<span style = "color:#000000;font-weight:bold">${index ? "火杀" : "决斗"}</span>`;
+						if (player.marks[name]) {
+							let element = player.marks[name].firstChild;
+							element.style.backgroundColor = bgColor;
+							
+							// 设置块级显示
+							element.style.display = "inline-block";
+							// 六边形裁剪
+							element.style.clipPath = "polygon(0% 49%, 15% 72%, 85% 72%, 100% 49%, 85% 26%, 15% 26%)";
+							// 双字
+							element.style.padding = '4px 4px';
+							// 单字
+							// element.style.padding = '4px 9.5px';
+							
+							element.innerHTML = text;
+						}
+						player.update();
+					},
+					Number(!!bool),
+					player
+				);
+			}
+		}
+		// 孙寒华汇灵标记修改
+		if(lib.skill.dchuiling != undefined){
+			lib.skill.dchuiling.subSkill.hint.content = function () {
+				"step 0";
+				var red = 0,
+					black = 0;
+				for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
+					var color = get.color(ui.discardPile.childNodes[i]);
+					if (color == "red") red++;
+					if (color == "black") black++;
+				}
+				if (trigger.name.indexOf("lose") == 0) {
+					var cards = trigger.getd().filterInD("d");
+					for (var i = 0; i < cards.length; i++) {
+						var color = get.color(cards[i]);
+						if (color == "red") red++;
+						if (color == "black") black++;
+					}
+				}
+				game.broadcastAll(function (ind) {
+					var bgColor = lib.skill.dchuiling_hint.markColor[ind][0],
+						text =
+							'<span style="color: ' +
+							lib.skill.dchuiling_hint.markColor[ind][1] +
+							'">灵</span>';
+					for (var player of game.players) {
+						if (player.marks.dchuiling) {
+							let element = player.marks.dchuiling.firstChild;
+							element.style.backgroundColor = bgColor;
+							
+							// 设置块级显示
+							element.style.display = "inline-block";
+							// 六边形裁剪
+							element.style.clipPath = "polygon(0% 49%, 15% 72%, 85% 72%, 100% 49%, 85% 26%, 15% 26%)";
+							element.style.padding = '4px 4px';
+							
+							element.innerHTML = text;
+						}
+					}
+				}, Math.sign(black - red) + 1);
+			}
+		}
+		
 	}
 	// 解除本体AI禁将
 	lib.config.forbidai.remove('ns_liuzhang');
@@ -8754,7 +9810,10 @@ content:function(config, pack){
 		animationColor:'soil',
 	};
 	lib.skill.new_wuhun={
-		audio:"wuhun21",
+		audio: ["wuhun21.mp3", "wuhun22.mp3", "wuhun23.mp3"],
+		logAudio(event, player, name) {
+			return "wuhun21.mp3";
+		},
 		group:["new_wuhun_mark","new_wuhun_die","wuhun22","wuhun23"],
 		trigger:{
 			player:"damageEnd",
@@ -9108,7 +10167,8 @@ content:function(config, pack){
 		// 高达一号技能描述修改
 		lib.translate.boss_juejing_info = "锁定技，摸牌阶段开始前，你跳过此阶段。当你得到牌/失去手牌后，若你的手牌数大于4/小于4，则你将手牌弃置至4张/摸至4张。";
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
-		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
+		lib.translate.xinlonghun_info = "你可以将你的手牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
+		// lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
 		// 凌人、整肃、蛊惑、军令、协力、五禽戏、暴虐值点数卡牌显示修复
 		lib.card.black = {fullskin:true};
 		lib.card.red = {fullskin:true};
@@ -9162,6 +10222,11 @@ content:function(config, pack){
 		lib.card.tw_bn_1 = {fullskin:true};
 		lib.card.tw_bn_2 = {fullskin:true};
 		lib.card.tw_bn_3 = {fullskin:true};
+		// SCL庞德公评才卡牌显示修复
+		lib.decade_extCardImage['sclc_wolong']=lib.assetURL+'extension/十周年UI/image/card/wolong_card.webp';
+		lib.decade_extCardImage['sclc_fengchu']=lib.assetURL+'extension/十周年UI/image/card/fengchu_card.webp';
+		lib.decade_extCardImage['sclc_shuijing']=lib.assetURL+'extension/十周年UI/image/card/shuijing_card.webp';
+		lib.decade_extCardImage['sclc_xuanjian']=lib.assetURL+'extension/十周年UI/image/card/xuanjian_card.webp';
 		// 修复手杀界孙笨的彩蛋
 		lib.translate.re_sunben = "手杀界孙策";
 		lib.translate.re_sunben_prefix = "手杀界";
@@ -9175,9 +10240,12 @@ content:function(config, pack){
 		lib.skill.boss_juejing.audio = true;
 		delete lib.skill.boss_juejing2.audio;
 		delete lib.skill.twwushen.audio;
+		delete lib.skill.twwuhun.audio;
+		delete lib.skill.twwuhun.subSkill.gain.audio;
 		lib.skill.twwushen.audio = 2;
-		lib.skill.twwuhun.audio = true;
-		lib.skill.twwuhun.subSkill.gain.audio = 2;
+		lib.skill.twwuhun.audio = ["twwuhun_gain1.mp3", "twwuhun_gain2.mp3", "twwuhun.mp3"];
+		lib.skill.twwuhun.logAudio = () => "twwuhun.mp3";
+		lib.skill.twwuhun.subSkill.gain.audio = ["twwuhun_gain1.mp3", "twwuhun_gain2.mp3"];
 		lib.translate.wuhun21 = "武魂";
 		lib.translate.wuhun22 = "武魂";
 		lib.translate.wuhun23 = "武魂";
@@ -9186,6 +10254,8 @@ content:function(config, pack){
 		// 本体用间篇卡牌名魔改
 		lib.translate.duanjian = "折戟";
 		lib.translate.serafuku = "女装";
+		// 26神黄月英藏巧描述修改
+		lib.translate.zc26_cangqiao_info = "每轮开始时，你可以获得游戏外或弃牌堆中的【折戟】、【女装】、【庸驴】各至多一张；你使用上述牌时可以将手牌摸至体力上限。";
 		// 台词修改
 		delete lib.translate["#wangzun_old_yuanshu1"];
 		delete lib.translate["#wangzun_old_yuanshu2"];
@@ -9196,26 +10266,28 @@ content:function(config, pack){
 		lib.translate["#lizhan1"]="任你横行霸道，我自岿然不动！";
 		lib.translate["#lizhan2"]="行伍严整，百战不殆！";
 		lib.translate["#sp_caoren:die"]="城在人在，城破人亡……";
+		delete lib.translate["#twwuhun1"];
+		delete lib.translate["#twwuhun2"];
 		lib.translate["#twwushen1"]="鬼龙斩月刀！";
 		lib.translate["#twwushen2"]="千里追魂，一刀索命！";
 		lib.translate["#twwuhun_gain1"]="不杀此人，何以雪恨！";
 		lib.translate["#twwuhun_gain2"]="还我头来！";
 		lib.translate["#twwuhun"]="生当啖汝之肉，死当追汝之魂！-- 阵亡";
 		// 武魂台词特殊处理
-		lib.translate["#wuhun21"]="1. 拿命来！<br>2. 我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡<br>3. 桃园之梦再也不会回来了……-- 无角色阵亡";
-		// lib.translate["#wuhun21"]="拿命来！";
-		// lib.translate["#wuhun22"]="我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡";
-		// lib.translate["#wuhun23"]="桃园之梦再也不会回来了……-- 无角色阵亡";
+		// lib.translate["#wuhun21"]="1. 拿命来！<br>2. 我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡<br>3. 桃园之梦再也不会回来了……-- 无角色阵亡";
+		lib.translate["#wuhun21"]="拿命来！";
+		lib.translate["#wuhun22"]="我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡";
+		lib.translate["#wuhun23"]="桃园之梦再也不会回来了……-- 无角色阵亡";
 		lib.translate["#wushen1"]="还不速速领死！";
 		lib.translate["#wushen2"]="取汝狗头犹如探囊取物！";
 		lib.translate["#shen_guanyu:die"]="谁来与我同去？";
 		lib.translate["#boss_juejing"]="龙战于野，其血玄黄。";
 		// 龙魂台词特殊处理
-		lib.translate["#xinlonghun"]="1. 金甲映日，驱邪祛秽。-- 黑桃<br>2. 腾龙行云，首尾不见。-- 梅花<br>3. 潜龙于渊，涉灵愈伤。-- 红桃<br>4. 千里一怒，红莲灿世！-- 方片";
-		// lib.translate["#xinlonghun1"]="金甲映日，驱邪祛秽。-- 黑桃";
-		// lib.translate["#xinlonghun2"]="腾龙行云，首尾不见。-- 梅花";
-		// lib.translate["#xinlonghun3"]="潜龙于渊，涉灵愈伤。-- 红桃";
-		// lib.translate["#xinlonghun4"]="千里一怒，红莲灿世！-- 方片";
+		// lib.translate["#xinlonghun"]="1. 金甲映日，驱邪祛秽。-- 黑桃<br>2. 腾龙行云，首尾不见。-- 梅花<br>3. 潜龙于渊，涉灵愈伤。-- 红桃<br>4. 千里一怒，红莲灿世！-- 方片";
+		lib.translate["#xinlonghun1"]="金甲映日，驱邪祛秽。-- 黑桃";
+		lib.translate["#xinlonghun2"]="腾龙行云，首尾不见。-- 梅花";
+		lib.translate["#xinlonghun3"]="潜龙于渊，涉灵愈伤。-- 红桃";
+		lib.translate["#xinlonghun4"]="千里一怒，红莲灿世！-- 方片";
 		lib.translate["#boss_zhaoyun:die"]="血染鳞甲，龙坠九天……";
 		delete lib.translate["#kuiwei1"];
 		delete lib.translate["#kuiwei2"];
@@ -9531,28 +10603,95 @@ content:function(config, pack){
 				element:{
 					dialog:{
 						open:function(){
-							if (this.noopen) return;
-							for (var i = 0; i < ui.dialogs.length; i++) {
-								if (ui.dialogs[i] == this) {
-									this.show();
-									this.refocus();
-									ui.dialogs.remove(this);
-									ui.dialogs.unshift(this);
-									ui.update();
-									return this;
+							/*
+							// 参考本体noname\library\element\dialog.js的open() {
+							// 临时修复电脑端chooseButton.dialog.direct = true会多弹出一个对话框然后自动关闭（蒋琬蓄发、魔吕布罡拳等）的问题
+							// 失败方案：if (this.noopen || (!lib.device && this.classList.contains('forcebutton-auto') && !this.classList.contains('prompt'))) return;
+							// 暂不更新（因为修复后效果变了，不能因为几个武将影响体验，需要的自行去掉注释）
+							if(!lib.device){
+								// 电脑端（临时修复）
+								if (this.noopen) return;
+								for (let i = 0; i < ui.dialogs.length; i++) {
+									if (ui.dialogs[i] == this) {
+										this.show();
+										this.refocus();
+										ui.dialogs.remove(this);
+										ui.dialogs.unshift(this);
+										ui.update();
+										return this;
+									}
+									if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
+									else ui.dialogs[i].hide();
 								}
-								if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
-								else ui.dialogs[i].hide();
-							}
-							ui.dialog = this;
-							ui.arena.appendChild(this);
-							ui.dialogs.unshift(this);
-							ui.update();
-							if (!this.classList.contains('prompt')) {
-								this.style.animation = 'open-dialog 0.5s';
-							}
-							
-							return this;
+								ui.dialog = this;
+								// let translate;
+								// if (
+									// lib.config.remember_dialog &&
+									// lib.config.dialog_transform &&
+									// !this.classList.contains("fixed")
+								// ) {
+									// translate = lib.config.dialog_transform;
+									// this._dragtransform = translate;
+									// this.style.transform =
+										// "translate(" +
+										// translate[0] +
+										// "px," +
+										// translate[1] +
+										// "px) scale(0.8)";
+								// } else {
+									this.style.transform = "scale(0.8)";
+								// }
+								this.style.transitionProperty = "opacity,transform";
+								this.style.opacity = "0";
+								ui.arena.appendChild(this);
+								ui.dialogs.unshift(this);
+								ui.update();
+								ui.refresh(this);
+								// if (
+									// lib.config.remember_dialog &&
+									// lib.config.dialog_transform &&
+									// !this.classList.contains("fixed")
+								// ) {
+									// this.style.transform =
+										// "translate(" +
+										// translate[0] +
+										// "px," +
+										// translate[1] +
+										// "px) scale(1)";
+								// } else {
+									this.style.transform = "scale(1)";
+								// }
+								this.style.opacity = "1";
+								setTimeout(() => {
+									this.style.transitionProperty = "";
+								}, 500);
+								return this;
+							}else{
+							*/
+								// 手机端（保持原版）
+								if (this.noopen) return;
+								for (var i = 0; i < ui.dialogs.length; i++) {
+									if (ui.dialogs[i] == this) {
+										this.show();
+										this.refocus();
+										ui.dialogs.remove(this);
+										ui.dialogs.unshift(this);
+										ui.update();
+										return this;
+									}
+									if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
+									else ui.dialogs[i].hide();
+								}
+								ui.dialog = this;
+								ui.arena.appendChild(this);
+								ui.dialogs.unshift(this);
+								ui.update();
+								if (!this.classList.contains('prompt')) {
+									this.style.animation = 'open-dialog 0.5s';
+								}
+								
+								return this;
+							// }
 						},
 					},
 					
@@ -9697,7 +10836,7 @@ content:function(config, pack){
 							this.classList.remove('fullborder');
 							this.dataset.cardName = card[2];
 							this.dataset.cardType = info.type || '';
-							this.dataset.cardSubype = info.subtype || '';
+							this.dataset.cardSubtype = info.subtype || '';
 							this.dataset.cardMultitarget = info.multitarget ? '1': '0';
 							if (this.node.name.dataset.nature) this.node.name.dataset.nature = '';
 							if (!lib.config.hide_card_image && lib.card[bg].fullskin) {
@@ -9835,8 +10974,21 @@ content:function(config, pack){
 							// var vertname = '';
 							var cardname = get.translation(card[2]);
 							this.dataset.suit = card[0];
-							this.$suitnum.$num.textContent = cardnum;
-							this.$suitnum.$suit.textContent = cardsuit;
+							
+							// 卡牌类型文字显示美化
+							if (!['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'].includes(cardnum) && !['♠', '♣', '♥', '♦'].includes(cardsuit)) {
+								var cardnumchange=cardnum;
+								var cardsuitchange=cardsuit;
+								if(cardnum=='' && cardsuit!=''){
+									cardnumchange=cardsuit;
+									cardsuitchange='';
+								}
+								this.$suitnum.$num.textContent = cardnumchange;
+								this.$suitnum.$suit.textContent = cardsuitchange;
+							}else{
+								this.$suitnum.$num.textContent = cardnum;
+								this.$suitnum.$suit.textContent = cardsuit;
+							}
 							
 							if (card[2] == 'sha') {
 								if (card[3] == 'fire') {
@@ -10665,7 +11817,8 @@ content:function(config, pack){
 								if (_status.noReplaceCharacter) {
 									type = 'character';
 								} else if (lib.characterReplace[item] && lib.characterReplace[item].length) {
-									 item = lib.characterReplace[item][0];
+									// 临时修改（by 棘手怀念摧毁）
+									item = lib.characterReplace[item].filter(name => lib.character[name] != undefined).randomGet();
 								}
 							}
 							
@@ -10676,7 +11829,8 @@ content:function(config, pack){
 							// if (doubleCamp) node._changeGroup = true;
 							var double=get.is.double(node._link,true);
 							if(double) node._changeGroup=true;
-							if (type=='characterx' && lib.characterReplace[node._link] && lib.characterReplace[node._link].length > 1) {
+							// 临时修改（by 棘手怀念摧毁）
+							if (type=='characterx' && lib.characterReplace[node._link] && lib.characterReplace[node._link].filter(name => lib.character[name] != undefined).length > 1) {
 								node._replaceButton = true;
 							}
 							
@@ -10745,6 +11899,33 @@ content:function(config, pack){
 										ui.create.div(node.node.hp,'.shield');
 										ui.create.div('.text',get.numStr(hujia),node.node.hp);
 									}
+									
+									// 国战魔改
+									if(config.guozhanmogai){
+										// 在国战模式，若开启“使用国战武将”开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整
+										// 为避免新版千幻聆音（手杀/十周年UI套装）/扩展使用国战武将后与国战魔改的冲突，新增是否开启千幻聆音扩展/扩展是否使用国战武将的判断，以解决本扩展对本体魔改导致的兼容问题（即国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效）
+										if(lib.config.mode=='guozhan' && get.config('onlyguozhan') && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable']) && lib.characterGuozhanFilter.length<2){
+											// 国战武将阴阳鱼、非国战武将勾玉
+											if(lib.characterPack.mode_guozhan && lib.characterPack.mode_guozhan[item]){
+												if(hp==2.5){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round4.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp==2){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round1.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp==1.5){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round2.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+											}else{
+												if(hp>3){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/glass1.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp<=3){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/glass2.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+											}
+										}
+									}
 								}
 								else{
 									var hp=get.infoHp(infoitem[2]);
@@ -10810,7 +11991,8 @@ content:function(config, pack){
 									intro.addEventListener(lib.config.touchscreen ? 'touchend': 'click', function() {
 										_status.tempNoButton = true;
 										var node = this._node;
-										var list = lib.characterReplace[node._link];
+										// 临时修改（by 棘手怀念摧毁）
+										var list = lib.characterReplace[node._link].filter(name => lib.character[name] != undefined);
 										var link = node.link;
 										var index = list.indexOf(link);
 										if (index == list.length - 1) index = 0;
@@ -12202,19 +13384,32 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					this.parentNode.setIdentity(theNext);
 					
                 } else {
-                    if (get.mode() == 'guozhan') {
-                        identityList = {
-                            wei: '魏',
-                            shu: '蜀',
-                            wu: '吴',
-                            qun: '群',
-							jin: '晋',
-							ye: '野',
-							unknown: '未知',
-                        };
+					if (get.mode() == 'guozhan') {
+						if(get.config('onlyguozhan')) {
+							identityList = {
+								wei: '魏',
+								shu: '蜀',
+								wu: '吴',
+								qun: '群',
+								jin: '晋',
+								ye: '野',
+								unknown: '未知',
+							};
+						} else {
+							identityList = {
+								wei: '魏',
+								shu: '蜀',
+								wu: '吴',
+								qun: '群',
+								jin: '晋',
+								western: '西',
+								ye: '野',
+								unknown: '未知',
+							};
+						}
 						if (_status.forceKey) identityList.key = '键';
-                    }
-                    
+					}
+					
 					if (!dui.$identityMarkBox) {
 						dui.$identityMarkBox = decadeUI.element.create('identity-mark-box');
 						
@@ -12907,13 +14102,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				// card.$suitnum.$num.style.fontFamily = '"STHeiti","SimHei","Microsoft JhengHei","Microsoft YaHei","WenQuanYi Micro Hei",Helvetica,Arial,sans-serif';
 				// card.$suitnum.$suit.style.fontFamily = '"STHeiti","SimHei","Microsoft JhengHei","Microsoft YaHei","WenQuanYi Micro Hei",Helvetica,Arial,sans-serif';
 				card.$suitnum.$suit.style.fontFamily = 'shousha';
-				if (lib.device) {
-					// 手机端
-					card.$suitnum.$suit.style.fontSize = '23px';
-				} else {
-					// 电脑端
-					card.$suitnum.$suit.style.fontSize = '21px';
-				}
 				
 				card.node.judgeMark.node = {
 					back: decadeUI.element.create('back', card.node.judgeMark),
@@ -13302,8 +14490,8 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					event.finish();
 					return;
 				}
-				game.log(player, '对', target, '发起拼点');
-				event.lose_list = [];
+				game.log(player, "对", target, "发起", (event.isDelay ? "延时" : ""), "拼点");
+				if (!event.filterCard) event.filterCard = lib.filter.all;
 				
 				// 更新拼点框
 				if (event.parent.name == null || event.parent.name == 'trigger') {
@@ -13319,51 +14507,73 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					dialog.caption = get.translation(eventName) + '拼点';
 					dialog.player = player;
 					dialog.target = target;
-					dialog.open();
+					if (!event.isDelay) dialog.open();
 					
 					decadeUI.delay(400);
 					ui.dialogs[eventName] = dialog;
 				}, player, target, event.compareName);
 				
 				"step 1"
-				var sendback = function() {
-					if (_status.event != event) {
-						return function() {
-							event.resultOL = _status.event.resultOL;
-						};
-					}
-				};
+				event.list = [player, target].filter(function (current) {
+					return !event.fixedResult || !event.fixedResult[current.playerid];
+				});
+				if (event.list.length) {
+					player.chooseCardOL(event.list, "请选择拼点牌", true).set("filterCard", event.filterCard).set("type", "compare").set("ai", event.ai).set("source", player).aiCard = function (target) {
+						var hs = target.getCards("h");
+						var event = _status.event;
+						event.player = target;
+						hs.sort(function (a, b) {
+							return event.ai(b) - event.ai(a);
+						});
+						delete event.player;
+						return { bool: true, cards: [hs[0]] };
+					};
+				}
 				
+				"step 2"
+				const lose_list = [];
 				if (event.fixedResult && event.fixedResult[player.playerid]) {
-					event.card1 = event.fixedResult[player.playerid];
-					event.lose_list.push([player, event.card1]);//共同丢失逻辑。
-				} else if (player.isOnline()) {
-					player.wait(sendback);
-					event.ol = true;
-					player.send(function(ai) {
-						game.me.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = ai;
-						game.resume();
-					}, event.ai);
+					lose_list.push([player, [event.fixedResult[player.playerid]]]);
 				} else {
-					event.localPlayer = true;
-					player.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
+					if (result[0].skill && lib.skill[result[0].skill] && lib.skill[result[0].skill].onCompare) {
+						player.logSkill(result[0].skill);
+						result[0].cards = lib.skill[result[0].skill].onCompare(player);
+					}
+					lose_list.push([player, result[0].cards]);
 				}
+				event.card1 = lose_list[0][1][0];
 				
-				if (event.fixedResult && event.fixedResult[target.playerid]) {
-					event.card2 = event.fixedResult[target.playerid];
-					event.lose_list.push([target, event.card2]);//共同丢失逻辑。
-				} else if (target.isOnline()) {
-					target.wait(sendback);
-					event.ol = true;
-					target.send(function(ai) {
-						game.me.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = ai;
-						game.resume();
-					},
-					event.ai);
-				} else {
-					event.localTarget = true;
+				// 更新拼点框
+				game.broadcastAll(function(eventName){
+					if (!window.decadeUI) return;
+					
+					var dialog = ui.dialogs[eventName];
+					dialog.$playerCard.classList.add('infohidden');
+					dialog.$playerCard.classList.add('infoflip');
+				}, event.compareName);
+				
+				if (event.list.includes(target)) {
+					let index = event.list.indexOf(target);
+					if (result[index].skill && lib.skill[result[index].skill] && lib.skill[result[index].skill].onCompare) {
+						target.logSkill(result[index].skill);
+						result[index].cards = lib.skill[result[index].skill].onCompare(target);
+					}
+					lose_list.push([target, result[index].cards]);
+				} else if (event.fixedResult && event.fixedResult[target.playerid]) {
+					lose_list.push([target, [event.fixedResult[target.playerid]]]);
 				}
+				event.card2 = lose_list[1][1][0];
+				event.lose_list = lose_list;
 				
+				// 更新拼点框
+				game.broadcastAll(function(eventName){
+					if (!window.decadeUI) return;
+					
+					var dialog = ui.dialogs[eventName];
+					dialog.$targetCard.classList.add('infohidden');
+					dialog.$targetCard.classList.add('infoflip');
+				}, event.compareName);
+				/*
 				"step 2"
 				if (event.localPlayer) {
 					if (result.skill && lib.skill[result.skill] && lib.skill[result.skill].onCompare) {
@@ -13383,10 +14593,11 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					}, event.compareName);
 				}
 				if (event.localTarget) {
-					target.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
+					if (event.isDelay) target.chooseCard('请选择拼点牌', true).set('prompt', true).set('type', 'compare').ai = event.ai;
+					else target.chooseCard('请选择拼点牌', true).set('prompt', false).set('type', 'compare').ai = event.ai;
 				}
 				
-				"step 3"			
+				"step 3"
 				if (event.localTarget) {
 					if (result.skill && lib.skill[result.skill] && lib.skill[result.skill].onCompare) {
 						target.logSkill(result.skill);
@@ -13456,11 +14667,16 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					event.finish();
 					return;
 				}
+				*/
+				
+				"step 3"
 				if (event.card2.number >= 10 || event.card2.number <= 4) {
 					if (target.countCards('h') > 2) {
 						event.addToAI = true;
 					}
 				}
+				
+				"step 4"
 				if (event.lose_list.length) {
 					game.loseAsync({
 						lose_list: event.lose_list,
@@ -13468,7 +14684,39 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				}
 				
 				"step 5"
-				event.trigger('compareCardShowBefore');
+				if (event.isDelay) {
+					let cards = [];
+					for (let current of event.lose_list) {
+						current[0].$giveAuto(current[1], current[0], false);
+						cards.addArray(current[1]);
+					}
+					game.cardsGotoSpecial(cards);
+					player
+						.when({
+							global: ["dieAfter", "phaseEnd"],
+						})
+						.assign({
+							forceDie: true,
+						})
+						.filter((event, player) => {
+							return event.name == "phase" || [player, target].includes(event.player);
+						})
+						.vars({
+							cardsx: cards,
+							evt: event,
+						})
+						.then(() => {
+							if (cardsx.some(card => get.position(card) == "s")) {
+								game.cardsDiscard(cards);
+								evt.isDestoryed = true;
+							}
+						});
+					event.untrigger();
+					event.finish();
+				}
+				else {
+					event.trigger("compareCardShowBefore");
+				}
 				"step 6"
 				// 更新拼点框
 				game.broadcastAll(function(eventName, player, target, playerCard, targetCard){
@@ -13572,6 +14820,140 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				}
 			};
 			
+			lib.element.content.chooseToCompareEffect =async function(event, trigger, player){
+				const evt = event.parentEvent;
+				for (const key of ["target", "card1", "card2", "lose_list", "forceWinner", "clear", "preserve"]) {
+					event[key] = evt[key];
+				}
+				if (evt.isDestoryed) {
+					event.untrigger();
+					return;
+				}
+				await game.cardsGotoOrdering([event.card1, event.card2]);
+				const target = event.target;
+				game.log(player, "揭示了和", target, "的延时拼点结果");
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelayx();
+				// await game.delayx();
+				await event.trigger("compareCardShowBefore");
+				
+				// 更新拼点框
+				game.broadcastAll(function(eventName, player, target, playerCard, targetCard){
+					if (!window.decadeUI) {
+						ui.arena.classList.add('thrownhighlight');
+						player.$compare(playerCard, target, targetCard);
+						return;
+					}
+					
+					var dialog = decadeUI.create.compareDialog();
+					dialog.caption = '延时拼点';
+					dialog.player = player;
+					dialog.target = target;
+					dialog.open();
+					
+					decadeUI.delay(400);
+					ui.dialogs[eventName] = dialog;
+					
+					dialog.playerCard = playerCard.copy();
+					dialog.targetCard = targetCard.copy();
+				}, event.parent.name, player, target, event.card1, event.card2);
+				
+				game.log(player, "的拼点牌为", event.card1);
+				game.log(target, "的拼点牌为", event.card2);
+				let getNum = function (card) {
+					for (var i of event.lose_list) {
+						// 临时修改（by 棘手怀念摧毁）
+						// if (i[1].includes(card)) {
+						if (i[1] == card) {
+							return get.number(card, i[0]);
+						}
+					}
+					return get.number(card, false);
+				};
+				event.num1 = getNum(event.card1);
+				event.num2 = getNum(event.card2);
+				await event.trigger("compare");
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelay(0, 1500);
+				// await game.delay(0, 1500);
+				event.result = {
+					player: event.card1,
+					target: event.card2,
+					num1: event.num1,
+					num2: event.num2,
+				};
+				await event.trigger("compareFixing");
+				let str;
+				if (event.forceWinner === player || (event.forceWinner !== target && event.num1 > event.num2)) {
+					event.result.bool = true;
+					event.result.winner = player;
+					str = get.translation(player) + "拼点成功";
+					player.popup("胜");
+					target.popup("负");
+				} else {
+					event.result.bool = false;
+					str = get.translation(player) + "拼点失败";
+					if (event.forceWinner !== target && event.num1 == event.num2) {
+						event.result.tie = true;
+						player.popup("平");
+						target.popup("平");
+					} else {
+						event.result.winner = target;
+						player.popup("负");
+						target.popup("胜");
+					}
+				}
+				
+				// 更新拼点框
+				game.broadcastAll(function(str, eventName, result) {
+					if (!window.decadeUI) {
+						var dialog = ui.create.dialog(str);
+						dialog.classList.add('center');
+						setTimeout(function(dialog) {
+							dialog.close();
+						}, 1000, dialog);
+						return;
+					}
+					
+					var dialog = ui.dialogs[eventName];
+					dialog.$playerCard.dataset.result = result ? '赢' : '没赢';
+					
+					setTimeout(function(dialog, eventName){
+						dialog.close();
+						setTimeout(function(dialog){
+							dialog.player.$throwordered2(dialog.playerCard, true);
+							dialog.target.$throwordered2(dialog.targetCard, true);
+						}, 180, dialog);
+						ui.dialogs[eventName] = undefined;
+						
+					}, 1400, dialog, eventName);
+					
+				}, str, event.parent.name, event.result.bool);
+				
+				// 临时修改（by 棘手怀念摧毁）
+				await game.asyncDelay(2);
+				// await game.delay(2);
+				if (typeof target.ai.shown == "number" && target.ai.shown <= 0.85 && event.addToAI) {
+					target.ai.shown += 0.1;
+				}
+				game.broadcastAll(function () {
+					ui.arena.classList.remove("thrownhighlight");
+				});
+				game.addVideo("thrownhighlight2");
+				if (event.clear !== false) {
+					game.broadcastAll(ui.clear);
+				}
+				if (typeof event.preserve == "function") {
+					event.preserve = event.preserve(event.result);
+				} else if (event.preserve == "win") {
+					event.preserve = event.result.bool;
+				} else if (event.preserve == "lose") {
+					event.preserve = !event.result.bool;
+				}
+				await event.trigger("chooseToCompareAfter");
+				await event.trigger("chooseToCompareEnd");
+			};
+			
 			lib.element.content.chooseToCompareMultiple = function(){
 				"step 0"
 				event.forceDie = true;
@@ -13597,6 +14979,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 					targets.sort(lib.sort.seat);
 				}
 				game.log(player, '对', targets, '发起拼点');
+				if (!event.filterCard) event.filterCard = lib.filter.all;
 				
 				// 更新拼点框
 				if (event.parent.name == null || event.parent.name == 'trigger') {
@@ -13626,7 +15009,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				
 				if (event.list.length || !event.fixedResult || !event.fixedResult[player.playerid]) {
 					if (!event.fixedResult || !event.fixedResult[player.playerid]) event.list.unshift(player);
-					player.chooseCardOL(event.list, '请选择拼点牌', true).set('type', 'compare').set('ai', event.ai).set('source', player).aiCard = function(target) {
+					player.chooseCardOL(event.list, "请选择拼点牌", true).set("filterCard", event.filterCard).set("type", "compare").set("ai", event.ai).set("source", player).aiCard = function (target) {
 						var hs = target.getCards('h');
 						var event = _status.event;
 						event.player = target;
@@ -13929,7 +15312,13 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 							continue;
 						}
 						
-						var skin = skins[Object.keys(skins)[0]];
+						// 动皮随机切换（by 棘手怀念摧毁）
+						if(lib.config['extension_十周年UI_dynamicSkin_random']==false){
+							var skin = skins[Object.keys(skins)[0]];
+						}else{
+							var skin = skins[Object.keys(skins).randomGet()];
+						}
+						
 						if (skin.speed == undefined)
 							skin.speed = 1;
 						this.playDynamic({
@@ -15141,7 +16530,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				var elef = card.getElementsByClassName("name2");
 				if (!(elef.length > 1)) {
 					var ef = elef[0].children;
-					var subype = card.getAttribute("data-card-subype");
+					var subype = card.getAttribute("data-card-subtype");
 					if (subype == "equip1") ef[1].textContent = "已废除";
 				}
 				
@@ -15203,7 +16592,7 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 							var elef = card.getElementsByClassName("name2");
 							if (!(elef.length > 1)) {
 								var ef = elef[0].children;
-								var subype = card.getAttribute("data-card-subype");
+								var subype = card.getAttribute("data-card-subtype");
 								if (subype == "equip1") ef[1].textContent = "已废除";
 							}
 							
@@ -17618,13 +19007,14 @@ config:{
 				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效；开启后，非国战模式选项-外观-体力条样式-勾玉无法更改。'+
 				'<br>- 国战其他魔改：国战隐匿美化（搬运自零二魔改版，修复邹氏等武将暗置武将牌后的显示问题、修复换人/重新选将后的显示问题等）、适配露头；鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
 				'<br>- 新增国战围攻队列标记美化开关选项，默认关闭，搬运自标记补充扩展。'+
-				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题。'+
+				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启。注1：可能与其他同样魔改本体武将技能的扩展存在兼容问题。注2：若遇冲突请关闭本选项！'+
 				'<br>- 新增旧版发送交互表情开关选项，开启后，将启用旧版发送交互表情函数（默认开启）。'+
 				'<br>- 新增富甲天下配置选项，开启富甲天下扩展后，可对toast提示和音效进行设置，即时生效（默认配置为toast提示：关闭、音效：开启）。'+
 				'<br>- 新增露头皮肤高度调整开关选项，可根据露头皮肤素材直接调整对应的露头皮肤高度（包括选将框、拼点框），即时生效。'+
 				'<br>- 新增座位布局调整开关选项，可调整座位布局（2-8人），即时生效。'+
 				'<br>- 新增折叠手牌开关选项，设置当手牌过多时，是否折叠手牌，即时生效；修复折叠手牌后手牌区可上下移动的bug。'+
 				'<br>- 新增装备栏布局调整开关选项，开启后将装备改成由下至上堆叠的布局（用于扩展装备栏），即时生效；显示扩展装备区状态时，同步更新装备栏布局。'+
+				'<br>- 新增可见手牌显示选项，开启后，启用标记显示/边框显示。'+
 				'<br>- 新增手牌数显示修复开关选项，开启后，临时修复手牌数显示无法及时更新的bug（手牌上限显示开启后失效）。'+
 				'<br>- 新增手牌上限显示开关选项，原作者为清瑶的“徒弟”、神秘喵，搬运自假装无敌扩展，已征得修改许可；开启后，游戏内显示的手牌数将改为显示手牌数与手牌上限(例：2/3，代表拥有2张牌，手牌上限为3)。'+
 				'<br>- 新增对话框美化开关选项（因短歌修改技能不全，为使对话框样式统一，并为避免旧代码出bug，设置默认关闭），可自行选用短歌修改的对话框美化，手动重启后生效。<br>① 拼点美化：开启后，启用chooseToCompare函数和chooseToCompareMultiple函数，美化拼点对话框。<br>② 观星美化：开启后，启用chooseToGuanxing函数和部分技能中的chooseGuanXing对话框，涉及观星、卜算类技能<br>注意：旧代码可能存在bug，若有问题请选择关闭选项。'+
@@ -17635,6 +19025,7 @@ config:{
 				'<br>- 使用战火（骨骼动画）替换游戏开始特效。'+
 				'<br>- 兵乐闪电标记魔改（参考零二魔改和光同尘的兵乐闪电标记使用方法）；增加牌名判断区分兵临城下和兵粮寸断标记（该方法可用于分离类似“兵”冲突的情况）。'+
 				'<br>- 新增（及搬运）动态背景人物/动态皮肤若干并调整大小位置；新增小杀和侍灵动态背景的彩蛋（战斗胜利/失败动画），侍灵素材来自EpicFX扩展；动态背景人物增加识别手机端和电脑端设备判断，从而调整对应大小位置；新增随机选项（重启后随机切换）。'+
+				'<br>- 新增动皮随机切换开关（默认开启），若有多个动皮会随机切换了，即时生效。'+
 				'<br>- 搬运并魔改部分新版更新内容（作者短歌、寰宇星城、Show-K、萌新（转型中）等大佬的更新），内容包括但不限于：'+
 				'<br>① 新增字体加载优化选项，优化字体加载功能（仅在电脑端测试有效）。'+
 				'<br>② 新增menu.js以魔改本体菜单。'+
@@ -17902,7 +19293,7 @@ config:{
 	},
 	biaojixiugai: {
 		name: '标记修改',
-		intro: "修改标记使之符合技能描述，默认开启，可能与其他同样魔改本体武将技能的扩展存在兼容问题",
+		intro: "修改标记使之符合技能描述，默认开启<br>注1：可能与其他同样魔改本体武将技能的扩展存在兼容问题<br>注2：若遇冲突请关闭本选项！",
 		init: true,
 	},
 	jiubanjhbq: {
@@ -17950,7 +19341,7 @@ config:{
 			skin_yan_default: 					'侍灵-焱',
 			skin_yueer_default: 				'侍灵-玥儿',
 			skin_baosanniang_漫花剑俏: 			'鲍三娘-漫花剑俏',
-			skin_baosanniang_舞剑铸缘: 			'鲍三娘-舞剑铸缘',
+			skin_baosanniang_嫣然一笑: 			'鲍三娘-嫣然一笑',
 			skin_caiwenji_才颜双绝: 			'蔡文姬-才颜双绝',
 			skin_caojie_凤历迎春: 				'曹节-凤历迎春',
 			skin_caojie_战场绝版: 				'曹节-战场绝版',
@@ -17958,30 +19349,26 @@ config:{
 			skin_daqiao_清萧清丽: 				'大乔-清萧清丽',
 			skin_daqiao_衣垂绿川:				'大乔-衣垂绿川',
 			skin_daqiao_战场绝版: 				'大乔-战场绝版',
-			skin_daqiaoxiaoqiao_战场绝版: 		'大乔小乔-战场绝版',
 			skin_diaochan_玉婵仙子: 			'貂蝉-玉婵仙子',
 			skin_diaochan_战场绝版: 			'貂蝉-战场绝版',
 			skin_dongbai_娇俏伶俐: 				'董白-娇俏伶俐',
 			skin_fanyufeng_斟酒入情: 			'樊玉凤-斟酒入情',
 			skin_fuhuanghou_万福千灯: 			'伏皇后-万福千灯',
 			skin_guozhao_雍容尊雅: 				'郭照-雍容尊雅',
-			skin_hetaihou_鸩毒除患: 			'何太后-鸩毒除患',
 			skin_hetaihou_蛇蝎为心: 			'何太后-蛇蝎为心',
 			skin_hetaihou_耀紫迷幻: 			'何太后-耀紫迷幻',
+			skin_hetaihou_鸩毒除患: 			'何太后-鸩毒除患',
 			skin_huaman_经典形象: 				'花鬘-经典形象',
 			skin_huaman_花俏蛮娇: 				'花鬘-花俏蛮娇',
 			skin_huangyueying_花好月圆: 		'黄月英-花好月圆',
 			skin_huangyueying_持智思耀: 		'黄月英-持智思耀',
 			skin_lukang_毁堰破晋: 				'陆抗-毁堰破晋',
 			skin_luxun_谋定天下: 				'陆逊-谋定天下',
-			skin_luxunlvmeng_清雨踏春: 			'陆逊吕蒙-清雨踏春',
 			skin_mayunlu_战场绝版: 				'马云騄-战场绝版',
-			skin_mayunlu_烟绚繁星: 				'马云騄-烟绚繁星',
-			skin_shuxiangxiang_花好月圆: 		'蜀香香-花好月圆',
-			skin_shuxiangxiang_花曳心牵:		'蜀香香-花曳心牵',
-			skin_sundengzhoufei_鹊星夕情: 		'孙登周妃-鹊星夕情',
 			skin_sunluban_宵靥谜君: 			'孙鲁班-宵靥谜君',
 			skin_sunluyu_娇俏伶俐: 				'孙鲁育-娇俏伶俐',
+			skin_shuxiangxiang_花好月圆: 		'孙尚香-花好月圆',
+			skin_shuxiangxiang_花曳心牵:		'孙尚香-花曳心牵',
 			skin_wangrong_云裳花容: 			'王荣-云裳花容',
 			skin_wangyi_绝色异彩: 				'王异-绝色异彩',
 			skin_wangyi_战场绝版: 				'王异-战场绝版',
@@ -17998,7 +19385,7 @@ config:{
 			skin_xushi_拈花思君: 				'徐氏-拈花思君',
 			skin_xushi_为夫弑敌: 				'徐氏-为夫弑敌',
 			skin_zhangchangpu_钟桂香蒲: 		'张昌蒲-钟桂香蒲',
-			skin_zhangchunhua_花好月圆: 		'张春华-花好月圆',
+			skin_zhangchunhua_绰约多姿: 		'张春华-绰约多姿',
 			skin_zhangchunhua_战场绝版: 		'张春华-战场绝版',
 			skin_zhangqiying_岁稔年丰: 			'张琪瑛-岁稔年丰',
 			skin_zhangqiying_逐鹿天下: 			'张琪瑛-逐鹿天下',
@@ -18012,6 +19399,10 @@ config:{
 			skin_zhugeguo_仙池起舞: 			'诸葛果-仙池起舞',
 			skin_zhugeguo_英装素果: 			'诸葛果-英装素果',
 			skin_zhugeliang_空城退敌: 			'诸葛亮-空城退敌',
+			skin_daqiaoxiaoqiao_战场绝版: 		'大乔小乔-战场绝版',
+			skin_luxunlvmeng_清雨踏春: 			'陆逊吕蒙-清雨踏春',
+			skin_mayunlu_烟绚繁星: 				'赵云马云騄-烟绚繁星',
+			skin_sundengzhoufei_鹊星夕情: 		'孙登周妃-鹊星夕情',
 		},
 		update:function(){
 			if (!window.decadeUI) return;
@@ -18170,7 +19561,21 @@ config:{
 	},
 	szn_fenjiexian27:{
 		clear:true,
-		name:"<font size='3'><li>手牌数/上限显示</font>",
+		name:"<font size='3'><li>手牌显示相关设置</font>",
+	},
+	"kjspxs":{
+		"name":"可见手牌显示",
+		"intro":"可自行选用，手动重启后生效<br>①标记：开启后，启用标记显示（有可见的手牌会加个眼睛标记，可点击展示完整手牌信息）<br>②边框：开启后，启用边框显示（在武将左侧显示其可见手牌，可上下滑动查看，还可点击展示完整手牌信息，点击边框关闭，建议在游戏人数较少的情况下开启）",
+		"init":lib.config.kjspxs === undefined ? "biaoji" : lib.config.kjspxs,
+		"item": {
+			"off":"关闭",
+			"biaoji":"标记",
+			"biankuang":"边框",
+		},
+		onclick:function(item){
+			game.saveConfig('extension_十周年UI_kjspxs',item);
+			game.saveConfig('kjspxs',item);
+		},
 	},
 	"szn_shoupaishuxsxf": {
 		name: '手牌数显示修复',
@@ -18316,6 +19721,11 @@ config:{
 			}
 		}
 	},
+	dynamicSkin_random: {
+		name: "动皮随机切换",
+		intro: "开启后，若有多个动皮会随机切换了，即时生效<br>注：若遇冲突请关闭本选项！",
+		init: true,
+	},
 	// dynamicAdaptiveHD:{
 		// name: '动皮高清自适应',
 		// init: 'on',
@@ -18396,7 +19806,7 @@ package:{
     author:"短歌<br>魔改：<span class='bluetext'>棘手怀念摧毁</span>",
     diskURL:"",
     forumURL:"",
-    version:"",
+    version:"1.10.11.3",
 },
 files:{
     "character":[],

@@ -223,7 +223,7 @@ game.import("card", function () {
 				fullskin: true,
 				type: "trick",
 				enable: true,
-				//cardnature:'fire',
+				cardnature: "fire",
 				filterTarget: function (card, player, target) {
 					//if(player!=game.me&&player.countCards('h')<2) return false;
 					return target.countCards("h") > 0;

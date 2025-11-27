@@ -1578,8 +1578,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						y: [0, 0.21],
 						height: [0, 0.58],
 					},
-					舞剑铸缘: {
-						name: 'skin_baosanniang_WuJianZhuYuan',
+					嫣然一笑: {
+						name: 'skin_baosanniang_YanRanYiXiao',
 						action: 'DaiJi',
 						x: [0, 0.77],
 						y: [0, 0.245],
@@ -1614,6 +1614,7 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.76],
 						y: [0, 0.222],
 						height: [0, 0.81],
+						hideSlots: ['caoying_huashang1', 'caoying_huashang3', 'caoying_huashang6'],
 					},
 				},
 				skin_daqiao: {
@@ -1636,14 +1637,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [ 0, 0.885],
 						y: [0, 0.315],
 						height: [0, 0.585],
-					},
-				},
-				skin_daqiaoxiaoqiao: {
-					战场绝版: {
-						name: 'skin_daqiaoxiaoqiao_ZhanChang',
-						x: [0, 0.8],
-						y: [0, 0.26],
-						height: [0, 0.565],
 					},
 				},
 				skin_diaochan: {
@@ -1693,12 +1686,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_hetaihou: {
-					鸩毒除患: {
-						name: 'skin_hetaihou_ZhenDuChuHuan',
-						x: [0, 0.78],
-						y: [0, 0.25],
-						height: [0, 0.49],
-					},
 					蛇蝎为心:{
 						name: 'skin_hetaihou_SheXieWeiXin',
 						action: 'DaiJi',
@@ -1711,6 +1698,12 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.84],
 						y: [0, 0.26],
 						height: [0, 0.62],
+					},
+					鸩毒除患: {
+						name: 'skin_hetaihou_ZhenDuChuHuan',
+						x: [0, 0.78],
+						y: [0, 0.25],
+						height: [0, 0.49],
 					},
 				},
 				skin_huaman: {
@@ -1757,14 +1750,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						height: [0, 0.82],
 					},
 				},
-				skin_luxunlvmeng: {
-					清雨踏春: {
-						name: 'skin_luxunlvmeng_QingYuTaChun',
-						x: [0, 0.78],
-						y: [0, 0.22],
-						height: [0, 0.56],
-					},
-				},
 				skin_mayunlu: {
 					战场绝版:{
 						name: 'skin_mayunlu_ZhanChang',
@@ -1777,28 +1762,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [ 0, 0.79],
 						y: [0, 0.25],
 						height: [0, 0.56],
-					},
-				},
-				skin_shuxiangxiang: {
-					花好月圆: {
-						name: 'skin_shuxiangxiang_HuaHaoYueYuan',
-						x: [0, 0.81],
-						y: [0, 0.29],
-						height: [0, 0.58],
-					},
-					花曳心牵: {
-						name: 'skin_shuxiangxiang_HuaYeXinQian',
-						x: [ 0, 0.81],
-						y: [0, 0.35],
-						height: [0, 0.62],
-					},
-				},
-				skin_sundengzhoufei: {
-					鹊星夕情: {
-						name: 'skin_sundengzhoufei_QueXingXiQing',
-						x: [0, 0.83],
-						y: [0, 0.27],
-						height: [0, 0.79],
 					},
 				},
 				skin_sunluban: {
@@ -1815,6 +1778,20 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.81],
 						y: [0, 0.27],
 						height: [0, 0.6],
+					},
+				},
+				skin_shuxiangxiang: {
+					花好月圆: {
+						name: 'skin_shuxiangxiang_HuaHaoYueYuan',
+						x: [0, 0.81],
+						y: [0, 0.29],
+						height: [0, 0.58],
+					},
+					花曳心牵: {
+						name: 'skin_shuxiangxiang_HuaYeXinQian',
+						x: [ 0, 0.81],
+						y: [0, 0.35],
+						height: [0, 0.62],
 					},
 				},
 				skin_wangrong: {
@@ -1940,8 +1917,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_zhangchunhua: {
-					花好月圆: {
-						name: 'skin_zhangchunhua_HuaHaoYueYuan',
+					绰约多姿: {
+						name: 'skin_zhangchunhua_ChuoYueDuoZi',
 						x: [0, 0.81],
 						y: [0, 0.27],
 						height: [0, 0.52],
@@ -2041,6 +2018,30 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.78],
 						y: [0, 0.28],
 						height: [0, 0.65],
+					},
+				},
+				skin_daqiaoxiaoqiao: {
+					战场绝版: {
+						name: 'skin_daqiaoxiaoqiao_ZhanChang',
+						x: [0, 0.8],
+						y: [0, 0.26],
+						height: [0, 0.565],
+					},
+				},
+				skin_luxunlvmeng: {
+					清雨踏春: {
+						name: 'skin_luxunlvmeng_QingYuTaChun',
+						x: [0, 0.78],
+						y: [0, 0.22],
+						height: [0, 0.56],
+					},
+				},
+				skin_sundengzhoufei: {
+					鹊星夕情: {
+						name: 'skin_sundengzhoufei_QueXingXiQing',
+						x: [0, 0.83],
+						y: [0, 0.27],
+						height: [0, 0.79],
 					},
 				},
 				
@@ -2171,8 +2172,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						y: [0, 0.19],
 						height: [0, 0.53],
 					},
-					舞剑铸缘: {
-						name: 'skin_baosanniang_WuJianZhuYuan',
+					嫣然一笑: {
+						name: 'skin_baosanniang_YanRanYiXiao',
 						action: 'DaiJi',
 						x: [0, 0.75],
 						y: [0, 0.225],
@@ -2207,6 +2208,7 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.74],
 						y: [0, 0.25],
 						height: [0, 0.75],
+						hideSlots: ['caoying_huashang1', 'caoying_huashang3', 'caoying_huashang6'],
 					},
 				},
 				skin_daqiao: {
@@ -2229,14 +2231,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [ 0, 0.91],
 						y: [0, 0.305],
 						height: [0, 0.535],
-					},
-				},
-				skin_daqiaoxiaoqiao: {
-					战场绝版: {
-						name: 'skin_daqiaoxiaoqiao_ZhanChang',
-						x: [0, 0.79],
-						y: [0, 0.255],
-						height: [0, 0.515],
 					},
 				},
 				skin_diaochan: {
@@ -2286,12 +2280,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_hetaihou: {
-					鸩毒除患: {
-						name: 'skin_hetaihou_ZhenDuChuHuan',
-						x: [0, 0.77],
-						y: [0, 0.225],
-						height: [0, 0.44],
-					},
 					蛇蝎为心:{
 						name: 'skin_hetaihou_SheXieWeiXin',
 						action: 'DaiJi',
@@ -2304,6 +2292,12 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.82],
 						y: [0, 0.27],
 						height: [0, 0.62],
+					},
+					鸩毒除患: {
+						name: 'skin_hetaihou_ZhenDuChuHuan',
+						x: [0, 0.77],
+						y: [0, 0.225],
+						height: [0, 0.44],
 					},
 				},
 				skin_huaman: {
@@ -2350,14 +2344,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						height: [0, 0.77],
 					},
 				},
-				skin_luxunlvmeng: {
-					清雨踏春: {
-						name: 'skin_luxunlvmeng_QingYuTaChun',
-						x: [0, 0.78],
-						y: [0, 0.25],
-						height: [0, 0.51],
-					},
-				},
 				skin_mayunlu: {
 					战场绝版:{
 						name: 'skin_mayunlu_ZhanChang',
@@ -2370,28 +2356,6 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [ 0, 0.79],
 						y: [0, 0.23],
 						height: [0, 0.51],
-					},
-				},
-				skin_shuxiangxiang: {
-					花好月圆: {
-						name: 'skin_shuxiangxiang_HuaHaoYueYuan',
-						x: [0, 0.81],
-						y: [0, 0.275],
-						height: [0, 0.53],
-					},
-					花曳心牵: {
-						name: 'skin_shuxiangxiang_HuaYeXinQian',
-						x: [ 0, 0.8],
-						y: [0, 0.33],
-						height: [0, 0.57],
-					},
-				},
-				skin_sundengzhoufei: {
-					鹊星夕情: {
-						name: 'skin_sundengzhoufei_QueXingXiQing',
-						x: [0, 0.83],
-						y: [0, 0.25],
-						height: [0, 0.74],
 					},
 				},
 				skin_sunluban: {
@@ -2408,6 +2372,20 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.8],
 						y: [0, 0.25],
 						height: [0, 0.55],
+					},
+				},
+				skin_shuxiangxiang: {
+					花好月圆: {
+						name: 'skin_shuxiangxiang_HuaHaoYueYuan',
+						x: [0, 0.81],
+						y: [0, 0.275],
+						height: [0, 0.53],
+					},
+					花曳心牵: {
+						name: 'skin_shuxiangxiang_HuaYeXinQian',
+						x: [ 0, 0.8],
+						y: [0, 0.33],
+						height: [0, 0.57],
 					},
 				},
 				skin_wangrong: {
@@ -2533,8 +2511,8 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 					},
 				},
 				skin_zhangchunhua: {
-					花好月圆: {
-						name: 'skin_zhangchunhua_HuaHaoYueYuan',
+					绰约多姿: {
+						name: 'skin_zhangchunhua_ChuoYueDuoZi',
 						x: [0, 0.82],
 						y: [0, 0.24],
 						height: [0, 0.47],
@@ -2634,6 +2612,30 @@ if (decadeModule) decadeModule.import(function(lib, game, ui, get, ai, _status) 
 						x: [0, 0.77],
 						y: [0, 0.27],
 						height: [0, 0.6],
+					},
+				},
+				skin_daqiaoxiaoqiao: {
+					战场绝版: {
+						name: 'skin_daqiaoxiaoqiao_ZhanChang',
+						x: [0, 0.79],
+						y: [0, 0.255],
+						height: [0, 0.515],
+					},
+				},
+				skin_luxunlvmeng: {
+					清雨踏春: {
+						name: 'skin_luxunlvmeng_QingYuTaChun',
+						x: [0, 0.78],
+						y: [0, 0.25],
+						height: [0, 0.51],
+					},
+				},
+				skin_sundengzhoufei: {
+					鹊星夕情: {
+						name: 'skin_sundengzhoufei_QueXingXiQing',
+						x: [0, 0.83],
+						y: [0, 0.25],
+						height: [0, 0.74],
 					},
 				},
 				

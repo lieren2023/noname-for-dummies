@@ -1353,6 +1353,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		// Show-K修改
 		nsanruo: {
 			unique: true,
+			locked: true,
 			init: function (player) {
 				if (!player.node.handcards1.cardMod) {
 					player.node.handcards1.cardMod = {};
@@ -1563,7 +1564,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					game.delay();
 				}
 			},
-			audio:true,
+			audio: 5,
 			enable:"phaseUse",
 			usable:1,
 			chooseButton:{
@@ -1593,7 +1594,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				},
 				backup:function(links,player){
 					return {
-						audio:'xinfu_pingcai',
+						audio: "xinfu_pingcai1.mp3",
 						filterCard:()=>false,
 						selectCard:-1,
 						takara:links[0][2],
@@ -2162,6 +2163,213 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		// 另：若写在extension.js中，则需将shanshen:{},改为lib.skill.shanshen = {};
 
 		// 龙魂配音与技能效果一一对应
+		// 新版修改代码
+		xinlonghun: {
+			audio: 4,
+			// audio: "longhun",
+			mod: {
+				aiOrder(player, card, num) {
+					if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num - 3.6;
+					}
+				},
+				aiValue(player, card, num) {
+					if (num <= 0) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num + 3.6;
+					}
+					if (suit === "club") {
+						return num + 1;
+					}
+					if (suit === "spade") {
+						return num + 1.8;
+					}
+				},
+				aiUseful(player, card, num) {
+					if (num <= 0) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num + 3;
+					}
+					if (suit === "club") {
+						return num + 1;
+					}
+					if (suit === "spade") {
+						return num + 1;
+					}
+				},
+			},
+			locked: false,
+			enable: ["chooseToUse", "chooseToRespond"],
+			prompt: "将一张♠手牌当做【无懈可击】，♣手牌当做【闪】，♥手牌当做【桃】，将♦手牌当做火【杀】使用或打出",
+			// prompt: "将♦手牌当做火【杀】，♥手牌当做【桃】，♣手牌当做【闪】，♠手牌当做【无懈可击】使用或打出",
+			viewAs(cards, player) {
+				if (cards.length) {
+					var name = false,
+						nature = null;
+					switch (get.suit(cards[0], player)) {
+						case "club":
+							name = "shan";
+							break;
+						case "diamond":
+							name = "sha";
+							nature = "fire";
+							break;
+						case "spade":
+							name = "wuxie";
+							break;
+						case "heart":
+							name = "tao";
+							break;
+					}
+					if (name) {
+						return { name: name, nature: nature };
+					}
+				}
+				return null;
+			},
+			check(card) {
+				var player = _status.event.player;
+				if (_status.event.type == "phase") {
+					var max = 0;
+					var name2;
+					var list = ["sha", "tao"];
+					var map = { sha: "diamond", tao: "heart" };
+					for (var i = 0; i < list.length; i++) {
+						var name = list[i];
+						if (
+							player.countCards("hs", function (card) {
+								return (name != "sha" || get.value(card) < 5) && get.suit(card, player) == map[name];
+							}) > 0 &&
+							player.getUseValue({ name: name, nature: name == "sha" ? "fire" : null }) > 0
+						) {
+							var temp = get.order({ name: name, nature: name == "sha" ? "fire" : null });
+							if (temp > max) {
+								max = temp;
+								name2 = map[name];
+							}
+						}
+					}
+					if (name2 == get.suit(card, player)) {
+						return name2 == "diamond" ? 5 - get.value(card) : 20 - get.value(card);
+					}
+					return 0;
+				}
+				return 1;
+			},
+			position: "hs",
+			filterCard(card, player, event) {
+				event = event || _status.event;
+				var filter = event._backup.filterCard;
+				var name = get.suit(card, player);
+				if (name == "club" && filter({ name: "shan", cards: [card] }, player, event)) {
+					return true;
+				}
+				if (name == "diamond" && filter({ name: "sha", cards: [card], nature: "fire" }, player, event)) {
+					return true;
+				}
+				if (name == "spade" && filter({ name: "wuxie", cards: [card] }, player, event)) {
+					return true;
+				}
+				if (name == "heart" && filter({ name: "tao", cards: [card] }, player, event)) {
+					return true;
+				}
+				return false;
+			},
+			filter(event, player) {
+				var filter = event.filterCard;
+				if (filter(get.autoViewAs({ name: "sha", nature: "fire" }, "unsure"), player, event) && player.countCards("hs", { suit: "diamond" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "shan" }, "unsure"), player, event) && player.countCards("hs", { suit: "club" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "tao" }, "unsure"), player, event) && player.countCards("hs", { suit: "heart" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "wuxie" }, "unsure"), player, event) && player.countCards("hs", { suit: "spade" })) {
+					return true;
+				}
+				return false;
+			},
+			logAudio(event, player) {
+				return "xinlonghun" + (4 - ["diamond", "heart", "club", "spade"].indexOf(get.suit(event.cards[0], player))) + ".ogg";
+				// return "longhun" + (4 - lib.suit.indexOf(get.suit(event.cards[0], player))) + ".mp3";
+			},
+			ai: {
+				respondSha: true,
+				respondShan: true,
+				skillTagFilter(player, tag) {
+					var name;
+					switch (tag) {
+						case "respondSha":
+							name = "diamond";
+							break;
+						case "respondShan":
+							name = "club";
+							break;
+						case "save":
+							name = "heart";
+							break;
+					}
+					if (!player.countCards("hs", { suit: name })) {
+						return false;
+					}
+				},
+				order(item, player) {
+					if (player && _status.event.type == "phase") {
+						var max = 0;
+						var list = ["sha", "tao"];
+						var map = { sha: "diamond", tao: "heart" };
+						for (var i = 0; i < list.length; i++) {
+							var name = list[i];
+							if (
+								player.countCards("hs", function (card) {
+									return (name != "sha" || get.value(card) < 5) && get.suit(card, player) == map[name];
+								}) > 0 &&
+								player.getUseValue({
+									name: name,
+									nature: name == "sha" ? "fire" : null,
+								}) > 0
+							) {
+								var temp = get.order({
+									name: name,
+									nature: name == "sha" ? "fire" : null,
+								});
+								if (temp > max) {
+									max = temp;
+								}
+							}
+						}
+						max /= 1.1;
+						return max;
+					}
+					return 2;
+				},
+			},
+			hiddenCard(player, name) {
+				if (name == "wuxie" && _status.connectMode && player.countCards("hs") > 0) {
+					return true;
+				}
+				if (name == "wuxie") {
+					return player.countCards("hs", { suit: "spade" }) > 0;
+				}
+				if (name == "tao") {
+					return player.countCards("hs", { suit: "heart" }) > 0;
+				}
+			},
+		},
+		// 旧版修改代码（资料卡无法试听配音）
+		/*
 		xinlonghun:{
 			audio:true,
 			mod: {
@@ -2338,6 +2546,378 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					}
 				}
 			}
+		},
+		*/
+		
+		// 修复于吉、旧于吉蛊惑牌跑到左上角的bug
+		guhuo_guess: {
+			audio: 2,
+			trigger: {
+				player: ["useCardBefore", "respondBefore"],
+			},
+			forced: true,
+			silent: true,
+			popup: false,
+			firstDo: true,
+			charlotte: true,
+			filter(event, player) {
+				return (
+					event.skill &&
+					(event.skill.indexOf("guhuo_") == 0 || event.skill.indexOf("xinfu_guhuo_") == 0)
+				);
+			},
+			content() {
+				"step 0";
+				player.addTempSkill("guhuo_phase");
+				event.fake = false;
+				event.betrayer = null;
+				var card = trigger.cards[0];
+				if (
+					card.name != trigger.card.name ||
+					(card.name == "sha" && !get.is.sameNature(trigger.card, card))
+				)
+					event.fake = true;
+				player.popup(trigger.card.name, "metal");
+				player.lose(card, ui.ordering).relatedEvent = trigger;
+				// player.line(trigger.targets,trigger.card.nature);
+				trigger.throw = false;
+				trigger.skill = "xinfu_guhuo_backup";
+				game.log(
+					player,
+					"声明",
+					trigger.targets && trigger.targets.length ? "对" : "",
+					trigger.targets || "",
+					trigger.name == "useCard" ? "使用" : "打出",
+					trigger.card
+				);
+				event.prompt =
+					get.translation(player) +
+					"声明" +
+					(trigger.targets && trigger.targets.length
+						? "对" + get.translation(trigger.targets)
+						: "") +
+					(trigger.name == "useCard" ? "使用" : "打出") +
+					(get.translation(trigger.card.nature) || "") +
+					get.translation(trigger.card.name) +
+					"，是否质疑？";
+				event.targets = game
+					.filterPlayer(function (current) {
+						return current != player && !current.hasSkill("chanyuan");
+					})
+					.sortBySeat(_status.currentPhase);
+
+				game.broadcastAll(
+					function (card, player) {
+						_status.guhuoNode = card.copy("thrown");
+						if (lib.config.cardback_style != "default") {
+							_status.guhuoNode.style.transitionProperty = "none";
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.classList.add("infohidden");
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.style.transitionProperty = "";
+						} else {
+							_status.guhuoNode.classList.add("infohidden");
+						}
+						_status.guhuoNode.style.transform =
+							"perspective(600px) rotateY(180deg) translateX(0)";
+						player.$throwordered2(_status.guhuoNode);
+					},
+					trigger.cards[0],
+					player
+				);
+				// 修复开始
+				event.onEnd01 = function () {
+					_status.guhuoNode.removeEventListener("webkitTransitionEnd", _status.event.onEnd01);
+					setTimeout(function () {
+						_status.guhuoNode.style.transition = "all ease-in 0.3s";
+						// _status.guhuoNode.style.transform = "perspective(600px) rotateY(270deg)";
+						var onEnd = function () {
+							_status.guhuoNode.classList.remove("infohidden");
+							_status.guhuoNode.style.transition = "all 0s";
+							// ui.refresh(_status.guhuoNode);
+							// _status.guhuoNode.style.transform = "perspective(600px) rotateY(-90deg)";
+							// ui.refresh(_status.guhuoNode);
+							// _status.guhuoNode.style.transition = "";
+							// ui.refresh(_status.guhuoNode);
+							// _status.guhuoNode.style.transform = "";
+							_status.guhuoNode.removeEventListener("webkitTransitionEnd", onEnd);
+						};
+						_status.guhuoNode.listenTransition(onEnd);
+					}, 300);
+				};
+				// 修复结束
+				if (!event.targets.length) event.goto(3);
+				"step 1";
+				event.target = event.targets.shift();
+				event.target
+					.chooseButton([event.prompt, [["reguhuo_ally", "reguhuo_betray"], "vcard"]], true)
+					.set("ai", function (button) {
+						var player = _status.event.player;
+						var evt = _status.event.getParent("guhuo_guess"),
+							evtx = evt.getTrigger();
+						if (!evt) return Math.random();
+						var card = { name: evtx.card.name, nature: evtx.card.nature, isCard: true };
+						var ally = button.link[2] == "reguhuo_ally";
+						if (ally && (player.hp <= 1 || get.attitude(player, evt.player) >= 0)) return 1.1;
+						if (!ally && get.attitude(player, evt.player) < 0 && evtx.name == "useCard") {
+							var eff = 0;
+							var targetsx = evtx.targets || [];
+							for (var target of targetsx) {
+								var isMe = target == evt.player;
+								eff += get.effect(target, card, evt.player, player) / (isMe ? 1.5 : 1);
+							}
+							eff /= 1.5 * targetsx.length || 1;
+							if (eff > 0) return 0;
+							if (eff < -7) return Math.random() + Math.pow(-(eff + 7) / 8, 2);
+							return Math.pow(
+								(get.value(card, evt.player, "raw") - 4) / (eff == 0 ? 5 : 10),
+								2
+							);
+						}
+						return Math.random();
+					});
+				"step 2";
+				if (result.links[0][2] == "reguhuo_betray") {
+					target.addExpose(0.2);
+					game.log(target, "#y质疑");
+					target.popup("质疑！", "fire");
+					event.betrayer = target;
+				} else {
+					game.log(target, "#g不质疑");
+					target.popup("不质疑", "wood");
+					if (targets.length) event.goto(1);
+				}
+				"step 3";
+				game.delayx();
+				game.broadcastAll(function (onEnd) {
+					_status.event.onEnd01 = onEnd;
+					if (_status.guhuoNode) _status.guhuoNode.listenTransition(onEnd, 300);
+				}, event.onEnd01);
+				"step 4";
+				game.delay(2);
+				"step 5";
+				if (!event.betrayer) event.finish();
+				"step 6";
+				if (event.fake) {
+					event.betrayer.popup("质疑正确", "wood");
+					game.log(player, "声明的", trigger.card, "作废了");
+					trigger.cancel();
+					trigger.getParent().goto(0);
+					trigger.line = false;
+				} else {
+					event.betrayer.popup("质疑错误", "fire");
+					event.betrayer.addSkills("chanyuan");
+				}
+				"step 7";
+				game.delay(2);
+				"step 8";
+				if (event.fake) game.broadcastAll(ui.clear);
+			},
+		},
+		old_guhuo_guess: {
+			audio: "old_guhuo",
+			trigger: {
+				player: ["useCardBefore", "respondBefore"],
+			},
+			forced: true,
+			silent: true,
+			popup: false,
+			firstDo: true,
+			charlotte: true,
+			sourceSkill: "old_guhuo",
+			filter: function (event, player) {
+				return event.skill && event.skill.indexOf("old_guhuo_") == 0;
+			},
+			content: function () {
+				"step 0";
+				event.fake = false;
+				event.goon = true;
+				event.betrayers = [];
+				var card = trigger.cards[0];
+				if (
+					card.name != trigger.card.name ||
+					(card.name == "sha" && !get.is.sameNature(trigger.card, card))
+				)
+					event.fake = true;
+				if (event.fake) {
+					player.addSkill("old_guhuo_cheated");
+					player.markAuto("old_guhuo_cheated", [trigger.card.name + trigger.card.nature]);
+				}
+				player.popup(trigger.card.name, "metal");
+				player.lose(card, ui.ordering).relatedEvent = trigger;
+				trigger.throw = false;
+				trigger.skill = "old_guhuo_backup";
+				game.log(
+					player,
+					"声明",
+					trigger.targets && trigger.targets.length ? "对" : "",
+					trigger.targets || "",
+					trigger.name == "useCard" ? "使用" : "打出",
+					trigger.card
+				);
+				event.prompt =
+					get.translation(player) +
+					"声明" +
+					(trigger.targets && trigger.targets.length
+						? "对" + get.translation(trigger.targets)
+						: "") +
+					(trigger.name == "useCard" ? "使用" : "打出") +
+					(get.translation(trigger.card.nature) || "") +
+					get.translation(trigger.card.name) +
+					"，是否质疑？";
+				event.targets = game
+					.filterPlayer((i) => i != player && i.hp > 0)
+					.sortBySeat(_status.currentPhase);
+
+				game.broadcastAll(
+					function (card, player) {
+						_status.old_guhuoNode = card.copy("thrown");
+						if (lib.config.cardback_style != "default") {
+							_status.old_guhuoNode.style.transitionProperty = "none";
+							ui.refresh(_status.old_guhuoNode);
+							_status.old_guhuoNode.classList.add("infohidden");
+							ui.refresh(_status.old_guhuoNode);
+							_status.old_guhuoNode.style.transitionProperty = "";
+						} else {
+							_status.old_guhuoNode.classList.add("infohidden");
+						}
+						_status.old_guhuoNode.style.transform =
+							"perspective(600px) rotateY(180deg) translateX(0)";
+						player.$throwordered2(_status.old_guhuoNode);
+					},
+					trigger.cards[0],
+					player
+				);
+				event.onEnd01 = function () {
+					_status.old_guhuoNode.removeEventListener(
+						"webkitTransitionEnd",
+						_status.event.onEnd01
+					);
+					// 修复开始
+					setTimeout(function () {
+						_status.old_guhuoNode.style.transition = "all ease-in 0.3s";
+						// _status.old_guhuoNode.style.transform = "perspective(600px) rotateY(270deg)";
+						var onEnd = function () {
+							_status.old_guhuoNode.classList.remove("infohidden");
+							_status.old_guhuoNode.style.transition = "all 0s";
+							// ui.refresh(_status.old_guhuoNode);
+							// _status.old_guhuoNode.style.transform = "perspective(600px) rotateY(-90deg)";
+							// ui.refresh(_status.old_guhuoNode);
+							// _status.old_guhuoNode.style.transition = "";
+							// ui.refresh(_status.old_guhuoNode);
+							// _status.old_guhuoNode.style.transform = "";
+							_status.old_guhuoNode.removeEventListener("webkitTransitionEnd", onEnd);
+						};
+						_status.old_guhuoNode.listenTransition(onEnd);
+					}, 300);
+					// 修复结束
+				};
+				if (!event.targets.length) event.goto(3);
+				"step 1";
+				event.target = event.targets.shift();
+				event.target
+					.chooseButton([event.prompt, [["reguhuo_ally", "reguhuo_betray"], "vcard"]], true)
+					.set("ai", function (button) {
+						var player = _status.event.player;
+						var evt = _status.event.getParent("old_guhuo_guess"),
+							evtx = evt.getTrigger();
+						if (!evt) return Math.random();
+						var card = { name: evtx.card.name, nature: evtx.card.nature, isCard: true };
+						var ally = button.link[2] == "reguhuo_ally";
+						if (ally && (player.hp <= 1 || get.attitude(player, evt.player) >= 0)) return 1.1;
+						if (!ally && get.effect(player, { name: "losehp" }, player, player) >= 0)
+							return 10;
+						if (!ally && get.attitude(player, evt.player) < 0) {
+							if (evtx.name == "useCard") {
+								var eff = 0;
+								var targetsx = evtx.targets || [];
+								for (var target of targetsx) {
+									var isMe = target == evt.player;
+									eff +=
+										get.effect(target, card, evt.player, player) / (isMe ? 1.35 : 1);
+								}
+								eff /= 1.5 * targetsx.length || 1;
+								if (eff > 0) return 0;
+								if (eff < -7)
+									return (
+										(Math.random() + Math.pow(-(eff + 7) / 8, 2)) /
+											Math.sqrt(evt.betrayers.length + 1) +
+										(player.hp - 3) * 0.05 +
+										Math.max(0, 4 - evt.player.hp) * 0.05 -
+										(player.hp == 1 && !get.tag(card, "damage") ? 0.2 : 0)
+									);
+								return (
+									Math.pow(
+										(get.value(card, evt.player, "raw") - 4) / (eff == 0 ? 3.1 : 10),
+										2
+									) /
+										Math.sqrt(evt.betrayers.length || 1) +
+									(player.hp - 3) * 0.05 +
+									Math.max(0, 4 - evt.player.hp) * 0.05
+								);
+							}
+							if (
+								evt.player
+									.getStorage("old_guhuo_cheated")
+									.includes(card.name + card.nature)
+							)
+								return Math.random() + 0.3;
+						}
+						return Math.random();
+					});
+				"step 2";
+				if (result.links[0][2] == "reguhuo_betray") {
+					target.addExpose(0.2);
+					game.log(target, "#y质疑");
+					target.popup("质疑！", "fire");
+					event.betrayers.push(target);
+				} else {
+					game.log(target, "#g不质疑");
+					target.popup("不质疑", "wood");
+				}
+				if (targets.length) event.goto(1);
+				"step 3";
+				game.delayx();
+				game.broadcastAll(function (onEnd) {
+					_status.event.onEnd01 = onEnd;
+					if (_status.old_guhuoNode) _status.old_guhuoNode.listenTransition(onEnd, 300);
+				}, event.onEnd01);
+				"step 4";
+				game.delay(2);
+				"step 5";
+				if (!event.betrayers.length) {
+					event.goto(7);
+				}
+				"step 6";
+				if (event.fake) {
+					for (var target of event.betrayers) {
+						target.popup("质疑正确", "wood");
+					}
+					event.goon = false;
+				} else {
+					for (var target of event.betrayers) {
+						target.popup("质疑错误", "fire");
+						target.loseHp();
+					}
+					if (get.suit(trigger.cards[0], player) != "heart") {
+						event.goon = false;
+					}
+				}
+				"step 7";
+				if (!event.goon) {
+					game.log(player, "声明的", trigger.card, "作废了");
+					trigger.cancel();
+					trigger.getParent().goto(0);
+					trigger.line = false;
+				}
+				"step 8";
+				game.delay();
+				"step 9";
+				if (!event.goon) {
+					if (event.fake) game.asyncDraw(event.betrayers);
+					game.broadcastAll(ui.clear);
+				}
+			},
 		},
 		
 		// - 武将技能临时修复：
@@ -3561,9 +4141,10 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		
 		// 临时删除谋弈提示，等对策加提示后加回
 		sbtieji: {
-			audio: 1,
+			audio: ["sbtieji1.mp3", "sbtieji_true1.mp3", "sbtieji_true2.mp3", "sbtieji_false.mp3"],
 			trigger: { player: "useCardToPlayered" },
 			logTarget: "target",
+			logAudio: () => "sbtieji1.mp3",
 			filter: function (event, player) {
 				return player != event.target && event.card.name == "sha" && event.target.isIn();
 			},
@@ -3623,9 +4204,10 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			},
 		},
 		sbduanliang: {
-			audio: 1,
+			audio: ["sbduanliang1.mp3", "sbduanliang_true1.mp3", "sbduanliang_true2.mp3", "sbduanliang_false.mp3"],
 			enable: "phaseUse",
 			usable: 1,
+			logAudio: () => "sbduanliang1.mp3",
 			filterTarget: lib.filter.notMe,
 			content: function () {
 				"step 0";

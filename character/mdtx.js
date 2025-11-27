@@ -17,7 +17,7 @@ game.import("character", function () {
 			dc_sb_caoang: ["male", "wei", 4, ["dcsbfengmin", "dcsbzhiwang"]],
 			dc_sb_dianwei: ["male", "wei", "4/5", ["dcsbkuangzhan", "dcsbkangyong"]],
 			dc_caoshuang: ["male", "wei", 4, ["dcjianzhuan", "dcfanshi"]],
-			dc_simashi: ["male", "wei", 3, ["dcsanshi", "dczhenrao", "dcchenlve"]],
+			dc_simashi: ["male", "wei", 3, ["dcsanshi", "dczhenrao", "dcchenlve"], ["border:jin"]],
 			dc_wangling: ["male", "wei", 4, ["dcjichou", "dcmouli"], ["clan:太原王氏"]],
 			dc_jiangji: ["male", "wei", 3, ["dcshiju", "dcyingshi"]],
 			dc_sb_zhugejin: ["male", "wu", 3, ["dcsbtaozhou", "dcsbhoude"]],
@@ -25,9 +25,6 @@ game.import("character", function () {
 			dc_sb_simayi: ["male", "wei", 3, ["dcsbquanmou", "dcsbpingliao"]],
 			dc_sb_zhouyu: ["male", "wu", 4, ["dcsbronghuo", "dcsbyingmou"]],
 			dc_sb_lusu: ["male", "wu", 3, ["dcsbmingshi", "dcsbmengmou"]],
-		},
-		characterFilter: {
-			
 		},
 		characterSort: {
 			mdtx: {
@@ -37,9 +34,15 @@ game.import("character", function () {
 				mdtx_dushi: ["dc_sb_caoang", "dc_sb_zhangxiu", "dc_sb_dianwei", "dc_sb_hucheer"],
 				mdtx_zhoulang: ["dc_sb_chengyu"],
 				mdtx_qizuo: ["dc_sb_jushou", "dc_sb_chenlin"],
+				// mdtx_wangzuo: [],
+				// mdtx_youlin: [],
+				// mdtx_boyan: [],
 				
 				// mdtx_waitforsort: [],
 			},
+		},
+		characterSubstitute: {
+			
 		},
 		characterIntro: {
 			
@@ -47,14 +50,19 @@ game.import("character", function () {
 		characterTitle: {
 			
 		},
-		card: {
+		characterFilter: {
 			
 		},
-		perfectPair: {
+		characterInitFilter: {
+			
+		},
+		card: {
 			
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			// 部分武将代码位于xianding.js
+			
 			//谋陈琳
 			dcsbyaozuo: {
 				audio: 2,
@@ -96,23 +104,29 @@ game.import("character", function () {
 						};
 						await Promise.all(
 							humans.map(current => {
-								return new Promise(async (resolve, reject) => {
+								return new Promise((resolve, reject) => {
 									if (current.isOnline()) {
 										current.send(send, player, current);
 										current.wait((result, player) => {
 											solve(result, player);
-											resolve();
+											resolve(void 0);
 										});
 									} else if (current == game.me) {
 										const next = lib.skill.dcsbyaozuo.chooseCard(player, current);
 										const solver = (result, player) => {
 											solve(result, player);
-											resolve();
+											resolve(void 0);
 										};
-										if (_status.connectMode) game.me.wait(solver);
-										const result = await next.forResult();
-										if (_status.connectMode) game.me.unwait(result, current);
-										else solver(result, current);
+										if (_status.connectMode) {
+											game.me.wait(solver);
+										}
+										return next.forResult().then(result => {
+											if (_status.connectMode) {
+												game.me.unwait(result, current);
+											} else {
+												solver(result, current);
+											}
+										});
 									}
 								});
 							})
@@ -211,7 +225,7 @@ game.import("character", function () {
 				},
 				async cost(event, trigger, player) {
 					event.result = await player
-						.chooseTarget(get.prompt2("dcsbzhuanwen"), function (card, player, target) {
+						.chooseTarget(get.prompt2(event.skill), function (card, player, target) {
 							return target != player && target.countCards("h");
 						})
 						.set("ai", target => {
@@ -274,7 +288,8 @@ game.import("character", function () {
 						cards.removeArray(nodamages);
 						await target.gain(nodamages, "gain2");
 					}
-					await game.cardsGotoPile(cards.reverse(), "insert");
+					// 临时修改（by 棘手怀念摧毁）
+					if(cards.length) await game.cardsGotoPile(cards.reverse(), "insert");
 				},
 			},
 			//这是俺拾嘞
@@ -403,9 +418,6 @@ game.import("character", function () {
 		dynamicTranslate: {
 			
 		},
-		characterReplace: {
-			
-		},
 		translate: {
 			dc_sb_hucheer: "新杀谋胡车儿",
 			dc_sb_hucheer_prefix: "新杀谋",
@@ -418,14 +430,23 @@ game.import("character", function () {
 			dcsbzhuanwen: "撰文",
 			dcsbzhuanwen_info: "结束阶段，你可选择一名其他角色，展示牌堆顶X张牌并选择一项：1.对其使用其中的伤害牌；2.令其获得其中的非伤害牌。然后将剩余牌置于牌堆顶（X为其手牌数且至多为5）。",
 
-			mdtx_mouding: "谋定天下·谋定天下",
-			mdtx_zhonghu: "谋定天下·冢虎狼顾",
-			mdtx_zijing: "谋定天下·子敬邀刀",
-			mdtx_dushi: "谋定天下·毒士鸩计",
-			mdtx_zhoulang: "谋定天下·周郎将计",
-			mdtx_qizuo: "谋定天下·奇佐论胜",
+			mdtx_mouding: "谋定天下",
+			mdtx_zhonghu: "冢虎狼顾",
+			mdtx_zijing: "子敬邀刀",
+			mdtx_dushi: "毒士鸩计",
+			mdtx_zhoulang: "周郎将计",
+			mdtx_qizuo: "奇佐论胜",
+			mdtx_wangzuo: "王佐倡义",
+			mdtx_youlin: "幼麟绝战",
+			mdtx_boyan: "伯言绽火",
 			
 			mdtx_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
 		},
 		pinyins: {
 			

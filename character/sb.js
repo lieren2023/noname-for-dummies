@@ -4,6 +4,9 @@ game.import("character", function () {
 		//strategy and battle, "sb" in short
 		name: "sb",
 		connect: true,
+		connectBanned: [
+			
+		],
 		character: {
 			sb_zhugejin: ["male", "wu", 3, ["sbhuanshi", "sbhongyuan", "sbmingzhe"]],
 			sb_jiaxu: ["male", "qun", 3, ["sbwansha", "sbluanwu", "sbweimu"]],
@@ -77,6 +80,22 @@ game.import("character", function () {
 		characterSubstitute: {
 			sb_sp_zhugeliang: [["sb_zhugeliang", []]],
 		},
+		characterIntro: {
+			
+		},
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
 			//诸葛瑾
 			sbhuanshi: {
@@ -450,6 +469,11 @@ game.import("character", function () {
 				},
 				derivation: ["sbwansha_rewrite", "sbweimu_rewrite"],
 			},
+			sbwansha_rewrite: { nopop: true },
+			sbweimu_rewrite: {
+				locked: true,
+				nopop: true,
+			},
 			sbweimu: {
 				audio: 4,
 				trigger: {
@@ -602,6 +626,8 @@ game.import("character", function () {
 						charlotte: true,
 						onremove: ["sbgongqi_block", "sbgongqi_blocker"],
 						filter(event, player) {
+							const evt = event.getParent("useCard", true, true);
+							if (evt && evt.effectedCount < evt.effectCount) return false;
 							if (!event.card || !player.storage.sbgongqi_block) return false;
 							return player.getStorage("sbgongqi_block").some(info => {
 								return info[0] === event.card;
@@ -1465,7 +1491,7 @@ game.import("character", function () {
 								lose_list.forEach((list) => list[0].unprompt());
 							}, lose_list);
 							resolve();
-						}, 2000 / (lib.config.speed == "vvfast" ? 3 : 1));
+						}, 2000 / (lib.config.game_speed == "vvfast" ? 3 : 1));
 					});
 					if (isMin) {
 						await mostPlayer.gain(myCards, "give", player);
@@ -4346,19 +4372,17 @@ game.import("character", function () {
 				group: "sbliuli_heart",
 				subSkill: {
 					heart: {
-						trigger: { player: "logSkill" },
+						trigger: { player: "discardAfter" },
 						filter: function (event, player) {
-							if (event.skill != "sbliuli") return false;
+							const evt = event.getParent("sbliuli", true);
+							if (!evt || !evt.cards) return false;
 							if (player.hasSkill("sbliuli_used")) return false;
-							var evt = event.log_event;
-							return player.hasHistory("lose", (evtx) => {
-								return evtx.getParent(2) == evt && get.suit(evtx.cards[0]) == "heart";
-							});
+							return get.suit(evt.cards[0]) == "heart";
 						},
 						direct: true,
 						content: function () {
 							"step 0";
-							var sourcex = trigger.log_event.getTrigger().player;
+							var sourcex = trigger.getParent("sbliuli", true).getTrigger().player;
 							player
 								.chooseTarget(
 									"流离：是否令一名不为" +
@@ -4391,10 +4415,8 @@ game.import("character", function () {
 						marktext: "流",
 						intro: { content: "回合开始时，执行一个额外的出牌阶段" },
 						content: function () {
-							var next = player.phaseUse();
-							event.next.remove(next);
-							trigger.next.push(next);
-							player.removeSkill("sbliuli_dangxian");
+							player.removeSkill(event.name);
+							trigger.phaseList.splice(trigger.num, 0, `phaseUse|${event.name}`);
 						},
 					},
 				},
@@ -5236,6 +5258,7 @@ game.import("character", function () {
 				audio: 2,
 				forced: true,
 				direct: true,
+				locked: true,
 				trigger: { player: "phaseZhunbeiBegin" },
 				filter: function (event, player) {
 					return game.hasPlayer((current) => current.hasMark("sbxuanhuo_mark"));
@@ -6021,6 +6044,7 @@ game.import("character", function () {
 					return { type: "basic" };
 				},
 				group: "sblongdan_charge",
+				derivation: "sblongdan_shabi",
 				onremove: function (player) {
 					player.removeSkill("sblongdan_mark");
 				},
@@ -6110,12 +6134,11 @@ game.import("character", function () {
 						},
 						content: function () {
 							game.log(player, "和", trigger.player, "的协力成功");
-							player.addTempSkill("sblongdan_mark", { player: "phaseJieshuBegin" });
+							player.addTempSkill("sblongdan_mark", player.hasSkill("jdlongdan", null, null, false) ? { player: "phaseAfter" } : { player: "phaseJieshuBegin" });
 							game.delayx();
 						},
 					},
 				},
-				derivation: "sblongdan_shabi",
 				ai: {
 					combo: "sblongdan",
 				},
@@ -6721,11 +6744,7 @@ game.import("character", function () {
 						target: function (player, target) {
 							if (
 								game.hasPlayer((current) => {
-									return (
-										get.rawAttitude(player, current) > 0 &&
-										current != player &&
-										get.attitude(player, current) <= 0
-									);
+									return (!get.rawAttitude || get.rawAttitude(player, current) > 0) && current != player && get.attitude(player, current) <= 0;
 								}) &&
 								game.countPlayer((current) => {
 									return get.attitude(player, current) > 0;
@@ -7599,6 +7618,9 @@ game.import("character", function () {
 					combo: "sbjushou",
 					order: 8,
 					result: {
+						player(player, target) {
+							return player.hujia - 3.6;
+						},
 						target: -1,
 					},
 				},
@@ -7921,7 +7943,7 @@ game.import("character", function () {
 					aiOrder: function (player, card, num) {
 						if (player.countUsed() >= player.getDamagedHp()) return;
 						var numx = get.info(card).usable;
-						if (typeof numx == "function") numx = num(card, player);
+						if (typeof numx == "function") return numx(card, player) + 10;
 						if (typeof numx == "number") return num + 10;
 					},
 				},
@@ -8968,6 +8990,8 @@ game.import("character", function () {
 							delete player.storage.sbliegong_blocker;
 						},
 						filter: function (event, player) {
+							const evt = event.getParent("useCard", true, true);
+							if (evt && evt.effectedCount < evt.effectCount) return false;
 							if (!event.card || !player.storage.sbliegong_block) return false;
 							for (var i of player.storage.sbliegong_block) {
 								if (i[0] == event.card) return true;
@@ -9884,6 +9908,15 @@ game.import("character", function () {
 			sb_neng: "谋攻篇·能",
 			
 			sb_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

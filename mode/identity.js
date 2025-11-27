@@ -1907,6 +1907,16 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 								_status.event = _status.event.parent;
 								_status.event.step = 0;
 								_status.event.identity = link;
+								
+								if (ui.selected.buttons.length > 0) {
+									ui.selected.buttons.forEach(function (button) {
+										if (button && button.parentNode) {
+											button.classList.remove("selected");
+										}
+									});
+									ui.selected.buttons.length = 0;
+								}
+								
 								if (!event.stratagemMode) {
 									if (link != (event.zhongmode ? "mingzhong" : "zhu")) {
 										seats.previousSibling.style.display = "";
@@ -2238,10 +2248,18 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						game.me.setIdentity();
 					}
 					if (!event.chosen.length) {
-						game.me.chooseButton(dialog, true).set("onfree", true).selectButton = function () {
-							if (_status.brawl && _status.brawl.doubleCharacter) return 2;
-							return get.config("double_character") ? 2 : 1;
-						};
+						// 玩家托管后会随机选将了
+						game.me
+							.chooseButton(dialog, true)
+							.set("onfree", true)
+							.set("selectButton", function () {
+								if (_status.brawl && _status.brawl.doubleCharacter) return 2;
+								return get.config("double_character") ? 2 : 1;
+							})
+							.set("ai", function (button) {
+								if (_status.brawl && _status.brawl.doubleCharacter) return list.randomGets(2);
+								return get.config("double_character") ? list.randomGets(2) : list.randomGet();
+							});
 					} else {
 						lib.init.onfree();
 					}
@@ -2375,7 +2393,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					var name = event.choosed[0];
 					if (get.is.double(name)) {
 						game.me._groupChosen = true;
-						game.me.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力");
+						// 玩家托管后会随机选势力了
+						game.me
+							.chooseControl(get.is.double(name, true))
+							.set("prompt", "请选择你的势力")
+							.set("ai", () => {
+								return _status.event.choice;
+							})
+							.set("choice", get.is.double(name, true).randomGet());
 					} else if (
 						lib.character[name][1] == "shen" &&
 						!lib.character[name][4].includes("hiddenSkill") &&
@@ -2385,7 +2410,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						list.remove("shen");
 						// 神武将选择势力（若开启）可点击取消了
 						list.push('cancel2');
-						game.me.chooseControl(list).set("prompt", "请选择神武将的势力");
+						// 玩家托管后会随机选势力了
+						game.me
+							.chooseControl(list)
+							.set("prompt", "请选择神武将的势力")
+							.set("ai", () => {
+								return _status.event.choice;
+							})
+							.set("choice", list.randomGet());
 					}
 					"step 2";
 					event.group = result.control || false;
@@ -4529,6 +4561,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (get.population("zhong") == 0 && player.identity == "fan") return false;
 					return Math.abs(get.attitude(player, event.player)) <= 1;
 				},
+				charlotte: true,
+				ruleSkill: true,
 				content: () => {
 					player.changeFury(-1, true);
 					player.insightInto(trigger.player);
@@ -4670,6 +4704,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				filter: function (event, player) {
 					return player.identity == "rYe" || player.identity == "bYe";
 				},
+				charlotte: true,
+				ruleSkill: true,
 				skillAnimation: "legend",
 				animationColor: "thunder",
 				content: function () {
@@ -4703,6 +4739,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				},
 				trigger: { player: "phaseZhunbeiBegin" },
 				silent: true,
+				charlotte: true,
 				content: function () {
 					"step 0";
 					var cards = get.cards(3);
@@ -4770,6 +4807,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return num + 1;
 					},
 				},
+				charlotte: true,
 			},
 			identity_zeishou: {
 				name: "贼首",
@@ -4782,6 +4820,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return num - 1;
 					},
 				},
+				charlotte: true,
 			},
 			dongcha: {
 				trigger: { player: "phaseBegin" },
@@ -4792,6 +4831,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						return current.countCards("ej");
 					});
 				},
+				charlotte: true,
 				forceunique: true,
 				content: function () {
 					"step 0";
@@ -4900,6 +4940,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				trigger: { global: "dieBefore" },
 				forced: true,
 				unique: true,
+				charlotte: true,
 				forceunique: true,
 				filter: function (event, player) {
 					return event.player == game.zhu && player.hp > 0;

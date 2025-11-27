@@ -1,5 +1,12 @@
 window.noname_package = {
 	character: {
+		// 分包调整（by 棘手怀念摧毁）
+		// 以各服分包和无名杀分包为基准
+		// 大致按照OL、新杀、手杀、外服、线下、怀旧、DIY的顺序排列
+		// 各服特色排在前或单独拎出
+		// 同服按标、界、谋、SP排列（但异构和活动武将往后排）
+		// 尽量按由旧到新顺序排列，同系列排在一起
+		
 		//经典标包＋神话再临
 		standard: "标准",
 		shenhua: "神话再临",
@@ -7,13 +14,13 @@ window.noname_package = {
 		yijiang: "一将成名",
 		refresh: "界限突破",
 		extra: "神将",
-		//OL服
+		//OL服（老服）
 		onlyOL: "OL专属",
 		sbfm: "上兵伐谋",
 		sp: "璀璨星河",
 		clan: "门阀士族",
 		yingbian: "文德武备",
-		//十周年服
+		//新服
 		xinghuoliaoyuan: "星火燎原",
 		mdtx: "谋定天下",
 		huicui: "群英荟萃",
@@ -23,13 +30,16 @@ window.noname_package = {
 		mobile: "移动版",
 		sb: "谋攻篇",
 		shiji: "始计篇",
+		bingshi: "兵势篇",
 		tw: "外服武将",
 		//线下系列
 		offline: "线下武将",
 		jsrg: "江山如故",
+		sxrm: "蚀心入魔",
 		sixiang: "四象封印",
-		//各服联动+怀旧
+		//各服联动+特殊武将+怀旧
 		collab: "联动卡",
+		shengxiao: "特殊武将",
 		old: "怀旧",
 		//DIY系列
 		diy: "DIY",

@@ -3,6 +3,9 @@ game.import("character", function () {
 	return {
 		name: "xinghuoliaoyuan",
 		connect: true,
+		connectBanned: [
+			
+		],
 		character: {
 			wangcan: ["male", "qun", 3, ["xinfu_sanwen", "xinfu_qiai", "xinfu_denglou"]],
 			sp_taishici: ["male", "qun", 4, ["xinfu_jixu"]],
@@ -43,16 +46,19 @@ game.import("character", function () {
 				xinghuoliaoyuan_qisha: ["lvqian", "re_zhangliang"],
 				
 				xinghuoliaoyuan_tianshu: ["star_yuanshu", "star_dongzhuo", "star_yuanshao"],
-				xinghuoliaoyuan_tianxuan: ["star_xunyu"],
+				xinghuoliaoyuan_tianxuan: ["star_xunyu", "star_zhangzhao"],
 				// xinghuoliaoyuan_bdtianji: [],
 				// xinghuoliaoyuan_tianquan: [],
 				xinghuoliaoyuan_yuheng: ["star_caoren", "star_zhangchunhua"],
 				xinghuoliaoyuan_kaiyang: ["star_sunjian"],
 				xinghuoliaoyuan_yaoguang: ["star_sunshangxiang"],
 				
-				xinghuoliaoyuan_waitforsort: ["star_zhangzhao"],
+				// xinghuoliaoyuan_waitforsort: [],
 				
 			},
+		},
+		characterSubstitute: {
+			
 		},
 		characterIntro: {
 			wangcan:
@@ -69,19 +75,22 @@ game.import("character", function () {
 			liuyao: "刘繇（一读yóu）（156年－197年），字正礼。东莱牟平（今山东牟平）人。东汉末年宗室、大臣，汉末群雄之一，齐悼惠王刘肥之后，太尉刘宠之侄。<br>刘繇最初被推举为孝廉，授郎中。任下邑县长时，因拒郡守请托而弃官。后被征辟为司空掾属，除授侍御史，因战乱而不到任，避居淮浦。兴平元年（194年），被任命为扬州刺史。他先后与袁术、孙策交战，一度被朝廷加授为扬州牧、振武将军，但最终还是败归丹徒。此后，刘繇又击破反叛的笮融，旋即病逝，年四十二。",
 			liuyan: "刘焉（？－194年），字君郎（《华阳国志》又作君朗）。江夏郡竟陵县（今湖北省天门市）人。东汉末年宗室、军阀，汉末群雄之一，西汉鲁恭王刘余之后。<br>刘焉初以汉朝宗室身份，拜为中郎，历任雒阳令、冀州刺史、南阳太守、宗正、太常等官。因益州刺史郄俭在益州大肆聚敛，贪婪成风，加上当时天下大乱。刘焉欲取得一安身立命之所，割据一方，于是向朝廷求为益州牧，封阳城侯，前往益州整饬吏治。郄俭为黄巾军所杀，刘焉进入益州，派张鲁盘踞汉中，张鲁截断交通，斩杀汉使，从此益州与中央道路不通。刘焉进一步对内打击地方豪强，巩固自身势力，益州因而处于半独立的状态。兴平元年（194年），刘焉因背疮迸发而逝世，其子刘璋继领益州牧。",
 		},
-		characterTitle: {},
-		perfectPair: {
-			lijue: ["guosi", "jiaxu"],
-			zhangji: ["zhangxiu", "drlt_zhangxiu", "zoushi"],
-			xf_sufei: ["ganning"],
-			//baosanniang:['guansuo'],
-			simahui: ["pangdegong"],
-			zhangqiying: ["zhanglu"],
-			pangtong: ["zhugejin"],
-			taishici: ["liuyao", "kongrong"],
-			//zhaotongzhaoguang:['zhaoyun','mayunlu'],
+		characterTitle: {
+			
 		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
+		},
+		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			// 部分武将代码位于sp2.js
+			
 			//荀彧
 			staranshu: {
 				audio: 2,
@@ -2203,12 +2212,8 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterReplace: {
-			duji: ["duji", "re_duji", "ns_duji"],
-			sp_taishici: ["sp_taishici", "re_sp_taishici"],
-			mazhong: ["mazhong", "re_mazhong", "tw_mazhong"],
-			wenpin: ["wenpin", "re_wenpin"],
-			liuyan: ["liuyan", "jsrg_liuyan", "junk_liuyan"],
+		dynamicTranslate: {
+			
 		},
 		translate: {
 			xinghuoliaoyuan: "星火燎原",
@@ -2345,6 +2350,15 @@ game.import("character", function () {
 			xinghuoliaoyuan_yaoguang: "北斗七星·瑶光",
 			
 			xinghuoliaoyuan_waitforsort: "等待分包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

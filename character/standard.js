@@ -3,41 +3,11 @@ game.import("character", function () {
 	return {
 		name: "standard",
 		connect: true,
-		characterSort: {
-			standard: {
-				standard_2008: [
-					"caocao",
-					"simayi",
-					"xiahoudun",
-					"zhangliao",
-					"xuzhu",
-					"guojia",
-					"zhenji",
-					"liubei",
-					"guanyu",
-					"zhangfei",
-					"zhugeliang",
-					"zhaoyun",
-					"machao",
-					"huangyueying",
-					"sunquan",
-					"ganning",
-					"lvmeng",
-					"huanggai",
-					"zhouyu",
-					"daqiao",
-					"luxun",
-					"sunshangxiang",
-					"huatuo",
-					"lvbu",
-					"diaochan",
-				],
-				standard_2013: ["old_re_lidian", "huaxiong", "re_yuanshu"],
-				standard_2019: ["gongsunzan", "xf_yiji"],
-				standard_2023: ["std_panfeng", "ganfuren"],
-			},
-		},
+		connectBanned: [
+			
+		],
 		character: {
+			std_yuejin: ["male", "wei", 4, ["stdxiaoguo"], ["die_audio:yuejin","character:gz_yuejin"]],
 			old_re_lidian: ["male", "wei", 3, ["xunxun", "wangxi"], ["die_audio:lidian"]],
 			ganfuren: ["female", "shu", 3, ["stdshushen", "shenzhi"]],
 			std_panfeng: ["male", "qun", 4, ["stdkuangfu"]],
@@ -71,6 +41,43 @@ game.import("character", function () {
 
 			xf_yiji: ["male", "shu", 3, ["xinfu_jijie", "xinfu_jiyuan"], []],
 			re_yuanshu: ["male", "qun", 4, ["rewangzun", "retongji"]],
+			
+		},
+		characterSort: {
+			standard: {
+				standard_2008: [
+					"caocao",
+					"simayi",
+					"xiahoudun",
+					"zhangliao",
+					"xuzhu",
+					"guojia",
+					"zhenji",
+					"liubei",
+					"guanyu",
+					"zhangfei",
+					"zhugeliang",
+					"zhaoyun",
+					"machao",
+					"huangyueying",
+					"sunquan",
+					"ganning",
+					"lvmeng",
+					"huanggai",
+					"zhouyu",
+					"daqiao",
+					"luxun",
+					"sunshangxiang",
+					"huatuo",
+					"lvbu",
+					"diaochan",
+				],
+				standard_2013: ["old_re_lidian", "huaxiong", "re_yuanshu"],
+				standard_2019: ["gongsunzan", "xf_yiji"],
+				standard_2023: ["std_panfeng", "ganfuren", "std_yuejin"],
+			},
+		},
+		characterSubstitute: {
 			
 		},
 		characterIntro: {
@@ -113,25 +120,78 @@ game.import("character", function () {
 			xf_yiji:
 				"伊籍，字机伯，生卒年不详，兖州山阳郡（今山东金乡县）人，三国时期蜀汉官员。年少时依附于同乡刘表。刘备落难到荆州时，伊籍时常拜访，托请刘备照顾。建安十三年（208年），刘表病死，伊籍便转投刘备，一起渡江南下。建安十六年（211年），刘备入蜀帮助刘璋，伊籍亦有跟随。随后刘备和刘璋双方决裂。建安十九年（214年），刘备平定益州，任命伊籍为左将军从事中郎，其待遇次于简雍、孙乾等。后升任昭文将军，并与诸葛亮、法正、刘巴、李严共同编制《蜀科》。",
 		},
-		perfectPair: {
-			xiahoudun: ["xiahouyuan"],
-			zhenji: ["caopi"],
-			caocao: ["xuzhu", "dianwei", "bianfuren"],
-			huangzhong: ["weiyan"],
-			zhugeliang: ["jiangwei", "jiangfei", "huangyueying"],
-			liubei: ["guanyu", "zhangfei", "ganfuren"],
-			zhaoyun: ["liushan"],
-			daqiao: ["xiaoqiao"],
-			zhouyu: ["huanggai", "xiaoqiao", "zhouyi"],
-			sunquan: ["zhoutai"],
-			lvbu: ["diaochan", "lvlingqi"],
-			machao: ["madai", "mayunlu", "yangwan"],
-			zhangliao: ["zangba"],
-			ganning: ["lingtong", "xf_sufei"],
-			guanyu: ["zhangfei", "liaohua"],
+		characterTitle: {
+			
+		},
+		characterFilter: {
+			
+		},
+		characterInitFilter: {
+			
+		},
+		card: {
+			
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//标准版乐进
+			stdxiaoguo: {
+				audio: "xiaoguo",
+				trigger: { global: "phaseJieshuBegin" },
+				filter(event, player) {
+					return (
+						event.player.isIn() &&
+						event.player != player &&
+						player.countCards("h", card => {
+							if (_status.connectMode) {
+								return true;
+							}
+							return get.type(card) == "basic" && lib.filter.cardDiscardable(card, player);
+						})
+					);
+				},
+				async cost(event, trigger, player) {
+					const target = trigger.player;
+					const next = player.chooseToDiscard(get.prompt(event.name.slice(0, -5)), (card, player) => {
+						return get.type(card) == "basic";
+					});
+					next.set("ai", card => {
+						return get.event("eff") - get.useful(card);
+					});
+					next.set(
+						"eff",
+						(function () {
+							if (target.hasSkillTag("noe")) {
+								return get.attitude(_status.event.player, target);
+							}
+							return get.damageEffect(target, player, _status.event.player);
+						})()
+					);
+					next.set("logSkill", [event.name.slice(0, -5), target]);
+					event.result = await next.forResult();
+				},
+				popup: false,
+				async content(event, trigger, player) {
+					const target = trigger.player;
+					const bool = await target
+						.chooseToDiscard("he", "弃置一张装备牌，或受到1点伤害", { type: "equip" })
+						.set("ai", card => {
+							if (get.event("damage") > 0) {
+								return 0;
+							}
+							if (get.event("noe")) {
+								return 12 - get.value(card);
+							}
+							return -get.event("damage") - get.value(card);
+						})
+						.set("damage", get.damageEffect(target, player, target))
+						.set("noe", target.hasSkillTag("noe"))
+						.forResultBool();
+					if (!bool) {
+						await target.damage();
+					}
+				},
+			},
 			//标准版甘夫人
 			stdshushen: {
 				audio: "shushen",
@@ -645,6 +705,7 @@ game.import("character", function () {
 						event.notLink()
 					);
 				},
+				charlotte: true,
 				forced: true,
 				async content(event, trigger, player) {
 					trigger.num++;
@@ -2674,41 +2735,7 @@ game.import("character", function () {
 				},
 			},
 		},
-		characterReplace: {
-			caocao: ["caocao", "re_caocao", "sb_caocao", "dc_caocao", "jd_sb_caocao"],
-			guojia: ["guojia", "re_guojia", "yj_sb_guojia", "ps1059_guojia", "ps2070_guojia", "jsrg_guojia"],
-			simayi: ["simayi", "re_simayi", "dc_sb_simayi", "jsrg_simayi", "ps_simayi", "ps2068_simayi", "huan_simayi"],
-			jin_simayi: ["jin_simayi", "junk_simayi", "ps_jin_simayi"],
-			zhenji: ["zhenji", "re_zhenji", "sb_zhenji", "yj_zhenji"],
-			xuzhu: ["xuzhu", "re_xuzhu"],
-			zhangliao: ["zhangliao", "re_zhangliao"],
-			sp_zhangliao: ["sp_zhangliao", "yj_zhangliao", "jsrg_zhangliao"],
-			xiahoudun: ["xiahoudun", "re_xiahoudun", "xin_xiahoudun", "sb_xiahoudun", "sp_xiahoudun"],
-			liubei: ["liubei", "re_liubei", "sb_liubei", "dc_liubei", "junk_liubei", "jd_sb_liubei", "ty_liubei", "sp_liubei"],
-			guanyu: ["guanyu", "re_guanyu", "ol_sb_guanyu", "sb_guanyu", "ps_guanyu", "old_guanyu", "junk_guanyu", "jx_guanyu", "jd_sb_guanyu", "ty_guanyu", "drag_guanyu"],
-			zhangfei: ["zhangfei", "re_zhangfei", "old_zhangfei", "xin_zhangfei", "sb_zhangfei", "tw_zhangfei", "jsrg_zhangfei", "yj_zhangfei", "jd_sb_zhangfei", "sp_zhangfei"],
-			zhaoyun: ["zhaoyun", "re_zhaoyun", "old_zhaoyun", "sb_zhaoyun", "jsrg_zhaoyun", "ps2063_zhaoyun", "ps2067_zhaoyun", "huan_zhaoyun", "jd_sb_zhaoyun"],
-			sp_zhaoyun: ["sp_zhaoyun", "jsp_zhaoyun"],
-			machao: ["machao", "re_machao", "sb_machao", "ps_machao"],
-			sp_machao: ["sp_machao", "dc_sp_machao", "jsrg_machao", "old_machao"],
-			zhugeliang: ["zhugeliang", "re_zhugeliang", "ps2066_zhugeliang", "ps_zhugeliang", "huan_zhugeliang", "jsrg_zhugeliang"],
-			huangyueying: ["huangyueying", "re_huangyueying", "junk_huangyueying", "sb_huangyueying", "jd_sb_huangyueying"],
-			sunquan: ["sunquan", "re_sunquan", "sb_sunquan", "dc_sunquan", "xin_sunquan", "jd_sb_sunquan"],
-			zhouyu: ["zhouyu", "re_zhouyu", "dc_sb_zhouyu", "sb_zhouyu", "ps1062_zhouyu", "ps2080_zhouyu", "jx_zhouyu"],
-			luxun: ["luxun", "re_luxun", "jsrg_luxun", "sb_luxun", "ty_luxun", "huan_luxun"],
-			lvmeng: ["lvmeng", "re_lvmeng", "sb_lvmeng", "sp_lvmeng"],
-			huanggai: ["huanggai", "re_huanggai", "sb_huanggai"],
-			daqiao: ["daqiao", "re_daqiao", "sb_daqiao", "jd_sb_daqiao", "yue_daqiao", "sp_daqiao"],
-			sunshangxiang: ["sunshangxiang", "re_sunshangxiang", "sb_sunshangxiang", "jsrg_sunshangxiang", "star_sunshangxiang", "jd_sb_sunshangxiang"],
-			ganning: ["ganning", "re_ganning", "sb_ganning", "yongjian_ganning", "jd_sb_ganning", "ty_ganning"],
-			yj_ganning: ["yj_ganning", "sp_ganning"],
-			lvbu: ["lvbu", "re_lvbu", "jsrg_lvbu", "ps_lvbu"],
-			diaochan: ["diaochan", "re_diaochan", "sb_diaochan"],
-			huatuo: ["huatuo", "re_huatuo", "old_huatuo"],
-			huaxiong: ["huaxiong", "re_huaxiong", "old_huaxiong", "sb_huaxiong", "ol_huaxiong"],
-			yuanshu: ["yuanshu", "re_yuanshu", "yl_yuanshu", "old_yuanshu", "ol_yuanshu", "star_yuanshu"],
-			gongsunzan: ["gongsunzan", "re_gongsunzan", "dc_gongsunzan", "xin_gongsunzan", "sb_gongsunzan", "sp_gongsunzan"],
-			re_lidian: ["re_lidian", "old_re_lidian", "junk_lidian"],
+		dynamicTranslate: {
 			
 		},
 		translate: {
@@ -2924,11 +2951,24 @@ game.import("character", function () {
 			stdshushen_info:
 				"当你回复1点体力时，你可以令一名其他角色摸一张牌（若其没有手牌则改为摸两张牌）。",
 			old_re_lidian: "李典",
+			std_yuejin: "标乐进",
+			std_yuejin_prefix: "标",
+			stdxiaoguo: "骁果",
+			stdxiaoguo_info: "其他角色的结束阶段开始时，你可以弃置一张基本牌，令该角色选择一项：1.弃置一张装备牌；2.受到你对其造成的1点伤害。",
 
 			standard_2008: "2008版标准包",
 			standard_2013: "2013版标准包",
 			standard_2019: "2019版标准包",
 			standard_2023: "2023版标准包",
+		},
+		perfectPair: {
+			
+		},
+		characterReplace: {
+			
+		},
+		pinyins: {
+			
 		},
 	};
 });

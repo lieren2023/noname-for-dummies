@@ -3382,6 +3382,7 @@ game.import("character", function () {
 				trigger: {
 					global: "dying",
 				},
+				limited: true,
 				priority: 8,
 				unique: true,
 				skillAnimation: true,
@@ -3578,6 +3579,7 @@ game.import("character", function () {
 			},
 			nsanruo: {
 				unique: true,
+				locked: true,
 				init(player) {
 					if (!player.node.handcards1.cardMod) {
 						player.node.handcards1.cardMod = {};
@@ -4987,6 +4989,7 @@ game.import("character", function () {
 						}
 					},
 				},
+				locked: true,
 				ai: {
 					neg: true,
 				},
@@ -5004,6 +5007,7 @@ game.import("character", function () {
 			nscangxi: {
 				unique: true,
 				global: "nscangxi2",
+				locked: false,
 				zhuSkill: true,
 				init(player) {
 					player.storage.nscangxi = 0;
@@ -6188,6 +6192,7 @@ game.import("character", function () {
 				filter(event, player) {
 					return event.cards.length >= 3;
 				},
+				forced: true,
 				content() {
 					player.insertPhase();
 					player.storage.nsjihui_use = _status.currentPhase;
@@ -6241,6 +6246,7 @@ game.import("character", function () {
 				forbid: ["guozhan"],
 				unique: true,
 				forceunique: true,
+				locked: true,
 				init(player) {
 					if (player.storage.nscongjun_show) return false;
 					var change = function (target) {
@@ -8385,8 +8391,9 @@ game.import("character", function () {
 				},
 				content() {
 					"step 0";
+					const num = player.getCards("he").reduce((arr, card) => arr.add(get.suit(card, player)), []).length;
 					player
-						.chooseToDiscard("he", true, [1, 4], function (card, player) {
+						.chooseToDiscard("he", true, [1, num], function (card, player) {
 							if (!ui.selected.cards.length) return true;
 							var suit = get.suit(card, player);
 							for (var i of ui.selected.cards) {
@@ -8402,7 +8409,7 @@ game.import("character", function () {
 					"step 1";
 					if (result.bool) {
 						var skills = lib.skill.junkyuheng.derivation.randomGets(result.cards.length);
-						player.addAdditionalSkills("junkyuheng", skills);
+						player.addAdditionalSkills("junkyuheng", skills, true);
 					}
 				},
 				group: "junkyuheng_remove",

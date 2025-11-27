@@ -4,6 +4,28 @@ import { game } from "../game/index.js";
 import { _status } from "../status/index.js";
 import { ui } from "../ui/index.js";
 
+/**
+ * 为元素添加右击或长按弹出的提示信息
+ * @param {string} title 标题
+ * @param {string} content 提示的具体内容
+ * @returns {HTMLElement}
+ */
+HTMLElement.prototype.setNodeIntro = function (title, content) {
+	this.classList.add("nodeintro");
+	// @ts-expect-error ThereBe
+	this.nodeTitle = title;
+	// @ts-expect-error ThereBe
+	this.nodeContent = content;
+	if (!lib.config.touchscreen) {
+		if (lib.config.hover_all) {
+			lib.setHover(this, ui.click.hoverplayer);
+		}
+		if (lib.config.right_info) {
+			this.oncontextmenu = ui.click.rightplayer;
+		}
+	}
+	return this;
+};
 // 废弃覆盖原型的HTMLDivElement.prototype.animate
 // 改为HTMLDivElement.prototype.addTempClass
 /**

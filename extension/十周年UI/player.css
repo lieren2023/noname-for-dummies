@@ -293,7 +293,7 @@
 
 .player>.camp-wrap>.avatar-name,
 #arena>.player.xplayer>.name{/*将名*/
-    top: 30px;
+    top: 28px;
     left: 30.8px; 
     calc(var(--border-width) / 2);
     transform: translateX(-50%);
@@ -426,7 +426,7 @@
 	/* justify-content: center; */
 	left: 51.6% !important;
 	right: auto;
-	top: 21px;
+	top: 19px;
 	width: 18px;
 	height: 96px;
 	font-size: 14.7px;

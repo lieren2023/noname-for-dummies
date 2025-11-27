@@ -1483,6 +1483,7 @@ game.import("character", function () {
 				},
 				mark: true,
 				unique: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "water",
 				line: "thunder",
@@ -2583,6 +2584,7 @@ game.import("character", function () {
 				trigger: { player: "phaseBegin" },
 				unique: true,
 				mark: true,
+				limited: true,
 				skillAnimation: true,
 				init: function (player) {
 					player.storage.zhanlong = false;
@@ -2945,6 +2947,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				unique: true,
 				mark: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "metal",
 				init: function (player) {
@@ -3088,6 +3091,7 @@ game.import("character", function () {
 				enable: "phaseUse",
 				unique: true,
 				mark: true,
+				limited: true,
 				skillAnimation: true,
 				animationColor: "fire",
 				init: function (player) {
