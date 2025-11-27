@@ -2606,32 +2606,51 @@ export const Content = {
 			if (typeof num == "function") {
 				numx = num(player);
 			}
-			if (player.getTopCards) player.directgain(player.getTopCards(numx));
-			else player.directgain(get.cards(numx));
-			if (
-				player.singleHp === true &&
-				get.mode() != "guozhan" &&
-				(lib.config.mode != "doudizhu" || _status.mode != "online")
-			) {
+
+			/*otherPile主要是针对那些用专属牌堆，不从一般牌堆摸牌的角色（如陈寿），该属性目前只有两个键值对，且都为函数
+			 *getCards函数与获得牌相关，只传入要获得的牌数num作为参数
+			 *discard与手气卡换牌后弃置牌相关，只传入要弃置的牌card作为参数
+			 */
+			const cards = [],
+				otherGetCards = event.otherPile?.[player.playerid]?.getCards;
+			//先看有没有专属牌堆，再看其他的
+			if (otherGetCards) {
+				cards.addArray(otherGetCards(numx));
+			} else if (player.getTopCards) {
+				cards.addArray(player.getTopCards(numx));
+			} else {
+				cards.addArray(get.cards(numx));
+			}
+			//别问，问就是初始手牌要有标记 by 星の语
+			//event.gaintag支持函数、字符串、数组。数组就是添加一连串的标记；函数的返回格式为[[cards1,gaintag1],[cards2,gaintag2]...]
+			if (event.gaintag?.[player.playerid]) {
+				const gaintag = event.gaintag[player.playerid];
+				const list = typeof gaintag == "function" ? gaintag(numx, cards) : [[cards, gaintag]];
+				game.broadcastAll(
+					(player, list) => {
+						for (let i = list.length - 1; i >= 0; i--) {
+							player.directgain(list[i][0], null, list[i][1]);
+						}
+					},
+					player,
+					list
+				);
+			} else {
+				player.directgain(cards);
+			}
+
+			if (player.singleHp === true && get.mode() != "guozhan" && (lib.config.mode != "doudizhu" || _status.mode != "online")) {
 				player.doubleDraw();
 			}
 			player._start_cards = player.getCards("h");
 			player = player.next;
 		} while (player != end);
 		event.changeCard = get.config("change_card");
-		if (
-			_status.connectMode ||
-			(lib.config.mode == "single" && _status.mode != "wuxianhuoli") ||
-			(lib.config.mode == "doudizhu" && _status.mode == "online") ||
-			(lib.config.mode != "identity" &&
-				lib.config.mode != "guozhan" &&
-				lib.config.mode != "doudizhu" &&
-				lib.config.mode != "single")
-		) {
+		if (_status.connectMode || (lib.config.mode == "single" && _status.mode != "wuxianhuoli") || (lib.config.mode == "doudizhu" && _status.mode == "online") || (lib.config.mode != "identity" && lib.config.mode != "guozhan" && lib.config.mode != "doudizhu" && lib.config.mode != "single")) {
 			event.changeCard = "disabled";
 		}
 		"step 1";
-		if (event.changeCard != "disabled" && !_status.auto) {
+		if (event.changeCard != "disabled" && !_status.auto && game.me.countCards("h")) {
 			event.dialog = ui.create.dialog("是否使用手气卡？");
 			ui.create.confirm("oc");
 			event.custom.replace.confirm = function (bool) {
@@ -2662,16 +2681,51 @@ export const Content = {
 			if (game.changeCoin) {
 				game.changeCoin(-3);
 			}
-			var hs = game.me.getCards("h");
+			/*otherPile主要是针对那些用专属牌堆，不从一般牌堆摸牌的角色（如陈寿），该属性目前只有两个键值对，且都为函数
+			 *getCards函数与获得牌相关，只传入要获得的牌数num作为参数
+			 *discard与手气卡换牌后弃置牌相关，只传入要弃置的牌card作为参数
+			 */
+			const hs = game.me.getCards("h"),
+				cards = [],
+				otherGetCards = event.otherPile?.[game.me.playerid]?.getCards,
+				otherDiscacrd = event.otherPile?.[game.me.playerid]?.discard;
+			//先弃牌
 			game.addVideo("lose", game.me, [get.cardsInfo(hs), [], [], []]);
-			for (var i = 0; i < hs.length; i++) {
-				hs[i].discard(false);
+			for (let i = 0; i < hs.length; i++) {
+				hs[i].removeGaintag(true);
+				if (otherDiscacrd) {
+					otherDiscacrd(hs[i]);
+				} else {
+					hs[i].discard(false);
+				}
 			}
-			game.me.directgain(get.cards(hs.length));
+			//再摸牌，先看有没有专属牌堆
+			if (otherGetCards) {
+				cards.addArray(otherGetCards(hs.length));
+			} else {
+				cards.addArray(get.cards(hs.length));
+			}
+			//添加标记相关
+			//别问，问就是初始手牌要有标记 by 星の语
+			//event.gaintag支持函数、字符串、数组。数组就是添加一连串的标记；函数的返回格式为[[cards1,gaintag1],[cards2,gaintag2]...]
+			if (event.gaintag?.[game.me.playerid]) {
+				const gaintag = event.gaintag[game.me.playerid];
+				const list = typeof gaintag == "function" ? gaintag(hs.length, cards) : [[cards, gaintag]];
+				for (let i = list.length - 1; i >= 0; i--) {
+					game.me.directgain(list[i][0], null, list[i][1]);
+				}
+			} else {
+				game.me.directgain(cards);
+			}
+			game.me._start_cards = game.me.getCards("h");
 			event.goto(2);
 		} else {
-			if (event.dialog) event.dialog.close();
-			if (ui.confirm) ui.confirm.close();
+			if (event.dialog) {
+				event.dialog.close();
+			}
+			if (ui.confirm) {
+				ui.confirm.close();
+			}
 			game.me._start_cards = game.me.getCards("h");
 			event.finish();
 		}
@@ -3034,10 +3088,9 @@ export const Content = {
 			targets = [targets];
 		}
 		if (info.popup != false && !info.direct && !("skill_popup" in result && !Boolean(result["skill_popup"]))) {
-			let popup_info = event.skill;
-			if (typeof info.popup === "string") popup_info = [event.skill, info.popup];
-			if (info.logLine === false) player.logSkill(popup_info, false, info.line);
-			else player.logSkill(popup_info, targets, info.line);
+			const popup_info = typeof info.popup === "string" ? [event.skill, info.popup] : event.skill;
+			const args = [trigger, player, event.triggername, event.indexedData, result];
+			player.logSkill(popup_info, info.logLine === false ? false : targets, info.line, null, args);
 		}
 		var next = game.createEvent(event.skill);
 		if (typeof info.usable == "number") {
@@ -3274,13 +3327,42 @@ export const Content = {
 		}
 		"step 1";
 		if (result && result.bool) {
-			var hs = game.me.getCards("h");
-			for (var i = 0; i < hs.length; i++) {
-				hs[i].discard(false);
+			/*otherPile主要是针对那些用专属牌堆，不从一般牌堆摸牌的角色（如陈寿），该属性目前只有两个键值对，且都为函数
+			 *getCards函数与获得牌相关，只传入要获得的牌数num作为参数
+			 *discard与手气卡换牌后弃置牌相关，只传入要弃置的牌card作为参数
+			 */
+			const hs = game.me.getCards("h"),
+				cards = [],
+				otherGetCards = event.otherPile?.[game.me.playerid]?.getCards,
+				otherDiscacrd = event.otherPile?.[game.me.playerid]?.discard;
+			//先弃牌
+			game.addVideo("lose", game.me, [get.cardsInfo(hs), [], [], []]);
+			for (let i = 0; i < hs.length; i++) {
+				hs[i].removeGaintag(true);
+				if (otherDiscacrd) {
+					otherDiscacrd(hs[i]);
+				} else {
+					hs[i].discard(false);
+				}
 			}
-			var cards = get.cards(hs.length);
+			//再摸牌，先看有没有专属牌堆
+			if (otherGetCards) {
+				cards.addArray(otherGetCards(hs.length));
+			} else {
+				cards.addArray(get.cards(hs.length));
+			}
+			//添加标记相关
+			//event.gaintag支持函数、字符串、数组。数组就是添加一连串的标记；函数的返回格式为[[cards1,gaintag1],[cards2,gaintag2]...]
+			if (event.gaintag?.[game.me.playerid]) {
+				const gaintag = event.gaintag[game.me.playerid];
+				const list = typeof gaintag == "function" ? gaintag(hs.length, cards) : [[cards, gaintag]];
+				for (let i = list.length - 1; i >= 0; i--) {
+					game.me.directgain(list[i][0], null, list[i][1]);
+				}
+			} else {
+				game.me.directgain(cards);
+			}
 			game.me._start_cards = cards;
-			game.me.directgain(cards);
 		}
 	},
 	replaceHandcardsOL: function () {
@@ -3291,19 +3373,54 @@ export const Content = {
 		};
 		var sendback = function (result, player) {
 			if (result && result.bool) {
-				var hs = player.getCards("h");
+				/*otherPile主要是针对那些用专属牌堆，不从一般牌堆摸牌的角色（如陈寿），该属性目前只有两个键值对，且都为函数
+				 *getCards函数与获得牌相关，只传入要获得的牌数num作为参数
+				 *discard与手气卡换牌后弃置牌相关，只传入要弃置的牌card作为参数
+				 */
+				const hs = player.getCards("h"),
+					cards = [],
+					otherGetCards = event.otherPile?.[player.playerid]?.getCards,
+					otherDiscacrd = event.otherPile?.[player.playerid]?.discard;
+				//先弃牌
 				game.broadcastAll(
-					function (player, hs) {
+					function (player, hs, otherDiscacrd) {
 						game.addVideo("lose", player, [get.cardsInfo(hs), [], [], []]);
 						for (var i = 0; i < hs.length; i++) {
-							hs[i].discard(false);
+							hs[i].removeGaintag(true);
+							if (otherDiscacrd) {
+								otherDiscacrd(hs[i]);
+							} else {
+								hs[i].discard(false);
+							}
 						}
 					},
 					player,
-					hs
+					hs,
+					otherDiscacrd
 				);
-				var cards = get.cards(hs.length);
-				player.directgain(cards);
+				//再摸牌，先看有没有专属牌堆
+				if (otherGetCards) {
+					cards.addArray(otherGetCards(hs.length));
+				} else {
+					cards.addArray(get.cards(hs.length));
+				}
+				//添加标记相关
+				//event.gaintag支持函数、字符串、数组。数组就是添加一连串的标记；函数的返回格式为[[cards1,gaintag1],[cards2,gaintag2]...]
+				if (event.gaintag?.[player.playerid]) {
+					const gaintag = event.gaintag[player.playerid];
+					const list = typeof gaintag == "function" ? gaintag(hs.length, cards) : [[cards, gaintag]];
+					game.broadcastAll(
+						(player, list) => {
+							for (let i = list.length - 1; i >= 0; i--) {
+								player.directgain(list[i][0], null, list[i][1]);
+							}
+						},
+						player,
+						list
+					);
+				} else {
+					player.directgain(cards);
+				}
 				player._start_cards = cards;
 			}
 		};
@@ -7158,7 +7275,19 @@ export const Content = {
 		"step 1";
 		event.result = result;
 		if (result.bool) {
-			if (event.logSkill) player.logSkill(event.logSkill, result.targets, false);
+			if (event.logSkill) {
+				if (typeof event.logSkill == "string") {
+					player.logSkill(event.logSkill, result.targets, false);
+				} else if (Array.isArray(event.logSkill)) {
+					if (event.logSkill.length >= 3) {
+						event.logSkill[1] = result.targets;
+						event.logSkill[2] = false;
+					} else if (event.logSkill.length) {
+						event.logSkill = [event.logSkill[0], result.targets, false];
+					}
+					player.logSkill.apply(player, event.logSkill);
+				}
+			}
 			player.line2(result.targets, "green");
 			event.targets = result.targets;
 		} else {
@@ -7255,7 +7384,7 @@ export const Content = {
 				cardaudio = false;
 			}
 			if (lib.skill[event.skill].log != false) {
-				player.logSkill(event.skill);
+				player.logSkill(event.skill, false, null, null, [event, event.player]);
 			}
 			if (get.info(event.skill).popname) {
 				player.tryCardAnimate(card, event.card.name, "metal", true);
@@ -7725,7 +7854,7 @@ export const Content = {
 		if (!info.noForceDie) event.forceDie = true;
 		if (!info.noForceOut) event.includeOut = true;
 		event._skill = event.skill;
-		game.trySkillAudio(event.skill, player);
+		game.trySkillAudio(event.skill, player, null, null, null, [event, event.player]);
 		var checkShow = player.checkShow(event.skill);
 		if (info.discard != false && info.lose != false && !info.viewAs) {
 			player.discard(cards).delay = false;
@@ -8080,7 +8209,9 @@ export const Content = {
 			if (lib.skill[event.skill].audio) {
 				cardaudio = false;
 			}
-			player.logSkill(event.skill);
+			if (lib.skill[event.skill].log != false) {
+				player.logSkill(event.skill, false, null, null, [event, event.player]);
+			}
 			player.checkShow(event.skill, true);
 			if (lib.skill[event.skill].onrespond && !game.online) {
 				lib.skill[event.skill].onrespond(event, player);
@@ -8309,7 +8440,7 @@ export const Content = {
 			}
 			cards[num].fix();
 			cards[num].style.transform = "";
-			cards[num].addGaintag(event.gaintag);
+			event.gaintag.forEach(tag => cards[num].addGaintag(tag));
 			if (event.knowers) {
 				cards[num].addKnower(event.knowers); //添加事件设定的知情者。
 			}
@@ -8675,7 +8806,14 @@ export const Content = {
 			}
 			if (cards[i].gaintag && cards[i].gaintag.length) {
 				event.gaintag_map[cards[i].cardid] = cards[i].gaintag.slice(0);
-				cards[i].removeGaintag(true);
+				
+				// 临时修改（by 棘手怀念摧毁）
+				// cards[i].removeGaintag(true);
+				//仅移除非永久标记
+				const tags = cards[i].gaintag.filter(tag => !tag.startsWith("eternal_"));
+				tags.forEach(tag => cards[i].removeGaintag(tag));
+				// const tags = cardx[j].gaintag.filter(tag => !tag.startsWith("eternal_"));
+				// tags.forEach(tag => cardx[j].removeGaintag(tag));
 			}
 
 			cards[i].style.transform += " scale(0.2)";

@@ -8670,11 +8670,9 @@ game.import("character", function () {
 					var characters2 = player.getStorage("sbyingmen").slice(0);
 					characters2.removeArray(characters);
 					skills.removeArray(lib.skill.sbyingmen.getSkills(characters2, player));
-					game.broadcastAll(
-						(player, characters) => player.tempname.removeArray(characters),
-						player,
-						characters
-					);
+					if (Array.isArray(player.tempname)) {
+						game.broadcastAll((player, characters) => player.tempname.removeArray(characters), player, characters);
+					}
 					player.unmarkAuto("sbyingmen", characters);
 					_status.characterlist.addArray(characters);
 					player.removeInvisibleSkill(skills);
@@ -8882,8 +8880,7 @@ game.import("character", function () {
 					return game.filterPlayer((i) => i != player);
 				},
 				prompt: "是否发动【朝争】？",
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index === "number" ? "jsrgchaozheng" + index + ".mp3" : 2),
+				logAudio: index => (typeof index === "number" ? "jsrgchaozheng" + index + ".mp3" : 2),
 				content: function () {
 					player
 						.chooseToDebate(game.filterPlayer((i) => i != player))
@@ -8896,8 +8893,7 @@ game.import("character", function () {
 							targets = result.red.map((i) => i[0]);
 						targets.sortBySeat();
 						if (opinion && ["red", "black"].includes(opinion)) {
-							// 临时修改（by 棘手怀念摧毁）
-							// player.logSkill("jsrgchaozheng", targets, null, null, [opinion == "red" ? 3 : 4]);
+							player.logSkill("jsrgchaozheng", targets, null, null, [opinion == "red" ? 3 : 4]);
 							targets.forEach(i => i[opinion == "red" ? "recover" : "loseHp"]());
 						}
 						if (
@@ -9025,6 +9021,7 @@ game.import("character", function () {
 			},
 			jsrgjulian: {
 				audio: 4,
+				logAudio: () => ["jsrgjulian3.mp3", "jsrgjulian4.mp3"],
 				trigger: { player: "phaseJieshuBegin" },
 				filter: function (event, player) {
 					return (
@@ -9056,7 +9053,7 @@ game.import("character", function () {
 				zhuSkill: true,
 				subSkill: {
 					draw: {
-						audio: "jsrgjulian",
+						audio: ["jsrgjulian1.mp3", "jsrgjulian2.mp3"],
 						trigger: { global: "gainAfter" },
 						filter: function (event, player) {
 							var source = event.player;
@@ -9282,8 +9279,7 @@ game.import("character", function () {
 					return player.countCards("he") && event.card.name == "sha";
 				},
 				direct: true,
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: () => ["jsrgjuelie3.mp3", "jsrgjuelie4.mp3"],
+				logAudio: () => ["jsrgjuelie3.mp3", "jsrgjuelie4.mp3"],
 				content: function () {
 					"step 0";
 					player
@@ -9300,7 +9296,9 @@ game.import("character", function () {
 						})
 						.set("max", trigger.target.countDiscardableCards(player, "he"))
 						.set("goon", get.attitude(player, trigger.target) < 0)
-						.set("logSkill", ["jsrgjuelie", trigger.target]);
+						// 临时修改（by 棘手怀念摧毁）
+						.set("logSkill", ["jsrgjuelie", [trigger.target], null, null, [get.rand(3, 4)]]);
+						// .set("logSkill", ["jsrgjuelie", trigger.target]);
 					"step 1";
 					if (result.bool) {
 						var num = result.cards.length;
@@ -10674,6 +10672,7 @@ game.import("character", function () {
 							get.effect(event.player, { name: "draw" }, player, _status.event.player) / 2
 					);
 				},
+				logAudio: () => 2,
 				group: "jsrgjishan_recover",
 				content: function () {
 					"step 0";
@@ -10692,7 +10691,7 @@ game.import("character", function () {
 				ai: { expose: 0.2 },
 				subSkill: {
 					recover: {
-						audio: "jsrgjishan",
+						audio: ["jsrgjishan3.mp3", "jsrgjishan4.mp3"],
 						trigger: { source: "damageSource" },
 						filter: function (event, player) {
 							return game.hasPlayer((current) => {
@@ -10791,8 +10790,7 @@ game.import("character", function () {
 				filterTarget: function (card, player, target) {
 					return player.inRange(target);
 				},
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index === "number" ? "jsrgshelun" + index + ".mp3" : 2),
+				logAudio: index => (typeof index === "number" ? "jsrgshelun" + index + ".mp3" : 2),
 				content: function () {
 					var num = player.countCards("h");
 					var targets = game.filterPlayer((current) => {
@@ -10806,8 +10804,7 @@ game.import("character", function () {
 								var opinion = result.opinion;
 								var target = event.getParent(2).target;
 								if (opinion && ["red", "black"].includes(opinion)) {
-									// 临时修改（by 棘手怀念摧毁）
-									// player.logSkill("jsrgshelun", target, null, null, [opinion == "red" ? 3 : 4]);
+									player.logSkill("jsrgshelun", target, null, null, [opinion == "red" ? 3 : 4]);
 									if (opinion == "red") player.discardPlayerCard(target, "he", true);
 									else target.damage();
 								}
@@ -11086,6 +11083,7 @@ game.import("character", function () {
 					if (num == 0) return "你可以摸一张牌";
 					return "你可以摸一张牌并令" + get.cnNumber(num) + "名角色获得“猎”标记";
 				},
+				logAudio: () => 2,
 				content: function () {
 					"step 0";
 					player.draw();
@@ -11128,7 +11126,7 @@ game.import("character", function () {
 				},
 				subSkill: {
 					damage: {
-						audio: "jsrgzhenglve",
+						audio: ["jsrgzhenglve3.mp3", "jsrgzhenglve4.mp3"],
 						trigger: { source: "damageSource" },
 						usable: 1,
 						filter: function (event, player) {
@@ -11186,7 +11184,7 @@ game.import("character", function () {
 				},
 			},
 			jsrgpingrong: {
-				audio: 2,
+				audio: 3,
 				trigger: { global: "phaseEnd" },
 				filter: function (event, player) {
 					return (
@@ -11195,6 +11193,7 @@ game.import("character", function () {
 					);
 				},
 				direct: true,
+				logAudio: () => 2,
 				content: function () {
 					"step 0";
 					player
@@ -11211,7 +11210,7 @@ game.import("character", function () {
 					"step 1";
 					if (result.bool) {
 						const target = result.targets[0];
-						player.logSkill("jsrgpingrong", target);
+						player.logSkill("jsrgpingrong", target, null, null, [get.rand(1, 2)]);
 						player.addTempSkill("jsrgpingrong_used", "roundStart");
 						target.removeMark("jsrgzhenglve_mark", target.countMark("jsrgzhenglve_mark"));
 						player.insertPhase();
@@ -11221,7 +11220,7 @@ game.import("character", function () {
 				subSkill: {
 					used: { charlotte: true },
 					check: {
-						audio: "jsrgpingrong",
+						audio: "jsrgpingrong3.mp3",
 						trigger: { player: "phaseAfter" },
 						charlotte: true,
 						forced: true,

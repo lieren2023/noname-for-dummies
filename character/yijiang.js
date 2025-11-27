@@ -14258,7 +14258,8 @@ game.import("character", function () {
 				group: ["enyuan1", "enyuan2"],
 			},
 			enyuan1: {
-				audio: ["enyuan3.mp3", "enyuan4.mp3"],
+				audio: "enyuan",
+				logAudio: () => ["enyuan3.mp3", "enyuan4.mp3"],
 				trigger: { player: "damageEnd" },
 				forced: true,
 				sourceSkill: "enyuan",
@@ -14298,7 +14299,8 @@ game.import("character", function () {
 				},
 			},
 			enyuan2: {
-				audio: ["enyuan1.mp3", "enyuan2.mp3"],
+				audio: "enyuan",
+				logAudio: () => ["enyuan1.mp3", "enyuan2.mp3"],
 				trigger: { player: "recoverEnd" },
 				forced: true,
 				logTarget: "source",
@@ -14311,7 +14313,8 @@ game.import("character", function () {
 					event.num = trigger.num;
 					"step 1";
 					if (event.num > 0) {
-						player.logSkill("enyuan1", trigger.source);
+						// 临时修改（by 棘手怀念摧毁）
+						// player.logSkill("enyuan1", trigger.source);
 						trigger.source.draw();
 						event.num--;
 						event.redo();

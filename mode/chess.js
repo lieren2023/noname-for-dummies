@@ -5460,7 +5460,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			zhiming: {
+			zhimingx: {
 				trigger: { source: "damageBegin1" },
 				filter: function (event, player) {
 					return (
@@ -6156,8 +6156,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			lianshe: "箭舞",
 			lianshe_info:
 				"当你于一回合内首次使用【杀】时，你可以摸一张牌；你的回合内，当你使用一张不为【杀】的牌时，你令本回合内使用【杀】的次数上限+1。",
-			zhiming: "穿杨",
-			zhiming_info: "锁定技，当你使用【杀】造成伤害时，若你不在目标角色的攻击范围内，此伤害+1。",
+			zhimingx: "穿杨",
+			zhimingx_info: "锁定技，当你使用【杀】造成伤害时，若你不在目标角色的攻击范围内，此伤害+1。",
 			sanjiansheji: "散箭",
 			sanjiansheji_info:
 				"你可以将两张【杀】当做【杀】使用，你以此法使用的【杀】可以指定距离5格内的角色为目标。",
@@ -6577,7 +6577,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				// chess_xiahoudun:['male','wei',3,['']],
 				// chess_dianwei:['male','wei',3,['']],
 				// chess_xuzhu:['male','wei',3,['']],
-				chess_zhangliao: ["male", "wei", 4, ["gongji", "zhiming"]],
+				chess_zhangliao: ["male", "wei", 4, ["gongji", "zhimingx"]],
 				// chess_jiaxu:['male','wei',3,['']],
 				//
 				// chess_liubei:['male','shu',3,['']],

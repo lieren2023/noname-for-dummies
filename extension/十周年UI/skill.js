@@ -1564,7 +1564,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					game.delay();
 				}
 			},
-			audio:true,
+			audio: 5,
 			enable:"phaseUse",
 			usable:1,
 			chooseButton:{
@@ -1594,7 +1594,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				},
 				backup:function(links,player){
 					return {
-						audio:'xinfu_pingcai',
+						audio: "xinfu_pingcai1.mp3",
 						filterCard:()=>false,
 						selectCard:-1,
 						takara:links[0][2],
@@ -2163,6 +2163,213 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		// 另：若写在extension.js中，则需将shanshen:{},改为lib.skill.shanshen = {};
 
 		// 龙魂配音与技能效果一一对应
+		// 新版修改代码
+		xinlonghun: {
+			audio: 4,
+			// audio: "longhun",
+			mod: {
+				aiOrder(player, card, num) {
+					if (num <= 0 || !player.isPhaseUsing() || player.needsToDiscard() < 2) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num - 3.6;
+					}
+				},
+				aiValue(player, card, num) {
+					if (num <= 0) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num + 3.6;
+					}
+					if (suit === "club") {
+						return num + 1;
+					}
+					if (suit === "spade") {
+						return num + 1.8;
+					}
+				},
+				aiUseful(player, card, num) {
+					if (num <= 0) {
+						return num;
+					}
+					let suit = get.suit(card, player);
+					if (suit === "heart") {
+						return num + 3;
+					}
+					if (suit === "club") {
+						return num + 1;
+					}
+					if (suit === "spade") {
+						return num + 1;
+					}
+				},
+			},
+			locked: false,
+			enable: ["chooseToUse", "chooseToRespond"],
+			prompt: "将一张♠手牌当做【无懈可击】，♣手牌当做【闪】，♥手牌当做【桃】，将♦手牌当做火【杀】使用或打出",
+			// prompt: "将♦手牌当做火【杀】，♥手牌当做【桃】，♣手牌当做【闪】，♠手牌当做【无懈可击】使用或打出",
+			viewAs(cards, player) {
+				if (cards.length) {
+					var name = false,
+						nature = null;
+					switch (get.suit(cards[0], player)) {
+						case "club":
+							name = "shan";
+							break;
+						case "diamond":
+							name = "sha";
+							nature = "fire";
+							break;
+						case "spade":
+							name = "wuxie";
+							break;
+						case "heart":
+							name = "tao";
+							break;
+					}
+					if (name) {
+						return { name: name, nature: nature };
+					}
+				}
+				return null;
+			},
+			check(card) {
+				var player = _status.event.player;
+				if (_status.event.type == "phase") {
+					var max = 0;
+					var name2;
+					var list = ["sha", "tao"];
+					var map = { sha: "diamond", tao: "heart" };
+					for (var i = 0; i < list.length; i++) {
+						var name = list[i];
+						if (
+							player.countCards("hs", function (card) {
+								return (name != "sha" || get.value(card) < 5) && get.suit(card, player) == map[name];
+							}) > 0 &&
+							player.getUseValue({ name: name, nature: name == "sha" ? "fire" : null }) > 0
+						) {
+							var temp = get.order({ name: name, nature: name == "sha" ? "fire" : null });
+							if (temp > max) {
+								max = temp;
+								name2 = map[name];
+							}
+						}
+					}
+					if (name2 == get.suit(card, player)) {
+						return name2 == "diamond" ? 5 - get.value(card) : 20 - get.value(card);
+					}
+					return 0;
+				}
+				return 1;
+			},
+			position: "hs",
+			filterCard(card, player, event) {
+				event = event || _status.event;
+				var filter = event._backup.filterCard;
+				var name = get.suit(card, player);
+				if (name == "club" && filter({ name: "shan", cards: [card] }, player, event)) {
+					return true;
+				}
+				if (name == "diamond" && filter({ name: "sha", cards: [card], nature: "fire" }, player, event)) {
+					return true;
+				}
+				if (name == "spade" && filter({ name: "wuxie", cards: [card] }, player, event)) {
+					return true;
+				}
+				if (name == "heart" && filter({ name: "tao", cards: [card] }, player, event)) {
+					return true;
+				}
+				return false;
+			},
+			filter(event, player) {
+				var filter = event.filterCard;
+				if (filter(get.autoViewAs({ name: "sha", nature: "fire" }, "unsure"), player, event) && player.countCards("hs", { suit: "diamond" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "shan" }, "unsure"), player, event) && player.countCards("hs", { suit: "club" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "tao" }, "unsure"), player, event) && player.countCards("hs", { suit: "heart" })) {
+					return true;
+				}
+				if (filter(get.autoViewAs({ name: "wuxie" }, "unsure"), player, event) && player.countCards("hs", { suit: "spade" })) {
+					return true;
+				}
+				return false;
+			},
+			logAudio(event, player) {
+				return "xinlonghun" + (4 - ["diamond", "heart", "club", "spade"].indexOf(get.suit(event.cards[0], player))) + ".ogg";
+				// return "longhun" + (4 - lib.suit.indexOf(get.suit(event.cards[0], player))) + ".mp3";
+			},
+			ai: {
+				respondSha: true,
+				respondShan: true,
+				skillTagFilter(player, tag) {
+					var name;
+					switch (tag) {
+						case "respondSha":
+							name = "diamond";
+							break;
+						case "respondShan":
+							name = "club";
+							break;
+						case "save":
+							name = "heart";
+							break;
+					}
+					if (!player.countCards("hs", { suit: name })) {
+						return false;
+					}
+				},
+				order(item, player) {
+					if (player && _status.event.type == "phase") {
+						var max = 0;
+						var list = ["sha", "tao"];
+						var map = { sha: "diamond", tao: "heart" };
+						for (var i = 0; i < list.length; i++) {
+							var name = list[i];
+							if (
+								player.countCards("hs", function (card) {
+									return (name != "sha" || get.value(card) < 5) && get.suit(card, player) == map[name];
+								}) > 0 &&
+								player.getUseValue({
+									name: name,
+									nature: name == "sha" ? "fire" : null,
+								}) > 0
+							) {
+								var temp = get.order({
+									name: name,
+									nature: name == "sha" ? "fire" : null,
+								});
+								if (temp > max) {
+									max = temp;
+								}
+							}
+						}
+						max /= 1.1;
+						return max;
+					}
+					return 2;
+				},
+			},
+			hiddenCard(player, name) {
+				if (name == "wuxie" && _status.connectMode && player.countCards("hs") > 0) {
+					return true;
+				}
+				if (name == "wuxie") {
+					return player.countCards("hs", { suit: "spade" }) > 0;
+				}
+				if (name == "tao") {
+					return player.countCards("hs", { suit: "heart" }) > 0;
+				}
+			},
+		},
+		// 旧版修改代码（资料卡无法试听配音）
+		/*
 		xinlonghun:{
 			audio:true,
 			mod: {
@@ -2340,6 +2547,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				}
 			}
 		},
+		*/
 		
 		// 修复于吉、旧于吉蛊惑牌跑到左上角的bug
 		guhuo_guess: {
@@ -3933,9 +4141,10 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		
 		// 临时删除谋弈提示，等对策加提示后加回
 		sbtieji: {
-			audio: 1,
+			audio: ["sbtieji1.mp3", "sbtieji_true1.mp3", "sbtieji_true2.mp3", "sbtieji_false.mp3"],
 			trigger: { player: "useCardToPlayered" },
 			logTarget: "target",
+			logAudio: () => "sbtieji1.mp3",
 			filter: function (event, player) {
 				return player != event.target && event.card.name == "sha" && event.target.isIn();
 			},
@@ -3995,9 +4204,10 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 			},
 		},
 		sbduanliang: {
-			audio: 1,
+			audio: ["sbduanliang1.mp3", "sbduanliang_true1.mp3", "sbduanliang_true2.mp3", "sbduanliang_false.mp3"],
 			enable: "phaseUse",
 			usable: 1,
+			logAudio: () => "sbduanliang1.mp3",
 			filterTarget: lib.filter.notMe,
 			content: function () {
 				"step 0";

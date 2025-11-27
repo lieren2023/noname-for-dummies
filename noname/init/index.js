@@ -972,6 +972,53 @@ async function setOnError() {
 		if (promiseErrorHandler.onHandle) await promiseErrorHandler.onHandle(event);
 	};
 
+// 将报错函数window.onerror改回旧版（临时修复电脑版懒人包不弹窗提醒及控制台无限报错的问题）
+	window.onerror=function(msg, src, line, column, err){
+		var str=msg;
+		if(_status&&_status.event){
+			var evt=_status.event;
+			str+=('\n'+evt.name+': '+evt.step);
+			if(evt.parent) str+='\n'+evt.parent.name+': '+evt.parent.step;
+			if(evt.parent&&evt.parent.parent) str+='\n'+evt.parent.parent.name+': '+evt.parent.parent.step;
+			if(evt.player||evt.target||evt.source||evt.skill||evt.card){
+				str+='\n-------------'
+			}
+			if(evt.player){
+				str+='\nplayer: ' + evt.player.name;
+			}
+			if(evt.target){
+				str+='\ntarget: ' + evt.target.name;
+			}
+			if(evt.source){
+				str+='\nsource: ' + evt.source.name;
+			}
+			if(evt.skill){
+				str+='\nskill: ' + evt.skill.name;
+			}
+			if(evt.card){
+				str+='\ncard: ' + evt.card.name;
+			}
+		}
+		str+='\n-------------';
+		// 临时修改（by 棘手怀念摧毁）
+		str+='\n行号: '+line;
+		str+='\n列号: '+column;
+		// str+='\n'+line;
+		// str+='\n'+column;
+		if(err&&err.stack) str+='\n'+decodeURI(err.stack);
+		alert(str);
+		window.ea=Array.from(arguments);
+		window.em=msg;
+		window.el=line;
+		window.ec=column;
+		window.eo=err;
+		game.print(str);
+		if(!lib.config.errstop){
+			_status.withError=true;
+			game.loop();
+		}
+	};
+/*
 	window.onerror = function (msg, src, line, column, err) {
 		if (promiseErrorHandler.onErrorPrepare) promiseErrorHandler.onErrorPrepare();
 		const winPath = window.__dirname
@@ -1114,6 +1161,7 @@ async function setOnError() {
 			game.loop();
 		}
 	};
+*/
 
 	return promiseErrorHandler;
 }

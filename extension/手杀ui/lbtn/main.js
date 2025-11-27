@@ -188,6 +188,25 @@ ui.click.menubut = function() {
             }
             
             if (this.parentNode.custom) {
+				// 修复攻守进退（最终）取消后按钮消失的bug
+				if (this.link === 'cancel') {
+					if (window.confirmskills2) {
+						if (_status.event.skill && _status.event.skill !== confirm.dataset.skill) {
+							confirm.dataset.skill = _status.event.skill;
+							window.confirmskills2.forEach(function (item) {
+							item.remove();
+							});
+							ui.updatec();
+						} else if (!_status.event.skill && confirm.dataset.skill) {
+							delete confirm.dataset.skill;
+							window.confirmskills2.forEach(function (item) {
+							confirm.insertBefore(item, confirm.firstChild);
+							});
+							ui.updatec();
+						}
+					}
+				}
+				
               this.parentNode.custom(this.link, this);
             }
           });
@@ -207,7 +226,7 @@ ui.click.menubut = function() {
 		
         // if (ui.skills2 && ui.skills2.skills.length) {
           // var skills = ui.skills2.skills;
-          confirm.skills2 = [];
+          window.confirmskills2 = [];
           for (var i = 0; i < skills.length; i++) {
             var item = document.createElement('div');
             item.link = skills[i];
@@ -217,8 +236,9 @@ ui.click.menubut = function() {
               ui.click.skill(this.link);
             });
             
-            item.dataset.type = 'skill2';/*
-                         if(ui.updateSkillControl)   ui.updateSkillControl(game.me, true);*/
+            item.dataset.type = 'skill2';
+			window.confirmskills2.push(item);
+			/*if(ui.updateSkillControl)   ui.updateSkillControl(game.me, true);*/
             confirm.insertBefore(item, confirm.firstChild);
           }
         }
@@ -229,16 +249,16 @@ ui.click.menubut = function() {
 				_status.event.endButton.close();
 				// delete event.endButton;
 			}
-          if (confirm.skills2) {
+          if (window.confirmskills2) {
             if (_status.event.skill && _status.event.skill !== confirm.dataset.skill) {
               confirm.dataset.skill = _status.event.skill;
-              confirm.skills2.forEach(function (item) {
+              window.confirmskills2.forEach(function (item) {
                 item.remove();
               });
               ui.updatec();
             } else if (!_status.event.skill && confirm.dataset.skill) {
               delete confirm.dataset.skill;
-              confirm.skills2.forEach(function (item) {
+              window.confirmskills2.forEach(function (item) {
                 confirm.insertBefore(item, confirm.firstChild);
               });
               ui.updatec();

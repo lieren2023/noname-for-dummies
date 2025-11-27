@@ -443,7 +443,8 @@ game.import("character", function () {
 				async content(event, trigger, player) {
 					await player.useSkill("stdwufei", event.targets);
 				},
-				derivation: "stdwufei",
+				// 临时修改（by 棘手怀念摧毁）
+				// derivation: "stdwufei",
 			},
 			//贾逵
 			stdzhongzuo: {

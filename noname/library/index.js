@@ -14451,6 +14451,13 @@ export class Library {
 			},
 		],
 		[
+			"礼",
+			{
+				color: "#f0cf13",
+				nature: "shenmm",
+			}
+		],
+		[
 			"TW",
 			{
 				getSpan: () => {
@@ -14940,6 +14947,20 @@ export class Library {
 			},
 		],
 		[
+			"PE",
+			{
+				getSpan: () => {
+					const span = document.createElement("span"),
+						style = span.style;
+					style.writingMode = style.webkitWritingMode = "horizontal-tb";
+					style.fontFamily = "MotoyaLMaru";
+					style.transform = "scaleY(0.85)";
+					span.textContent = "PE";
+					return span.outerHTML;
+				},
+			},
+		],
+		[
 			"智将",
 			{
 				showName: "智",
@@ -14991,6 +15012,14 @@ export class Library {
 			},
 		],
 		[
+			"文心雕龙",
+			{
+				showName: "文",
+				color: "#ffffff",
+				nature: "firemm",
+			},
+		],
+		[
 			"26",
 			{
 				getSpan: () => {
@@ -15006,6 +15035,15 @@ export class Library {
 		],
 		
 		// 补充by棘手怀念摧毁
+		[
+			"26神",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("26")}${get.prefixSpan("神")}`,
+			},
+		],
 		[
 			"极略神",
 			{

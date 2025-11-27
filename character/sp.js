@@ -2072,9 +2072,7 @@ game.import("character", function () {
 							return player.getExpansions("olxvfa").length;
 						});
 						dialog.add([list, "textbutton"]);
-						// 临时修改（by 棘手怀念摧毁）
-						if (list.length == 1 && lib.device) dialog.direct = true;
-						// if (list.length == 1) dialog.direct = true;
+						if (list.length == 1) dialog.direct = true;
 						return dialog;
 					},
 					filter(button, player) {
@@ -20716,6 +20714,7 @@ game.import("character", function () {
 					return game.hasPlayer(current => current != player) && (event.name != "phase" || game.phaseNumber == 0);
 				},
 				audio: 6,
+				logAudio: () => 2,
 				content: function () {
 					"step 0";
 					player
@@ -20763,6 +20762,12 @@ game.import("character", function () {
 					if (event.player.isDead() || !player.storage.xianfu2 || !player.storage.xianfu2.includes(event.player) || event.num <= 0) return false;
 					if (event.name == "damage") return true;
 					return player.isDamaged();
+				},
+				logAudio(event, player) {
+					if (event.name == "damage") {
+						return ["xianfu5.mp3", "xianfu6.mp3"];
+					}
+					return ["xianfu3.mp3", "xianfu4.mp3"];
 				},
 				logTarget: "player",
 				content: function () {

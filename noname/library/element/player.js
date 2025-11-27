@@ -3860,20 +3860,22 @@ export class Player extends HTMLDivElement {
 		if (typeof arg1 != "string") {
 			arg1 = "h";
 		}
-		const getCardName = (card) => {
+		const getCardName = card => {
 			if (card.parentNode == this.node.judges) {
-				if (card.viewAs) return card.viewAs;
+				if (card.viewAs) {
+					return card.viewAs;
+				}
 			}
 			return get.name(card);
 		};
-		let filter;
+		let filter = card => true;
 		if (arg2) {
 			if (typeof arg2 == "string") {
-				filter = (card) => getCardName(card) == arg2;
+				filter = card => getCardName(card) == arg2;
 			} else if (Array.isArray(arg2)) {
-				filter = (card) => arg2.includes(getCardName(card));
+				filter = card => arg2.includes(getCardName(card));
 			} else if (typeof arg2 == "object") {
-				filter = (card) => {
+				filter = card => {
 					for (let j in arg2) {
 						var value;
 						if (j == "type" || j == "subtype" || j == "color" || j == "suit" || j == "number") {
@@ -3883,10 +3885,7 @@ export class Player extends HTMLDivElement {
 						} else {
 							value = card[j];
 						}
-						if (
-							(typeof arg2[j] == "string" && value != arg2[j]) ||
-							(Array.isArray(arg2[j]) && !arg2[j].includes(value))
-						) {
+						if ((typeof arg2[j] == "string" && value != arg2[j]) || (Array.isArray(arg2[j]) && !arg2[j].includes(value))) {
 							return false;
 						}
 					}
@@ -3895,48 +3894,29 @@ export class Player extends HTMLDivElement {
 			} else if (typeof arg2 == "function") {
 				filter = arg2;
 			}
-		} else {
-			filter = (card) => true;
 		}
 		for (let i = 0; i < arg1.length; i++) {
 			if (arg1[i] == "h") {
 				for (let card of get.iterableChildNodes(this.node.handcards1, this.node.handcards2)) {
-					if (
-						!card.classList.contains("removing") &&
-						!card.classList.contains("glows") &&
-						filter(card)
-					) {
+					if (!card.classList.contains("removing") && !card.classList.contains("glows") && filter(card)) {
 						yield card;
 					}
 				}
 			} else if (arg1[i] == "s") {
 				for (let card of get.iterableChildNodes(this.node.handcards1, this.node.handcards2)) {
-					if (
-						!card.classList.contains("removing") &&
-						card.classList.contains("glows") &&
-						filter(card)
-					) {
+					if (!card.classList.contains("removing") && card.classList.contains("glows") && filter(card)) {
 						yield card;
 					}
 				}
 			} else if (arg1[i] == "e") {
 				for (let card of get.iterableChildNodes(this.node.equips)) {
-					if (
-						!card.classList.contains("removing") &&
-						!card.classList.contains("feichu") &&
-						!card.classList.contains("emptyequip") &&
-						filter(card)
-					) {
+					if (!card.classList.contains("removing") && !card.classList.contains("feichu") && !card.classList.contains("emptyequip") && filter(card)) {
 						yield card;
 					}
 				}
 			} else if (arg1[i] == "j") {
 				for (let card of get.iterableChildNodes(this.node.judges)) {
-					if (
-						!card.classList.contains("removing") &&
-						!card.classList.contains("feichu") &&
-						filter(card)
-					) {
+					if (!card.classList.contains("removing") && !card.classList.contains("feichu") && filter(card)) {
 						yield card;
 					}
 				}
@@ -4667,7 +4647,7 @@ export class Player extends HTMLDivElement {
 			}
 		}
 		if (next.isMine() == false && next.dialog) next.dialog.style.display = "none";
-		if (next.filterCard == undefined) next.filterCard = lib.filter.all;
+		if (next.filterCard == undefined) next.filterCard = lib.filter.cardDiscardable;
 		if (next.selectCard == undefined) next.selectCard = [1, 1];
 		if (next.ai == undefined) next.ai = get.unuseful;
 		next.autochoose = function () {
@@ -11032,6 +11012,113 @@ export class Player extends HTMLDivElement {
 				}
 			}
 		}
+	}
+	$addVirtualEquip(card, cards) {
+		if (game.online) {
+			return;
+		}
+		const player = this;
+		const isViewAsCard = cards.length !== 1 || cards[0].name !== card.name || !card.isCard,
+			info = get.info(card, false);
+		let cardShownName = get.translation(card.name);
+		if (info.subtype === "equip3") {
+			cardShownName += "+";
+		} else if (info.subtype === "equip4") {
+			cardShownName += "-";
+		}
+		let cardx;
+		if (get.itemtype(card) == "card" && card.isViewAsCard) {
+			cardx = card;
+		} else {
+			cardx = isViewAsCard ? game.createCard(card.name, cards.length == 1 ? get.suit(cards[0]) : "none", cards.length == 1 ? get.number(cards[0]) : 0) : cards[0];
+		}
+		game.broadcastAll(
+			(player, cardx, isViewAsCard, card, cards, cardShownName) => {
+				cardx.fix();
+				if (!cardx.isViewAsCard) {
+					const cardSymbol = Symbol("card");
+					cardx.cardSymbol = cardSymbol;
+					cardx[cardSymbol] = card;
+				}
+				if (card.subtypes) {
+					cardx.subtypes = card.subtypes;
+				}
+				cardx.style.transform = "";
+				cardx.classList.remove("drawinghidden");
+				delete cardx._transform;
+				if (isViewAsCard && !cardx.isViewAsCard) {
+					cardx.isViewAsCard = true;
+					cardx.destroyLog = false;
+					for (let i of cards) {
+						i.goto(ui.special);
+						i.destiny = player.node.equips;
+					}
+					if (cardx.destroyed) {
+						cardx._destroyed_Virtua = cardx.destroyed;
+					}
+					cardx.destroyed = function (card, id, player, event) {
+						if (card._destroyed_Virtua) {
+							if (typeof card._destroyed_Virtua == "function") {
+								let bool = card._destroyed_Virtua(card, id, player, event);
+								if (bool === true) {
+									return true;
+								}
+							} else if (lib.skill[card._destroyed_Virtua]) {
+								if (player) {
+									if (player.hasSkill(card._destroyed_Virtua)) {
+										delete card._destroyed_Virtua;
+										return false;
+									}
+								}
+								return true;
+							} else if (typeof card._destroyed_Virtua == "string") {
+								return card._destroyed_Virtua == id;
+							} else if (card._destroyed_Virtua === true) {
+								return true;
+							}
+						}
+						if (id != "equip") {
+							return true;
+						}
+					};
+				}
+				const suit = get.translation(cardx.suit),
+					number = get.strNumber(cardx.number);
+				if (isViewAsCard) {
+					cardx.cards = cards || [];
+					cardx.viewAs = card.name;
+					cardx.node.name2.innerHTML = `${suit}${number} [${cardShownName}]`;
+					cardx.classList.add("fakeequip");
+				} else {
+					delete cardx.viewAs;
+					cardx.node.name2.innerHTML = `${suit}${number} ${cardShownName}`;
+					cardx.classList.remove("fakeequip");
+				}
+				let equipped = false,
+					equipNum = get.equipNum(cardx);
+				if (player.node.equips.childNodes.length) {
+					for (let i = 0; i < player.node.equips.childNodes.length; i++) {
+						if (get.equipNum(player.node.equips.childNodes[i]) >= equipNum) {
+							equipped = true;
+							player.node.equips.insertBefore(cardx, player.node.equips.childNodes[i]);
+							break;
+						}
+					}
+				}
+				if (equipped === false) {
+					player.node.equips.appendChild(cardx);
+					if (cards?.length && _status.discarded) {
+						_status.discarded.removeArray(cards);
+					}
+				}
+			},
+			player,
+			cardx,
+			isViewAsCard,
+			card,
+			cards,
+			cardShownName
+		);
 	}
 	$equip(card) {
 		game.broadcast(

@@ -339,6 +339,51 @@ content:function(config, pack){
 		return card;
 	};
 	
+	// 查看牌堆卡牌的显示美化
+	// 修改noname\ui\click的函数cardPileButton() {
+	ui.click.cardPileButton=function() {
+		var uiintro = ui.create.dialog("hidden");
+		uiintro.listen(function (e) {
+			e.stopPropagation();
+		});
+		var num;
+		if (game.online) {
+			num = _status.cardPileNum || 0;
+		} else {
+			num = ui.cardPile.childNodes.length;
+		}
+		uiintro.add('剩余 <span style="font-family:' + "xinwei" + '">' + num);
+
+		if (_status.connectMode) return uiintro;
+		uiintro.add(
+			'<div class="text center">轮数 <span style="font-family:xinwei">' +
+				game.roundNumber +
+				'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">' +
+				game.shuffleNumber +
+				"</div>"
+		);
+		uiintro.add('<div class="text center">弃牌堆</div>');
+		if (ui.discardPile.childNodes.length) {
+			var list = [];
+			for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
+				// 修改（与菜单卡牌的显示美化一样）
+				var cardx = ui.discardPile.childNodes[i];
+				var copy = game.createCard2(cardx.name, cardx.suit, cardx.number, cardx.nature);
+				copy.classList.add('menusize');
+				copy.node.suitnum.classList.add('menusizex');
+				copy.node.image.classList.add('menusize');
+				copy.$name.classList.add('menusize');
+				list.unshift(copy);
+				
+				// list.unshift(ui.discardPile.childNodes[i]);
+			}
+			uiintro.addSmall([list, "card"]);
+		} else {
+			uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+		}
+		return uiintro;
+	};
+	
 	// 对策、谋弈美化
 	if(lib.config['extension_十周年UI_cardPrettify']){
 		lib.element.content.chooseToDuiben = function () {
@@ -446,6 +491,10 @@ content:function(config, pack){
 			game.addVideo('throwEmotion',this,[target.dataset.position,name]);
 			var getLeft=function(player){
 				if(player==game.me&&!ui.fakeme&&!ui.chess) return player.getLeft()+player.node.avatar.offsetWidth/2;
+				
+				// 出牌记录栏靠左显示修复
+				if (lib.config.show_history == "left") return player.getLeft()+player.offsetWidth/2+50;
+				
 				return player.getLeft()+player.offsetWidth/2;
 			};
 			var player=this;
@@ -481,6 +530,90 @@ content:function(config, pack){
 			var player=lib.playerOL[this.id];
 			if(player){
 				player.throwEmotion(target,emotion);
+			}
+		};
+	}else{
+		// 新版noname\library\element\player.js、noname\library\index.js
+		/**
+		 * @param { Player } target
+		 * @param { string } name
+		 * @param {*} rotate
+		 */
+		lib.element.player.$throwEmotion = function(target, name, rotate) {
+			game.addVideo("throwEmotion", this, [target.dataset.position, name]);
+			var getLeft = function (player) {
+				if (player == game.me && !ui.fakeme && !ui.chess)
+					return player.getLeft() + player.node.avatar.offsetWidth / 2;
+				
+				// 出牌记录栏靠左显示修复
+				if (lib.config.show_history == "left") return player.getLeft() + player.offsetWidth / 2 +50;
+				
+				return player.getLeft() + player.offsetWidth / 2;
+			};
+			var player = this;
+			var emotion = ui.create.div(
+				"",
+				'<div style="text-align:center"> <img src="' +
+					lib.assetURL +
+					"image/emotion/throw_emotion/" +
+					name +
+					'1.png"> </div>',
+				game.chess ? ui.chess : ui.window
+			);
+			emotion.style.width = "60px";
+			emotion.style.height = "60px";
+			var width = emotion.offsetWidth / 2;
+			var height = emotion.offsetHeight / 2;
+			if (game.chess) width += 60;
+			var left = getLeft(player) - width;
+			var top = player.getTop() + player.offsetHeight / 3 - height;
+			emotion.style.left = left + "px";
+			emotion.style.top = top + "px";
+			var left2 = getLeft(target) - width;
+			var top2 = target.getTop() + target.offsetHeight / 3 - height;
+			if (["egg", "flower", "shoe"].includes(name) || rotate) {
+				var num1 = 0.95 + Math.random() * (1.1 - 0.95);
+				var num2 = 1 + Math.random() * (3 - 1);
+				var left2 = getLeft(target) / num1 - width;
+				var top2 = target.getTop() + target.offsetHeight / num2 - height;
+			} else {
+				var left2 = getLeft(target) - width;
+				var top2 = target.getTop() + target.offsetHeight / 3 - height;
+			}
+			emotion.style["z-index"] = 10;
+			emotion.style.transform = "translateY(" + (top2 - top) + "px) translateX(" + (left2 - left) + "px)";
+			// @ts-ignore
+			if (["egg", "flower", "shoe"].includes(name) || rotate)
+				emotion.firstElementChild.style.transform = "rotate(1440deg)";
+			if (lib.config.background_audio) game.playAudio("effect", "throw_" + name + get.rand(1, 2));
+			setTimeout(function () {
+				emotion.innerHTML =
+					'<div style="text-align:center"> <img src="' +
+					lib.assetURL +
+					"image/emotion/throw_emotion/" +
+					name +
+					'2.png"> </div>';
+				setTimeout(function () {
+					emotion.delete();
+				}, 1200);
+			}, 600);
+		};
+		lib.element.player.throwEmotion = function(target, emotion, rotate) {
+			game.broadcastAll(
+				function (player, target, emotion, rotate) {
+					player.$throwEmotion(target, emotion, rotate);
+				},
+				this,
+				target,
+				emotion,
+				rotate
+			);
+		};
+		lib.message.server.throwEmotion = function (target, emotion, rotate) {
+			if (lib.node.observing.includes(this)) return;
+			var player = lib.playerOL[this.id];
+			if (player) {
+				player.throwEmotion(target, emotion, rotate);
 			}
 		};
 	}
@@ -592,6 +725,42 @@ content:function(config, pack){
 			style.transform = 'scaleY(0.85)';
 			style.paddingLeft = '0.1px';
 			span.textContent = 'TW';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('PE');
+	lib.namePrefix.set('PE',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = 'PE';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('ddd');
+	lib.namePrefix.set('ddd',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = '3D';
+			return span.outerHTML;
+		},
+	});
+	lib.namePrefix.delete('26');
+	lib.namePrefix.set('26',{
+		getSpan: () => {
+			const span = document.createElement('span'), style = span.style;
+			style.writingMode = style.webkitWritingMode = 'horizontal-tb';
+			style.fontFamily = 'MotoyaLMaru';
+			style.transform = 'scaleY(0.85)';
+			style.paddingLeft = '0.1px';
+			span.textContent = '26';
 			return span.outerHTML;
 		},
 	});
@@ -7459,6 +7628,147 @@ content:function(config, pack){
 		};
 	}
 	
+	// 斗地主-智斗叫地主界面卡牌的显示美化
+	if(lib.config.mode=='doudizhu'){
+		game.chooseCharacterZhidou = function () {
+			var next = game.createEvent("chooseCharacter");
+			next.setContent(function () {
+				"step 0";
+				game.no_continue_game = true;
+				lib.init.onfree();
+				"step 1";
+				ui.arena.classList.add("choose-character");
+				var i;
+				var groups = [];
+				event.list = [];
+				event.map = {};
+				var chara = get.config("character_online") || lib.characterOnline;
+				for (i in chara) {
+					var list = chara[i];
+					for (var j = 0; j < list.length; j++) {
+						if (
+							!lib.character[list[j]] ||
+							(i == "key" && lib.filter.characterDisabled(list[j]))
+						)
+							list.splice(j--, 1);
+					}
+					if (list.length >= 3) {
+						groups.push(i);
+						event.list.addArray(list);
+					}
+				}
+				event.list.randomSort();
+				_status.characterlist = event.list.slice(0);
+				event.controls = ["不叫地主", "一倍", "两倍", "三倍"];
+				for (var player of game.players) {
+					var id = player.playerid;
+					player._group = groups.randomRemove(1)[0];
+					event.map[id] = chara[player._group].randomGets(4);
+					
+					// 修改
+					// player.storage.doudizhu_cardPile = get.cards(20).sort(function (a, b) {
+						// if (a.name != b.name) return lib.sort.card(a.name, b.name);
+						// else if (a.suit != b.suit) return lib.suit.indexOf(a) - lib.suit.indexOf(b);
+						// else return a.number - b.number;
+					// });
+					player.storage.doudizhu_cardPile = get.cards(20);
+					player.storage.doudizhu_cardPile_copy = [];
+					for (var i = 0; i < player.storage.doudizhu_cardPile.length; i++) {
+						// 修改（与菜单卡牌的显示美化一样）
+						var cardx = player.storage.doudizhu_cardPile[i];
+						var copy = game.createCard2(cardx.name, cardx.suit, cardx.number, cardx.nature);
+						copy.classList.add('menusize');
+						copy.node.suitnum.classList.add('menusizex');
+						player.storage.doudizhu_cardPile_copy.unshift(copy);
+					}
+					player.storage.doudizhu_cardPile_copy.sort(function (a, b) {
+						if (a.name != b.name) return lib.sort.card(a.name, b.name);
+						else if (a.suit != b.suit) return lib.suit.indexOf(a) - lib.suit.indexOf(b);
+						else return a.number - b.number;
+					});
+				}
+				event.dialog = ui.create.dialog(
+					"你的选将框与底牌",
+					[event.map[game.me.playerid], "character"],
+					// 修改
+					game.me.storage.doudizhu_cardPile_copy
+					// game.me.storage.doudizhu_cardPile
+				);
+				event.start = game.players.randomGet();
+				event.current = event.start;
+				game.delay(7);
+				"step 2";
+				event.current.classList.add("glow_phase");
+				if (event.current == game.me) event.dialog.content.firstChild.innerHTML = "是否叫地主？";
+				else {
+					event.dialog.content.firstChild.innerHTML = "请等待其他玩家叫地主";
+					game.delay(2);
+				}
+				event.current.chooseControl(event.controls).set("ai", function () {
+					return _status.event.getParent().controls.randomGet();
+				});
+				"step 3";
+				event.current.classList.remove("glow_phase");
+				event.current._control = result.control;
+				event.current.chat(result.control);
+				if (result.control == "三倍") {
+					game.bonusNum = 3;
+					game.zhu = event.current;
+					return;
+				} else if (result.control != "不叫地主") {
+					event.controls.splice(1, event.controls.indexOf(result.control));
+					event.tempDizhu = event.current;
+					if (result.control == "二倍") game.bonusNum = 2;
+				}
+				event.current = event.current.next;
+				if (
+					event.current == event.start &&
+					(event.start == event.tempDizhu || event.start._control == "不叫地主")
+				) {
+					game.zhu = event.tempDizhu || event.start.previous;
+				} else if (event.current == event.start.next && event.current._control) {
+					game.zhu = event.tempDizhu;
+				} else event.goto(2);
+				if (event.current == event.start.previous && !event.tempDizhu)
+					event.controls.remove("不叫地主");
+				"step 4";
+				game.updateRoundNumber();
+				for (var player of game.players) {
+					player.identity = player == game.zhu ? "zhu" : "fan";
+					player.showIdentity();
+				}
+				event.dialog.content.firstChild.innerHTML =
+					"请选择" + get.cnNumber(game.me == game.zhu ? 2 : 1) + "张武将牌";
+				game.me
+					.chooseButton(event.dialog, true, game.me == game.zhu ? 2 : 1)
+					.set("filterButton", function (button) {
+						return typeof button.link == "string";
+					});
+				"step 5";
+				game.me.init(result.links[0], result.links[1]);
+				for (var player of game.players) {
+					if (player != game.me) {
+						if (player == game.zhu) {
+							var list = event.map[player.playerid].randomGets(2);
+							player.init(list[0], list[1]);
+						} else player.init(event.map[player.playerid].randomGet());
+					}
+					player.markSkill("doudizhu_cardPile");
+				}
+				game.zhu.hp = 4;
+				game.zhu.maxHp = 4;
+				game.zhu.update();
+				for (var i = 0; i < game.players.length; i++) {
+					_status.characterlist.remove(game.players[i].name1);
+					_status.characterlist.remove(game.players[i].name2);
+				}
+				setTimeout(function () {
+					ui.arena.classList.remove("choose-character");
+				}, 500);
+			});
+		};
+	}
+	
 	// 神贾诩限制使用修改
 	lib.characterFilter.le_shen_jiaxu=function(mode){
 		if(lib.config.extensions && lib.config.extensions.contains('搬运自用') && lib.config['extension_搬运自用_enable']){
@@ -8057,11 +8367,169 @@ content:function(config, pack){
 			return audio;
 		};
 		
+		// 跟进新版本体logAudio属性及logSkill修改
+		// 修改noname\library\element\player.js的函数，以及修改game.trySkillAudio
+		/**
+		 * @param { string | string[] } name 
+		 * @param { Player | Player[] } [targets] 
+		 * @param { boolean | string } [nature] 
+		 * @param { boolean } [logv] 
+		 */
+		lib.element.player.logSkill=function(name, targets, nature, logv, args) {
+			if (get.itemtype(targets) == "player") targets = [targets];
+			var nopop = false;
+			var popname = name;
+			if (Array.isArray(name)) {
+				popname = name[1];
+				name = name[0];
+			}
+			var checkShow = this.checkShow(name);
+			if (lib.translate[name]) {
+				this.trySkillAnimate(name, popname, checkShow);
+				if (Array.isArray(targets) && targets.length) {
+					var str;
+					if (targets[0] == this) {
+						str = "#b自己";
+						if (targets.length > 1) {
+							str += "、";
+							str += get.translation(targets.slice(1));
+						}
+					} else str = targets;
+					game.log(this, "对", str, "发动了", "【" + get.skillTranslation(name, this) + "】");
+				} else {
+					game.log(this, "发动了", "【" + get.skillTranslation(name, this) + "】");
+				}
+			}
+			if (nature != false) {
+				if (nature === undefined) {
+					nature = "green";
+				}
+				this.line(targets, nature);
+			}
+			var info = lib.skill[name];
+			if (
+				info &&
+				info.ai &&
+				info.ai.expose != undefined &&
+				this.logAi &&
+				(!targets || targets.length != 1 || targets[0] != this)
+			) {
+				this.logAi(lib.skill[name].ai.expose);
+			}
+			if (info && info.round) {
+				var roundname = name + "_roundcount";
+				this.storage[roundname] = game.roundNumber;
+				this.syncStorage(roundname);
+				this.markSkill(roundname);
+			}
+			
+			// 修改
+			game.trySkillAudio(name, this, true, null, null, args);
+			// game.trySkillAudio(name, this, true);
+			
+			if (game.chess) {
+				this.chessFocus();
+			}
+			if (logv === true) {
+				game.logv(this, name, targets, null, true);
+			} else if (info && info.logv !== false) {
+				game.logv(this, name, targets);
+			}
+			if (info) {
+				var player = this;
+				var players = player.getSkills(false, false, false);
+				var equips = player.getSkills("e");
+				var global = lib.skill.global.slice(0);
+				var logInfo = {
+					skill: name,
+					targets: targets,
+					event: _status.event,
+				};
+				if (info.sourceSkill) {
+					logInfo.sourceSkill = info.sourceSkill;
+					if (global.includes(info.sourceSkill)) {
+						logInfo.type = "global";
+					} else if (players.includes(info.sourceSkill)) {
+						logInfo.type = "player";
+					} else if (equips.includes(info.sourceSkill)) {
+						logInfo.type = "equip";
+					}
+				} else {
+					if (global.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "global";
+					} else if (players.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "player";
+					} else if (equips.includes(name)) {
+						logInfo.sourceSkill = name;
+						logInfo.type = "equip";
+					} else {
+						var bool = false;
+						for (var i of players) {
+							var expand = [i];
+							game.expandSkills(expand);
+							if (expand.includes(name)) {
+								bool = true;
+								logInfo.sourceSkill = i;
+								logInfo.type = "player";
+								break;
+							}
+						}
+						if (!bool) {
+							for (var i of players) {
+								var expand = [i];
+								game.expandSkills(expand);
+								if (expand.includes(name)) {
+									logInfo.sourceSkill = i;
+									logInfo.type = "equip";
+									break;
+								}
+							}
+						}
+					}
+				}
+				var next = game.createEvent("logSkill", false),
+					evt = _status.event;
+				next.player = player;
+				next.forceDie = true;
+				next.includeOut = true;
+				evt.next.remove(next);
+				if (evt.logSkill) evt = evt.getParent();
+				for (var i in logInfo) {
+					if (i == "event") next.log_event = logInfo[i];
+					else next[i] = logInfo[i];
+				}
+				evt.after.push(next);
+				next.setContent("emptyEvent");
+				player.getHistory("useSkill").push(logInfo);
+				//尽可能别往这写插入结算
+				//不能用来终止技能发动！！！
+				var next2 = game.createEvent("logSkillBegin", false);
+				next2.player = player;
+				next2.forceDie = true;
+				next2.includeOut = true;
+				for (var i in logInfo) {
+					if (i == "event") next2.log_event = logInfo[i];
+					else next2[i] = logInfo[i];
+				}
+				next2.setContent("emptyEvent");
+			}
+			if (this._hookTrigger) {
+				for (var i = 0; i < this._hookTrigger.length; i++) {
+					var info = lib.skill[this._hookTrigger[i]].hookTrigger;
+					if (info && info.log) {
+						info.log(this, name, targets);
+					}
+				}
+			}
+		};
+		
 		// 修改game.js的播放函数，trySkillAudio:function(skill,player,directaudio,nobroadcast/*,index*/){
 		// 旧版trySkillAudio函数已知bug：audioname2不适配？（例如：小游戏整合扩展-芙莉莲-发动技能语音修改开启-发动破军，会播放徐盛的技能配音、名将吴懿扩展弹窗）
 		// 适配新版本体（双形态原画配音、适配写法audio:'sbhuoji1.mp3',）
-		game.trySkillAudio=function(skill,player,directaudio,nobroadcast,skillInfo){
-			if(!nobroadcast) game.broadcast(game.trySkillAudio,skill,player,directaudio,nobroadcast,skillInfo);
+		game.trySkillAudio=function(skill,player,directaudio,nobroadcast,skillInfo,args){
+			if(!nobroadcast) game.broadcast(game.trySkillAudio,skill,player,directaudio,nobroadcast,skillInfo,args);
 			var info=skillInfo || get.info(skill);
 			if(!info) return;
 			if(!lib.config.background_speak) return;
@@ -8078,10 +8546,39 @@ content:function(config, pack){
 				var name2 = (player.skin && player.skin.name2) ? player.skin.name2 : player.name2;
 			}
 			
+			// 跟进新版本体logAudio属性及logSkill修改
+			// 可能需要进一步修改（by 棘手怀念摧毁）
+			if (info.logAudio && args) {
+				var result = info.logAudio(...args);
+				
+				// 扩展用logAudio不写ext:时修一下
+				if(typeof audioinfo=='string' && audioinfo.startsWith('ext:') && !result.startsWith('ext:')){
+					var fix=audioinfo.split(':');
+					if(fix.length==3) result = fix[0]+':'+fix[1]+':'+result;
+				}
+				
+				audioinfo = result;
+			}
+			
 			if(info.audioname2&&info.audioname2[name]){
 				audioname=info.audioname2[name];
 				audioinfo=lib.skill[audioname].audio;
 			}
+			
+			// 跟进新版本体logAudio2
+			// 可能需要进一步修改（by 棘手怀念摧毁）
+			if (info.logAudio2 && info.logAudio2[name] && args) {
+				var result1 = info.logAudio2[name](...args);
+				
+				// 扩展用logAudio2不写ext:时修一下
+				if(typeof audioinfo=='string' && audioinfo.startsWith('ext:') && !result.startsWith('ext:')){
+					var fix=audioinfo.split(':');
+					if(fix.length==3) result1 = fix[0]+':'+fix[1]+':'+result1;
+				}
+				
+				audioinfo = result1;
+			}
+			
 			var history=[];
 			while(true){//可以嵌套引用了
 				if(history.contains(audioname)) break;
@@ -8114,8 +8611,15 @@ content:function(config, pack){
 			if(typeof audioinfo=='string'){
 				// 适配写法audio:'sbhuoji1.mp3',
 				if(audioinfo.endsWith('.mp3') || audioinfo.endsWith('.ogg')) { // 若audioinfo以'.mp3'或'.ogg'结尾
-					audioname = audioinfo.slice(0, -4); // 去掉'.mp3'或'.ogg'
-					game.playAudio('skill', audioname);
+					if(audioinfo.startsWith('ext:')) {
+						// 扩展适配
+						audioinfo=audioinfo.split(':');
+						if(audioinfo.length!=3) return;
+						game.playAudio('..','extension',audioinfo[1],audioinfo[2].slice(0, -4));
+					} else {
+						audioname = audioinfo.slice(0, -4); // 去掉'.mp3'或'.ogg'
+						game.playAudio('skill', audioname);
+					}
 				} else {
 					if(audioinfo.indexOf('ext:')!=0) return;
 					audioinfo=audioinfo.split(':');
@@ -8142,7 +8646,9 @@ content:function(config, pack){
 	// 标记修改
 	// 注1：可能与其他同样魔改本体武将技能的扩展存在兼容问题
 	// 注2：若遇冲突请关闭本选项！
-	if(lib.config['extension_十周年UI_biaojixiugai']){
+	// 为提升兼容性，增加游戏版本号判断（若本体版本与本扩展版本号不相同，则不开启标记修改）
+	// 备忘：若后续更新了本体，记得修改扩展版本号
+	if(lib.config['extension_十周年UI_biaojixiugai'] && lib.version == lib.extensionPack['十周年UI'].version){
 		// 神姜维九伐标记改文字
 		// 法一
 		if(lib.skill.jiufa != undefined){
@@ -9204,6 +9710,85 @@ content:function(config, pack){
 				lib.translate.weiwoduzun_bg='战神';
 			};
 		}
+		
+		// 棘手懒人包魔吕布、孙寒华等标记美化
+		// 临时修改，后续可能要直接改标记相关函数
+		// 魔吕布罡拳标记修改
+		if(lib.skill.olgangquan != undefined){
+			lib.skill.olgangquan.subSkill.mark.init = function (player, skill) {
+				const evt = get.info("dcjianying").getLastUsed(player);
+				const bool = evt.cards?.some(card => card.hasGaintag("eternal_olduoqi_tag"));
+				player.markSkill(skill);
+				game.broadcastAll(
+					function (index, player) {
+						const name = "olgangquan_mark";
+						const bgColor = get.info(name).markColor[index],
+							text = `<span style = "color:#000000;font-weight:bold">${index ? "火杀" : "决斗"}</span>`;
+						if (player.marks[name]) {
+							let element = player.marks[name].firstChild;
+							element.style.backgroundColor = bgColor;
+							
+							// 设置块级显示
+							element.style.display = "inline-block";
+							// 六边形裁剪
+							element.style.clipPath = "polygon(0% 49%, 15% 72%, 85% 72%, 100% 49%, 85% 26%, 15% 26%)";
+							// 双字
+							element.style.padding = '4px 4px';
+							// 单字
+							// element.style.padding = '4px 9.5px';
+							
+							element.innerHTML = text;
+						}
+						player.update();
+					},
+					Number(!!bool),
+					player
+				);
+			}
+		}
+		// 孙寒华汇灵标记修改
+		if(lib.skill.dchuiling != undefined){
+			lib.skill.dchuiling.subSkill.hint.content = function () {
+				"step 0";
+				var red = 0,
+					black = 0;
+				for (var i = 0; i < ui.discardPile.childNodes.length; i++) {
+					var color = get.color(ui.discardPile.childNodes[i]);
+					if (color == "red") red++;
+					if (color == "black") black++;
+				}
+				if (trigger.name.indexOf("lose") == 0) {
+					var cards = trigger.getd().filterInD("d");
+					for (var i = 0; i < cards.length; i++) {
+						var color = get.color(cards[i]);
+						if (color == "red") red++;
+						if (color == "black") black++;
+					}
+				}
+				game.broadcastAll(function (ind) {
+					var bgColor = lib.skill.dchuiling_hint.markColor[ind][0],
+						text =
+							'<span style="color: ' +
+							lib.skill.dchuiling_hint.markColor[ind][1] +
+							'">灵</span>';
+					for (var player of game.players) {
+						if (player.marks.dchuiling) {
+							let element = player.marks.dchuiling.firstChild;
+							element.style.backgroundColor = bgColor;
+							
+							// 设置块级显示
+							element.style.display = "inline-block";
+							// 六边形裁剪
+							element.style.clipPath = "polygon(0% 49%, 15% 72%, 85% 72%, 100% 49%, 85% 26%, 15% 26%)";
+							element.style.padding = '4px 4px';
+							
+							element.innerHTML = text;
+						}
+					}
+				}, Math.sign(black - red) + 1);
+			}
+		}
+		
 	}
 	// 解除本体AI禁将
 	lib.config.forbidai.remove('ns_liuzhang');
@@ -9225,7 +9810,10 @@ content:function(config, pack){
 		animationColor:'soil',
 	};
 	lib.skill.new_wuhun={
-		audio:"wuhun21",
+		audio: ["wuhun21.mp3", "wuhun22.mp3", "wuhun23.mp3"],
+		logAudio(event, player, name) {
+			return "wuhun21.mp3";
+		},
 		group:["new_wuhun_mark","new_wuhun_die","wuhun22","wuhun23"],
 		trigger:{
 			player:"damageEnd",
@@ -9579,7 +10167,8 @@ content:function(config, pack){
 		// 高达一号技能描述修改
 		lib.translate.boss_juejing_info = "锁定技，摸牌阶段开始前，你跳过此阶段。当你得到牌/失去手牌后，若你的手牌数大于4/小于4，则你将手牌弃置至4张/摸至4张。";
 		lib.translate.zhanjiang_info = "准备阶段开始时，如果其他角色的装备区内有【青釭剑】，你可以获得之。";
-		lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
+		lib.translate.xinlonghun_info = "你可以将你的手牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
+		// lib.translate.xinlonghun_info = "你可以将你的牌按下列规则使用或打出：黑桃当【无懈可击】，梅花当【闪】，红桃当【桃】，方块当火【杀】。";
 		// 凌人、整肃、蛊惑、军令、协力、五禽戏、暴虐值点数卡牌显示修复
 		lib.card.black = {fullskin:true};
 		lib.card.red = {fullskin:true};
@@ -9633,6 +10222,11 @@ content:function(config, pack){
 		lib.card.tw_bn_1 = {fullskin:true};
 		lib.card.tw_bn_2 = {fullskin:true};
 		lib.card.tw_bn_3 = {fullskin:true};
+		// SCL庞德公评才卡牌显示修复
+		lib.decade_extCardImage['sclc_wolong']=lib.assetURL+'extension/十周年UI/image/card/wolong_card.webp';
+		lib.decade_extCardImage['sclc_fengchu']=lib.assetURL+'extension/十周年UI/image/card/fengchu_card.webp';
+		lib.decade_extCardImage['sclc_shuijing']=lib.assetURL+'extension/十周年UI/image/card/shuijing_card.webp';
+		lib.decade_extCardImage['sclc_xuanjian']=lib.assetURL+'extension/十周年UI/image/card/xuanjian_card.webp';
 		// 修复手杀界孙笨的彩蛋
 		lib.translate.re_sunben = "手杀界孙策";
 		lib.translate.re_sunben_prefix = "手杀界";
@@ -9646,9 +10240,12 @@ content:function(config, pack){
 		lib.skill.boss_juejing.audio = true;
 		delete lib.skill.boss_juejing2.audio;
 		delete lib.skill.twwushen.audio;
+		delete lib.skill.twwuhun.audio;
+		delete lib.skill.twwuhun.subSkill.gain.audio;
 		lib.skill.twwushen.audio = 2;
-		lib.skill.twwuhun.audio = true;
-		lib.skill.twwuhun.subSkill.gain.audio = 2;
+		lib.skill.twwuhun.audio = ["twwuhun_gain1.mp3", "twwuhun_gain2.mp3", "twwuhun.mp3"];
+		lib.skill.twwuhun.logAudio = () => "twwuhun.mp3";
+		lib.skill.twwuhun.subSkill.gain.audio = ["twwuhun_gain1.mp3", "twwuhun_gain2.mp3"];
 		lib.translate.wuhun21 = "武魂";
 		lib.translate.wuhun22 = "武魂";
 		lib.translate.wuhun23 = "武魂";
@@ -9657,6 +10254,8 @@ content:function(config, pack){
 		// 本体用间篇卡牌名魔改
 		lib.translate.duanjian = "折戟";
 		lib.translate.serafuku = "女装";
+		// 26神黄月英藏巧描述修改
+		lib.translate.zc26_cangqiao_info = "每轮开始时，你可以获得游戏外或弃牌堆中的【折戟】、【女装】、【庸驴】各至多一张；你使用上述牌时可以将手牌摸至体力上限。";
 		// 台词修改
 		delete lib.translate["#wangzun_old_yuanshu1"];
 		delete lib.translate["#wangzun_old_yuanshu2"];
@@ -9667,26 +10266,28 @@ content:function(config, pack){
 		lib.translate["#lizhan1"]="任你横行霸道，我自岿然不动！";
 		lib.translate["#lizhan2"]="行伍严整，百战不殆！";
 		lib.translate["#sp_caoren:die"]="城在人在，城破人亡……";
+		delete lib.translate["#twwuhun1"];
+		delete lib.translate["#twwuhun2"];
 		lib.translate["#twwushen1"]="鬼龙斩月刀！";
 		lib.translate["#twwushen2"]="千里追魂，一刀索命！";
 		lib.translate["#twwuhun_gain1"]="不杀此人，何以雪恨！";
 		lib.translate["#twwuhun_gain2"]="还我头来！";
 		lib.translate["#twwuhun"]="生当啖汝之肉，死当追汝之魂！-- 阵亡";
 		// 武魂台词特殊处理
-		lib.translate["#wuhun21"]="1. 拿命来！<br>2. 我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡<br>3. 桃园之梦再也不会回来了……-- 无角色阵亡";
-		// lib.translate["#wuhun21"]="拿命来！";
-		// lib.translate["#wuhun22"]="我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡";
-		// lib.translate["#wuhun23"]="桃园之梦再也不会回来了……-- 无角色阵亡";
+		// lib.translate["#wuhun21"]="1. 拿命来！<br>2. 我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡<br>3. 桃园之梦再也不会回来了……-- 无角色阵亡";
+		lib.translate["#wuhun21"]="拿命来！";
+		lib.translate["#wuhun22"]="我生不能啖汝之肉，死当追汝之魂！-- 有角色阵亡";
+		lib.translate["#wuhun23"]="桃园之梦再也不会回来了……-- 无角色阵亡";
 		lib.translate["#wushen1"]="还不速速领死！";
 		lib.translate["#wushen2"]="取汝狗头犹如探囊取物！";
 		lib.translate["#shen_guanyu:die"]="谁来与我同去？";
 		lib.translate["#boss_juejing"]="龙战于野，其血玄黄。";
 		// 龙魂台词特殊处理
-		lib.translate["#xinlonghun"]="1. 金甲映日，驱邪祛秽。-- 黑桃<br>2. 腾龙行云，首尾不见。-- 梅花<br>3. 潜龙于渊，涉灵愈伤。-- 红桃<br>4. 千里一怒，红莲灿世！-- 方片";
-		// lib.translate["#xinlonghun1"]="金甲映日，驱邪祛秽。-- 黑桃";
-		// lib.translate["#xinlonghun2"]="腾龙行云，首尾不见。-- 梅花";
-		// lib.translate["#xinlonghun3"]="潜龙于渊，涉灵愈伤。-- 红桃";
-		// lib.translate["#xinlonghun4"]="千里一怒，红莲灿世！-- 方片";
+		// lib.translate["#xinlonghun"]="1. 金甲映日，驱邪祛秽。-- 黑桃<br>2. 腾龙行云，首尾不见。-- 梅花<br>3. 潜龙于渊，涉灵愈伤。-- 红桃<br>4. 千里一怒，红莲灿世！-- 方片";
+		lib.translate["#xinlonghun1"]="金甲映日，驱邪祛秽。-- 黑桃";
+		lib.translate["#xinlonghun2"]="腾龙行云，首尾不见。-- 梅花";
+		lib.translate["#xinlonghun3"]="潜龙于渊，涉灵愈伤。-- 红桃";
+		lib.translate["#xinlonghun4"]="千里一怒，红莲灿世！-- 方片";
 		lib.translate["#boss_zhaoyun:die"]="血染鳞甲，龙坠九天……";
 		delete lib.translate["#kuiwei1"];
 		delete lib.translate["#kuiwei2"];
@@ -10002,28 +10603,95 @@ content:function(config, pack){
 				element:{
 					dialog:{
 						open:function(){
-							if (this.noopen) return;
-							for (var i = 0; i < ui.dialogs.length; i++) {
-								if (ui.dialogs[i] == this) {
-									this.show();
-									this.refocus();
-									ui.dialogs.remove(this);
-									ui.dialogs.unshift(this);
-									ui.update();
-									return this;
+							/*
+							// 参考本体noname\library\element\dialog.js的open() {
+							// 临时修复电脑端chooseButton.dialog.direct = true会多弹出一个对话框然后自动关闭（蒋琬蓄发、魔吕布罡拳等）的问题
+							// 失败方案：if (this.noopen || (!lib.device && this.classList.contains('forcebutton-auto') && !this.classList.contains('prompt'))) return;
+							// 暂不更新（因为修复后效果变了，不能因为几个武将影响体验，需要的自行去掉注释）
+							if(!lib.device){
+								// 电脑端（临时修复）
+								if (this.noopen) return;
+								for (let i = 0; i < ui.dialogs.length; i++) {
+									if (ui.dialogs[i] == this) {
+										this.show();
+										this.refocus();
+										ui.dialogs.remove(this);
+										ui.dialogs.unshift(this);
+										ui.update();
+										return this;
+									}
+									if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
+									else ui.dialogs[i].hide();
 								}
-								if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
-								else ui.dialogs[i].hide();
-							}
-							ui.dialog = this;
-							ui.arena.appendChild(this);
-							ui.dialogs.unshift(this);
-							ui.update();
-							if (!this.classList.contains('prompt')) {
-								this.style.animation = 'open-dialog 0.5s';
-							}
-							
-							return this;
+								ui.dialog = this;
+								// let translate;
+								// if (
+									// lib.config.remember_dialog &&
+									// lib.config.dialog_transform &&
+									// !this.classList.contains("fixed")
+								// ) {
+									// translate = lib.config.dialog_transform;
+									// this._dragtransform = translate;
+									// this.style.transform =
+										// "translate(" +
+										// translate[0] +
+										// "px," +
+										// translate[1] +
+										// "px) scale(0.8)";
+								// } else {
+									this.style.transform = "scale(0.8)";
+								// }
+								this.style.transitionProperty = "opacity,transform";
+								this.style.opacity = "0";
+								ui.arena.appendChild(this);
+								ui.dialogs.unshift(this);
+								ui.update();
+								ui.refresh(this);
+								// if (
+									// lib.config.remember_dialog &&
+									// lib.config.dialog_transform &&
+									// !this.classList.contains("fixed")
+								// ) {
+									// this.style.transform =
+										// "translate(" +
+										// translate[0] +
+										// "px," +
+										// translate[1] +
+										// "px) scale(1)";
+								// } else {
+									this.style.transform = "scale(1)";
+								// }
+								this.style.opacity = "1";
+								setTimeout(() => {
+									this.style.transitionProperty = "";
+								}, 500);
+								return this;
+							}else{
+							*/
+								// 手机端（保持原版）
+								if (this.noopen) return;
+								for (var i = 0; i < ui.dialogs.length; i++) {
+									if (ui.dialogs[i] == this) {
+										this.show();
+										this.refocus();
+										ui.dialogs.remove(this);
+										ui.dialogs.unshift(this);
+										ui.update();
+										return this;
+									}
+									if (ui.dialogs[i].static) ui.dialogs[i].unfocus();
+									else ui.dialogs[i].hide();
+								}
+								ui.dialog = this;
+								ui.arena.appendChild(this);
+								ui.dialogs.unshift(this);
+								ui.update();
+								if (!this.classList.contains('prompt')) {
+									this.style.animation = 'open-dialog 0.5s';
+								}
+								
+								return this;
+							// }
 						},
 					},
 					
@@ -10306,8 +10974,21 @@ content:function(config, pack){
 							// var vertname = '';
 							var cardname = get.translation(card[2]);
 							this.dataset.suit = card[0];
-							this.$suitnum.$num.textContent = cardnum;
-							this.$suitnum.$suit.textContent = cardsuit;
+							
+							// 卡牌类型文字显示美化
+							if (!['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'].includes(cardnum) && !['♠', '♣', '♥', '♦'].includes(cardsuit)) {
+								var cardnumchange=cardnum;
+								var cardsuitchange=cardsuit;
+								if(cardnum=='' && cardsuit!=''){
+									cardnumchange=cardsuit;
+									cardsuitchange='';
+								}
+								this.$suitnum.$num.textContent = cardnumchange;
+								this.$suitnum.$suit.textContent = cardsuitchange;
+							}else{
+								this.$suitnum.$num.textContent = cardnum;
+								this.$suitnum.$suit.textContent = cardsuit;
+							}
 							
 							if (card[2] == 'sha') {
 								if (card[3] == 'fire') {
@@ -11217,6 +11898,33 @@ content:function(config, pack){
 									if(hujia>0){
 										ui.create.div(node.node.hp,'.shield');
 										ui.create.div('.text',get.numStr(hujia),node.node.hp);
+									}
+									
+									// 国战魔改
+									if(config.guozhanmogai){
+										// 在国战模式，若开启“使用国战武将”开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整
+										// 为避免新版千幻聆音（手杀/十周年UI套装）/扩展使用国战武将后与国战魔改的冲突，新增是否开启千幻聆音扩展/扩展是否使用国战武将的判断，以解决本扩展对本体魔改导致的兼容问题（即国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效）
+										if(lib.config.mode=='guozhan' && get.config('onlyguozhan') && !(lib.config.extensions && lib.config.extensions.contains('千幻聆音') && lib.config['extension_千幻聆音_enable']) && lib.characterGuozhanFilter.length<2){
+											// 国战武将阴阳鱼、非国战武将勾玉
+											if(lib.characterPack.mode_guozhan && lib.characterPack.mode_guozhan[item]){
+												if(hp==2.5){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round4.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp==2){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round1.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp==1.5){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/round2.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+											}else{
+												if(hp>3){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/glass1.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+												else if(hp<=3){
+													node.node.hp.childNodes[0].style.cssText='background: url("'+lib.assetURL+"theme/style/hp/image/glass2.png"+'");box-shadow: none;border: none;background-size: 100% 100%;transform: scale(1.4);-webkit-filter: none;border-radius: 0px;';
+												}
+											}
+										}
 									}
 								}
 								else{
@@ -13394,13 +14102,6 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 				// card.$suitnum.$num.style.fontFamily = '"STHeiti","SimHei","Microsoft JhengHei","Microsoft YaHei","WenQuanYi Micro Hei",Helvetica,Arial,sans-serif';
 				// card.$suitnum.$suit.style.fontFamily = '"STHeiti","SimHei","Microsoft JhengHei","Microsoft YaHei","WenQuanYi Micro Hei",Helvetica,Arial,sans-serif';
 				card.$suitnum.$suit.style.fontFamily = 'shousha';
-				if (lib.device) {
-					// 手机端
-					card.$suitnum.$suit.style.fontSize = '23px';
-				} else {
-					// 电脑端
-					card.$suitnum.$suit.style.fontSize = '21px';
-				}
 				
 				card.node.judgeMark.node = {
 					back: decadeUI.element.create('back', card.node.judgeMark),
@@ -18664,10 +19365,10 @@ config:{
 			skin_lukang_毁堰破晋: 				'陆抗-毁堰破晋',
 			skin_luxun_谋定天下: 				'陆逊-谋定天下',
 			skin_mayunlu_战场绝版: 				'马云騄-战场绝版',
-			skin_shuxiangxiang_花好月圆: 		'蜀香香-花好月圆',
-			skin_shuxiangxiang_花曳心牵:		'蜀香香-花曳心牵',
 			skin_sunluban_宵靥谜君: 			'孙鲁班-宵靥谜君',
 			skin_sunluyu_娇俏伶俐: 				'孙鲁育-娇俏伶俐',
+			skin_shuxiangxiang_花好月圆: 		'孙尚香-花好月圆',
+			skin_shuxiangxiang_花曳心牵:		'孙尚香-花曳心牵',
 			skin_wangrong_云裳花容: 			'王荣-云裳花容',
 			skin_wangyi_绝色异彩: 				'王异-绝色异彩',
 			skin_wangyi_战场绝版: 				'王异-战场绝版',
@@ -19105,7 +19806,7 @@ package:{
     author:"短歌<br>魔改：<span class='bluetext'>棘手怀念摧毁</span>",
     diskURL:"",
     forumURL:"",
-    version:"",
+    version:"1.10.11.3",
 },
 files:{
     "character":[],

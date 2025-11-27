@@ -302,31 +302,6 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				background: 'skin_panshu_FanYouYinFang_bg.png',
 			},
 		},
-		sunshangxiang:{
-			魅影剑舞:{
-				name: 'skin_sunshangxiang_MeiYingJianWu',
-				x: [-5, 0.6],
-				y: [10, 0.31],
-				scale: 0.32,
-				background: 'skin_sunshangxiang_MeiYingJianWu_bg.png',
-			},
-		},
-		sp_sunshangxiang:{
-			花曳心牵:{
-				name: 'skin_shuxiangxiang_HuaYeXinQian',
-				x: [0, 0.42],
-				y: [0, 0.59],
-				scale: 0.6,
-				background: 'skin_shuxiangxiang_HuaYeXinQian_bg.png',
-			},
-			花好月圆:{
-				name: 'skin_shuxiangxiang_HuaHaoYueYuan',
-				x: [0, 0.43],
-				y: [0, 0.43],
-				scale: 0.29,
-				background: 'skin_shuxiangxiang_HuaHaoYueYuan_bg.png',
-			},
-		},
 		sunluban:{
 			沅茝香兰:{
 				name: 'skin_sunluban_YuanChaiXiangLan',
@@ -350,6 +325,31 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				y: [20, 0.35],
 				scale: 0.32,
 				background: 'skin_sunluyu_JiaoQiaoLingLi_bg.png',
+			},
+		},
+		sunshangxiang:{
+			魅影剑舞:{
+				name: 'skin_sunshangxiang_MeiYingJianWu',
+				x: [-5, 0.6],
+				y: [10, 0.31],
+				scale: 0.32,
+				background: 'skin_sunshangxiang_MeiYingJianWu_bg.png',
+			},
+		},
+		sp_sunshangxiang:{
+			花曳心牵:{
+				name: 'skin_shuxiangxiang_HuaYeXinQian',
+				x: [0, 0.42],
+				y: [0, 0.59],
+				scale: 0.6,
+				background: 'skin_shuxiangxiang_HuaYeXinQian_bg.png',
+			},
+			花好月圆:{
+				name: 'skin_shuxiangxiang_HuaHaoYueYuan',
+				x: [0, 0.43],
+				y: [0, 0.43],
+				scale: 0.29,
+				background: 'skin_shuxiangxiang_HuaHaoYueYuan_bg.png',
 			},
 		},
 		wangrong:{

@@ -2108,8 +2108,14 @@ game.import("character", function () {
 				async sclc_wolong(player) {
 					const ingame = get.mode() === "doudizhu" && game.hasPlayer(cur => {
 						let names = get.characterSurname(cur.name1);
-						names.addArray(get.characterSurname(cur.name2));
+						// 临时修改（by 棘手怀念摧毁）
+						// names.addArray(get.characterSurname(cur.name2));
 						for (let [surname, name] of names) {
+							if (surname === "诸葛" && name === "亮") return true;
+						}
+						let names2 = get.characterSurname(cur.name2);
+						if(names2 != undefined)
+						for (let [surname, name] of names2) {
 							if (surname === "诸葛" && name === "亮") return true;
 						}
 					});
@@ -2131,8 +2137,14 @@ game.import("character", function () {
 				async sclc_fengchu(player) {
 					const ingame = get.mode() === "doudizhu" && game.hasPlayer(cur => {
 						let names = get.characterSurname(cur.name1);
-						names.addArray(get.characterSurname(cur.name2));
+						// 临时修改（by 棘手怀念摧毁）
+						// names.addArray(get.characterSurname(cur.name2));
 						for (let [surname, name] of names) {
+							if (surname === "庞" && name === "统") return true;
+						}
+						let names2 = get.characterSurname(cur.name2);
+						if(names2 != undefined)
+						for (let [surname, name] of names2) {
 							if (surname === "庞" && name === "统") return true;
 						}
 					});
@@ -2157,8 +2169,14 @@ game.import("character", function () {
 				async sclc_shuijing(player) {
 					const equip = get.mode() !== "doudizhu" || game.hasPlayer(cur => {
 						let names = get.characterSurname(cur.name1);
-						names.addArray(get.characterSurname(cur.name2));
+						// 临时修改（by 棘手怀念摧毁）
+						// names.addArray(get.characterSurname(cur.name2));
 						for (let [surname, name] of names) {
+							if (surname === "司马" && name === "徽") return true;
+						}
+						let names2 = get.characterSurname(cur.name2);
+						if(names2 != undefined)
+						for (let [surname, name] of names2) {
 							if (surname === "司马" && name === "徽") return true;
 						}
 					});
@@ -2276,8 +2294,14 @@ game.import("character", function () {
 				async sclc_xuanjian(player) {
 					const ingame = get.mode() === "doudizhu" && game.hasPlayer(cur => {
 						let names = get.characterSurname(cur.name1);
-						names.addArray(get.characterSurname(cur.name2));
+						// 临时修改（by 棘手怀念摧毁）
+						// names.addArray(get.characterSurname(cur.name2));
 						for (let [surname, name] of names) {
+							if (surname === "徐" && name === "庶") return true;
+						}
+						let names2 = get.characterSurname(cur.name2);
+						if(names2 != undefined)
+						for (let [surname, name] of names2) {
 							if (surname === "徐" && name === "庶") return true;
 						}
 					});
@@ -2329,17 +2353,21 @@ game.import("character", function () {
 							return 0;
 					}
 				},
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio(event, player) {
-					// const suit = get.suit(event.cards[0], player);
-					// switch (suit) {
-						// case "diamond": return "xinfu_pingcai2.mp3";
-						// case "club": return "xinfu_pingcai3.mp3";
-						// case "spade": return "xinfu_pingcai4.mp3";
-						// case "heart": return "xinfu_pingcai5.mp3";
-						// default: return "xinfu_pingcai1.mp3";
-					// }
-				// },
+				logAudio(event, player) {
+					const suit = get.suit(event.cards[0], player);
+					switch (suit) {
+						case "diamond":
+							return "xinfu_pingcai2.mp3";
+						case "club":
+							return "xinfu_pingcai3.mp3";
+						case "spade":
+							return "xinfu_pingcai4.mp3";
+						case "heart":
+							return "xinfu_pingcai5.mp3";
+						default:
+							return "xinfu_pingcai1.mp3";
+					}
+				},
 				async content(event, trigger, player) {
 					let name;
 					if (get.mode() === "doudizhu") {
@@ -18395,8 +18423,8 @@ game.import("character", function () {
 			pssuiluan_info: "群势力技。你使用【杀】可以额外指定两个目标，若如此做，此牌结算完毕后，所有目标角色可依次对你使用一张【杀】，你以此法受到伤害后，将势力变更至蜀。",
 			psconghan: "从汉",
 			psconghan_info: "蜀势力技。一号位造成伤害后，你可以对受伤角色使用一张【杀】。",
-			yj_zhonghui: "线下钟会",
-			yj_zhonghui_prefix: "线下",
+			yj_zhonghui: "PE钟会",
+			yj_zhonghui_prefix: "PE",
 			psmouchuan: "谋川",
 			psmouchuan_info: "每轮开始时，你可以摸两张牌并交给一名其他角色一张牌，然后你与其依次展示一张手牌，若这两张牌颜色相同/不同，你获得〖道合〗/〖志异〗直到本轮结束。",
 			pszizhong: "自重",

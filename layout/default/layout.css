@@ -1497,6 +1497,8 @@ div:not(.handcards) > .card > .info > span,
 }
 .buttons {
 	width: 100%;
+	/* 临时修改（by 棘手怀念摧毁） */
+	margin-left: 0px !important;
 }
 .buttons.guanxing {
 	min-height: 106px !important;

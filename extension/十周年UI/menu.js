@@ -2469,7 +2469,7 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 				};
 				
 				lib.config.nocharacters=[];
-				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','sxrm','onlyOL','sixiang','sbfm','mdtx','bingshi','shengxiao','old'];
+				lib.config.defaultcharacters=['standard','shenhua','sp','sp2','yijiang','refresh','xinghuoliaoyuan','mobile','extra','yingbian','sb','tw','offline','clan','collab','xianding','huicui','shiji','jsrg','sxrm','onlyOL','sixiang','bingshi','sbfm','mdtx','shengxiao','old'];
 				lib.config.notdefaultcharacters=['diy','ddd','key','yxs','hearth','gwent','mtg','ow','swd','gujian','xianjian'];
 				lib.config.benticharacters=lib.config.defaultcharacters.concat(lib.config.notdefaultcharacters);
 				var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
@@ -2654,8 +2654,9 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					var list = [];
 					for (var i = 0; i < info.length; i++) {
 						if (!lib.card[info[i]] || (lib.card[info[i]].derivation && mode != 'mode_derivation')) continue;
-						// list.push([get.translation(get.type(info[i], 'trick')), '', info[i]]);
-						list.push(['',get.translation(get.type(info[i],'trick')),info[i]]);
+						// 不用修改√ or 修改×
+						list.push([get.translation(get.type(info[i], 'trick')), '', info[i]]);
+						// list.push(['',get.translation(get.type(info[i],'trick')),info[i]]);
 					}
 					var sortCard = function (card) {
 						var type = lib.card[card[2]].type;
@@ -2747,6 +2748,13 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 					var buttons = ui.create.buttons(list, 'vcard', page);
 					for (var i = 0; i < buttons.length; i++) {
 						buttons[i].classList.add('noclick');
+						
+						// 菜单卡牌的显示美化
+						buttons[i].classList.add('menusize');
+						buttons[i].node.suitnum.classList.add('menusize');
+						buttons[i].node.image.classList.add('menusize');
+						buttons[i].$name.classList.add('menusize');
+						
 						buttons[i].listen(banCard);
 						if (mode != 'mode_banned') {
 							buttons[i].updateBanned = updateBanned;

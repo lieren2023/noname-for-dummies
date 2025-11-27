@@ -32,6 +32,26 @@ export class Get {
 		return ["safari", parseInt(major), parseInt(minor), parseInt(patch)];
 	}
 	/**
+	 * 获取装备牌对应的技能
+	 * @param { Card[]|VCard[] } cards
+	 * @returns { any[] }
+	 */
+	skillsFromEquips(cards) {
+		return cards.reduce((skills, card) => {
+			// @ts-expect-error ignore
+			if (Array.isArray(card.skills)) {
+				// @ts-expect-error ignore
+				skills.addArray(card.skills);
+				return skills;
+			}
+			const info = get.info(card, false);
+			if (info.skills) {
+				skills.addArray(info.skills);
+			}
+			return skills;
+		}, []);
+	}
+	/**
 	 * 返回 VCard[] 形式的所有牌，用于印卡将遍历
 	 * @param {Function} filter
 	 * @returns {string[][]}

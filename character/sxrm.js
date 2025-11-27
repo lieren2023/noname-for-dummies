@@ -64,7 +64,7 @@ game.import("character", function () {
 				"male",
 				"wei",
 				4,
-				["sxrmnizhan"],
+				["sxrmnuozhan"],
 			],
 			sxrm_yanwen: [
 				"male",
@@ -500,6 +500,13 @@ game.import("character", function () {
 						
 						inherit: "rende",
 						sourceSkill: "rende",
+						duplicatePrefix(player, skill) {
+							const targets = player.getStorage(skill);
+							if (targets.length == 1) {
+								return `${get.translation(targets)}·`;
+							}
+							return "魔";
+						},
 						name: "仁德",
 						audio: "rende",
 						init(player, skill) {
@@ -516,6 +523,9 @@ game.import("character", function () {
 							player.setStorage(skill, null);
 						},
 						filterTarget(card, player, target) {
+							if (!player.getStorage("sxrmweiwo_rende").length) {
+								return player != target;
+							}
 							return player != target && player.getStorage("sxrmweiwo_rende").includes(target);
 						},
 						check(card) {
@@ -625,6 +635,13 @@ game.import("character", function () {
 						
 						inherit: "qingnang",
 						sourceSkill: "qingnang",
+						duplicatePrefix(player, skill) {
+							const targets = player.getStorage(skill);
+							if (targets.length == 1) {
+								return `${get.translation(targets)}·`;
+							}
+							return "魔";
+						},
 						name: "青囊",
 						audio: "qingnang",
 						init(player, skill) {
@@ -644,6 +661,9 @@ game.import("character", function () {
 							if (target.hp >= target.maxHp) {
 								return false;
 							}
+							if (!player.getStorage("sxrmweiwo_qingnang").length) {
+								return true;
+							}
 							return player.getStorage("sxrmweiwo_qingnang").includes(target);
 						},
 					},
@@ -658,6 +678,13 @@ game.import("character", function () {
 						
 						inherit: "longyin",
 						sourceSkill: "longyin",
+						duplicatePrefix(player, skill) {
+							const targets = player.getStorage(skill);
+							if (targets.length == 1) {
+								return `${get.translation(targets)}·`;
+							}
+							return "魔";
+						},
 						name: "龙吟",
 						audio: "longyin",
 						init(player, skill) {
@@ -674,7 +701,7 @@ game.import("character", function () {
 							player.setStorage(skill, null);
 						},
 						filter(event, player) {
-							if (!player.getStorage("sxrmweiwo_longyin").includes(event.player)) {
+							if (player.getStorage("sxrmweiwo_longyin").length && !player.getStorage("sxrmweiwo_longyin").includes(event.player)) {
 								return false;
 							}
 							return event.card.name == "sha" && player.countCards("he") > 0 && event.player.isPhaseUsing();
@@ -995,7 +1022,7 @@ game.import("character", function () {
 								trigger.forced = true;
 								const evt = trigger.getParent(2);
 								evt.targets.splice(evt.num + 1);
-							} else {
+							} else if (player.countCards("h")) {
 								const evt = trigger.getParent();
 								const next = evt.target.viewHandcards(player);
 								event.next.remove(next);
@@ -1322,7 +1349,10 @@ game.import("character", function () {
 					const bool = player.getStorage(event.name, false);
 					player.changeZhuanhuanji(event.name);
 					if (bool) {
-						await player.discardPlayerCard(trigger.player, "he", 2, true);
+						const num = Math.min(2, trigger.player.countDiscardableCards(player, "he"));
+						if (num > 0) {
+							await player.discardPlayerCard(trigger.player, "he", num, true);
+						}
 					} else {
 						await game.asyncDraw([player, trigger.player]);
 					}
@@ -1356,6 +1386,21 @@ game.import("character", function () {
 					cardname(card, player) {
 						if (player.isDamaged() && lib.card[card.name].type == "basic") {
 							return "shan";
+						}
+					},
+				},
+				ai: {
+					effect: {
+						target(card, player, target) {
+							if (!target.isDamaged()) {
+								return;
+							}
+							if (get.type(card) == "trick") {
+								return "zeroplayertarget";
+							}
+							if (get.name(card) == "sha") {
+								return 0.3;
+							}
 						}
 					},
 				},
@@ -1418,7 +1463,7 @@ game.import("character", function () {
 				},
 			},
 			//庞德
-			sxrmnizhan: {
+			sxrmnuozhan: {
 				audio: 2,
 				trigger: {
 					player: "phaseZhunbeiBegin",
@@ -1447,7 +1492,8 @@ game.import("character", function () {
 							.set("ai", button => {
 								const { player, kuangtu } = get.event(),
 									card = new lib.element.VCard({ name: button.link[2], nature: button.link[3], isCard: true});
-								return Math.min(get.effect(player, card, kuangtu, player), get.effect(kuangtu, card, player, player));
+								let eff = Math.max(get.effect(player, card, kuangtu, kuangtu), get.effect(kuangtu, card, player, kuangtu));
+								return eff;
 							})
 							.set("kuangtu", player)
 							.forResult();
@@ -1488,7 +1534,9 @@ game.import("character", function () {
 						if (next.baseDamage == null) next.baseDamage = 1;
 						next.baseDamage++;
 						await next;
-						if (user.hasHistory("sourceDamage", evt => evt.getParent(evtx => evtx == next, true))) {
+						if (next.targets?.length && next.targets.some(current => {
+							return current.hasHistory("damage", evt => evt.card == next.card);
+						})) {
 							break;
 						}
 						await user.loseHp();
@@ -3564,8 +3612,8 @@ game.import("character", function () {
 			sxrmbizha_info: "结束阶段，你可以摸一张牌并拼点：若其没赢，其失去2点体力并令你观看其手牌，你可使用其中至多两张点数小于其拼点牌的牌；若你没赢，你减少1点体力上限。",
 			sxrm_pangde: "慢庞德",
 			sxrm_pangde_prefix: "慢",
-			sxrmnizhan: "搦战",
-			sxrmnizhan_info: "准备阶段，你可摸一张牌并令一名其他角色声明一个伤害类牌的牌名，然后你令你或其对对方使用此牌且伤害+1；若此牌未对目标造成伤害，使用者失去1点体力且你可以对相同角色重复此流程。",
+			sxrmnuozhan: "搦战",
+			sxrmnuozhan_info: "准备阶段，你可摸一张牌并令一名其他角色声明一个伤害类牌的牌名，然后你令你或其视为对对方使用此牌且伤害+1；若此牌未对目标造成伤害，使用者失去1点体力且你可以对相同角色重复此流程。",
 			sxrm_yanwen: "慢颜良文丑",
 			sxrm_yanwen_prefix: "慢",
 			sxrmhaibian: "骇变",

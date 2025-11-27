@@ -298,11 +298,11 @@ html {
 }
 
 .card>.top-name {
-    left: 14px;
-    top: 10px;
+    left: 16px;
+    top: 9px;
     width: calc(100% - 15px);
 	color: black;
-	font-size: 20px;
+	font-size: 18px;
 	font-family: shousha;
 	text-align: center;
 	z-index: 1;
@@ -349,8 +349,11 @@ html {
 	-webkit-text-size-adjust: none;
 }
 
+.card>.suit-num>.suit {
+	font-size: 21px;
+}
 .dui-mobile .card>.suit-num>.suit {
-    font-size: 16px;
+	font-size: 22px;
 }
 
 .card[data-suit='heart']>.suit-num,
@@ -811,6 +814,8 @@ html {
 
 /* 本体出牌记录栏魔改 */
 #historybar>div>.card {
+	width: 108px;
+	height: 150px;
 	transform: scale(0.3);
 	transform-origin: top left;
 	margin: 0;
@@ -921,4 +926,55 @@ span[data-nature='qunmm'] {
 }
 #arena.chess > .dialog {
 	max-height: inherit !important;
+}
+
+/* 右键菜单卡牌的显示美化、菜单卡牌的显示美化、查看牌堆卡牌的显示美化、斗地主-智斗叫地主界面卡牌的显示美化 */
+.skill>.card,
+.skill>.card.decade-card.menusize {
+	width: 108px;
+	height: 150px;
+}
+
+.card,
+.card.decade-card.menusize {
+	width: 90px;
+	height: 125px;
+}
+.card>.suit-num.menusize {
+	font-size: 18px;
+	top: 5px;
+	left: 1px;
+	line-height: 19px;
+}
+.button.card.menusize {
+	width: 90px;
+	height: 125px;
+}
+.card>.image.menusize {
+	width: 90px;
+	height: 90px;
+}
+.card>.top-name.menusize {
+	font-size: 15px;
+	left: 17px;
+	top: 6px;
+}
+
+.card>.suit-num.menusizex {
+	font-size: 20px;
+	top: 7px;
+	left: 1px;
+	line-height: 17.5px;
+}
+.card>.suit-num.menusizex>.suit {
+	font-size: 17px !important;
+}
+.dui-mobile .card>.suit-num.menusizex {
+	font-size: 21px;
+	top: 8px;
+	left: 1px;
+	line-height: 17px;
+}
+.dui-mobile .card>.suit-num.menusizex>.suit {
+	font-size: 18px !important;
 }
