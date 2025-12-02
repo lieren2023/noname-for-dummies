@@ -11530,8 +11530,7 @@ game.import("character", function () {
 			//贾南风
 			jsrgshanzheng: {
 				audio: 4,
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index === "number" ? "jsrgshanzheng" + index + ".mp3" : 2),
+				logAudio: index => (typeof index === "number" ? "jsrgshanzheng" + index + ".mp3" : 2),
 				enable: "phaseUse",
 				usable: 1,
 				filter(event, player) {
@@ -11565,8 +11564,7 @@ game.import("character", function () {
 								})
 								.forResult();
 							if (resultx.bool) {
-								// 临时修改（by 棘手怀念摧毁）
-								// player.logSkill("jsrgshanzheng", resultx.targets, null, null, [3]);
+								player.logSkill("jsrgshanzheng", resultx.targets, null, null, [3]);
 								player.line(resultx.targets.sortBySeat(), "green");
 								for (let target of resultx.targets.sortBySeat()) await target.damage();
 							}
@@ -11581,8 +11579,7 @@ game.import("character", function () {
 								}
 							}
 							targets.remove(player);
-							// 临时修改（by 棘手怀念摧毁）
-							// player.logSkill("jsrgshanzheng", targets, null, null, [4]);
+							player.logSkill("jsrgshanzheng", targets, null, null, [4]);
 							if (cards.length) {
 								await player.gain(cards, "giveAuto");
 							}
@@ -11683,8 +11680,7 @@ game.import("character", function () {
 					}
 					else event.result = { bool: false };
 				},
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index == "number" ? "jsrgfuzhen" + index + ".mp3" : 2),
+				logAudio: index => (typeof index == "number" ? "jsrgfuzhen" + index + ".mp3" : 2),
 				async content(event, trigger, player) {
 					const targets = event.targets,
 						silentTarget = event.cost_data;
@@ -11694,8 +11690,7 @@ game.import("character", function () {
 						.when("useCardAfter")
 						.filter(evt => evt.getParent() == event)
 						.then(() => {
-							// 临时修改（by 棘手怀念摧毁）
-							// player.logSkill("jsrgfuzhen", null, null, null, [get.rand(3, 4)]);
+							player.logSkill("jsrgfuzhen", null, null, null, [get.rand(3, 4)]);
 							const sum = player
 								.getHistory("sourceDamage", evt => evt.card && evt.card == trigger.card)
 								.reduce((num, evt) => {
@@ -12034,9 +12029,7 @@ game.import("character", function () {
 								const num = Math.max(4 - _status.event.ciyin_suits.length, 1);
 								return [num, Infinity];
 							},
-							audio: "jsrgciyin",
-							// 临时修改（by 棘手怀念摧毁）
-							// logAudio: () => ["jsrgciyin1.mp3", "jsrgciyin2.mp3"],
+							audio: ["jsrgciyin1.mp3", "jsrgciyin2.mp3"],
 							ai1(card) {
 								const suits = _status.event.ciyin_suits;
 								if (!suits.includes(get.suit(card))) return 15 - get.value(card);
@@ -12077,9 +12070,7 @@ game.import("character", function () {
 				group: "jsrgciyin_draw",
 				subSkill: {
 					draw: {
-						audio: "jsrgciyin",
-						// 临时修改（by 棘手怀念摧毁）
-						// logAudio: () => ["jsrgciyin3.mp3"],
+						audio: "jsrgciyin3.mp3",
 						trigger: { global: ["cardsDiscardAfter"] },
 						forced: true,
 						filter(event, player) {
@@ -12214,8 +12205,7 @@ game.import("character", function () {
 			//司马昭
 			jsrgqiantun: {
 				audio: 4,
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index === "number" ? "jsrgqiantun" + index + ".mp3" : 2),
+				logAudio: index => (typeof index === "number" ? "jsrgqiantun" + index + ".mp3" : 2),
 				enable: "phaseUse",
 				usable: 1,
 				filterTarget(card, player, target) {
@@ -12251,14 +12241,12 @@ game.import("character", function () {
 					const result3 = await next.forResult();
 					target.removeGaintag("jsrgqiantun_tag");
 					if (result3.winner == player) {
-						// 临时修改（by 棘手怀念摧毁）
-						// player.logSkill("jsrgqiantun", [target], null, null, [3]);
+						player.logSkill("jsrgqiantun", [target], null, null, [3]);
 						const cards = target.getCards("h", card => result.cards.includes(card));
 						if (cards.length) await target.give(cards, player);
 					}
 					else {
-						// 临时修改（by 棘手怀念摧毁）
-						// player.logSkill("jsrgqiantun", [target], null, null, [4]);
+						player.logSkill("jsrgqiantun", [target], null, null, [4]);
 						const cards = target.getCards("h", card => !result.cards.includes(card));
 						if (cards.length) await target.give(cards, player);
 					}
@@ -12350,8 +12338,7 @@ game.import("character", function () {
 			jsrgweisi: {
 				audio: 3,
 				enable: "phaseUse",
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: index => (typeof index === "number" ? "jsrgweisi" + index + ".mp3" : 2),
+				logAudio: index => (typeof index === "number" ? "jsrgweisi" + index + ".mp3" : 2),
 				usable: 1,
 				filterTarget(card, player, target) {
 					return target.countCards("h") && target != player;
@@ -12394,8 +12381,7 @@ game.import("character", function () {
 							const cards = trigger.player.getCards("h");
 							if (cards.length) {
 								trigger.player.give(cards, player);
-								// 临时修改（by 棘手怀念摧毁）
-								// player.logSkill("jsrgweisi", [trigger.player], null, null, [3]);
+								player.logSkill("jsrgweisi", [trigger.player], null, null, [3]);
 							}
 						});
 					if (player.canUse(card, target)) await player.useCard(card, target);
@@ -12448,8 +12434,7 @@ game.import("character", function () {
 			},
 			jsrgzuozhan: {
 				audio: 4,
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio: () => 2,
+				logAudio: () => 2,
 				trigger: {
 					global: "phaseBefore",
 					player: "enterGame",
@@ -12503,9 +12488,7 @@ game.import("character", function () {
 				group: "jsrgzuozhan_gain",
 				subSkill: {
 					gain: {
-						audio: "jsrgzuozhan",
-						// 临时修改（by 棘手怀念摧毁）
-						// logAudio: () => ["jsrgzuozhan3.mp3", "jsrgzuozhan4.mp3"],
+						audio: ["jsrgzuozhan3.mp3", "jsrgzuozhan4.mp3"],
 						trigger: {
 							global: "dieAfter",
 						},
@@ -12549,17 +12532,16 @@ game.import("character", function () {
 					player: "phaseUseEnd",
 				},
 				forced: true,
-				// 临时修改（by 棘手怀念摧毁）
-				// logAudio(event, player) {
-					// const num = Math.min(
-						// 5,
-						// game.countPlayer(current => player.inRange(current))
-					// ),
-					// numx = player.countCards("h");
-					// if (num > numx) return 2;
-					// if (num == numx) return ["jsrgcuibing5.mp3"];
-					// return ["jsrgcuibing3.mp3", "jsrgcuibing4.mp3"]
-				// },
+				logAudio(event, player) {
+					const num = Math.min(
+						5,
+						game.countPlayer(current => player.inRange(current))
+					),
+					numx = player.countCards("h");
+					if (num > numx) return 2;
+					if (num == numx) return ["jsrgcuibing5.mp3"];
+					return ["jsrgcuibing3.mp3", "jsrgcuibing4.mp3"]
+				},
 				async content(event, trigger, player) {
 					const num = Math.min(5, game.countPlayer(current => player.inRange(current))),
 						numx = player.countCards("h");

@@ -1255,7 +1255,19 @@ game.import("character", function () {
 					if (result?.winner) {
 						const winner = result.winner,
 							loser = [player, target].find(current => current != winner);
-						const dialog = ui.create.dialog("谄谀：是否交换其中一种颜色或类别的所有手牌？", "你的手牌", winner.getCards("h"), `${get.translation(loser)}的手牌`, loser.getCards("h"));
+						
+						// 临时修复（by 棘手怀念摧毁）
+						const dialog = ui.create.dialog("谄谀：是否交换其中一种颜色或类别的所有手牌？");
+						if(winner.getCards("h").length) {
+							dialog.add("你的手牌");
+							dialog.add(winner.getCards("h"));
+						}
+						if(loser.getCards("h").length) {
+							dialog.add(`${get.translation(loser)}的手牌`);
+							dialog.add(loser.getCards("h"));
+						}
+						// const dialog = ui.create.dialog("谄谀：是否交换其中一种颜色或类别的所有手牌？", "你的手牌", winner.getCards("h"), `${get.translation(loser)}的手牌`, loser.getCards("h"));
+						
 						const result2 = await winner
 							.chooseControl("red", "black", "basic", "equip", "trick", "cancel2")
 							.set("dialog", dialog)

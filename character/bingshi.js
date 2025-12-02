@@ -1820,10 +1820,14 @@ game.import("character", function () {
 							player.awakenSkill(event.name.slice(0, -8));
 							game.log(player, "成功完成使命");
 							player.changeSkin("potzhongao", "pot_weiyan_achieve");
+							
+							// 临时修改（by 棘手怀念摧毁）
+							if (lib.config.effectBGM_pot_weiyan)
 							game.broadcastAll(() => {
 								_status.tempMusic = "effect_yinzhanBGM";
 								game.playBackgroundMusic();
 							});
+							
 							player.setStorage("potkuanggu", 1);
 							const num1 = player.countMark("potzhuangshi_limit"),
 								num2 = player.countMark("potzhuangshi_directHit");
@@ -1854,10 +1858,14 @@ game.import("character", function () {
 							player.awakenSkill(event.name.slice(0, -5));
 							game.log(player, "使命失败");
 							player.changeSkin("potzhongao", "pot_weiyan_fail");
+							
+							// 临时修改（by 棘手怀念摧毁）
+							if (lib.config.effectBGM_pot_weiyan)
 							game.broadcastAll(() => {
 								_status.tempMusic = "effect_tuishouBGM";
 								game.playBackgroundMusic();
 							});
+							
 							await player.changeSkills(["kunfen"], ["potzhuangshi"]);
 						},
 					},
@@ -2874,7 +2882,9 @@ game.import("character", function () {
 						audio: ["mbduanyang1.mp3", "mbduanyang2.mp3"],
 						charlotte: true,
 						trigger: {
-							global: "phaseAnyEnd",
+							// 临时修改（by 棘手怀念摧毁）
+							global: ["phaseZhunbeiEnd", "phaseJudgeEnd", "phaseDrawEnd", "phaseUseEnd", "phaseDiscardEnd", "phaseJieshuEnd"],
+							// global: "phaseAnyEnd",
 						},
 						filter(event, player) {
 							return player.getExpansions("mbduanyang").length;

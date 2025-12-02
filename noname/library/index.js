@@ -4489,6 +4489,19 @@ export class Library {
 						'<button style="width:40px">确定</button></div>',
 					clear: true,
 				},
+				
+				// 临时修改（by 棘手怀念摧毁）
+				effectBGM_mb_caomao: {
+					name: "• 手杀曹髦专属BGM",
+					init: true,
+					intro: "开启后，游戏中满足条件时会切换专属BGM",
+				},
+				effectBGM_pot_weiyan: {
+					name: "• 势魏延专属BGM",
+					init: true,
+					intro: "开启后，游戏中满足条件时会切换专属BGM",
+				},
+				
 				background_audio: {
 					name: "游戏音效",
 					init: true,
@@ -6054,6 +6067,7 @@ export class Library {
 						disabled: "不启用",
 						online: "Online",
 						rewrite: "Rewrite",
+						shousha: "逐鹿天下",
 						chaoming: "潮鸣",
 						random: "随机播放",
 					},
@@ -11178,6 +11192,86 @@ export class Library {
 	 * }}
 	 */
 	skill = {
+		equipEnable: {
+			chalotte: true,
+			mod: {
+				globalFrom(from, to, distance) {
+					let num = from
+						// 临时修改（by 棘手怀念摧毁）
+						.getCards("j", vcard => {
+						// .getVCards("j", vcard => {
+							if (get.type(vcard) != "delay") {
+								false;
+							} else if (!vcard.storage?.equipEnable) {
+								return false;
+							}
+							return vcard.cards.some(card => get.type(card) == "equip");
+						})
+						.map(vcard => {
+							const sum = vcard.cards?.reduce((sum, card) => {
+								if (get.type(card) != "equip") {
+									return sum;
+								}
+								let globalFrom = get.info(card)?.distance?.globalFrom || 0;
+								return sum + globalFrom;
+							}, 0);
+							return sum || 0;
+						})
+						.reduce((a, b) => a + b, 0);
+					return distance + num;
+				},
+				globalTo(from, to, distance) {
+					let num = to
+						// 临时修改（by 棘手怀念摧毁）
+						.getCards("j", vcard => {
+						// .getVCards("j", vcard => {
+							if (get.type(vcard) != "delay") {
+								false;
+							} else if (!vcard.storage?.equipEnable) {
+								return false;
+							}
+							return vcard.cards.some(card => get.type(card) == "equip");
+						})
+						.map(vcard => {
+							const sum = vcard.cards?.reduce((sum, card) => {
+								if (get.type(card) != "equip") {
+									return sum;
+								}
+								let globalTo = get.info(card)?.distance?.globalTo || 0;
+								return sum + globalTo;
+							}, 0);
+							return sum || 0;
+						})
+						.reduce((a, b) => a + b, 0);
+					return distance + num;
+				},
+				attackRangeBase(player) {
+					let num = player
+						// 临时修改（by 棘手怀念摧毁）
+						.getCards("j", vcard => {
+						// .getVCards("j", vcard => {
+							if (get.type(vcard) != "delay") {
+								false;
+							} else if (!vcard.storage?.equipEnable) {
+								return false;
+							}
+							return vcard.cards.some(card => get.type(card) == "equip");
+						})
+						.map(vcard => {
+							const num = vcard.cards?.reduce((sum, card) => {
+								if (get.type(card) != "equip") {
+									return sum;
+								}
+								let attackFrom = get.info(card)?.distance?.attackFrom || 0;
+								return sum + attackFrom;
+							}, 0);
+							return num || 0;
+						})
+						.reduce((a, b) => a + b, 0);
+					return Math.max(player.getEquipRange(player.getCards("e")), 1 - num);
+				},
+			},
+		},
 		stratagem_fury: {
 			marktext: "🔥",
 			intro: {
@@ -15042,6 +15136,15 @@ export class Library {
 				 * @returns {string}
 				 */
 				getSpan: () => `${get.prefixSpan("26")}${get.prefixSpan("神")}`,
+			},
+		],
+		[
+			"OL魔",
+			{
+				/**
+				 * @returns {string}
+				 */
+				getSpan: () => `${get.prefixSpan("OL")}${get.prefixSpan("魔")}`,
 			},
 		],
 		[

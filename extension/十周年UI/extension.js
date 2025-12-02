@@ -9711,9 +9711,9 @@ content:function(config, pack){
 			};
 		}
 		
-		// 棘手懒人包魔吕布、孙寒华等标记美化
+		// 棘手懒人包OL魔吕布、孙寒华等标记美化
 		// 临时修改，后续可能要直接改标记相关函数
-		// 魔吕布罡拳标记修改
+		// OL魔吕布罡拳标记修改
 		if(lib.skill.olgangquan != undefined){
 			lib.skill.olgangquan.subSkill.mark.init = function (player, skill) {
 				const evt = get.info("dcjianying").getLastUsed(player);
@@ -10605,7 +10605,7 @@ content:function(config, pack){
 						open:function(){
 							/*
 							// 参考本体noname\library\element\dialog.js的open() {
-							// 临时修复电脑端chooseButton.dialog.direct = true会多弹出一个对话框然后自动关闭（蒋琬蓄发、魔吕布罡拳等）的问题
+							// 临时修复电脑端chooseButton.dialog.direct = true会多弹出一个对话框然后自动关闭（蒋琬蓄发、OL魔吕布罡拳等）的问题
 							// 失败方案：if (this.noopen || (!lib.device && this.classList.contains('forcebutton-auto') && !this.classList.contains('prompt'))) return;
 							// 暂不更新（因为修复后效果变了，不能因为几个武将影响体验，需要的自行去掉注释）
 							if(!lib.device){
@@ -12805,11 +12805,12 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 							}
 						}
 						
-						// 注释掉？
+						// 临时修复选装备牌的问题（例如，张华剑合最多只能选两张已装备的装备牌的bug）
+						if (event.complexCard && typeof event.position == 'string' && event.position.indexOf('e') != -1 && player.node.equips.querySelector('.card.selectable')) {
 						// if (lib.config.popequip && get.is.phoneLayout() && typeof event.position == 'string' && event.position.indexOf('e') != -1 && player.node.equips.querySelector('.card.selectable')) {
-							// player.node.equips.classList.add('popequip');
-							// auto_confirm = false;
-						// }
+							player.node.equips.classList.add('popequip');
+							auto_confirm = false;
+						}
 					}
 					if (custom.add.card) {
 						custom.add.card();

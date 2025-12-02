@@ -2921,6 +2921,253 @@ decadeModule.import(function(lib, game, ui, get, ai, _status){
 		},
 		
 		// - 武将技能临时修复：
+		// 26神黄月英化朽
+		zc26_huaxiu: {
+			// 临时修改（by 棘手怀念摧毁）
+			derivation: ["zc26_zhuge_skill", "zc26_bagua_skill", "zc26_lingling_skill"],
+			
+			usable: 1,
+			enable: "phaseUse",
+			onChooseToUse(event) {
+				if (game.online) {
+					return;
+				}
+				event.set(
+					"zc26_huaxiu",
+					["duanjian", "serafuku", "yonglv"].filter(i => i in lib.card)
+				);
+			},
+			filter(event, player) {
+				return event.zc26_huaxiu?.length;
+			},
+			async content(event, trigger, player) {
+				const list = event.getParent(2).zc26_huaxiu.map(name => [get.type(name), "", name]);
+				const { result } = await player.chooseButton(true, ["化朽", "选择要升级的装备", [list, "vcard"]]).set("ai", button => {
+					const player = get.player(),
+						name = button.link[2];
+					const num = game.countPlayer(current => {
+						// 临时修改（by 棘手怀念摧毁）
+						const hs = current.countCards("h", card => name == card.name),
+							es = current.countCards("e", card => name == card.name),
+							js = current.countCards("j", card => get.type(card) == "delay" && card.storage.equipEnable && name == get.name(card, false));
+						// const hs = current.countVCards("h", card => name == card.name),
+							// es = current.countVCards("e", card => name == card.name),
+							// js = current.countVCards("j", card => get.type(card) == "delay" && card.storage.equipEnable && name == get.name(card, false));
+						return get.sgnAttitude(player, current) * (es + js + current == player ? hs : 0);
+					});
+					return num;
+				});
+				if (result?.bool && result.links?.length) {
+					const name = result.links[0][2],
+						map = {
+							duanjian: "zc26_zhuge",
+							serafuku: "zc26_bagua",
+							yonglv: "zc26_lingling",
+						};
+					game.log(player, "将", `#y${get.translation({ name })}`, "升级为", `#y${get.translation({ name: map[name] })}`);
+					
+					// 修改
+					player.markSkill("zc26_huaxiu_" + map[name] + "_mark");
+					
+					player.addTempSkill("zc26_huaxiu_restore", { player: "phaseBegin" });
+					game.broadcastAll(
+						function (name, player, map) {
+							if (!_status.zc26_huaxiu_origin) {
+								_status.zc26_huaxiu_origin = {};
+								for (let name of ["duanjian", "serafuku", "yonglv"]) {
+									_status.zc26_huaxiu_origin[name] = { info: lib.card[name], translate: lib.translate[name], translate2: lib.translate[`${name}_info`] };
+								}
+							}
+							lib.card[name] = lib.card[map[name]];
+							lib.translate[name] = lib.translate[map[name]];
+							lib.translate[`${name}_info`] = lib.translate[`${map[name]}_info`];
+							// 临时修改（by 棘手怀念摧毁）
+							if (_status.zc26_huaxiu == null) _status.zc26_huaxiu = {};
+							if (_status.zc26_huaxiu[name] == null) _status.zc26_huaxiu[name] = [];
+							// _status.zc26_huaxiu ??= {};
+							// _status.zc26_huaxiu[name] ??= [];
+							_status.zc26_huaxiu[name].add(player);
+							lib.init.sheet(`
+								.card[data-card-name = "${name}"]>.image {
+									background-image: url(${lib.assetURL}image/card/${map[name]}.png) !important;
+								}
+							`);
+						},
+						name,
+						player,
+						map
+					);
+					function check(name, target, method) {
+						if (method == "e") {
+							// 临时修改（by 棘手怀念摧毁）
+							return target.hasCard({ name }, "e");
+							// return target.hasVCard({ name }, "e");
+						} else if (method == "j") {
+							// 临时修改（by 棘手怀念摧毁）
+							return target.hasCard(card => {
+							// return target.hasVCard(card => {
+								if (!card.storage?.equipEnable) {
+									return false;
+								}
+								return card.cards.some(cardx => cardx.name == name);
+							}, "j");
+						}
+						return false;
+					}
+					const removeSkill = get.skillsFromEquips([{ name }]),
+						addSkill = get.skillsFromEquips([{ name: map[name] }]);
+					for (let current of game.players) {
+						let keepSkills = Object.values(current.additionalSkills).flat(),
+							removeSkill2 = removeSkill.slice().removeArray(keepSkills);
+						if (removeSkill2.length) {
+							current.removeSkill(removeSkill2);
+						}
+						if (check(name, current, "j")) {
+							current.addSkill(addSkill);
+						}
+						if (check(name, current, "e")) {
+							current.addEquipTrigger({ name: map[name] });
+						}
+						// 临时修改（by 棘手怀念摧毁）
+						let vcards = current.getCards("e", { name });
+						// let vcards = current.getVCards("e", { name });
+						while (vcards.length) {
+							let vcard = vcards.shift();
+							// 临时修改（by 棘手怀念摧毁）
+							// current.$addVirtualEquip(vcard, vcard.cards);
+						}
+					}
+				}
+			},
+			subSkill: {
+				// 修改
+				zc26_zhuge_mark: {
+					charlotte: true,
+					mark: true,
+					marktext: "折戟",
+					intro: {
+						content() { return "“藏巧”装备牌【折戟】的效果修改为【魂·诸葛连弩】：<br>" + get.translation("zc26_zhuge_info") },
+					},
+				},
+				zc26_bagua_mark: {
+					charlotte: true,
+					mark: true,
+					marktext: "女装",
+					intro: {
+						content() { return "“藏巧”装备牌【女装】的效果修改为【魂·八卦阵】：<br>" + get.translation("zc26_bagua_info") },
+					},
+				},
+				zc26_lingling_mark: {
+					charlotte: true,
+					mark: true,
+					marktext: "庸驴",
+					intro: {
+						content() { return "“藏巧”装备牌【庸驴】的效果修改为【軨軨】：<br>" + get.translation("zc26_lingling_info") },
+					},
+				},
+				
+				restore: {
+					charlotte: true,
+					onremove(player, skill) {
+						get.info(skill).contentx.apply(this, [null, null, player]);
+					},
+					trigger: { player: "phaseBegin" },
+					filter(event, player) {
+						for (let name of ["duanjian", "serafuku", "yonglv"]) {
+							if (_status.zc26_huaxiu?.[name]?.includes(player)) {
+								return true;
+							}
+						}
+						return false;
+					},
+					forced: true,
+					popup: false,
+					async content(event, trigger, player) {
+						get.info(event.name).contentx.apply(this, arguments);
+					},
+					contentx(event, trigger, player) {
+						game.broadcastAll(function (player) {
+							for (let name of ["duanjian", "serafuku", "yonglv"]) {
+								if (_status.zc26_huaxiu?.[name]?.includes(player)) {
+									_status.zc26_huaxiu[name].remove(player);
+									lib.init.sheet(`
+										.card[data-card-name = "${name}"]>.image {
+											background-image: url(${lib.assetURL}image/card/${name}.png) !important;
+										}
+									`);
+								}
+							}
+						}, player);
+						function check(name, target, method) {
+							if (method == "e") {
+								// 临时修改（by 棘手怀念摧毁）
+								return target.hasCard({ name }, "e");
+								// return target.hasVCard({ name }, "e");
+							} else if (method == "j") {
+								// 临时修改（by 棘手怀念摧毁）
+								return target.hasCard(card => {
+								// return target.hasVCard(card => {
+									if (!card.storage?.equipEnable) {
+										return false;
+									}
+									return card.cards.some(cardx => cardx.name == name);
+								}, "j");
+							}
+							return false;
+						}
+						const map = {
+							duanjian: "zc26_zhuge",
+							serafuku: "zc26_bagua",
+							yonglv: "zc26_lingling",
+						};
+						for (let name of ["duanjian", "serafuku", "yonglv"]) {
+							if (name in _status.zc26_huaxiu && !_status.zc26_huaxiu[name].length) {
+								game.log(`#y${get.translation({ name })}`, "的效果还原了");
+								
+								// 修改
+								player.unmarkSkill("zc26_huaxiu_" + map[name] + "_mark");
+								
+								game.broadcastAll(function (name) {
+									delete _status.zc26_huaxiu[name];
+								}, name);
+								lib.card[name] = _status.zc26_huaxiu_origin[name].info;
+								lib.translate[name] = _status.zc26_huaxiu_origin[name].translate;
+								lib.translate[`${name}_info`] = _status.zc26_huaxiu_origin[name].translate2;
+								const addSkill = get.skillsFromEquips([{ name }]),
+									removeSkill = get.skillsFromEquips([{ name: map[name] }]);
+								for (let current of game.players) {
+									let keepSkills = Object.values(current.additionalSkills).flat(),
+										removeSkill2 = removeSkill.slice().removeArray(keepSkills);
+									if (removeSkill2.length) {
+										current.removeSkill(removeSkill2);
+									}
+									if (check(name, current, "j")) {
+										current.addSkill(addSkill);
+									} else if (check(name, current, "e")) {
+										current.addEquipTrigger({ name });
+									}
+									// 临时修改（by 棘手怀念摧毁）
+									let vcards = current.getCards("e", { name });
+									// let vcards = current.getVCards("e", { name });
+									while (vcards.length) {
+										let vcard = vcards.shift();
+										// 临时修改（by 棘手怀念摧毁）
+										// current.$addVirtualEquip(vcard, vcard.cards);
+									}
+								}
+							}
+						}
+					},
+				},
+			},
+			ai: {
+				order: 10,
+				result: {
+					player: 1,
+				},
+			},
+		},
+		
 		// ※ 司敌（手杀曹真彩蛋）技能描述及代码修改
 		// ※ 神曹丕〖天行〗技能修改（含技能描述修改）：行动→放权
 		disordersidi:{audio:2},

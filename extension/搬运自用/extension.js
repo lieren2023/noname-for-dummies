@@ -310,18 +310,12 @@ content:function(config,pack){
 		lib.characterTitle.ol_wanglang = "凤鹛";
 		lib.characterTitle.ol_puyuan = "鬼斧神工";
 		lib.characterTitle.ol_zhouqun = "后圣";
-		lib.characterTitle.ol_peixiu = "勋德茂著";
 		lib.characterTitle.sp_diaochan = "暗黑的傀儡师";
 		lib.characterTitle.sp_caoren = "险不辞难";
 		lib.characterTitle.yuanshu = lib.characterTitle.yl_yuanshu;
 		lib.characterTitle.sp_zhaoyun = "常山的游龙";
-		lib.characterTitle.sp_sunshangxiang = "梦醉良缘";
-		lib.characterTitle.sp_jiangwei = "幼麒";
 		lib.characterTitle.sp_machao = "西凉的猛狮";
-		lib.characterTitle.sp_caiwenji = "金璧之才";
 		lib.characterTitle.jsp_guanyu = "汉寿亭侯";
-		lib.characterTitle.jsp_huangyueying = "闺中璞玉";
-		lib.characterTitle.sp_pangde = "抬榇之悟";
 		lib.characterTitle.sp_jiaxu = "算无遗策";
 		lib.characterTitle.sp_zhangliao = "功果显名";
 		lib.characterTitle.sp_ol_zhanghe = "倾柱覆州";
@@ -380,6 +374,7 @@ content:function(config,pack){
 		lib.characterTitle.budugen = "秋城雁阵";
 		lib.characterTitle.mawan = "驱率羌胡";
 		lib.characterTitle.caimao = "蛟海腾云";
+		lib.characterTitle.ol_peixiu = "勋德茂著";
 		lib.characterTitle.yadan = "西羌相";
 		lib.characterTitle.ol_liupi = "夺路救主";
 		lib.characterTitle.ol_lukai = "节概梗梗";
@@ -458,48 +453,29 @@ content:function(config,pack){
 		lib.characterTitle.chenlin = "破竹之咒";
 		lib.characterTitle.caohong = "福将";
 		lib.characterTitle.xiahouba = "棘途壮志";
-		lib.characterTitle.liuxie = "受困天子";
-		lib.characterTitle.zhugejin = "联盟的维系者";
 		lib.characterTitle.zhugeke = "兴家赤族";
-		lib.characterTitle.guanyinping = "武姬";
-		lib.characterTitle.simalang = "再世神农";
-		lib.characterTitle.zhangxingcai = "敬哀皇后";
 		lib.characterTitle.fuwan = "沉毅的国丈";
-		lib.characterTitle.caoang = "取义成仁";
 		lib.characterTitle.zhangbao = "地公将军";
 		lib.characterTitle.maliang = "白眉智士";
-		lib.characterTitle.zhugedan = "薤露蒿里";
 		lib.characterTitle.sunhao = "时日曷丧";
 		lib.characterTitle.shixie = "雄长百越";
-		lib.characterTitle.mayunlu = "剑胆琴心";
-		lib.characterTitle.zhanglu = "政宽教惠";
 		lib.characterTitle.wutugu = "霸体金刚";
 		lib.characterTitle.zhugeguo = "凤阁乘烟";
 		lib.characterTitle.lingju = "情随梦逝";
 		lib.characterTitle.sunluyu = "舍身饲虎";
-		lib.characterTitle.zumao = "碧血染赤帻";
-		lib.characterTitle.wenpin = "坚城宿将";
 		lib.characterTitle.daxiaoqiao = "江东之花";
-		lib.characterTitle.tadun = "北狄王";
 		lib.characterTitle.yanbaihu = "豺牙落涧";
 		lib.characterTitle.chengyu = "泰山捧日";
 		lib.characterTitle.litong = "万亿吾独往";
-		lib.characterTitle.mizhu = "挥金追义";
-		lib.characterTitle.buzhi = "积跬靖边";
 		lib.characterTitle.dongbai = "魔姬";
 		lib.characterTitle.zhaoxiang = "拾梅鹊影";
-		lib.characterTitle.mazhong = "笑合南中";
-		lib.characterTitle.dongyun = "骨鲠良相";
 		lib.characterTitle.kanze = "慧眼的博士";
-		lib.characterTitle.heqi = "马踏群峦";
 		lib.characterTitle.yuejin = lib.characterTitle.std_yuejin;
 		lib.characterTitle.hetaihou = "弄权之蛇蝎";
 		lib.characterTitle.dingfeng = "清侧重臣";
 		lib.characterTitle.shamoke = "五溪蛮夷";
 		lib.characterTitle.zhangren = "索命神射"; // 暂时不删
 		lib.characterTitle.wangyun = "忠魂不泯";
-		lib.characterTitle.sunqian = "折冲樽俎";
-		lib.characterTitle.xizhicai = "负俗的天才";
 		lib.characterTitle.quyi = "名门的骁将";
 		lib.characterTitle.luzhi = lib.characterTitle.yl_luzhi;
 		
@@ -552,6 +528,30 @@ content:function(config,pack){
 		lib.characterTitle.duyu = "文成武德";
 		
 		// xinghuoliaoyuan: "星火燎原",
+		lib.characterTitle.zhangxingcai = "敬哀皇后";
+		lib.characterTitle.caoang = "取义成仁";
+		lib.characterTitle.zhugedan = "薤露蒿里";
+		lib.characterTitle.buzhi = "积跬靖边";
+		lib.characterTitle.liuxie = "受困天子";
+		lib.characterTitle.dongyun = "骨鲠良相";
+		lib.characterTitle.simalang = "再世神农";
+		lib.characterTitle.zhugejin = "联盟的维系者";
+		lib.characterTitle.zhanglu = "政宽教惠";
+		lib.characterTitle.sunqian = "折冲樽俎";
+		lib.characterTitle.xizhicai = "负俗的天才";
+		lib.characterTitle.sp_sunshangxiang = "梦醉良缘";
+		lib.characterTitle.sp_caiwenji = "金璧之才";
+		lib.characterTitle.sp_jiangwei = "幼麒";
+		lib.characterTitle.sp_pangde = "抬榇之悟";
+		lib.characterTitle.jsp_huangyueying = "闺中璞玉";
+		lib.characterTitle.mizhu = "挥金追义";
+		lib.characterTitle.mazhong = "笑合南中";
+		lib.characterTitle.wenpin = "坚城宿将";
+		lib.characterTitle.heqi = "马踏群峦";
+		lib.characterTitle.guanyinping = "武姬";
+		lib.characterTitle.mayunlu = "剑胆琴心";
+		lib.characterTitle.zumao = "碧血染赤帻";
+		lib.characterTitle.tadun = "北狄王";
 		lib.characterTitle.wangcan = "七子之冠冕";
 		lib.characterTitle.sp_taishici = "北海酬恩";
 		lib.characterTitle.re_jsp_pangtong = "南州士冠";
@@ -1287,6 +1287,7 @@ content:function(config,pack){
 		lib.characterTitle.kaisa = "";
 		
 		// offline: "线下武将",
+		lib.characterTitle.pe_que = "神人何惧";
 		lib.characterTitle.xk_luoli = "庐江义寇";
 		lib.characterTitle.xk_cuilian = "缚树行鞭";
 		lib.characterTitle.xk_penghu = "鄱阳风浪";
@@ -1614,9 +1615,9 @@ content:function(config,pack){
 		lib.characterTitle.std_zhoufang = "";
 		
 		// collab: "联动卡",
-		lib.characterTitle.jiangziya = "";
-		lib.characterTitle.shengongbao = "";
-		lib.characterTitle.nanjixianweng = "";
+		lib.characterTitle.jiangziya = "武庙主祭";
+		lib.characterTitle.shengongbao = "道友留步";
+		lib.characterTitle.nanjixianweng = "阐教真君";
 		lib.characterTitle.ol_jsrg_caocao = "";
 		lib.characterTitle.liuxiecaojie = "";
 		lib.characterTitle.dc_zhaoyun = lib.characterTitle.boss_zhaoyun;
@@ -1632,8 +1633,8 @@ content:function(config,pack){
 		lib.characterTitle.sunwukong = "斗战胜佛"; // 参考太阳神三国杀
 		lib.characterTitle.longwang = "群龙之首"; // 参考太阳神三国杀
 		lib.characterTitle.taoshen = "";
-		lib.characterTitle.sunyang = "";
-		lib.characterTitle.yeshiwen = "";
+		lib.characterTitle.sunyang = "逐浪追风";
+		lib.characterTitle.yeshiwen = "出水青莲";
 		lib.characterTitle.sp_jiben = "";
 		lib.characterTitle.sp_fuhuanghou = "";
 		lib.characterTitle.sp_fuwan = "";
@@ -1742,23 +1743,23 @@ content:function(config,pack){
 		lib.characterTitle.re_zhugedan = lib.characterTitle.zhugedan;
 		lib.characterTitle.re_caorui = lib.characterTitle.caorui;
 		lib.characterTitle.re_caochong = lib.characterTitle.caochong;
-		lib.characterTitle.ol_zhangzhang = "";
-		lib.characterTitle.re_jsp_huangyueying = "";
-		lib.characterTitle.re_zhangsong = "";
-		lib.characterTitle.re_zhuzhi = "";
-		lib.characterTitle.dc_caozhi = "";
-		lib.characterTitle.ol_huangzhong = "";
-		lib.characterTitle.re_wenpin = "";
-		lib.characterTitle.re_guanzhang = "";
-		lib.characterTitle.re_mazhong = "";
-		lib.characterTitle.dc_chenqun = "";
-		lib.characterTitle.re_sundeng = "";
-		lib.characterTitle.re_caiyong = "";
-		lib.characterTitle.re_chengong = "";
-		lib.characterTitle.re_xunyou = "";
-		lib.characterTitle.dc_liru = "";
-		lib.characterTitle.re_zhuhuan = "";
-		lib.characterTitle.ol_dianwei = "";
+		lib.characterTitle.ol_zhangzhang = lib.characterTitle.zhangzhang;
+		lib.characterTitle.re_jsp_huangyueying = lib.characterTitle.jsp_huangyueying;
+		lib.characterTitle.re_zhangsong = lib.characterTitle.zhangsong;
+		lib.characterTitle.re_zhuzhi = lib.characterTitle.zhuzhi;
+		lib.characterTitle.dc_caozhi = lib.characterTitle.caozhi;
+		lib.characterTitle.ol_huangzhong = lib.characterTitle.re_huangzhong;
+		lib.characterTitle.re_wenpin = lib.characterTitle.wenpin;
+		lib.characterTitle.re_guanzhang = lib.characterTitle.guanzhang;
+		lib.characterTitle.re_mazhong = lib.characterTitle.mazhong;
+		lib.characterTitle.dc_chenqun = lib.characterTitle.chenqun;
+		lib.characterTitle.re_sundeng = lib.characterTitle.sundeng;
+		lib.characterTitle.re_caiyong = lib.characterTitle.caiyong;
+		lib.characterTitle.re_chengong = lib.characterTitle.chengong;
+		lib.characterTitle.re_xunyou = lib.characterTitle.xunyou;
+		lib.characterTitle.dc_liru = lib.characterTitle.xin_liru;
+		lib.characterTitle.re_zhuhuan = lib.characterTitle.zhuhuan;
+		lib.characterTitle.ol_dianwei = lib.characterTitle.dianwei;
 		lib.characterTitle.re_sp_taishici = "";
 		lib.characterTitle.re_liufeng = "";
 		lib.characterTitle.ol_xunyu = "";
@@ -1768,12 +1769,12 @@ content:function(config,pack){
 		lib.characterTitle.re_jushou = "";
 		lib.characterTitle.re_zhanghe = "";
 		lib.characterTitle.dc_xushu = lib.characterTitle.re_xushu;
-		lib.characterTitle.xin_gaoshun = "";
+		lib.characterTitle.xin_gaoshun = lib.characterTitle.gaoshun;
 		lib.characterTitle.re_guohuanghou = "";
 		lib.characterTitle.re_xiahoushi = "";
 		lib.characterTitle.ol_lusu = "";
 		lib.characterTitle.re_jiaxu = lib.characterTitle.jiaxu;
-		lib.characterTitle.re_guyong = "";
+		lib.characterTitle.re_guyong = lib.characterTitle.guyong;
 		lib.characterTitle.xin_zhonghui = lib.characterTitle.zhonghui;
 		lib.characterTitle.re_caifuren = "";
 		lib.characterTitle.re_guanping = "";
@@ -1833,14 +1834,14 @@ content:function(config,pack){
 		lib.characterTitle.re_lvbu = "";
 		lib.characterTitle.re_huatuo = "";
 		lib.characterTitle.re_liubei = lib.characterTitle.liubei;
-		lib.characterTitle.re_diaochan = "";
-		lib.characterTitle.re_huangyueying = "";
+		lib.characterTitle.re_diaochan = lib.characterTitle.diaochan;
+		lib.characterTitle.re_huangyueying = lib.characterTitle.huangyueying;
 		lib.characterTitle.re_sunquan = lib.characterTitle.sunquan;
-		lib.characterTitle.re_sunshangxiang = "";
-		lib.characterTitle.re_zhenji = "";
-		lib.characterTitle.re_zhugeliang = "";
-		lib.characterTitle.re_huaxiong = "";
-		lib.characterTitle.re_zhangjiao = "";
+		lib.characterTitle.re_sunshangxiang = lib.characterTitle.sunshangxiang;
+		lib.characterTitle.re_zhenji = lib.characterTitle.zhenji;
+		lib.characterTitle.re_zhugeliang = lib.characterTitle.zhugeliang;
+		lib.characterTitle.re_huaxiong = lib.characterTitle.huaxiong;
+		lib.characterTitle.re_zhangjiao = lib.characterTitle.sp_zhangjiao;
 		lib.characterTitle.xin_yuji = lib.characterTitle.re_yuji;
 		lib.characterTitle.re_zuoci = "";
 		lib.characterTitle.ol_xiahouyuan = "";
@@ -1855,7 +1856,7 @@ content:function(config,pack){
 		lib.characterTitle.ol_yuanshao = "";
 		lib.characterTitle.re_menghuo = "";
 		lib.characterTitle.ol_dongzhuo = lib.characterTitle.dongzhuo;
-		lib.characterTitle.ol_sunjian = "";
+		lib.characterTitle.ol_sunjian = lib.characterTitle.sunjian;
 		lib.characterTitle.re_caopi = lib.characterTitle.caopi;
 		lib.characterTitle.ol_jiangwei = "";
 		lib.characterTitle.ol_caiwenji = "";
@@ -2055,7 +2056,7 @@ content:function(config,pack){
 		lib.characterTitle.gz_wangling = lib.characterTitle.dc_wangling;
 		lib.characterTitle.gz_yanyan = "";
 		lib.characterTitle.gz_xin_zhuran = "";
-		lib.characterTitle.gz_gaoshun = "";
+		lib.characterTitle.gz_gaoshun = "清威严整";
 		lib.characterTitle.gz_jin_jiachong = "";
 		lib.characterTitle.gz_jin_yanghu = "";
 		lib.characterTitle.gz_re_xusheng = "";
@@ -2499,6 +2500,11 @@ content:function(config,pack){
 		// 宝物牌
 		obj.muniu='十年，亮休士劝农于黄沙，作流马木牛毕，教兵讲武。——《三国志后主传》';
 		obj.yuxi='方圆四寸，上镌五龙交纽；傍缺一角，以黄金镶之；上有篆文八字云：‘受命于天，既寿永昌。——《三国演义》';
+		
+		// 衍生
+		// 神黄月英
+		obj.zc26_zhuge='时来天地皆同力。';
+		obj.zc26_bagua='夫君，是你回来了吗？';
 		
 		function addStyle(content) {
 			var quote = content.split('——');
@@ -6564,6 +6570,7 @@ content:function(config,pack){
 		"ruyijingubang_skill",//如意金箍棒
 		"cheliji_sichengliangyu","cheliji_tiejixuanyu","cheliji_feilunzhanyu",//四乘粮舆、铁蒺玄舆、飞轮战舆
 		"dagongche_attack","dagongche_defend",//大攻车·攻、大攻车·守
+		"zc26_zhuge_skill", "zc26_bagua_skill", "zc26_lingling_skill",//魂·诸葛连弩、魂·八卦阵、軨軨
 		"mapodoufu",//麻婆豆腐
 		"hsbaowu_cangbaotu","hsbaowu_huangjinyuanhou",//藏宝图、黄金猿猴
 		"wy_meirenji","wy_xiaolicangdao",//美人计、笑里藏刀
@@ -14154,7 +14161,7 @@ precontent:function(){
 	
 	// 使用手气卡函数
 	// 旧代码（给控制台用）
-	// 别在分发初始手牌时用（举例：魔吕布加好“炁”tag前别用）
+	// 别在分发初始手牌时用（举例：OL魔吕布加好“炁”tag前别用）
 	game.byzyusesqk_old = function (player) {
 		var target = player;
 		var hs = target.getCards("h");
@@ -16298,7 +16305,7 @@ config:{
 		intro: "开启后，显示判定区的牌，即时生效。",
 		init: true,
 	},
-	// 默认关闭，如棘手懒人包魔吕布、孙寒华等标记美化过的就不需要开启标记显示了（开了反而不好看）
+	// 默认关闭，如棘手懒人包OL魔吕布、孙寒华等标记美化过的就不需要开启标记显示了（开了反而不好看）
 	yjcd_biaoji: {
 		name: "| 标记",
 		intro: "开启后，显示标记，即时生效。",
@@ -17947,7 +17954,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 复盘模式：类似再战，身份座位武将不变，重开一局（灵感来自群友）
 // 资料卡可双击原画/皮肤后放大看
 // 悔棋功能
-// 武将胜率
+// 武将胜率（参考本体胜率功能和胜负统计扩展）
 // 右键看武将技能不暂停游戏
 // 自由控制功能：任意控制，设置谁算队友/敌人（参考攻心为上扩展-谁算队友）；部分情况自娱自乐控制会有问题
 // 国战/双将的右键菜单加入/移出收藏功能有问题？只能收藏主将？再添加一个按钮收藏副将

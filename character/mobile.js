@@ -2576,6 +2576,13 @@ game.import("character", function () {
 				selectTarget: -1,
 				multiline: true,
 				async contentBefore(event, trigger, player) {
+					// 临时修改（by 棘手怀念摧毁）
+					if (lib.config.effectBGM_mb_caomao)
+					game.broadcastAll(() => {
+						_status.tempMusic = "effect_caomaoBJM";
+						game.playBackgroundMusic();
+					});
+					
 					player.changeSkin({ characterName: "mb_caomao" }, "mb_caomao_shadow");
 					player.awakenSkill("mbjuejin");
 				},

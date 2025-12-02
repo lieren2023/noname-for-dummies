@@ -6531,6 +6531,7 @@ game.import("character", function () {
 				},
 				locked: false,
 				audio: 2,
+				audioname: ["pot_huanjie"],
 				enable: "chooseToUse",
 				filterCard(card) {
 					return get.color(card) == "black";

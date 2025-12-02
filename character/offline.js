@@ -7,6 +7,12 @@ game.import("character", function () {
 			"zhangliang", "yj_tianchuan"
 		],
 		character: {
+			pe_que: [
+				"male",
+				"qun",
+				4,
+				["peyingzhen", "peyuanjue", "peaoyong"],
+			],
 			xk_luoli: ["male", "qun", 4, ["xkjuluan", "xkxianxing"]],
 			xk_cuilian: ["male", "qun", 3, ["xktanlu", "xkjubian"]],
 			xk_penghu: ["male", "qun", 5, ["xkjuqian", "xkkanpo", "xkyizhong"]],
@@ -208,7 +214,7 @@ game.import("character", function () {
 					"yj_jiaxu",
 					"yj_zhenji",
 				],
-				offline_piracyE: ["yj_zhouji", "yj_ehuan", "yj_tianchuan", "yj_zhonghui"],
+				offline_piracyE: ["pe_que", "yj_zhouji", "yj_ehuan", "yj_tianchuan", "yj_zhonghui"],
 				offline_piracyE_zy: ["shen_jiaxu", "pe_wangyun", "pe_zhonghui", "pe_sunchen", "pe_mengda", "pe_wenqin", "ns_caoanmin", "jiangqing", "kongrong", "jiling", "tianfeng", "mateng"],
 				offline_piracyE_xk: ["xk_luoli", "xk_cuilian", "xk_penghu", "xk_shanfu", "xk_pengqi", "xk_zulang"],
 				offline_piracyS: [
@@ -248,6 +254,7 @@ game.import("character", function () {
 			jd_sb_sp_zhugeliang: [["sb_zhugeliang", []]],
 		},
 		characterIntro: {
+			pe_que: "曲阿小将，《三国演义》虚构人物。太史慈神亭酣战孙策时，独自抵挡程普等十二将。",
 			simayan: "晋武帝司马炎（236年—290年5月16日），字安世，河内郡温县（今河南省温县）人。中国西晋开国皇帝（266年2月8日—290年5月16日在位），晋宣帝司马懿之孙，晋文帝司马昭嫡长子，母为文明皇后王元姬。司马炎出身河内司马氏。曹魏末年，其祖司马懿、伯父司马师、父司马昭相继控制朝政。咸熙元年（264年），司马炎被立为晋王世子，翌年司马昭去世，他继任为相国，袭封晋王。同年十二月（266年2月），逼迫魏元帝曹奂禅让，即位为帝，建立西晋，改元泰始。即位之初，鉴于曹魏宗室屏藩无力以致孤立而亡，大封同姓诸王，又委任几位宗王统领重兵，出镇要地；重视法律的修订，其颁行的《晋律》是中国古代重要的法典。咸宁五年（279年），发兵南下，次年灭亡吴国，实现全国统一。其间颁行占田制、户调式，促进人口增长，使得经济社会呈现繁荣景象，史称“太康之治”。但随着天下安定，司马炎逐渐“怠于政术，耽于游宴”，使统治阶层中奢侈荒淫之风广泛蔓延。他执意立智力低下的司马衷为继承人，又在统一前后命诸王就国、废除州郡武备，为西晋短暂统治的覆亡埋下了深刻隐患。太熙元年（290年），司马炎在洛阳含章殿病逝，时年五十五岁，谥号武皇帝，庙号世祖，安葬于峻阳陵。司马炎在父祖开创的政治基础上，建立晋朝，渡江灭吴，完成了三国统一的历史伟业。由他制定的有晋一代的政治、经济、律法制度，还深刻影响了后世王朝的政治体制。",
 			ehuan: "鄂焕，古典文学名著《三国演义》人物，为蜀将高定部将，身长九尺，面目狰狞，使一只方天戟，有万夫不当之勇。于孔明征朱褒、雍闿时粉墨登场，与魏延大战不分胜负，后中计被魏延、王平、张翼联手擒获，孔明以礼相待，成功离间高定与朱、雍二人。后高定派鄂焕斩朱褒、平雍闿，二人一起归蜀，鄂焕遂因其功而被封为牙门将。",
 			zhouji: "三国杀集换式卡牌游戏《阵面对决》中的权倾系列卡牌。游卡桌游官方的三国时期女性角色，原型是周妃（又名周彻）。周瑜之女。",
@@ -615,6 +622,244 @@ game.import("character", function () {
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
+			//曲阿小将
+			peyingzhen: {
+				trigger: {
+					global: "phaseBefore",
+					player: "enterGame",
+				},
+				filter(event, player) {
+					if (!game.countPlayer(current => current != player)) {
+						return false;
+					}
+					return event.name != "phase" || game.phaseNumber == 0;
+				},
+				async cost(event, trigger, player) {
+					const targets = game.filterPlayer(current => current != player);
+					event.result =
+						targets.length > 1
+							? await player
+									.chooseTarget(
+										get.prompt2(event.skill),
+										(card, player, target) => {
+											if (target == player) {
+												return false;
+											}
+											if (ui.selected.targets.length) {
+												const targetx = ui.selected.targets[0];
+												return target == targetx.getPrevious() || target == targetx.getNext();
+											}
+											return true;
+										},
+										true,
+										2
+									)
+									.set("targetprompt", ["执行回合", "交换位置"])
+									.set("complexTarget", true)
+									.set("ai", target => {
+										const att = get.attitude(get.player(), target);
+										if (ui.selected.targets.length) {
+											return -att;
+										}
+										return att;
+									})
+									.forResult()
+							: {
+									bool: true,
+									targets: targets,
+								};
+				},
+				async content(event, trigger, player) {
+					const targets = event.targets;
+					if (targets.length > 1) {
+						game.broadcastAll(
+							function (target1, target2) {
+								game.swapSeat(target1, target2);
+							},
+							player,
+							targets[1]
+						);
+					}
+					// 临时修改（by 棘手怀念摧毁）
+					await game.asyncDelay(3);
+					// await game.delay(3);
+					const evt = player.insertPhase();
+					evt.pushHandler("onPhase", (event, option) => {
+						if (event.step === 0 && option.state === "begin") {
+							event.step = 1;
+						}
+					});
+					targets[0].insertPhase();
+					if (trigger.name == "phase" && !trigger._finished) {
+						let first = game.findPlayer(current => current.getSeatNum() == 1) || trigger.player;
+						trigger.finish();
+						trigger._finished = true;
+						trigger.untrigger(true);
+						trigger._triggered = 5;
+						const evtx = first.insertPhase();
+						delete evtx.skill;
+						const evt2 = trigger.getParent();
+						if (evt2.name == "phaseLoop" && evt2._isStandardLoop) {
+							evt2.player = first;
+						}
+					}
+				},
+			},
+			peyuanjue: {
+				trigger: {
+					player: "phaseDrawBefore",
+				},
+				zhuanhuanji: true,
+				mark: true,
+				marktext: "☯",
+				intro: {
+					content(storage, player, skill) {
+						if (storage) {
+							return "所有角色的基本牌视为无次数限制的【杀】";
+						} else if (storage === false) {
+							return "所有角色与你互相计算距离为1，你视为拥有〖同忾〗";
+						}
+						return get.skillInfoTranslation(skill, player, false);
+					},
+				},
+				async content(event, trigger, player) {
+					trigger.cancel();
+					player.changeZhuanhuanji(event.name);
+					if (player.getStorage(event.name, false)) {
+						player.removeAdditionalSkill(event.name);
+					} else {
+						player.addAdditionalSkill(event.name, ["petongkai"]);
+					}
+				},
+				locked: false,
+				mod: {
+					globalFrom(from, to) {
+						if (from.storage.peyuanjue === false) {
+							return -Infinity;
+						}
+					},
+					globalTo(from, to) {
+						if (to.storage.peyuanjue === false) {
+							return -Infinity;
+						}
+					},
+				},
+				global: "peyuanjue_viewas",
+				derivation: "petongkai",
+				subSkill: {
+					viewas: {
+						mod: {
+							cardname(card, player) {
+								if (
+									game.hasPlayer(current => {
+										return current.hasSkill("peyuanjue") && current.getStorage("peyuanjue") === true;
+									}) &&
+									lib.card[card.name]?.type == "basic"
+								) {
+									return "sha";
+								}
+							},
+							cardUsable(card, player) {
+								if (
+									!game.hasPlayer(current => {
+										return current.hasSkill("peyuanjue") && current.getStorage("peyuanjue") === true;
+									}) ||
+									card.name != "sha"
+								) {
+									return;
+								}
+								if (!card.cards || card.cards.length != 1) {
+									return;
+								}
+								if (get.suit(card) == "unsure" || lib.card[card.cards[0].name]?.type == "basic") {
+									return Infinity;
+								}
+							},
+						},
+					},
+				},
+			},
+			peaoyong: {
+				trigger: {
+					player: "gainAfter",
+					global: "loseAsyncAfter",
+				},
+				persevereSkill: true,
+				filter(event, player) {
+					return event.getParent(2, true)?.name != "peaoyong" && event.getg(player)?.length;
+				},
+				async cost(event, trigger, player) {
+					const result = await player
+						.chooseControl(["选项一", "选项二", "选项三", "背水！", "cancel2"])
+						.set("choiceList", ["选项一：摸一张牌", "选项二：回复1点体力", "选项三：使用一张牌", "背水，减少1点体力上限"])
+						.set("displayIndex", false)
+						.set("ai", () => {
+							return get.player().hp <= 2 ? "选项二" : "选项一";
+						})
+						.set("prompt", get.prompt(event.skill))
+						.forResult();
+					event.result = {
+						bool: result.index != 4,
+						cost_data: result.index,
+					};
+				},
+				async content(event, trigger, player) {
+					const num = event.cost_data;
+					if (num == 3) {
+						player.popup("背水", "thunder");
+					}
+					if (num == 0 || num == 3) {
+						await player.draw();
+					}
+					if (num == 1 || num == 3) {
+						await player.recover();
+					}
+					if (num == 2 || num == 3) {
+						await player.chooseToUse({
+							filterCard(card, player, event) {
+								if (get.itemtype(card) != "card") {
+									return false;
+								}
+								return lib.filter.filterCard.apply(this, arguments);
+							},
+							prompt: "鏊勇：是否使用一张牌？",
+							addCount: false,
+						});
+					}
+					if (num == 3) {
+						await player.loseMaxHp();
+					}
+				},
+			},
+			petongkai: {
+				trigger: {
+					global: "useCardToTargeted",
+				},
+				filter(event, player) {
+					return get.tag(event.card, "damage") && get.distance(player, event.target) <= 1 && event.target.isIn();
+				},
+				logTarget: "target",
+				async content(event, trigger, player) {
+					await player.draw();
+					if (trigger.target == player || !trigger.target?.isIn()) {
+						return;
+					}
+					const result = await player.chooseToGive(true, "he", trigger.target).set("visibleMove", true).forResult();
+					if (!result?.bool) {
+						return;
+					}
+					// 临时修改（by 棘手怀念摧毁）
+					await game.asyncDelay();
+					// await game.delay();
+					const card = result.cards[0];
+					if (trigger.target.getCards("h").includes(card) && get.type(card) == "equip") {
+						trigger.target.chooseUseTarget(card);
+					}
+				},
+				ai: {
+					threaten: 1.1,
+				},
+			},
 			//祖郎
 			xkxijun: {
 				enable: ["chooseToUse", "chooseToRespond"],
@@ -17746,6 +17991,19 @@ game.import("character", function () {
 			},
 		},
 		dynamicTranslate: {
+			peyuanjue(player) {
+				const bool = player.storage.peyuanjue;
+				let yang = "令所有角色的基本牌视为无次数限制的【杀】",
+					yin = "令所有角色与你互相计算距离为1，且你视为拥有〖同忾〗";
+				if (bool) {
+					yin = `<span class='bluetext'>${yin}</span>`;
+				} else {
+					yang = `<span class='firetext'>${yang}</span>`;
+				}
+				let start = "转换技。摸牌阶段开始时，你可以跳过摸牌阶段，",
+					end = "。";
+				return `${start}阳：${yang}；阴：${yin}${end}`;
+			},
 			scls_miaojian(player) {
 				if (player.hasMark("scls_miaojian")) return "出牌阶段限一次，你可视为使用一张刺【杀】或【无中生有】。";
 				return "出牌阶段限一次，你可将一张基本牌当做刺【杀】使用，或将一张非基本牌当做【无中生有】使用。";
@@ -18829,6 +19087,17 @@ game.import("character", function () {
 			jun_lvbu_prefix: "幻",
 			yjqingjiao: "轻狡",
 			yjqingjiao_info: "主公技，锁定技。结束阶段，若你本回合对其他群势力角色造成过伤害，你摸一张牌。",
+			pe_que: "曲阿小将",
+			peyingzhen: "应阵",
+			peyingzhen_info: "游戏开始时，你与一名其他角色的上家或下家交换位置，然后你与其依次执行一个额外回合。",
+			peyuanjue: "援绝",
+			peyuanjue_info: "转换技，摸牌阶段开始时，你可以跳过摸牌阶段，阳：令所有角色的基本牌视为无次数限制的【杀】；阴：令所有角色与你互相计算距离为1，且你视为拥有〖同忾〗。",
+			peaoyong: "鏊勇",
+			// 临时修改（by 棘手怀念摧毁）
+			// peaoyong_info: `${get.poptip("rule_chihengji")}，你不因此技能获得牌时，可以选择一项：1.摸一张牌；2.回复1点体力；3.使用一张牌；${get.poptip("rule_beishui")}：减少1点体力上限。`,
+			peaoyong_info: "持恒技，你不因此技能获得牌时，可以选择一项：1.摸一张牌；2.回复1点体力；3.使用一张牌；背水：减少1点体力上限。",
+			petongkai: "同忾",
+			petongkai_info: "一名角色成为伤害牌的目标时，若你与其的距离不大于1，你可以摸一张牌，然后展示并交给其一张牌；若此牌为装备牌，其可使用之。",
 
 			offline_star: "桌游志·SP",
 			offline_sticker: "桌游志·贴纸",
