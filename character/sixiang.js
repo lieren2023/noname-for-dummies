@@ -41,7 +41,7 @@ game.import("character", function () {
 			std_zhonghui: ["male", "wei", 4, ["stdxingfa"], ["clan:颍川钟氏"]],
 			std_huaxin: ["male", "wei", 3, ["stdyuanqing", "stdshuchen"]],
 			
-			std_zhangbao: ["male", "shu", 4, ["stdjuezhu", "stdchengji"]],
+			std_zhangbao: ["male", "shu", 4, ["stdjuezhu", "stdchengji"], ["die:std_zhangbao"]],
 			std_liuchen: ["male", "shu", 4, ["stdzhanjue", "stdqinwang"], ["zhu"]],
 			std_guansuo: ["male", "shu", 4, ["stdzhengnan"]],
 			std_xiahouba: ["male", "shu", 4, ["stdbaobian"]],
@@ -4335,6 +4335,11 @@ game.import("character", function () {
 			shaoyang_kan: "少阳·坎",
 			taiyang_qian: "太阳·乾",
 			taiyang_dui: "太阳·兑",
+			
+			sixiang_sort_qinglong: "四象封印·青龙",
+			sixiang_sort_baihu: "四象封印·白虎",
+			sixiang_sort_zhuque: "四象封印·朱雀",
+			sixiang_sort_xuanwu: "四象封印·玄武",
 		},
 		perfectPair: {
 			

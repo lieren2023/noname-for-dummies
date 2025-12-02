@@ -41,6 +41,7 @@ var pinyin_dict_polyphone = {
 	"夏侯令女": " hóu lìng nǚ",
 	"马日磾": " mì dī",
 	"史阿": " ē",
+	"曲阿": "qū ē",
 	"单福": "shàn ",
 	"秃发树机能": "tú fá shù jī néng",
 	
@@ -105,6 +106,7 @@ var pinyin_dict_polyphone = {
 	"破降": " xiáng",
 	"拒降": " xiáng",
 	"奔降": "bēn xiáng",
+	"应阵": "yìng ",
 	"应势": "yìng ",
 	"应援": "yìng ",
 	"应机": "yìng ",

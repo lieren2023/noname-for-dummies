@@ -91,9 +91,9 @@ game.import("character", function () {
 		},
 		characterFilter: {
 			// 临时修改（by 棘手怀念摧毁）
-			zc26_shen_huangyueying: function (mode) {
-				return false;
-			},
+			// zc26_shen_huangyueying: function (mode) {
+				// return false;
+			// },
 			
 			shen_diaochan(mode) {
 				return (
@@ -747,6 +747,9 @@ game.import("character", function () {
 				},
 			},
 			zc26_huaxiu: {
+				// 临时修改（by 棘手怀念摧毁）
+				derivation: ["zc26_zhuge_skill", "zc26_bagua_skill", "zc26_lingling_skill"],
+				
 				usable: 1,
 				enable: "phaseUse",
 				onChooseToUse(event) {
@@ -1180,7 +1183,9 @@ game.import("character", function () {
 				equipSkill: true,
 				trigger: {
 					player: "phaseZhunbeiBegin",
-					global: "roundEnd",
+					// 临时修改（by 棘手怀念摧毁）
+					global: "roundStart",
+					// global: "roundEnd",
 				},
 				getIndex(event, player) {
 					if (event.name == "phaseZhunbei") {
@@ -1200,13 +1205,19 @@ game.import("character", function () {
 					return es.concat(js);
 				},
 				filter(event, player, triggername, card) {
+					// 临时修改（by 棘手怀念摧毁）
+					const curLen = player.actionHistory.length;
+					if (curLen <= 2) return false;
+					
 					if (event.name == "phaseZhunbei") {
 						return true;
 					}
 					if (!game.dead.length) {
 						return false;
 					}
-					return !event.next[event.next.length - 1]?.zc26_lingling?.includes(card);
+					// 临时修改（by 棘手怀念摧毁）
+					return _status.deadtrigger != game.roundNumber;
+					// return !event.next[event.next.length - 1]?.zc26_lingling?.includes(card);
 				},
 				forced: true,
 				async content(event, trigger, player) {
@@ -1220,9 +1231,10 @@ game.import("character", function () {
 						}
 					} else {
 						// 临时修改（by 棘手怀念摧毁）
-						if (trigger.next[trigger.next.length - 1].zc26_lingling == null) trigger.next[trigger.next.length - 1].zc26_lingling = [];
+						_status.deadtrigger = game.roundNumber;
+						// if (trigger.next[trigger.next.length - 1].zc26_lingling == null) trigger.next[trigger.next.length - 1].zc26_lingling = [];
 						// trigger.next[trigger.next.length - 1].zc26_lingling ??= [];
-						trigger.next[trigger.next.length - 1].zc26_lingling.add(event.indexedData);
+						// trigger.next[trigger.next.length - 1].zc26_lingling.add(event.indexedData);
 						const targets = game.dead.slice();
 						const map = await game.chooseAnyOL(targets, get.info(event.name).chooseControl, [player, event.indexedData]).forResult();
 						for (const target of targets) {
@@ -1260,12 +1272,14 @@ game.import("character", function () {
 										if (source.getCards("e").includes(event.card)) {
 											position = "e";
 											if (!event.card.cards?.length) {
-												source.removeVirtualEquip(event.card);
+												// 临时修改（by 棘手怀念摧毁）
+												// source.removeVirtualEquip(event.card);
 											}
 											await aim.equip(event.card);
 										} else {
 											if (!event.card.cards?.length) {
-												source.removeVirtualJudge(event.card);
+												// 临时修改（by 棘手怀念摧毁）
+												// source.removeVirtualJudge(event.card);
 											}
 											await aim.addJudge(event.card, event.card?.cards);
 										}
@@ -2041,14 +2055,22 @@ game.import("character", function () {
 					global: "_wuxieAfter",
 				},
 				filter(event, player) {
-					if (player.countMark("xinrenjie_used") >= 4) return false;
-					if (event.name == "chooseToUse" && event.type == "wuxie") return false;
+					if (player.countMark("xinrenjie_used") >= 4) {
+						return false;
+					}
+					if (event.name == "chooseToUse" && event.type == "wuxie") {
+						return false;
+					}
 					if (event.name == "_wuxie") {
-						if (event.wuxieresult && event.wuxieresult == player) return false;
-						if (event._info_map.player == player) return false;
+						if (event.wuxieresult && event.wuxieresult == player) {
+							return false;
+						}
+						if (event._info_map.player == player) {
+							return false;
+						}
 						return true;
 					}
-					return event.respondTo && event.respondTo[0] !==player && !event.result.bool;
+					return event.respondTo && event.respondTo[0] !== player && !event.result.bool;
 				},
 				forced: true,
 				async content(event, trigger, player) {
@@ -2072,10 +2094,45 @@ game.import("character", function () {
 						}
 					},
 				},
+				group: "xinrenjie_change",
 				subSkill: {
 					used: {
 						charlotte: true,
 						onremove: true,
+					},
+					change: {
+						audio: "xinrenjie",
+						trigger: {
+							global: "phaseBefore",
+							player: "enterGame",
+						},
+						filter(event, player) {
+							if (event.name === "phase" && game.phaseNumber > 0) {
+								return false;
+							}
+							if (!lib.group.some(group => group !== "shen")) {
+								return false;
+							}
+							return player.group === "shen" && player._groupChosen !== "kami";
+						},
+						async cost(event, trigger, player) {
+							const groups = lib.group.filter(group => group !== "shen");
+							const result = (event.result = await player
+								.chooseControl(groups, "cancel2")
+								.set("ai", () => {
+									// 魔改（by 棘手怀念摧毁）
+									const groups = get.event().controls.filter(group => !["wei", "shu", "wu", "qun", "jin"].includes(group));
+									// const groups = get.event().controls.filter(group => !["wei", "shu", "wu", "qun"].includes(group));
+									return groups.length ? groups.randomGet() : "cancel2";
+								})
+								.set("prompt", get.translation("xinrenjie") + "：是否变更势力？")
+								.forResult());
+							event.result.bool = typeof result.control === "string" && result.control !== "cancel2";
+							event.result.cost_data = result.control;
+						},
+						content() {
+							player.changeGroup(event.cost_data);
+						},
 					},
 				},
 			},
@@ -2264,6 +2321,7 @@ game.import("character", function () {
 								["qun", "rewansha"],
 								// 魔改（by 棘手怀念摧毁）
 								["jin", "xiongzhi"],
+								["shen", get.info("xinbaiyin").derivation.randomGet()],
 							]);
 							if (Array.from(groupList.keys()).includes(player.group)) skills.push(groupList.get(player.group));
 							skills = skills.filter(skill => !player.hasSkill(skill, null, null, false));
@@ -12479,7 +12537,7 @@ game.import("character", function () {
 			xinjilve: "极略",
 			// xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
 			// 魔改（by 棘手怀念摧毁）
-			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗；晋：〖雄志〗。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
+			xinjilve_info: "①当你获得此技能时，你获得〖鬼才〗并根据你的势力获得以下对应技能：魏：〖放逐〗；蜀：〖集智〗；吴：〖制衡〗；群：〖完杀〗；晋：〖雄志〗；神：随机获得一个上述技能。②出牌阶段开始时，你可以选择一项：1.弃置X枚“忍”标记并获得一个你未拥有的〖极略〗技能（X为你选择此项的次数+1且至少为2）；2.弃置至多2枚“忍”标记并摸等量张牌。",
 			new_simayi: "应天神司马懿",
 			// new_simayi_ab: "手杀神司马懿",
 			// new_simayi_prefix: "手杀神",

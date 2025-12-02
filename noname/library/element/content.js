@@ -9850,6 +9850,8 @@ export const Content = {
 		var cards = get.cards(num);
 		game.cardsGotoOrdering(cards);
 		var next = player.chooseToMove();
+		next.set("forceDie", event.forceDie);
+		next.set("includeOut", event.includeOut);
 		next.set("list", [["牌堆顶", cards], ["牌堆底"]]);
 		next.set("prompt", "点击将牌移动到牌堆顶或牌堆底");
 		next.processAI =

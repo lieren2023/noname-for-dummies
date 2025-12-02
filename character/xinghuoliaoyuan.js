@@ -7,6 +7,31 @@ game.import("character", function () {
 			
 		],
 		character: {
+			zhangxingcai: ["female", "shu", 3, ["shenxian", "qiangwu"]],
+			caoang: ["male", "wei", 4, ["kaikang"]],
+			zhugedan: ["male", "wei", 4, ["gongao", "juyi"]],
+			buzhi: ["male", "wu", 3, ["hongde", "dingpan"]],
+			liuxie: ["male", "qun", 3, ["tianming", "mizhao", "twzhuiting"], ["zhu"]],
+			dongyun: ["male", "shu", 3, ["bingzheng", "sheyan"]],
+			simalang: ["male", "wei", 3, ["junbing", "quji"]],
+			zhugejin: ["male", "wu", 3, ["huanshi", "olhongyuan", "olmingzhe"]],
+			zhanglu: ["male", "qun", 3, ["yishe", "bushi", "midao", "twshijun"], ["zhu"]],
+			sunqian: ["male", "shu", 3, ["qianya", "shuimeng"]],
+			xizhicai: ["male", "wei", 3, ["tiandu", "xianfu", "chouce"]],
+			sp_sunshangxiang: ["female", "shu", 3, ["liangzhu", "fanxiang"]],
+			sp_caiwenji: ["female", "wei", 3, ["chenqing", "mozhi"]],
+			sp_jiangwei: ["male", "wei", 4, ["kunfen", "fengliang"]],
+			sp_pangde: ["male", "wei", 4, ["mashu", "juesi"]],
+			jsp_huangyueying: ["female", "qun", 3, ["jiqiao", "linglong"]],
+			mizhu: ["male", "shu", 3, ["ziyuan", "jugu"]],
+			mazhong: ["male", "shu", 4, ["fuman"]],
+			wenpin: ["male", "wei", 4, ["zhenwei"]],
+			heqi: ["male", "wu", 4, ["olqizhou", "olshanxi"]],
+			guanyinping: ["female", "shu", 3, ["huxiao", "xueji", "wuji"]],
+			mayunlu: ["female", "shu", 4, ["fengpo", "mashu"]],
+			zumao: ["male", "wu", 4, ["yinbing", "juedi"]],
+			tadun: ["male", "qun", 4, ["reluanzhan"]],
+
 			wangcan: ["male", "qun", 3, ["xinfu_sanwen", "xinfu_qiai", "xinfu_denglou"]],
 			sp_taishici: ["male", "qun", 4, ["xinfu_jixu"]],
 			re_jsp_pangtong: ["male", "wu", 3, ["xinfu_guolun", "xinfu_songsang"]],
@@ -38,12 +63,13 @@ game.import("character", function () {
 		},
 		characterSort: {
 			xinghuoliaoyuan: {
-				// xinghuoliaoyuan_tianfu: [],
-				xinghuoliaoyuan_tianliang: ["duji", "liuyan", "yanjun"],
-				xinghuoliaoyuan_tianji: ["panjun", "wangcan"],
-				xinghuoliaoyuan_tiantong: ["re_jsp_pangtong", "sp_taishici"],
-				xinghuoliaoyuan_tianxiang: ["lvdai", "zhoufang", "liuyao"],
-				xinghuoliaoyuan_qisha: ["lvqian", "re_zhangliang"],
+				// 分包调整（by棘手怀念摧毁）
+				xinghuoliaoyuan_tianfu: ["zhangxingcai", "caoang", "zhugedan", "buzhi", "liuxie"],
+				xinghuoliaoyuan_tianliang: ["dongyun", "simalang", "duji", "zhugejin", "liuyan", "zhanglu", "yanjun"],
+				xinghuoliaoyuan_tianji: ["sunqian", "xizhicai", "panjun", "wangcan"],
+				xinghuoliaoyuan_tiantong: ["sp_sunshangxiang", "sp_caiwenji", "sp_jiangwei", "sp_pangde", "re_jsp_pangtong", "jsp_huangyueying", "sp_taishici"],
+				xinghuoliaoyuan_tianxiang: ["mizhu", "mazhong", "wenpin", "zhoufang", "heqi", "lvdai", "liuyao"],
+				xinghuoliaoyuan_qisha: ["guanyinping", "mayunlu", "lvqian", "zumao", "tadun", "re_zhangliang"],
 				
 				xinghuoliaoyuan_tianshu: ["star_yuanshu", "star_dongzhuo", "star_yuanshao"],
 				xinghuoliaoyuan_tianxuan: ["star_xunyu", "star_zhangzhao"],
@@ -89,7 +115,7 @@ game.import("character", function () {
 		},
 		/** @type { importCharacterConfig['skill'] } */
 		skill: {
-			// 部分武将代码位于sp2.js
+			// 部分武将代码位于sp.js、sp2.js
 			
 			//荀彧
 			staranshu: {
