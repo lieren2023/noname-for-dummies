@@ -37,8 +37,9 @@ content:function(config, pack){
 		'<li>无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等<br>'+
 		'<li>主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等<br>'+
 		'<li>最重要的是：<span style=\"color:red\">看教程，看教程，看教程</span></ul>'+
-		'<div style="margin:10px">关于无名杀官方</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/libccy/noname">点击前往Github仓库</a><br><li>无名杀基于GPLv3开源协议。<br><a href="https://www.gnu.org/licenses/gpl-3.0.html">点击查看GPLv3协议</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为玩家自发组织，与无名杀官方无关！'+
-		'<li>【无名杀】属于个人开发软件且【完全免费】，如非法倒卖用于牟利将承担法律责任，开发团队将追究到底！';
+		'<div style="margin:10px">关于无名杀官方</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br>https://github.com/libnoname<br>/noname<br><a href="https://github.com/libnoname/noname">点击前往Github新仓库</a><br>https://github.com/libccy<br>/noname<br><a href="https://github.com/libccy/noname">点击前往Github旧仓库</a><br><li>无名杀基于GPLv3开源协议。<br><a href="https://www.gnu.org/licenses/gpl-3.0.html">点击查看GPLv3协议</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为玩家自发组织，与无名杀官方无关！'+
+		'<li>【无名杀】属于个人开发软件且【完全免费】，如非法倒卖用于牟利将承担法律责任，开发团队将追究到底！</ul>'+
+		'<div style="margin:10px">关于棘手懒人包</div><ul style="margin-top:0"><li>作者：棘手怀念摧毁<li>GitHub仓库：<br>https://github.com/lieren2023<br>/noname-for-dummies<br><a href="https://github.com/lieren2023/noname-for-dummies">点击前往Github仓库</a><br>或可到十周年UI扩展点击复制懒人包开源项目的访问地址</ul>';
 	
 	// Show-K修复版搬运
 	const Mixin = window.Mixin = {
@@ -224,6 +225,7 @@ content:function(config, pack){
 			init:'off',
 			item:{
 				'off':'关闭',
+				'3000':'3秒',
 				'5000':'5秒',
 				'10000':'10秒',
 				'15000':'15秒',
@@ -1646,6 +1648,20 @@ content:function(config, pack){
 			
 		} else lib.configMenu.appearence.config.hp_style.onclick('glass'); 
 		
+		// 君主再战恢复（但士兵再战暂时无法恢复）
+		game.reloadCurrent = function() {
+			let names = [game.me.name1 || game.me.name, game.me.name2];
+			if(game.me.name1 != game.me.name) names = [game.me.name];
+			
+			for (var i = 0; i < names.length; i++) {
+				if(names[i].startsWith("gz_jun_")) names[i] = "gz_" + names[i].slice(7);
+			}
+			
+			game.saveConfig("continue_name", names);
+			game.saveConfig("mode", lib.config.mode);
+			localStorage.setItem(lib.configprefix + "directstart", true);
+			game.reload();
+		};
 	}
 	// 国战其他魔改
 	if(lib.config.mode=='guozhan'){
@@ -3359,6 +3375,41 @@ content:function(config, pack){
 
 				game.onSwapControl();
 			});
+		};
+		
+		// 显示手牌按钮菜单的显示美化（对决模式）
+		game.versusHoverHandcards = function () {
+			var uiintro = ui.create.dialog("hidden");
+			var added = false;
+			for (var i = 0; i < game.players.length; i++) {
+				if (
+					game.players[i].name &&
+					game.players[i].side == game.me.side &&
+					game.players[i] != game.me
+				) {
+					added = true;
+					uiintro.add(get.translation(game.players[i]));
+					var cards = game.players[i].getCards("h");
+					if (cards.length) {
+						// 修改（与菜单卡牌的显示美化一样）
+						var list = [];
+						for (var j = 0; j < cards.length; j++) {
+							var cardx = cards[j];
+							var copy = game.createCard2(cardx.name, cardx.suit, cardx.number, cardx.nature);
+							copy.classList.add('menusize');
+							copy.node.suitnum.classList.add('menusizex');
+							copy.node.image.classList.add('menusize');
+							copy.$name.classList.add('menusize');
+							list.unshift(copy);
+						}
+						uiintro.addSmall([list, "card"], true);
+						// uiintro.addSmall(cards, true);
+					} else {
+						uiintro.add("（无）");
+					}
+				}
+			}
+			if (added) return uiintro;
 		};
 	}
 	
@@ -9708,6 +9759,30 @@ content:function(config, pack){
 				};
 				lib.translate.weiwoduzun='战神';
 				lib.translate.weiwoduzun_bg='战神';
+			};
+		}
+		
+		// 入魔标记显示内容修改
+		if(lib.skill.olrumo != undefined){
+			lib.skill.olrumo.intro.content = function() { return "你已入魔：每轮结束时，若本轮你未造成过伤害，你失去1点体力。" };
+		}
+		
+		// OL魔曹操覆载标记显示内容修改
+		if(lib.skill.olfuzai != undefined){
+			lib.skill.olfuzai.intro.content = function(_, player) {
+				const names = player.getStorage("olfuzai").filter(name => name != undefined);
+				let str = "",
+					name = "",
+					translation = "";
+				if(names.length){
+					for (let i = 0; i < names.length; i++) {
+						name += get.translation(names[i])+ "、";
+						translation += "【" + get.translation(names[i]) + "】：" + get.translation(names[i] + "_info")+ "<br><br>";
+					}
+					str = name.slice(0, -1) + "<br><br>" + translation.slice(0, -8);
+					return "视为装备着：" + str;
+				}
+				return "无视为装备";
 			};
 		}
 		
@@ -16328,6 +16403,18 @@ if(!(lib.config.extensions.contains("手杀ui")&&lib.config.extension_手杀ui_e
 								break;
 							}
 						}
+						else {
+							var skillEvent = event.parent.parent.parent;
+							if (skillEvent) {
+								infoText = lib.translate[skillEvent.name != 'useSkill' ? skillEvent.name : skillEvent.skill];
+								if (!infoText || infoText == '重铸')
+									infoText = '';
+								if (event.parent.parent.name != 'recast') infoText += '置入弃牌堆';
+								else infoText += '重铸';
+							}
+							else infoText = '置入弃牌堆';
+						}
+						break;
 				    case 'discard':
 				        infoText = '弃置';
 				        break;
@@ -19005,7 +19092,7 @@ config:{
 				'<br>① 新增伤害音效配置选项，可设置新版和旧版伤害音效的使用，即时生效。（手机端可长按/电脑端可右击选项查看配置）'+
 				'<br>② 新增旧版连环音效开关选项，开启后，将启用旧版连环音效，即时生效。'+
 				'<br>③ 新增旧版配音系统开关选项，开启后，将启用旧版配音系统，支持.ogg格式配音播放（默认开启），若遇冲突请关闭本选项！'+
-				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效；开启后，非国战模式选项-外观-体力条样式-勾玉无法更改。'+
+				'<br>- 新增国战魔改开关（默认开启，在国战模式，若开启 使用国战武将 开关时，勾玉改为阴阳鱼，武将体力以阴阳鱼为单位，体力上限相加向下取整），虽然取平均值效果一样，但对于国战而言，勾玉和阴阳鱼寓意上是不一样的，故特做此魔改；为避免冲突，国战模式-“使用国战武将”开启时，开启千幻聆音扩展后/扩展使用国战武将后国战魔改失效；开启后，非国战模式选项-外观-体力条样式-勾玉无法更改；君主再战恢复。'+
 				'<br>- 国战其他魔改：国战隐匿美化（搬运自零二魔改版，修复邹氏等武将暗置武将牌后的显示问题、修复换人/重新选将后的显示问题等）、适配露头；鏖战模式删除左上角提示；国战军令卡牌删除“军令”文字显示。'+
 				'<br>- 新增国战围攻队列标记美化开关选项，默认关闭，搬运自标记补充扩展。'+
 				'<br>- 新增标记修改开关选项，修改标记使之符合技能描述，默认开启。注1：可能与其他同样魔改本体武将技能的扩展存在兼容问题。注2：若遇冲突请关闭本选项！'+

@@ -2620,7 +2620,7 @@ export class Player extends HTMLDivElement {
 		}
 		for (const i of ["name", "name1", "name2"]) {
 			if (i == "name" && get.mode() == "guozhan") continue;
-			if (i == "name1" && this.name === this.name1) continue;
+			if (i == "name1" && this.name === this.name1 && get.mode() != "guozhan") continue;
 			const list = lib.characterSubstitute[this[i]];
 			if (this[i] && list) {
 				const name = i == "name2" ? "name2" : "name";

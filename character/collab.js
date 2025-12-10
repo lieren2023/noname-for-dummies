@@ -6286,6 +6286,17 @@ game.import("character", function () {
 	"#huangzhong:die": "不得不服老啦~",
 	
 	// onlyOL
+	"#olbachao1": "众卿，别来无恙。",
+	"#olbachao2": "改弦更张，乾坤倒转，待我重整江山。",
+	"#olbachao3": "豺狼聚野，万民皆唤我，魂归来兮！",
+	"#olbachao4": "钝劣无能者，跪服便罢。",
+	"#olbachao5": "天下离孤久矣，此来当还黎庶以太明！",
+	"#olfuzai1": "舍去慈悲苦，目中唯蕴帝王志！",
+	"#olfuzai2": "葬尽衣冠旧，魔气聚化绣龙袍。",
+	"#olfuzai3": "万化归一，开以阴阳，持以纯相。",
+	"#olfuzai4": "天子剑在心，何凭刀兵胄甲。",
+	"#olfuzai5": "凡俗兵刃，何胆与神器争锋？",
+	"#dm_caocao:die": "身登帝座，也救不了大魏江山……",
 	"#olduoqi1": "你的脊梁，不堪一击！",
 	"#olduoqi2": "你的胆气，一文不值！",
 	"#olkuangmo1": "草芥，也配呼吸？",

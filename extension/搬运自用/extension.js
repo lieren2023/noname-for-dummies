@@ -248,8 +248,8 @@ content:function(config,pack){
 		// extra: "神将",
 		lib.characterTitle.zc26_shen_huangyueying = "卧龙的点睛人";
 		lib.characterTitle.shen_huangzhong = "战意破苍穹";
-		lib.characterTitle.new_simayi = "晋国之祖";
-		lib.characterTitle.xin_simayi = lib.characterTitle.new_simayi;
+		lib.characterTitle.new_simayi = "鉴往知来";
+		lib.characterTitle.xin_simayi = "晋国之祖";
 		lib.characterTitle.dc_shen_huatuo = "灵魂的医者";
 		lib.characterTitle.shen_xuzhu = "嗜战的熊罴";
 		lib.characterTitle.shen_lusu = "兴吴之邓禹";
@@ -274,7 +274,7 @@ content:function(config,pack){
 		lib.characterTitle.shen_zhugeliang = "赤壁的妖术师";
 		lib.characterTitle.shen_lvmeng = "圣光之国士";
 		lib.characterTitle.shen_zhouyu = "赤壁的火神";
-		lib.characterTitle.shen_simayi = lib.characterTitle.new_simayi;
+		lib.characterTitle.shen_simayi = lib.characterTitle.xin_simayi;
 		lib.characterTitle.shen_caocao = "超世之英杰";
 		lib.characterTitle.shen_lvbu = "修罗之道";
 		lib.characterTitle.shen_liubei = "誓守桃园义";
@@ -287,7 +287,7 @@ content:function(config,pack){
 		lib.characterTitle.boss_zhaoyun = "天龙乘云";
 		
 		// onlyOL: "OL专属",
-		lib.characterTitle.dm_caocao = "";
+		lib.characterTitle.dm_caocao = "逆溯的帝魔";
 		lib.characterTitle.dm_sunquan = "隳坠的英谋";
 		lib.characterTitle.dm_lvbu = "荡宇的捷拳";
 		lib.characterTitle.dm_diaochan = "倾世的魅影";
@@ -2619,6 +2619,34 @@ content:function(config,pack){
 					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
 				}
 
+			// 配置显示内容-武将分包
+			if(lib.config['extension_搬运自用_yjcd_wujiangfenbao']!=false) {
+				// if (lib.config.show_sortPack) {
+					for (let packname in lib.characterPack) {
+						if (node.name in lib.characterPack[packname]) {
+							let pack = lib.translate[packname + "_character_config"], sort;
+							if (lib.characterSort[packname]) {
+								let sorted = lib.characterSort[packname];
+								for (let sortname in sorted) {
+									if (sorted[sortname].includes(node.name)) {
+										sort = `<span style = "font-size:small">${lib.translate[sortname]}</span>`;
+										break;
+									}
+								}
+							}
+							const sortPack = document.createElement("div");
+							// 临时修改（by 棘手怀念摧毁）
+							sortPack.innerHTML = `${pack}${sort ? ` [${sort}]` : ""}`;
+							// sortPack.innerHTML = `${pack}${sort ? `<br>[${sort}]` : ""}`;
+							sortPack.appendChild(document.createElement("hr"));
+							sortPack.insertBefore(document.createElement("hr"), sortPack.firstChild);
+							uiintro.add(sortPack);
+							break;
+						}
+					}
+				// }
+			}
+
 				if (get.characterInitFilter(node.name)) {
 					const initFilters = get.characterInitFilter(node.name).filter(tag => {
 						if (!lib.characterInitFilter[node.name]) return true;
@@ -3020,7 +3048,9 @@ content:function(config,pack){
 							}
 							var buttons = ui.create.div('.buttons.smallzoom.scrollbuttons');
 							lib.setMousewheel(buttons);
-							var nameskin = (avatar2 ? node.name2 : node.name1);
+							// 右键菜单修改：支持多形态皮肤切换
+							var nameskin = (avatar2 ? (node.skin.name2 || node.name2) : (node.skin.name || node.name1));
+							// var nameskin = (avatar2 ? node.name2 : node.name1);
 							var nameskin2 = nameskin;
 							var gzbool = false;
 							if (nameskin.startsWith('gz_shibing')) {
@@ -3084,7 +3114,10 @@ content:function(config,pack){
 									}
 								}
 							};
-							var nameskin = (avatar2 ? node.name2 : node.name1);
+							
+							// 右键菜单修改：支持多形态皮肤切换
+							var nameskin = (avatar2 ? (node.skin.name2 || node.name2) : (node.skin.name || node.name1));
+							// var nameskin = (avatar2 ? node.name2 : node.name1);
 							var nameskin2 = nameskin;
 							var gzbool = false;
 							if (nameskin.startsWith('gz_shibing')) {
@@ -3417,6 +3450,34 @@ content:function(config,pack){
 				if (lib.characterTitle[node.link]) {
 					uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
 				}
+
+			// 配置显示内容-武将分包
+			if(lib.config['extension_搬运自用_yjcd_fcs_wujiangfenbao']!=false) {
+				// if (lib.config.show_sortPack) {
+					for (let packname in lib.characterPack) {
+						if (node.link in lib.characterPack[packname]) {
+							let pack = lib.translate[packname + "_character_config"], sort;
+							if (lib.characterSort[packname]) {
+								let sorted = lib.characterSort[packname];
+								for (let sortname in sorted) {
+									if (sorted[sortname].includes(node.link)) {
+										sort = `<span style = "font-size:small">[${lib.translate[sortname]}]</span>`;
+										break;
+									}
+								}
+							}
+							const sortPack = document.createElement("div");
+							// 临时修改（by 棘手怀念摧毁）
+							sortPack.innerHTML = `${pack}${sort ? ` ${sort}` : ""}`;
+							// sortPack.innerHTML = `${pack}${sort ? `<br>${sort}` : ""}`;
+							sortPack.appendChild(document.createElement("hr"));
+							sortPack.insertBefore(document.createElement("hr"), sortPack.firstChild);
+							uiintro.add(sortPack);
+							break;
+						}
+					}
+				// }
+			}
 
 				if (get.characterInitFilter(node.link)) {
 					const initFilters = get.characterInitFilter(node.link).filter(tag => {
@@ -3818,62 +3879,64 @@ content:function(config,pack){
 		// 界面缩放
 		lib.configMenu.appearence.config.ui_zoom={
 			name:'界面缩放',
+			intro: "手机端默认设为100%，电脑端默认设为135%",
 			unfrequent:true,
-			init:'normal',
+			init:'100%',
 			item:{
-				normalw:'170%',
-				normalv:'165%',
-				normalu:'160%',
-				normalt:'155%',
-				normals:'150%',
-				normalr:'145%',
-				normalq:'140%',
-				normalp:'135%',
-				normala:'130%',
-				normalb:'125%',
-				normalc:'120%',
-				normald:'115%',
-				normale:'110%',
-				normalf:'105%',
-				normal:'100%',
-				normalg:'95%',
-				normalh:'90%',
-				normali:'85%',
-				normalj:'80%',
-				normalk:'75%',
-				normall:'70%',
-				normalm:'65%',
-				normaln:'60%',
-				normalo:'55%',
+				'170%':'170%',
+				'165%':'165%',
+				'160%':'160%',
+				'155%':'155%',
+				'150%':'150%',
+				'145%':'145%',
+				'140%':'140%',
+				'135%':'135%',
+				'130%':'130%',
+				'125%':'125%',
+				'120%':'120%',
+				'115%':'115%',
+				'110%':'110%',
+				'105%':'105%',
+				'100%':'100%',
+				'95%':'95%',
+				'90%':'90%',
+				'85%':'85%',
+				'80%':'80%',
+				'75%':'75%',
+				'70%':'70%',
+				'65%':'65%',
+				'60%':'60%',
+				'55%':'55%',
 			},
 			onclick:function(zoom){
 				game.saveConfig('ui_zoom',zoom);
 				// 扩展界面缩放设置与本体界面缩放设置保持一致
 				game.saveConfig('extension_搬运自用_kzjmsf',zoom);
+				game.saveConfig('extension_搬运自用_zyykzjmsf', zoom);
 				switch(zoom){
-					case 'normalw':zoom=1.7;break;
-					case 'normalv':zoom=1.65;break;
-					case 'normalu':zoom=1.6;break;
-					case 'normalt':zoom=1.55;break;
-					case 'normals':zoom=1.5;break;
-					case 'normalr':zoom=1.45;break;
-					case 'normalq':zoom=1.4;break;
-					case 'normalp':zoom=1.35;break;
-					case 'normala':zoom=1.3;break;
-					case 'normalb':zoom=1.25;break;
-					case 'normalc':zoom=1.2;break;
-					case 'normald':zoom=1.15;break;
-					case 'normale':zoom=1.1;break;
-					case 'normalf':zoom=1.05;break;
-					case 'normalg':zoom=0.95;break;
-					case 'normalh':zoom=0.9;break;
-					case 'normali':zoom=0.85;break;
-					case 'normalj':zoom=0.8;break;
-					case 'normalk':zoom=0.75;break;
-					case 'normall':zoom=0.7;break;
-					case 'normalm':zoom=0.65;break;
-					case 'normaln':zoom=0.6;break;
-					case 'normalo':zoom=0.55;break;
+					case '170%':zoom=1.7;break;
+					case '165%':zoom=1.65;break;
+					case '160%':zoom=1.6;break;
+					case '155%':zoom=1.55;break;
+					case '150%':zoom=1.5;break;
+					case '145%':zoom=1.45;break;
+					case '140%':zoom=1.4;break;
+					case '135%':zoom=1.35;break;
+					case '130%':zoom=1.3;break;
+					case '125%':zoom=1.25;break;
+					case '120%':zoom=1.2;break;
+					case '115%':zoom=1.15;break;
+					case '110%':zoom=1.1;break;
+					case '105%':zoom=1.05;break;
+					case '95%':zoom=0.95;break;
+					case '90%':zoom=0.9;break;
+					case '85%':zoom=0.85;break;
+					case '80%':zoom=0.8;break;
+					case '75%':zoom=0.75;break;
+					case '70%':zoom=0.7;break;
+					case '65%':zoom=0.65;break;
+					case '60%':zoom=0.6;break;
+					case '55%':zoom=0.55;break;
 					default:zoom=1;
 				}
 				game.documentZoom=game.deviceZoom*zoom;
@@ -3889,30 +3952,31 @@ content:function(config,pack){
 		
 		var zoom;
 		switch(lib.config.ui_zoom){
-			case 'normalw':zoom=1.7;break;
-			case 'normalv':zoom=1.65;break;
-			case 'normalu':zoom=1.6;break;
-			case 'normalt':zoom=1.55;break;
-			case 'normals':zoom=1.5;break;
-			case 'normalr':zoom=1.45;break;
-			case 'normalq':zoom=1.4;break;
-			case 'normalp':zoom=1.35;break;
-			case 'normala':zoom=1.3;break;
-			case 'normalb':zoom=1.25;break;
-			case 'normalc':zoom=1.2;break;
-			case 'normald':zoom=1.15;break;
-			case 'normale':zoom=1.1;break;
-			case 'normalf':zoom=1.05;break;
-			case 'normalg':zoom=0.95;break;
-			case 'normalh':zoom=0.9;break;
-			case 'normali':zoom=0.85;break;
-			case 'normalj':zoom=0.8;break;
-			case 'normalk':zoom=0.75;break;
-			case 'normall':zoom=0.7;break;
-			case 'normalm':zoom=0.65;break;
-			case 'normaln':zoom=0.6;break;
-			case 'normalo':zoom=0.55;break;
-			default:zoom=1;
+			case '170%':zoom=1.7;break;
+			case '165%':zoom=1.65;break;
+			case '160%':zoom=1.6;break;
+			case '155%':zoom=1.55;break;
+			case '150%':zoom=1.5;break;
+			case '145%':zoom=1.45;break;
+			case '140%':zoom=1.4;break;
+			case '135%':zoom=1.35;break;
+			case '130%':zoom=1.3;break;
+			case '125%':zoom=1.25;break;
+			case '120%':zoom=1.2;break;
+			case '115%':zoom=1.15;break;
+			case '110%':zoom=1.1;break;
+			case '105%':zoom=1.05;break;
+			case '100%':zoom=1;break;
+			case '95%':zoom=0.95;break;
+			case '90%':zoom=0.9;break;
+			case '85%':zoom=0.85;break;
+			case '80%':zoom=0.8;break;
+			case '75%':zoom=0.75;break;
+			case '70%':zoom=0.7;break;
+			case '65%':zoom=0.65;break;
+			case '60%':zoom=0.6;break;
+			case '55%':zoom=0.55;break;
+			default:zoom=Number.parseInt(lib.config['extension_搬运自用_zyykzjmsf'])/100;break;
 		}
 		game.documentZoom=game.deviceZoom*zoom;
 		if(zoom!=1){
@@ -3986,13 +4050,13 @@ content:function(config,pack){
 	if (lib.config.kzjmsf == undefined) {
 		if (lib.device) {
 			// 手机端
-			var item = 'normal';
+			var item = '100%';
 			lib.extensionMenu['extension_搬运自用'].kzjmsf.onclick(item);
 			game.saveConfig('extension_搬运自用_kzjmsf',item);
 			game.saveConfig('kzjmsf',item);
 		} else {
 			// 电脑端
-			var item = 'normalp';
+			var item = '135%';
 			lib.extensionMenu['extension_搬运自用'].kzjmsf.onclick(item);
 			game.saveConfig('extension_搬运自用_kzjmsf',item);
 			game.saveConfig('kzjmsf',item);
@@ -6545,6 +6609,61 @@ content:function(config,pack){
 		}
 	}
 	
+	// 资料卡修改/右键菜单修改 开启后生效
+	if(config.byzy_zlkxg || config.youjiancaidan) {
+		// 自动换肤函数修改
+		ui.click.autoskin = function() {
+			if (!lib.config.change_skin) return;
+			var players = game.filterPlayer();
+			var change = function (player, num, callback) {
+				if (num == "1") {
+					// 修改
+					ui.click.skin(player.node.avatar, player.skin.name || player.name, callback);
+				} else {
+					// 修改
+					ui.click.skin(player.node.avatar2, player.skin.name2 || player.name2, callback);
+				}
+			};
+			var finish = function () {
+				if (lib.config.change_skin_auto != "off") {
+					_status.skintimeout = setTimeout(ui.click.autoskin, parseInt(lib.config.change_skin_auto));
+				}
+			};
+			var autoskin = function () {
+				if (players.length) {
+					var player = players.randomRemove();
+					var list = [];
+					if (player.name && !player.isUnseen(0)) {
+						list.push("1");
+					}
+					if (player.name2 && !player.isUnseen(1)) {
+						list.push("2");
+					}
+					if (list.length) {
+						change(player, list.randomRemove(), function (bool) {
+							if (bool) {
+								finish();
+							} else if (list.length) {
+								change(player, list[0], function (bool) {
+									if (bool) {
+										finish();
+									} else {
+										autoskin();
+									}
+								});
+							} else {
+								autoskin();
+							}
+						});
+					} else {
+						autoskin();
+					}
+				}
+			};
+			autoskin();
+		};
+	}
+	
 	// 新增lib.notShowSkillNamePinyin，资料卡中不显示技能拼音的技能和衍生技能（用ID识别）
 	lib.notShowSkillNamePinyin=[
 		"byzyzhenwangpeiyin","byzyshenglipeiyin",//阵亡、胜利
@@ -7382,7 +7501,7 @@ content:function(config,pack){
 			
 			var changeskinfunc=null;
 			
-			// 资料卡修改：支持多形态皮肤添加
+			// 资料卡修改：支持多形态皮肤切换
 			var nameskin=audioName;
 			var nameskin2=audioName;
 			// var nameskin=name;
@@ -13791,7 +13910,21 @@ precontent:function(){
 			for(var i in lib.mode){if(i!=lib.config.mode){var list=[];game.saveConfig(i+'_banned',list);}}
 		}
 		if(num==1003){
-			for(var i in lib.mode){if(i!=lib.config.mode){var list=lib.config.banned;game.saveConfig(i+'_banned',list);}}
+			// 应用当前禁将到全部
+			// for(var i in lib.mode){if(i!=lib.config.mode){var list=lib.config.banned;game.saveConfig(i+'_banned',list);}}
+			
+			// 应用当前禁将到......
+			var libmode = lib.mode;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_identity']==false) delete libmode.identity;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_guozhan']==false) delete libmode.guozhan;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_versus']==false) delete libmode.versus;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_boss']==false) delete libmode.boss;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_doudizhu']==false) delete libmode.doudizhu;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_single']==false) delete libmode.single;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_chess']==false) delete libmode.chess;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_tafang']==false) delete libmode.tafang;
+			if(lib.config['extension_搬运自用_byzy_yydqjjd_stone']==false) delete libmode.stone;
+			for(var i in libmode){if(i!=lib.config.mode){var list=lib.config.banned;game.saveConfig(i+'_banned',list);}}
 		}
 		if(num==1004){
 			var list=[];game.saveConfig('forbidai_user',list);
@@ -14898,7 +15031,7 @@ config:{
 				'<br>※ 禁将功能'+
 				'<br>- 解除所有游戏模式禁将：启用在武将-禁将里的武将（所有游戏模式），相当于将武将资料卡-禁用-所有游戏模式开关开启（全部启用），自动重启后生效'+
 				'<br>- 解除非当前模式禁将：启用在武将-禁将里的武将（非当前游戏模式），相当于将武将资料卡-禁用-非当前游戏模式开关开启，自动重启后生效'+
-				'<br>- 应用当前禁将到全部：将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用），自动重启后生效'+
+				'<br>- 应用当前禁将到全部：将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用），自动重启后生效<br>注：还可应用当前禁将到选项设置的模式'+
 				'<br>- 所有武将随机选将可用：将武将包仅点将可用开关全部关闭&武将资料卡-禁用-随机选将可用开关全部开启，自动重启后生效'+
 				'<br>- 场上所有角色禁将：在已有禁将的基础上继续场上所有角色禁将（当前游戏模式），即把场上所有角色的武将加入武将-禁将，相当于将武将资料卡-禁用-当前游戏模式开关关闭，手动重启后生效；若想解除禁将，请在未手动重启前使用“解除场上所有角色禁将”功能'+
 				'<br>- 解除场上所有角色禁将：在已有禁将的基础上解除场上所有角色禁将（当前游戏模式）【前提是已禁将但未手动重启】，即启用在武将-禁将里的武将，相当于将武将资料卡-禁用-当前游戏模式开关开启，手动重启后生效'+
@@ -15468,6 +15601,7 @@ config:{
 				'<br>'+
 				'<br>棘手怀念摧毁（主要）更新内容'+
 				'<br>- 新增初始界面缩放比例设置（手机端设为100%界面缩放，电脑端设为135%界面缩放）；为方便调节界面缩放比例大小，本扩展新增界面缩放设置选项。'+
+				'<br>- 新增界面缩放(自定义)，自定义界面缩放[手机端默认设为100%，电脑端默认设为135%]，请填写正整数作为界面缩放比例（系统会转换为对应缩放百分比），即时生效。'+
 				'<br>- 新增触屏按钮位置选项（自用设置），可调整触屏按钮位置，手动重启后生效。'+
 				'<br>- 完善2-8人场的身份选项，新增如1主7反等选项，还可开启双内奸开关调整身份选项（将1反调整为1内）；增加9-17人场身份选项（身份-标准模式，1主+X忠+Y反+Z内）。'+
 				'<br>- 9-17人布局调整，配合棘手怀念摧毁的懒人包使用时，手机端建议70%界面缩放，电脑端建议95%界面缩放（非全屏、最大化）。'+
@@ -15495,36 +15629,81 @@ config:{
 		name:'界面缩放',
 		intro: "除本体界面缩放设置选项（点击触屏按钮，选项-选项-外观-界面缩放）外，还可通过本扩展此选项调节界面缩放（即时生效）。<br>重启后扩展界面缩放设置与本体界面缩放设置保持一致（界面缩放比例大小以重启前最后一次选择的选项为准）。",
 		item:{
-			normalw:'170%',
-			normalv:'165%',
-			normalu:'160%',
-			normalt:'155%',
-			normals:'150%',
-			normalr:'145%',
-			normalq:'140%',
-			normalp:'135%',
-			normala:'130%',
-			normalb:'125%',
-			normalc:'120%',
-			normald:'115%',
-			normale:'110%',
-			normalf:'105%',
-			normal:'100%',
-			normalg:'95%',
-			normalh:'90%',
-			normali:'85%',
-			normalj:'80%',
-			normalk:'75%',
-			normall:'70%',
-			normalm:'65%',
-			normaln:'60%',
-			normalo:'55%',
+			'170%':'170%',
+			'165%':'165%',
+			'160%':'160%',
+			'155%':'155%',
+			'150%':'150%',
+			'145%':'145%',
+			'140%':'140%',
+			'135%':'135%',
+			'130%':'130%',
+			'125%':'125%',
+			'120%':'120%',
+			'115%':'115%',
+			'110%':'110%',
+			'105%':'105%',
+			'100%':'100%',
+			'95%':'95%',
+			'90%':'90%',
+			'85%':'85%',
+			'80%':'80%',
+			'75%':'75%',
+			'70%':'70%',
+			'65%':'65%',
+			'60%':'60%',
+			'55%':'55%',
 		},
 		onclick:function(item){
 			// 适配新版本体（临时修复，不弹窗就行）
 			if (typeof lib.configMenu.appearence.config.ui_zoom.onclick == 'function')
 			// 扩展界面缩放设置与本体界面缩放设置保持一致
 			lib.configMenu.appearence.config.ui_zoom.onclick(item);
+		},
+	},
+	
+	zyykzjmsf: {
+		name: "界面缩放(自定义)*",
+		intro: "自定义界面缩放[手机端默认设为100%，电脑端默认设为135%]，请填写正整数作为界面缩放比例（系统会转换为对应缩放百分比），即时生效。<br><br>电脑端无法输入的解决方案：<li>非全屏下按下Esc键、全屏下按下F11键<li>最小化一下无名杀，再最大化/全屏后就能输入了",
+		input: true,
+		restart: true,
+		init: lib.config.extension_搬运自用_zyykzjmsf === undefined ? (lib.device ? "100%" : "135%") : lib.config.extension_搬运自用_zyykzjmsf,
+		onblur(e) {
+			const text = e.target;
+			let zoom = Number.parseInt(text.innerText);
+			const originalValue = lib.config.ui_zoom;
+			const zoomText = `${zoom}%`;
+			if (zoom <= 0 || isNaN(zoom)) {
+				alert("填写正整数！");
+				text.innerText = originalValue;
+				return;
+			} else if (zoom < 65 || zoom > 140) {
+				if (!confirm(`提示：比例可能过大或过小，确定要将界面缩放比例修改为 ${zoomText} 吗？`)) {
+					text.innerText = originalValue;
+					return;
+				}
+			} else {
+				if (!confirm(`确定要将界面缩放比例修改为 ${zoomText} 吗？`)) {
+					text.innerText = originalValue;
+					return;
+				}
+			}
+			text.innerText = zoomText;
+			game.saveConfig("ui_zoom", zoomText);
+			
+			// 扩展界面缩放设置与本体界面缩放设置保持一致
+			game.saveConfig('extension_搬运自用_zyykzjmsf', zoomText);
+			game.saveConfig('extension_搬运自用_kzjmsf',zoomText);
+			
+			game.documentZoom = game.deviceZoom * zoom / 100;
+			ui.updatez();
+			if (Array.isArray(lib.onresize)) {
+				lib.onresize.forEach((fun) => {
+					if (typeof fun === "function") {
+						fun();
+					}
+				});
+			}
 		},
 	},
 	
@@ -15911,7 +16090,7 @@ config:{
 				};
 			}
 			if(item == '3'){
-				if(confirm("是否应用当前禁将到全部，即将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用）。\n\r继续请点击【确定】，自动重启后生效。")){
+				if(confirm("是否应用当前禁将到全部，即将当前游戏模式禁将应用到非当前游戏模式，相当于将武将-禁将里的当前游戏模式已禁用的武将的资料卡-禁用-所有游戏模式开关关闭（全部禁用）。\n注：还可应用当前禁将到选项设置的模式。\n\r继续请点击【确定】，自动重启后生效。")){
 					game.zxgn(1003);
 					game.reload();
 				};
@@ -16047,6 +16226,77 @@ config:{
 		onclick:function(item){
 			game.wjtjgn(Number(item));
 		},
+	},
+	
+	byzy_yydqjjd_fenjiexian:{
+		clear:true,
+		name:"<li>应用当前禁将到......&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▽",
+		onclick:function(){
+			if(lib.config.byzy_yydqjjd_fenjiexian==undefined){
+				lib.config.byzy_yydqjjd_fenjiexian=[
+					this.nextSibling,
+					this.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+				];
+				this.innerHTML="<li>应用当前禁将到......&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷";
+				lib.config.byzy_yydqjjd_fenjiexian.forEach(function(element) {element.hide()});
+			}else{
+				this.innerHTML="<li>应用当前禁将到......&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▽";
+				lib.config.byzy_yydqjjd_fenjiexian.forEach(function(element) {element.show()});
+				delete lib.config.byzy_yydqjjd_fenjiexian;
+			}
+		}
+	},
+	byzy_yydqjjd_identity: {
+		name: "| 身份模式",
+		intro: "开启后将应用当前禁将到身份模式。",
+		init: true,
+	},
+	byzy_yydqjjd_guozhan: {
+		name: "| 国战模式",
+		intro: "开启后将应用当前禁将到国战模式。",
+		init: true,
+	},
+	byzy_yydqjjd_versus: {
+		name: "| 对决模式",
+		intro: "开启后将应用当前禁将到对决模式。",
+		init: true,
+	},
+	byzy_yydqjjd_boss: {
+		name: "| 挑战模式",
+		intro: "开启后将应用当前禁将到挑战模式。",
+		init: true,
+	},
+	byzy_yydqjjd_doudizhu: {
+		name: "| 斗地主模式",
+		intro: "开启后将应用当前禁将到斗地主模式。",
+		init: true,
+	},
+	byzy_yydqjjd_single: {
+		name: "| 单挑模式",
+		intro: "开启后将应用当前禁将到单挑模式。",
+		init: true,
+	},
+	byzy_yydqjjd_chess: {
+		name: "| 战棋模式",
+		intro: "开启后将应用当前禁将到战棋模式。",
+		init: true,
+	},
+	byzy_yydqjjd_tafang: {
+		name: "| 塔防模式",
+		intro: "开启后将应用当前禁将到塔防模式。",
+		init: true,
+	},
+	byzy_yydqjjd_stone: {
+		name: "| 炉石模式",
+		intro: "开启后将应用当前禁将到炉石模式。",
+		init: true,
 	},
 	
 	// 分割线
@@ -16270,6 +16520,7 @@ config:{
 					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling,
 				];
 				this.innerHTML="配置显示内容（点击后展开）▷";
 				lib.config.yjcd_pzxsnr.forEach(function(element) {element.hide()});
@@ -16279,6 +16530,11 @@ config:{
 				delete lib.config.yjcd_pzxsnr;
 			}
 		}
+	},
+	yjcd_wujiangfenbao: {
+		name: "| 武将分包",
+		intro: "开启后，显示武将所在分包，即时生效。",
+		init: true,
 	},
 	yjcd_kejianshoupai: {
 		name: "| 可见手牌",
@@ -16341,6 +16597,7 @@ config:{
 					this.nextSibling,
 					this.nextSibling.nextSibling,
 					this.nextSibling.nextSibling.nextSibling,
+					this.nextSibling.nextSibling.nextSibling.nextSibling,
 				];
 				this.innerHTML="配置显示内容（点击后展开）▷";
 				lib.config.yjcd_fcs_pzxsnr.forEach(function(element) {element.hide()});
@@ -16350,6 +16607,11 @@ config:{
 				delete lib.config.yjcd_fcs_pzxsnr;
 			}
 		}
+	},
+	yjcd_fcs_wujiangfenbao: {
+		name: "| 武将分包",
+		intro: "开启后，显示武将所在分包，即时生效。",
+		init: true,
 	},
 	yjcd_fcs_jineng: {
 		name: "| 技能",
@@ -17901,11 +18163,15 @@ config:{
 },
 files:{"character":[],"card":[],"skill":[]}}})
 
-// 备注：
+// 备注1：
 // 本扩展接口
 // lib.notShowSkillNamePinyin 资料卡中不显示技能拼音的技能和衍生技能【应用扩展举例：小游戏整合】
 // window.setWuJiangYinWenTranslation 武将引文接口【应用扩展举例：小游戏整合】
 // window.setKaPaiYinWenTranslation 卡牌引文接口【应用扩展举例：怪物猎人】
+// 备注2：
+// 本扩展对本体换肤功能修改说明（暂仅支持旧版本体）
+// 资料卡修改、右键菜单修改：支持多形态皮肤切换（多形态原画的武将添加皮肤同原画一样，参考棘手懒人包image/skin/mb_caomao、image/skin/mb_caomao_shadow）
+// 自动换肤函数修改：支持多形态皮肤切换（资料卡修改/右键菜单修改 开启后生效）
 
 // 武将称号、引文等来自：
 // 三国杀官方规则集，链接：https://m.weibo.cn/detail/4341518321802913
@@ -17985,6 +18251,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 临时解决方案（纯手动）：最小化一下无名杀，再最大化/全屏后点击搜素框就能输入了；或者将鼠标（焦点）放到另一个窗口上，再回到无名杀就能输入了（还可通过Alt+Tab切换窗口）
 // 临时修复方案（快捷键）：非全屏下按下Esc键/全屏下按下F11键
 // 待更新修复方案：改用自定义弹窗函数（不能图省事用alert了），alert显示代码有问题参考其它-命令界面
+// 对话框修改、禁将可视化、武将统计等可参考叠彩峰岭等扩展
 
 // 后续更新计划：
 // 弹窗改对话框
@@ -18025,6 +18292,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 真白板模式，真清空模式
 // 主亡忠继、无主公模式
 // 护甲模式：把体力变成护甲
+// 顺时针模式（有结算问题？）
 
 // 懒人包临时修改本体css以适配控制台按钮显示，按钮宽度调整通过修改本体临时修复；非懒人包可开启临时修复开关（请等待后续更新）
 // 双内奸失效？添加双内奸开关？开民身份后2-17人自动失效？
@@ -18038,4 +18306,7 @@ files:{"character":[],"card":[],"skill":[]}}})
 // 控制台新增将体力回复至功能；新增更改一名角色的势力功能，用changeGroup；国战模式暗置武将功能；控制台获得基本牌-杀闪桃酒、锦囊牌-伤害类等具体分类
 // 调整卡牌等功能待适配event.gaintag？
 // 调整卡牌功能：新增初始手牌数修改功能（改gameDraw函数？）
+// 资料卡样式选项（大资料卡、小资料卡）、适配新版本体？
+// 跟进新版本体多形态原画切换？新版本体换肤待适配？
+// 国战换肤修改？（资料卡/右键菜单换肤）：使用国战皮肤开启后，国战武将支持换肤（参考棘手懒人包周瑜image/skin/gz_zhouyu、小乔image/skin/gz_xiaoqiao）
 // 武将称号待补充
