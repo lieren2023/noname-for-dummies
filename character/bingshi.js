@@ -1418,7 +1418,7 @@ game.import("character", function () {
 									// })
 									// .join("<br>")
 							// );
-							await player.drawTo(4);
+							await player.drawTo(3);
 						},
 					},
 					clear: {
@@ -2076,10 +2076,12 @@ game.import("character", function () {
 							.filter(evt => evt == trigger.getParent(2))
 							.vars({ target: target, bool1: bool1 })
 							.then(() => {
-								let result;
+								var result;
 								if (target.isIn() && target.countDiscardableCards(player, "he")) {
 									result = player.discardPlayerCard(target, "he", true).forResult();
 								}
+							})
+							.then(() => {
 								if (bool1) {
 									player.recover();
 									if (result?.cards?.length) {
@@ -4953,7 +4955,18 @@ game.import("character", function () {
 			//势董昭
 			spmiaolve: {
 				audio: "twmiaolve",
-				inherit: "twmiaolve",
+				// 临时修改（by 棘手怀念摧毁）
+				// inherit: "twmiaolve",
+				trigger: {
+					global: "phaseBefore",
+					player: ["enterGame", "damageEnd"],
+				},
+				filter(event, player) {
+					if (event.name == "damage") {
+						return event.num > 0;
+					}
+					return event.name != "phase" || game.phaseNumber == 0;
+				},
 				getIndex: () => 1,
 				async cost(event, trigger, player) {
 					if (trigger.name == "damage") {
@@ -5659,7 +5672,7 @@ game.import("character", function () {
 			pot_lusu: "势鲁肃",
 			pot_lusu_prefix: "势",
 			pothaoshi: "好施",
-			pothaoshi_info: "结束阶段，你可以选择一名其他角色：直到你的下个回合开始，其可以如手牌般使用或打出你的手牌，且其前两次因此令你失去最后的手牌时，你将手牌摸至四张。",
+			pothaoshi_info: "结束阶段，你可以选择一名其他角色：直到你的下个回合开始，其可以如手牌般使用或打出你的手牌，且其前两次因此令你失去最后的手牌时，你将手牌摸至三张。",
 			potdimeng: "缔盟",
 			potdimeng_info: "出牌阶段限一次，你可以选择两名手牌数之差小于等于3的角色，令他们交换手牌。然后你选择一项：1.弃置X张牌（不足则全弃）；2.交换后手牌较少的角色摸X张牌（X为你已损失的体力值）。",
 			mb_sunjun: "势孙峻",

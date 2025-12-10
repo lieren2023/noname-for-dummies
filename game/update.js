@@ -16,9 +16,10 @@ window.noname_update = {
 		// 备忘：
 		// roundEnd、phaseAnyEnd时机待适配
 		// event.checkKuanggu、event.checkJiushi等待适配（现暂时要先改成新本体noname\library\assembly\buildin.js里的代码）
+		// docs\skin-guide.md本体换肤待适配
 		
 		// extra
-		// $addVirtualEquip等待适配（26神黄月英zc26_shen_huangyueying暂时可用）
+		// $addVirtualEquip等待适配（26神黄月英zc26_shen_huangyueying暂不可用）
 		// onlyOL
 		// 魔孙权dm_sunquan暂不可用
 		// bingshi

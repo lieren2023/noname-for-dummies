@@ -1684,7 +1684,8 @@ game.import("character", function () {
 						// 红桃牌很难获得
 						return false;
 					}
-					return (
+					return true; //跟你爆了 TODO: 一个考虑大局的枯心ai
+					/*return (
 						game.countPlayer(current => {
 							if (current === player) {
 								return 0;
@@ -1699,7 +1700,7 @@ game.import("character", function () {
 							return 0.5;
 						}) >=
 						6 / (1 + player.getHp())
-					);
+					);*/
 				},
 				logTarget(event, player) {
 					return game.filterPlayer(current => current !== player).sortBySeat(_status.currentPhase);
@@ -1817,13 +1818,15 @@ game.import("character", function () {
 						await player.showCards(gaincards);
 					}
 					if (!gaincards.some(card => get.suit(card, false) === "heart")) {
-						player.chat("孩子们，一张牌都拿不到力");
+						// 临时修改（by 棘手怀念摧毁）
+						// player.chat("孩子们，一张牌都拿不到力");
 						if (gaincards.length) {
 							await player.discard(gaincards);
 						}
 						await player.turnOver();
 					} else {
-						player.chat("保持富态");
+						// 临时修改（by 棘手怀念摧毁）
+						// player.chat("保持富态");
 					}
 				},
 				ai: {

@@ -23910,6 +23910,7 @@ game.import("character", function () {
 				trigger: { player: "phaseJieshuBegin" },
 				direct: true,
 				audio: 2,
+				audioname: ["sxrm_lvboshe"],
 				init: function (player) {
 					if (!player.storage.shefu) player.storage.shefu = [];
 					if (!player.storage.shefu2) player.storage.shefu2 = [];

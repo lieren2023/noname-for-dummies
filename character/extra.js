@@ -91,9 +91,9 @@ game.import("character", function () {
 		},
 		characterFilter: {
 			// 临时修改（by 棘手怀念摧毁）
-			// zc26_shen_huangyueying: function (mode) {
-				// return false;
-			// },
+			zc26_shen_huangyueying: function (mode) {
+				return false;
+			},
 			
 			shen_diaochan(mode) {
 				return (

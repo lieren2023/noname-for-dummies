@@ -208,7 +208,7 @@ game.import("character", function () {
 			
 			//魔曹操
 			olbachao: {
-				audio: 2,
+				audio: 5,
 				trigger: {
 					player: "phaseUseBegin",
 				},
@@ -225,10 +225,10 @@ game.import("character", function () {
 					return game.countPlayer(current => current != player) > 1;
 				},
 				chooseToGive(target, player) {
-					const next = target.chooseCard(`霸朝：是否交给${get.translation(player)}一张非基本牌`, "he");
-					next.set("filterCard", card => {
+					const next = target.chooseCard(`霸朝：是否交给${get.translation(player)}一张牌`, "he");
+					/*next.set("filterCard", card => {
 						return get.type(card) != "basic";
-					});
+					});*/
 					next.set("sourcex", player);
 					next.set("att", get.attitude(target, player));
 					next.set("ai", card => {
@@ -237,7 +237,7 @@ game.import("character", function () {
 							return 15 - get.value(card);
 						}
 						if (game.countPlayer(current => current != sourcex) <= 3) {
-							return 10 - get.value(card);
+							return (get.type(card) != "basic" ? 10 : 8) - get.value(card);
 						}
 						return 0;
 					});
@@ -261,27 +261,21 @@ game.import("character", function () {
 						await next;
 					}
 					const targets = game.filterPlayer(current => {
-						return !current.hasHistory("lose", evt => evt.getParent() == next);
+						return !current.hasHistory("lose", evt => evt.getParent() == next && get.type(evt.cards[0]) != "basic");
 					});
 					if (!targets.length) {
 						return;
 					}
-					const result =
-						targets.length > 1
-							? await player
-									.chooseTarget("霸朝：对一名未交给你牌的角色造成1点伤害", true, (card, player, target) => {
-										return get.event("targetx").includes(target);
-									})
-									.set("targetx", targets)
-									.set("ai", target => {
-										const player = get.player();
-										return get.damageEffect(target, player, player);
-									})
-									.forResult()
-							: {
-									bool: true,
-									targets: targets,
-								};
+					const result = await player
+						.chooseTarget("霸朝：是否对一名未交给你非基本牌的角色造成1点伤害", (card, player, target) => {
+							return get.event("targetx").includes(target);
+						})
+						.set("targetx", targets)
+						.set("ai", target => {
+							const player = get.player();
+							return get.damageEffect(target, player, player);
+						})
+						.forResult();
 					if (result?.bool && result.targets?.length) {
 						const target = result.targets[0];
 						player.line(target, "green");
@@ -341,7 +335,7 @@ game.import("character", function () {
 				},
 			},
 			olfuzai: {
-				audio: 2,
+				audio: 5,
 				enable: "chooseToUse",
 				locked: true,
 				filter(event, player) {
@@ -436,6 +430,7 @@ game.import("character", function () {
 				group: "olfuzai_equip",
 				subSkill: {
 					equip: {
+						audio: "olfuzai",
 						trigger: {
 							global: ["phaseBefore", "loseAfter", "loseAsyncAfter", "equipAfter", "addToExpansionAfter", "addJudgeAfter", "gainAfter"],
 							player: ["enterGame", "expandEquipAfter", "disableEquipAfter", "enableEquipAfter", "changeHpAfter", "changeSkillsAfter"],
@@ -556,16 +551,16 @@ game.import("character", function () {
 							// player.addTip("olfuzai", cards.map(name => `覆载 ${get.translation(name)}`).join("\n"));
 						},
 						mod: {
-							attackRange(player, num) {
+							attackRangeBase(player) {
 								const equips = player.getStorage("olfuzai");
-								let range = 0;
+								let range = 1;
 								for (const card of equips) {
 									const info = lib.card[card];
 									if (info?.distance?.attackFrom) {
 										range -= info.distance.attackFrom;
 									}
 								}
-								return num + range;
+								return Math.max(player.getEquipRange(player.getCards("e")), range);
 							},
 						},
 					},
@@ -5754,12 +5749,13 @@ game.import("character", function () {
 			ol_caozhi_prefix: "OL界",
 			oljiushi: "酒诗",
 			oljiushi_info: "①当你需要使用【酒】时，若你的武将牌正面向上，你可以翻面，视为使用一张【酒】。②当你受到伤害后，若你的武将牌于受到伤害时背面向上，或当你于回合外累计因〖落英〗获取至少X张牌（X为你的体力上限）后，若你的武将牌背面向上，你可以翻面。③若你的武将牌背面向上，你使用因〖落英〗获得的牌无距离限制且不可被响应。",
+			
 			dm_caocao: "OL魔曹操",
 			dm_caocao_prefix: "OL魔",
 			olbachao: "霸朝",
 			// 临时修改（by 棘手怀念摧毁）
-			olbachao_info: "出牌阶段开始时，你可以令所有其他角色同时选择是否交给你一张非基本牌，然后你对一名未以此法交给你牌的角色造成1点伤害；若该角色为你，本阶段你使用当前手牌无距离次数限制并“入魔”。",
-			// olbachao_info: `出牌阶段开始时，你可以令所有其他角色同时选择是否交给你一张非基本牌，然后你对一名未以此法交给你牌的角色造成1点伤害；若该角色为你，本阶段你使用当前手牌无距离次数限制并${get.poptip("rule_rumo")}。`,
+			olbachao_info: "出牌阶段开始时，你可以令所有其他角色同时选择是否交给你一张牌，然后你可对一名未以此法交给你非基本牌的角色造成1点伤害；若该角色为你，本阶段你使用当前手牌无距离次数限制并“入魔”。",
+			// olbachao_info: `出牌阶段开始时，你可以令所有其他角色同时选择是否交给你一张牌，然后你可对一名未以此法交给你非基本牌的角色造成1点伤害；若该角色为你，本阶段你使用当前手牌无距离次数限制并${get.poptip("rule_rumo")}。`,
 			olfuzai: "覆载",
 			olfuzai_info: "锁定技，①你的装备牌只能当【借刀杀人】或【无中生有】使用。②若你的装备区没有牌，你视为装备着随机武器和防具各一件（优先装备攻击距离/牌名字数与你的体力值相同的武器/防具）。",
 			dm_sunquan: "OL魔孙权",
