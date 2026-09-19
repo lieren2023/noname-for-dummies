@@ -3511,10 +3511,9 @@ game.import("card", function () {
 						if (range[1] == -1) return;
 						var cards = player.getCards("h");
 						if (!cards.length) return;
-						for (var i = 0; i < cards.length; i++) {
-							if (cards[i].classList.contains("selected") == false) return;
+						if (cards.every(card => ui.selected.cards.includes(card)) && ui.selected.cards.length === cards.length) {
+							range[1] += 2;
 						}
-						range[1] += 2;
 					},
 				},
 			},

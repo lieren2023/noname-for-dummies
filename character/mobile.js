@@ -177,7 +177,7 @@ game.import("character", function () {
 			scs_guosheng: ["male", "qun", "", ["scsniqu"], ["unseen", "sex:male_castrated"]],
 			scs_gaowang: ["male", "qun", "", ["scsmiaoyu"], ["unseen", "sex:male_castrated"]],
 
-			new_yj_dongzhuo: ["male", "qun", "4/5", ["xiongjin", "xiawei", "baoxi"]],
+			new_yj_dongzhuo: ["male", "qun", "4/5", ["xiongjin", "zhenbian", "baoxi"]],
 		},
 		characterSort: {
 			mobile: {
@@ -20240,34 +20240,44 @@ game.import("character", function () {
 					},
 				},
 			},
-			xiawei: {
+			zhenbian: {
 				audio: 2,
 				trigger: { global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter"] },
 				filter(event, player) {
 					if (event.name.indexOf("lose") === 0) {
-						if (event.getlx === false || event.position !== ui.discardPile) return false;
-					} else if (event.getParent()?.relatedEvent?.name == "useCard") return false;
-					return event.cards.some(card => !player.getStorage("xiawei").includes(get.suit(card, false)));
+						if (event.getlx === false || event.position !== ui.discardPile) {
+							return false;
+						}
+					} else if (event.getParent()?.relatedEvent?.name == "useCard") {
+						return false;
+					}
+					return event.cards.length;
 				},
 				forced: true,
 				async content(event, trigger, player) {
-					player.markAuto(
-						"xiawei",
-						trigger.cards.reduce((list, card) => list.add(get.suit(card, false)), [])
-					);
-					player.storage.xiawei.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
-					// 临时修改（by 棘手怀念摧毁）
-					// player.addTip("xiawei", get.translation("xiawei") + player.getStorage("xiawei").reduce((str, suit) => str + get.translation(suit), " "));
-					if (player.getStorage("xiawei").length >= 4 && player.maxHp < 9) {
-						delete player.storage.xiawei;
-						player.unmarkSkill("xiawei");
+					if (trigger.cards.some(card => !player.getStorage("zhenbian").includes(get.suit(card, false)))) {
+						player.markAuto(
+							"zhenbian",
+							trigger.cards.reduce((list, card) => list.add(get.suit(card, false)), [])
+						);
+						player.storage.zhenbian.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
 						// 临时修改（by 棘手怀念摧毁）
-						// player.removeTip("xiawei");
+						// player.addTip("zhenbian", get.translation("zhenbian") + player.getStorage("zhenbian").reduce((str, suit) => str + get.translation(suit), ""));
+					}
+					if (player.getStorage("zhenbian").length >= 4 && player.maxHp < 8) {
+						player.unmarkSkill("zhenbian");
 						await player.gainMaxHp();
 						await player.draw();
 					}
 				},
-				intro: { content: "已记录花色$" },
+				intro: {
+					content: "已记录花色$",
+					onunmark(storage, player) {
+						delete player.storage.zhenbian;
+						// 临时修改（by 棘手怀念摧毁）
+						// player.removeTip("zhenbian");
+					},
+				},
 				mod: { maxHandcardBase: player => player.maxHp },
 				// 临时修改（by 棘手怀念摧毁）
 				// onremove: (player, skill) => player.removeTip(skill),
@@ -21358,8 +21368,8 @@ game.import("character", function () {
 			new_yj_dongzhuo_prefix: "☆",
 			xiongjin: "雄进",
 			xiongjin_info: "转换技。阳：出牌阶段开始时，你可以摸X张牌，然后本回合的弃牌阶段开始时，你弃置所有非基本牌；阴，其他角色的出牌阶段开始时，你可以令其摸X张牌，然后本回合的弃牌阶段开始时，其弃置所有基本牌（X为你已损失的体力值，至少为1，至多为3）。",
-			xiawei: "侠威",
-			xiawei_info: "锁定技。①你的手牌上限等于体力上限。②有牌非因使用进入弃牌堆后，你记录这些牌的花色，然后若你因此记录了至少四种花色且你的体力上限小于9，则你增加1点体力上限并摸一张牌。",
+			zhenbian: "镇边",
+			zhenbian_info: "锁定技。①你的手牌上限等于体力上限。②有牌非因使用进入弃牌堆后，你记录这些牌的花色，然后若你因此记录了至少四种花色且你的体力上限小于8，则你清除记录，增加1点体力上限并摸一张牌。",
 			baoxi: "暴袭",
 			baoxi_info: "每回合每项各限一次，当一次性至少有两张基本牌/非基本牌进入弃牌堆时，你可以减1点体力上限，视为对一名角色使用【决斗】/【杀】。",
 			mb_cuilingyi: "手杀崔令仪",

@@ -26,13 +26,13 @@
 
 开发者：[水乎](https://github.com/libccy)（于2013年底发布）
 
-现更新者：[诗笺](https://github.com/nonameShijian)
+现更新者：[无名杀开发组](https://github.com/libnoname)
 
 客户端平台：安卓Android、苹果iOS、鸿蒙OS（HarmonyOS）、澎湃OS（HyperOS）、Windows、Mac、Linux以及支持web内核的浏览器版本等
 
 无名杀内置多种游戏模式和武将（及卡牌）包，拥有智能AI且可以实现单机、（弱）联机和局域网联机等多种游戏方式，并能通过扩展功能实现各种DIY设计，包括但不限于武将技能（含台词、配音）和卡牌设计、游戏模式设计、UI界面美化（含皮肤、特效）、功能扩展等
 
-主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧（现吧主：诗笺）；无名杀QQ群、QQ频道、微信公众号等
+主要交流平台——无名杀GitHub官网；百度贴吧：无名杀吧；无名杀QQ群、QQ频道、微信公众号等
 
 ★ 最重要的是：看教程，看教程，看教程！！！
 
@@ -75,8 +75,9 @@
 
 无名杀原版
 
-- 开源地址（新仓库）：https://github.com/libnoname/noname
 - 开源地址（旧仓库）：https://github.com/libccy/noname
+
+- 开源地址（新仓库）：https://github.com/libnoname/noname
 
 ##### 无名杀懒人包
 
@@ -187,6 +188,6 @@ GitHub： https://github.com/libccy/noname/releases/tag/chromium77-client
 
 网页端推荐使用 Chrome 系内核浏览器游玩，不推荐使用低版本 Firefox 浏览器
 
-请尽量保证游玩的 Chrome 系浏览器或手机 Webview 的`内核版本大于等于77`
+请尽量保证游玩的 Chrome 系浏览器或手机 Webview 的`内核版本大于等于77`（现要求`内核版本大于等于91`）
 
 提交 Pull Request 时请推送到"PR-Branch"分支！
